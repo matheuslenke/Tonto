@@ -1,0 +1,51 @@
+{
+  "name": "tonto",
+  "scopeName": "source.tonto",
+  "fileTypes": [
+    ".tonto"
+  ],
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "name": "keyword.control.tonto",
+      "match": "\\b(Hello|person)\\b"
+    },
+    {
+      "name": "keyword.symbol.tonto",
+      "match": "(\\!)"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.block.tonto",
+          "begin": "/\\*",
+          "beginCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.tonto"
+            }
+          },
+          "end": "\\*/",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.comment.tonto"
+            }
+          }
+        },
+        {
+          "begin": "//",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.whitespace.comment.leading.tonto"
+            }
+          },
+          "end": "(?=$)",
+          "name": "comment.line.tonto"
+        }
+      ]
+    }
+  }
+}
