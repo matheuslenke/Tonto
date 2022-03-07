@@ -1,0 +1,75 @@
+// Cada package representaria um contexto daquele modelo
+module personHealth {
+
+    category PhysicalObject
+
+    // : representa herança numa generalização
+    kind Hearth specializes PhysicalObject {
+
+    }
+
+    kind Brain specializes PhysicalObject
+
+    phase FunctionalBrain specializes Brain
+    phase NonFunctionalBrain specializes Brain
+
+    kind Person specializes PhysicalObject {
+        // composition ou aggregation
+        // composition ref hasOneHearth: [1] Hearth
+        // composition ref (essential, inseparable) hasOneBrain: [1..1] Brain
+    }
+
+    // Definição explícita do genset e suas restrições
+    // disjoint genset physicalObjects {
+    //     general PhysicalObject
+    //     // categorizer opcional
+    //     specifics Person, Heath, Brain;
+    // }
+
+    phase DeceasedPerson specializes Person
+    phase LivingPerson specializes Person
+
+    // Referencias que precisam estar declaradas antes
+    // disjoint complete genset personByLivingCondition {
+    //     general Person
+    //     specifics DeceasedPerson, LivingPerson 
+    // }
+
+    mode Sympton
+
+    role Patient specializes LivingPerson {
+        // Pode usar self para representar a si mesmo talvez?
+        // ref (comparative) isMoreCriticalThan: [*] -> [*] self
+        // ref (comparative) isMoreCriticalThan: [*] -> [*] Patient
+        // // Ou
+        // comparative ref isMoreCriticalThan: [*] Patient
+
+
+        // @Material ref treatedIn: [1..*] -> [1..*] healthCareSystem.HealhcareProvider
+        
+        // @Characterization
+        // Sympton [1..*] -> Patient [1]
+    }
+
+    // Como fazer um Relator com uma relação material? juntar tudo?
+    relator Treatment {
+        // mediation ref self [1..*] -> Patient [1]
+        // mediation ref self [1..*] -> healthCareSystem.HealhcareProvider [1]
+    }
+}
+
+module healthCareSystem {
+    kind Organization
+
+    phase ActiveOrganization specializes Organization
+
+    phase ExtinctOrganization specializes Organization
+
+
+    // disjoint complete genset OrganizationByStatus {
+    //     general Organiztion
+    //     specifics ActiveOrganization, ExtinctOrganization
+    // }
+
+    role HealhcareProvider specializes ActiveOrganization
+}

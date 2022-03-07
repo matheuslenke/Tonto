@@ -7,20 +7,55 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import { AstNode, AstReflection, Reference, isAstNode } from 'langium';
 
-export interface Greeting extends AstNode {
-    readonly $container: Model;
-    person: Reference<Person>
+export interface ClassPrefix extends AstNode {
+    readonly $container: Element;
+    stereotype: Stereotype
 }
 
-export const Greeting = 'Greeting';
+export const ClassPrefix = 'ClassPrefix';
 
-export function isGreeting(item: unknown): item is Greeting {
-    return reflection.isInstance(item, Greeting);
+export function isClassPrefix(item: unknown): item is ClassPrefix {
+    return reflection.isInstance(item, ClassPrefix);
+}
+
+export interface ContextModule extends AstNode {
+    readonly $container: ModelElement;
+    elements: Array<Element>
+    name: QualifiedName
+}
+
+export const ContextModule = 'ContextModule';
+
+export function isContextModule(item: unknown): item is ContextModule {
+    return reflection.isInstance(item, ContextModule);
+}
+
+export interface Element extends AstNode {
+    readonly $container: ContextModule;
+    name: string
+    prefix: ClassPrefix
+}
+
+export const Element = 'Element';
+
+export function isElement(item: unknown): item is Element {
+    return reflection.isInstance(item, Element);
+}
+
+export interface EndurantReference extends AstNode {
+    readonly $container: Class | Relator;
+    referencedClass: Reference<Class>
+    refName: string
+}
+
+export const EndurantReference = 'EndurantReference';
+
+export function isEndurantReference(item: unknown): item is EndurantReference {
+    return reflection.isInstance(item, EndurantReference);
 }
 
 export interface Model extends AstNode {
-    greetings: Array<Greeting>
-    persons: Array<Person>
+    elements: Array<ModelElement>
 }
 
 export const Model = 'Model';
@@ -29,25 +64,72 @@ export function isModel(item: unknown): item is Model {
     return reflection.isInstance(item, Model);
 }
 
-export interface Person extends AstNode {
+export interface ModelElement extends AstNode {
     readonly $container: Model;
-    name: string
+    module: ContextModule
 }
 
-export const Person = 'Person';
+export const ModelElement = 'ModelElement';
 
-export function isPerson(item: unknown): item is Person {
-    return reflection.isInstance(item, Person);
+export function isModelElement(item: unknown): item is ModelElement {
+    return reflection.isInstance(item, ModelElement);
 }
 
-export type TontoAstType = 'Greeting' | 'Model' | 'Person';
+export interface Stereotype extends AstNode {
+    readonly $container: ClassPrefix;
+    stereotype: string
+}
 
-export type TontoAstReference = 'Greeting:person';
+export const Stereotype = 'Stereotype';
+
+export function isStereotype(item: unknown): item is Stereotype {
+    return reflection.isInstance(item, Stereotype);
+}
+
+export interface Class extends Element {
+    references: EndurantReference
+    specializationClass?: Reference<Class>
+}
+
+export const Class = 'Class';
+
+export function isClass(item: unknown): item is Class {
+    return reflection.isInstance(item, Class);
+}
+
+export interface Endurant extends Element {
+    specializationEndurant?: Reference<Endurant>
+    type: EndurantType
+}
+
+export const Endurant = 'Endurant';
+
+export function isEndurant(item: unknown): item is Endurant {
+    return reflection.isInstance(item, Endurant);
+}
+
+export interface Relator extends Element {
+    references: EndurantReference
+}
+
+export const Relator = 'Relator';
+
+export function isRelator(item: unknown): item is Relator {
+    return reflection.isInstance(item, Relator);
+}
+
+export type QualifiedName = string
+
+export type EndurantType = 'kind' | 'subkind' | 'collective' | 'phase' | 'role' | 'category' | 'roleMixin' | 'mode' | 'quality'
+
+export type TontoAstType = 'ClassPrefix' | 'ContextModule' | 'Element' | 'EndurantReference' | 'Model' | 'ModelElement' | 'Stereotype' | 'Class' | 'Endurant' | 'Relator';
+
+export type TontoAstReference = 'EndurantReference:referencedClass' | 'Class:specializationClass' | 'Endurant:specializationEndurant';
 
 export class TontoAstReflection implements AstReflection {
 
     getAllTypes(): string[] {
-        return ['Greeting', 'Model', 'Person'];
+        return ['ClassPrefix', 'ContextModule', 'Element', 'EndurantReference', 'Model', 'ModelElement', 'Stereotype', 'Class', 'Endurant', 'Relator'];
     }
 
     isInstance(node: unknown, type: string): boolean {
@@ -59,6 +141,11 @@ export class TontoAstReflection implements AstReflection {
             return true;
         }
         switch (subtype) {
+            case Class:
+            case Endurant:
+            case Relator: {
+                return this.isSubtype(Element, supertype);
+            }
             default: {
                 return false;
             }
@@ -67,8 +154,14 @@ export class TontoAstReflection implements AstReflection {
 
     getReferenceType(referenceId: TontoAstReference): string {
         switch (referenceId) {
-            case 'Greeting:person': {
-                return Person;
+            case 'EndurantReference:referencedClass': {
+                return Class;
+            }
+            case 'Class:specializationClass': {
+                return Class;
+            }
+            case 'Endurant:specializationEndurant': {
+                return Endurant;
             }
             default: {
                 throw new Error(`${referenceId} is not a valid reference id.`);

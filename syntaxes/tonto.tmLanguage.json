@@ -10,11 +10,11 @@
     },
     {
       "name": "keyword.control.tonto",
-      "match": "\\b(Hello|person)\\b"
+      "match": "\\b(category|class|collective|kind|mode|module|phase|quality|ref|relator|role|roleMixin|specializes|subkind)\\b"
     },
     {
       "name": "keyword.symbol.tonto",
-      "match": "(\\!)"
+      "match": "(\\:|\\.|\\{|\\}|\\@)"
     }
   ],
   "repository": {

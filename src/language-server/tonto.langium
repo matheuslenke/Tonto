@@ -2,13 +2,64 @@ grammar Tonto
 hidden(WS, SL_COMMENT, ML_COMMENT)
 
 Model:
-    (persons+=Person | greetings+=Greeting)*;
+	elements+=ModelElement*
+;
 
-Person:
-    'person' name=ID;
+ModelElement:
+	module=ContextModule 
+;
 
-Greeting:
-    'Hello' person=[Person|ID] '!';
+// <--- Criação de Pacotes --->
+	
+ContextModule:
+	'module' name=QualifiedName '{'
+	elements+=Element*
+	'}'
+;
+
+QualifiedName returns string:
+	ID ('.' ID)*
+;
+
+// <--- Elementos e classes --->
+
+Element:
+	(prefix=ClassPrefix? Class) | Endurant | Relator
+;
+
+Stereotype:
+	'@'stereotype=ID
+;
+
+ClassPrefix:
+	stereotype=Stereotype?
+;
+
+Class:
+	'class' name=ID ('specializes' specializationClass=[Class|QualifiedName])?  '{'
+        references=EndurantReference*
+	'}'
+;
+
+Endurant:
+    type=EndurantType name=ID ('specializes' specializationEndurant=[Endurant|QualifiedName])? ('{' 
+
+    '}')?
+;
+
+EndurantType returns string:
+    'kind' | 'subkind' | 'collective' | 'phase' | 'role' | 'category' | 'roleMixin' | 'mode' | 'quality'
+;
+
+EndurantReference:
+    'ref'? refName=ID ':' referencedClass=[Class]
+;
+
+Relator:
+    'relator' name=ID '{' 
+        references=EndurantReference*
+    '}'
+;
 
 terminal WS: /\s+/;
 terminal ID: /[_a-zA-Z][\w_]*/;
