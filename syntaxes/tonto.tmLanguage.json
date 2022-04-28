@@ -13,8 +13,14 @@
       "match": "\\b(category|class|collective|kind|mode|module|phase|quality|ref|relator|role|roleMixin|specializes|subkind)\\b"
     },
     {
-      "name": "keyword.symbol.tonto",
-      "match": "(\\:|\\.|\\{|\\}|\\@)"
+      "name": "string.quoted.double.tonto",
+      "begin": "\"",
+      "end": "\""
+    },
+    {
+      "name": "string.quoted.single.tonto",
+      "begin": "'",
+      "end": "'"
     }
   ],
   "repository": {

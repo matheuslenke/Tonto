@@ -9,4 +9,4 @@ const connection = createConnection(ProposedFeatures.all);
 const services = createTontoServices({ connection });
 
 // Start the language server with the language-specific services
-startLanguageServer(services);
+startLanguageServer(services.shared);

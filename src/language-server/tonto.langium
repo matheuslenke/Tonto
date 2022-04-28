@@ -1,7 +1,6 @@
 grammar Tonto
-hidden(WS, SL_COMMENT, ML_COMMENT)
 
-Model:
+entry Model:
 	elements+=ModelElement*
 ;
 
@@ -36,13 +35,13 @@ ClassPrefix:
 ;
 
 Class:
-	'class' name=ID ('specializes' specializationClass=[Class|QualifiedName])?  '{'
+	'class' name=ID ('specializes' specializationClass=[Class:ID])?  '{'
         references=EndurantReference*
 	'}'
 ;
 
 Endurant:
-    type=EndurantType name=ID ('specializes' specializationEndurant=[Endurant|QualifiedName])? ('{' 
+    type=EndurantType name=ID ('specializes' specializationEndurant=[Endurant:ID])? ('{' 
 
     '}')?
 ;
@@ -61,10 +60,10 @@ Relator:
     '}'
 ;
 
-terminal WS: /\s+/;
+hidden terminal WS: /\s+/;
 terminal ID: /[_a-zA-Z][\w_]*/;
 terminal INT returns number: /[0-9]+/;
 terminal STRING: /"[^"]*"|'[^']*'/;
 
-terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
-terminal SL_COMMENT: /\/\/[^\n\r]*/;
+hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
+hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;

@@ -1,11 +1,11 @@
 import { ValidationCheck, ValidationRegistry } from 'langium';
-import { TontoAstType } from './generated/ast';
+import { tontoAstType } from './generated/ast';
 import { TontoServices } from './tonto-module';
 
 /**
  * Map AST node types to validation checks.
  */
-type TontoChecks = { [type in TontoAstType]?: ValidationCheck | ValidationCheck[] }
+type TontoChecks = { [type in tontoAstType]?: ValidationCheck | ValidationCheck[] }
 
 /**
  * Registry for validation checks.

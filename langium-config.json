@@ -1,9 +1,12 @@
 {
-    "languageId": "tonto",
-    "grammar": "src/language-server/tonto.langium",
-    "fileExtensions": [".tonto"],
-    "out": "src/language-server/generated",
-    "textMate": {
-        "out": "syntaxes/tonto.tmLanguage.json"
-    }
+    "projectName": "tonto",
+    "languages": [{
+        "id": "tonto",
+        "grammar": "src/language-server/tonto.langium",
+        "fileExtensions": [".tonto"],
+        "textMate": {
+            "out": "syntaxes/tonto.tmLanguage.json"
+        }
+        }],
+    "out": "src/language-server/generated"
 }

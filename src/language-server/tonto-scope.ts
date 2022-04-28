@@ -4,7 +4,7 @@
  * terms of the MIT License, which is available in the project root.
  ******************************************************************************/
 
- import { AstNodeDescription, DefaultScopeComputation, interruptAndCheck, LangiumDocument, LangiumServices, PrecomputedScopes } from 'langium';
+ import { AstNode, AstNodeDescription, DefaultScopeComputation, interruptAndCheck, LangiumDocument, LangiumServices, PrecomputedScopes, MultiMap } from 'langium';
  import { CancellationToken } from 'vscode-jsonrpc';
  import { TontoNameProvider } from './tonto-naming';
  import { Model, ContextModule, isContextModule, isClass } from './generated/ast';
@@ -17,7 +17,7 @@
  
      async computeScope(document: LangiumDocument, cancelToken = CancellationToken.None): Promise<PrecomputedScopes> {
          const model = document.parseResult.value as Model;
-         const scopes = new Map();
+         const scopes = new MultiMap<AstNode, AstNodeDescription>();
          await this.processContainer(model, scopes, document, cancelToken);
          return scopes;
      }
@@ -38,7 +38,7 @@
                  }
              }
          }
-         scopes.set(container, localDescriptions);
+         scopes.addAll(container, localDescriptions);
          return localDescriptions;
      }
  
