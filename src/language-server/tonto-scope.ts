@@ -7,9 +7,9 @@
  import { AstNode, AstNodeDescription, DefaultScopeComputation, interruptAndCheck, LangiumDocument, LangiumServices, PrecomputedScopes, MultiMap } from 'langium';
  import { CancellationToken } from 'vscode-jsonrpc';
  import { TontoNameProvider } from './tonto-naming';
- import { Model, ContextModule, isContextModule, isClass } from './generated/ast';
+ import { Model, ContextModule, isContextModule, isClass, isEndurant, isRelator, isDataType } from './generated/ast';
  
- export class UmlTextScopeComputation extends DefaultScopeComputation {
+ export class TontoScopeComputation extends DefaultScopeComputation {
  
      constructor(services: LangiumServices) {
          super(services);
@@ -24,9 +24,10 @@
  
      protected async processContainer(container: Model | ContextModule, scopes: PrecomputedScopes, document: LangiumDocument, cancelToken: CancellationToken): Promise<AstNodeDescription[]> {
          const localDescriptions: AstNodeDescription[] = [];
+
          for (const element of container.elements) {
              interruptAndCheck(cancelToken);
-             if (isClass(element)) {
+             if (isClass(element) || isEndurant(element) || isRelator(element) || isDataType(element)) {
                  const description = this.descriptions.createDescription(element, element.name, document);
                  localDescriptions.push(description);
              } else if (isContextModule(element)) {
@@ -38,6 +39,7 @@
                  }
              }
          }
+         console.log(localDescriptions)
          scopes.addAll(container, localDescriptions);
          return localDescriptions;
      }

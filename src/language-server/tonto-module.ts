@@ -1,3 +1,6 @@
+import { TontoDescriptionProvider } from './tonto-index';
+import { TontoNameProvider } from './tonto-naming';
+import { TontoScopeComputation } from './tonto-scope';
 import { createDefaultModule, createDefaultSharedModule, DefaultSharedModuleContext, inject, LangiumServices, LangiumSharedServices, Module, PartialLangiumServices } from 'langium';
 import { TontoGeneratedModule, tontoGeneratedSharedModule } from './generated/module';
 import { TontoValidationRegistry, TontoValidator } from './tonto-validator';
@@ -23,9 +26,16 @@ export type TontoServices = LangiumServices & TontoAddedServices
  * selected services, while the custom services must be fully specified.
  */
 export const TontoModule: Module<TontoServices, PartialLangiumServices & TontoAddedServices> = {
+    references: {
+        ScopeComputation: (services) => new TontoScopeComputation(services),
+        NameProvider: () => new TontoNameProvider()
+    },
     validation: {
         ValidationRegistry: (injector) => new TontoValidationRegistry(injector),
         TontoValidator: () => new TontoValidator()
+    },
+    index: {
+        AstNodeDescriptionProvider: (services) => new TontoDescriptionProvider(services)
     }
 };
 

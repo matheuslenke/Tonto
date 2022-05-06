@@ -22,7 +22,8 @@
      getQualifiedName(qualifier: ContextModule | string, name: string): string {
          let prefix = qualifier;
          if (isContextModule(prefix)) {
-             prefix = (isContextModule(prefix.$container) ? this.getQualifiedName(prefix.$container, prefix.name) : prefix.name);
+             prefix = (isContextModule(prefix.$container) 
+             ? this.getQualifiedName(prefix.$container, prefix.name) : prefix.name);
          } 
          return (prefix ? prefix + '.' : '') + name;
      }

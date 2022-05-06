@@ -1,11 +1,10 @@
 // Cada package representaria um contexto daquele modelo
-module personHealth {
+module PersonHealth {
 
     category PhysicalObject
 
     // : representa herança numa generalização
     kind Hearth specializes PhysicalObject {
-
     }
 
     kind Brain specializes PhysicalObject
@@ -15,61 +14,61 @@ module personHealth {
 
     kind Person specializes PhysicalObject {
         // composition ou aggregation
-        // composition ref hasOneHearth: [1] Hearth
-        // composition ref (essential, inseparable) hasOneBrain: [1..1] Brain
+        @composition hasOneHearth [1] : [1] Hearth
+        @composition hasOneBrain [1] : [1] Brain
     }
 
     // Definição explícita do genset e suas restrições
-    // disjoint genset physicalObjects {
-    //     general PhysicalObject
-    //     // categorizer opcional
-    //     specifics Person, Heath, Brain;
-    // }
+    disjoint genset physicalObjects {
+        general PhysicalObject
+        // categorizer opcional
+        specifics Person, Hearth, Brain
+    }
 
     phase DeceasedPerson specializes Person
     phase LivingPerson specializes Person
 
     // Referencias que precisam estar declaradas antes
-    // disjoint complete genset personByLivingCondition {
-    //     general Person
-    //     specifics DeceasedPerson, LivingPerson 
-    // }
+    disjoint complete genset personByLivingCondition {
+        general Person
+        specifics DeceasedPerson, LivingPerson 
+    }
 
     mode Sympton
 
     role Patient specializes LivingPerson {
         // Pode usar self para representar a si mesmo talvez?
-        // ref (comparative) isMoreCriticalThan: [*] -> [*] self
-        // ref (comparative) isMoreCriticalThan: [*] -> [*] Patient
-        // // Ou
-        // comparative ref isMoreCriticalThan: [*] Patient
+        @comparative isMoreCriticalThan: Patient
+        @comparative isMoreCriticalThan: Patient
+        // Ou
+        @comparative ref isMoreCriticalThan: [*] Patient
 
 
-        // @Material ref treatedIn: [1..*] -> [1..*] healthCareSystem.HealhcareProvider
+        @material ref treatedIn [1..*] : [1..*] HealthCareSystem.HealhcareProvider
         
-        // @Characterization
-        // Sympton [1..*] -> Patient [1]
+        @characterization hasSympton [1] : [1..*] Sympton
     }
 
     // Como fazer um Relator com uma relação material? juntar tudo?
     relator Treatment {
-        // mediation ref self [1..*] -> Patient [1]
-        // mediation ref self [1..*] -> healthCareSystem.HealhcareProvider [1]
+        @mediation recievedBy :  [1..*] Patient
+        @mediation withProvider [1..*] : [1] HealthCareSystem.HealhcareProvider
     }
 }
 
-module healthCareSystem {
+module HealthCareSystem {
     kind Organization
+
+    kind teste specializes Organization
 
     phase ActiveOrganization specializes Organization
 
     phase ExtinctOrganization specializes Organization
 
-
-    // disjoint complete genset OrganizationByStatus {
-    //     general Organiztion
-    //     specifics ActiveOrganization, ExtinctOrganization
-    // }
+    disjoint complete genset OrganizationByStatus {
+        general Organization
+        specifics ActiveOrganization, ExtinctOrganization
+    }
 
     role HealhcareProvider specializes ActiveOrganization
 }

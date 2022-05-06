@@ -1,6 +1,8 @@
+import { EndurantValidator } from './validators/EndurantValidator';
 import { ValidationCheck, ValidationRegistry } from 'langium';
 import { tontoAstType } from './generated/ast';
 import { TontoServices } from './tonto-module';
+import { PackageValidator } from './validators/ContextModuleValidator';
 
 /**
  * Map AST node types to validation checks.
@@ -14,7 +16,12 @@ export class TontoValidationRegistry extends ValidationRegistry {
     constructor(services: TontoServices) {
         super(services);
         const validator = services.validation.TontoValidator;
-        const checks: TontoChecks = {};
+        const checks: TontoChecks = {
+            ContextModule: [
+                validator.contextModuleValidator.checkIfModelIsValid, 
+                validator.contextModuleValidator.checkContextModuleStartsWithCapital ],
+            Endurant: [validator.endurantValidator.checkEndurantIsValid]
+        };
         this.register(checks, validator);
     }
 }
@@ -24,12 +31,6 @@ export class TontoValidationRegistry extends ValidationRegistry {
  */
 export class TontoValidator {
 
-    // checkPersonStartsWithCapital(person: Person, accept: ValidationAcceptor): void {
-    //     if (person.name) {
-    //         const firstChar = person.name.substring(0, 1);
-    //         if (firstChar.toUpperCase() !== firstChar) {
-    //             accept('warning', 'Person name should start with a capital.', { node: person, property: 'name' });
-    //         }
-    //     }
-    // }
+    contextModuleValidator = new PackageValidator();
+    endurantValidator = new EndurantValidator();
 }
