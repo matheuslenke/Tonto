@@ -1,6 +1,6 @@
+import { Endurant } from './../generated/ast';
 import { EndurantTypes } from './../models/EndurantType';
 import { ValidationAcceptor } from "langium";
-import { Endurant } from "../generated/ast";
 import { Endurant as EndurantModel} from '../models/Endurant'
 
 export class EndurantValidator {
@@ -9,9 +9,23 @@ export class EndurantValidator {
   }
 
   checkKindSpecialization(endurantItem: Endurant, accept: ValidationAcceptor): void {
-    if (endurantItem.$type === EndurantTypes.KIND) {
+    const endurantType = endurantItem.type.stereotype
+    if (endurantType === EndurantTypes.KIND || endurantType === EndurantTypes.SUBKIND  ) {
       const endurant = new EndurantModel()
       endurant.type = EndurantTypes.KIND
+
+      endurantItem.specializationEndurants.forEach( specializationItem => {
+        const refElement = specializationItem.ref?.$cstNode?.element as Endurant
+        const refType = refElement.type.stereotype
+
+        console.log(refType)
+        if( refType === EndurantTypes.KIND || refType === EndurantTypes.COLLECTIVE ||
+          refType === EndurantTypes.QUANTITY ||
+          refType === EndurantTypes.QUALITY || refType === EndurantTypes.MODE ) {
+          console.log("Error na referencia")
+          accept('error', 'Every sortal class must specialize a unique ultimate sortal (Kind, Collective, Quantity, Relator, Quality or mode', {node: endurantItem, property: 'name'} )
+        }
+      })
 
       // const ultimateSortalAncestors = _class.getUltimateSortalAncestors();
 

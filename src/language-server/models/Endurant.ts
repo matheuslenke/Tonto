@@ -1,6 +1,5 @@
 import { stereotypeUtils } from './StereotypeUtils';
 import { EndurantTypes } from './EndurantType';
-import { setFlagsFromString } from 'v8';
 
 export class Endurant {
   name: string

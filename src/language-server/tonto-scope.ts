@@ -39,7 +39,6 @@
                  }
              }
          }
-         console.log(localDescriptions)
          scopes.addAll(container, localDescriptions);
          return localDescriptions;
      }

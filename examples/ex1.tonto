@@ -39,7 +39,7 @@ module PersonHealth {
     role Patient specializes LivingPerson {
         // Pode usar self para representar a si mesmo talvez?
         @comparative isMoreCriticalThan: Patient
-        @comparative isMoreCriticalThan: Patient
+        @comparative isLessCriticalThan: Patient
         // Ou
         @comparative ref isMoreCriticalThan: [*] Patient
 
@@ -51,15 +51,16 @@ module PersonHealth {
 
     // Como fazer um Relator com uma relação material? juntar tudo?
     relator Treatment {
-        @mediation recievedBy :  [1..*] Patient
-        @mediation withProvider [1..*] : [1] HealthCareSystem.HealhcareProvider
+        @mediation :  [1..*] Patient
+        @mediation offeredByProvider : [1] HealthCareSystem.HealhcareProvider
     }
+    // relation treatmentOfferedByProvider [1..*]
 }
 
 module HealthCareSystem {
     kind Organization
 
-    kind teste specializes Organization
+    // kind teste specializes Organization
 
     phase ActiveOrganization specializes Organization
 
@@ -70,5 +71,7 @@ module HealthCareSystem {
         specifics ActiveOrganization, ExtinctOrganization
     }
 
-    role HealhcareProvider specializes ActiveOrganization
+    role HealhcareProvider specializes ActiveOrganization {
+        @mediation providesTreatment : [1..*] PersonHealth.Treatment
+    }
 }

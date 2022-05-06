@@ -20,7 +20,9 @@ export class TontoValidationRegistry extends ValidationRegistry {
             ContextModule: [
                 validator.contextModuleValidator.checkIfModelIsValid, 
                 validator.contextModuleValidator.checkContextModuleStartsWithCapital ],
-            Endurant: [validator.endurantValidator.checkEndurantIsValid]
+            Endurant: [
+                validator.endurantValidator.checkEndurantIsValid, 
+                validator.endurantValidator.checkKindSpecialization]
         };
         this.register(checks, validator);
     }

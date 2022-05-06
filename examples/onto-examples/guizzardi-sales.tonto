@@ -11,6 +11,8 @@ module Sales {
         involves_2 [1..*] : [1] Provider
     }
 
+    @type class EconomicEvent2
+
     mode MoneyTransferConditionalCommitment {
         @composition ref [1..*] : [1] BilateralEconomicContract
         reciprocity [1] : [1] GoodTransferConditionalCommitment
@@ -25,7 +27,7 @@ module Sales {
     event EconomicEvent 
     event EconomicExchange
 
-    subkind SellEvent specializes EconomicEvent {
+    kind SellEvent specializes EconomicEvent {
         @composition [1] : [1] EconomicExchange 
         fulfills [0..1] : [1] GoodTransferConditionalCommitment
     }
@@ -34,5 +36,4 @@ module Sales {
         @composition [1] : [1] EconomicExchange
         fulfills [0..1] : [1] MoneyTransferConditionalCommitment
     }
-
 }
