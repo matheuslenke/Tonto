@@ -1,12 +1,21 @@
 import { ValidationAcceptor } from "langium";
-import { Element } from "../generated/ast";
+import { Element, ElementReference } from "../generated/ast";
 
-export class EndurantValidator {
+export class ClassElementValidator {
   checkEndurantIsValid(endurantItem: Element, accept: ValidationAcceptor): void {
 
   }
 
+  checksExternalReference(reference: ElementReference, accept: ValidationAcceptor ) {
+    if (reference.isAssociation) {
+        console.log(`${reference.name} is Association`)
+    } else if (reference.isComposition) {
+        console.log(`${reference.name} is Composition`)
+    }
+}
+
   checkKindSpecialization(endurantItem: Element, accept: ValidationAcceptor): void {
+    
     // const endurantType = endurantItem.type.stereotype
     // if (endurantType === EndurantTypes.KIND || endurantType === EndurantTypes.SUBKIND  ) {
     //   const endurant = new EndurantModel()

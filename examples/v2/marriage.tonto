@@ -3,10 +3,42 @@ module MarriageModule {
 
     relator SocialRelator
     relator SocialRelatorType specializes SocialRelator
+    kind MarriageDuty
+    kind MarriageRight
+    
+    role Spouse specializes Person {
+        -- isBoundBy -- Marriage inverseOf involvesSpouse
+    }
 
-    relator Marriage specializes SocialRelatorType
-    role Spouse specializes Person
+    relator Marriage specializes SocialRelator instanceOf SocialRelatorType
+    Marriage -- involvesSpouse -- [2..*] Spouse
+    Marriage <>-- [1..*] MarriageDuty
+
+    Marriage -- [2..*] Spouse
+    Marriage <>-- [1..*] MarriageDuty
+    Marriage <>-- [1..*] MarriageRight
+}
+
+module MarriageModuleCopy {
+    kind Person
+
+    relator SocialRelator
+    relator SocialRelatorType specializes SocialRelator
+
+    role Spouse specializes Person {
+        [1..*] -- isBoundBy --[2] Marriage inverseOf involvesSpouse
+    }
+
+    kind MarriageDuty
+    kind MarriageRight
     
 
-    // Spouse isBoundBy -- Marriage
+    relator Marriage specializes SocialRelatorType
+    
+    Marriage -- involvesSpouse -- [2..*] Spouse
+    Marriage <>-- [1..*] MarriageDuty
+
+    Marriage -- [2..*] Spouse
+    Marriage <>-- [1..*] MarriageDuty
+    Marriage <>-- [1..*] MarriageRight
 }

@@ -101,16 +101,16 @@
 //     }
 // }
 
-// module CarOwnership {
-//     kind Organization
-//     subkind CarAgency
-//     kind Car
+module CarOwnership {
+    // kind Organization
+    // subkind CarAgency
+    // kind Car
 
-//     relator CarOwnership {
-//         @mediation
-//         ref involvesOwner [0..*] : [1] CarAgency
+    // relator CarOwnership {
+    //     @mediation
+    //     ref involvesOwner [0..*] : [1] CarAgency
 
-//         @mediation
-//         ref involvesProperty [1] : [1] Car
-//     }
-// }
+    //     @mediation
+    //     ref involvesProperty [1] : [1] Car
+    // }
+}

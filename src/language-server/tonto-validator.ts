@@ -1,13 +1,11 @@
-import { EndurantValidator } from './validators/EndurantValidator';
 import { ValidationCheck, ValidationRegistry } from 'langium';
-import { tontoAstType } from './generated/ast';
-import { TontoServices } from './tonto-module';
-import { PackageValidator } from './validators/ContextModuleValidator';
+import { TontoAstType } from './generated/ast';
+import type { TontoServices } from './tonto-module';
 
 /**
  * Map AST node types to validation checks.
  */
-type TontoChecks = { [type in tontoAstType]?: ValidationCheck | ValidationCheck[] }
+type TontoChecks = { [type in TontoAstType]?: ValidationCheck | ValidationCheck[] }
 
 /**
  * Registry for validation checks.
@@ -17,12 +15,9 @@ export class TontoValidationRegistry extends ValidationRegistry {
         super(services);
         const validator = services.validation.TontoValidator;
         const checks: TontoChecks = {
-            ContextModule: [
-                validator.contextModuleValidator.checkIfModelIsValid, 
-                validator.contextModuleValidator.checkContextModuleStartsWithCapital ],
-            Element: [
-                validator.endurantValidator.checkEndurantIsValid, 
-                validator.endurantValidator.checkKindSpecialization]
+            ElementReference: [validator.ClassElementValidator.checksExternalReference]
+            // EndurantInternalReference: validator.checksExternalReference
+            // Person: validator.checkPersonStartsWithCapital
         };
         this.register(checks, validator);
     }
@@ -31,8 +26,3 @@ export class TontoValidationRegistry extends ValidationRegistry {
 /**
  * Implementation of custom validations.
  */
-export class TontoValidator {
-
-    contextModuleValidator = new PackageValidator();
-    endurantValidator = new EndurantValidator();
-}

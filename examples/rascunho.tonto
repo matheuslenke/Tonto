@@ -1,90 +1,90 @@
-// Cada package representaria um contexto daquele modelo
-module personHealth {
+// // Cada package representaria um contexto daquele modelo
+// module personHealth {
 
-    datatype Color {
+//     datatype Color {
         
-    }
+//     }
 
-    category PhysicalObject
+//     category PhysicalObject
 
-    // : representa herança numa generalização
-    kind Hearth specializes PhysicalObject {
+//     // : representa herança numa generalização
+//     kind Hearth specializes PhysicalObject {
 
-    }
+//     }
 
-    kind Brain specializes PhysicalObject
+//     kind Brain specializes PhysicalObject
 
-    phase FunctionalBrain specializes Brain
-    phase NonFunctionalBrain specializes Brain
+//     phase FunctionalBrain specializes Brain
+//     phase NonFunctionalBrain specializes Brain
 
-    class testClass {}
+//     class testClass {}
 
-    kind Person specializes PhysicalObject {
-        // composition ou aggregation
-        // composition ref hasOneHearth: [1] Hearth
-        // composition ref (essential, inseparable) hasOneBrain: [1..1] Brain
-    }
+//     kind Person specializes PhysicalObject {
+//         // composition ou aggregation
+//         // composition ref hasOneHearth: [1] Hearth
+//         // composition ref (essential, inseparable) hasOneBrain: [1..1] Brain
+//     }
 
-    mode Sympton {
-        @characterization inheresIn: Person
-    }
+//     mode Sympton {
+//         @characterization inheresIn: Person
+//     }
 
-    kind testando {
-        nome: Sympton
-    }
-
-
-    // Definição explícita do genset e suas restrições
-    // disjoint genset physicalObjects {
-    //     general PhysicalObject
-    //     // categorizer opcional
-    //     specifics Person, Heath, Brain;
-    // }
-
-    phase DeceasedPerson specializes Person
-    phase LivingPerson specializes Person
-
-    // Referencias que precisam estar declaradas antes
-    // disjoint complete genset personByLivingCondition {
-    //     general Person
-    //     specifics DeceasedPerson, LivingPerson 
-    // }
-
-    mode Sympton
-
-    role Patient specializes LivingPerson {
-        // Pode usar self para representar a si mesmo talvez?
-        // ref (comparative) isMoreCriticalThan: [*] -> [*] self
-        // ref (comparative) isMoreCriticalThan: [*] -> [*] Patient
-        // // Ou
-        // comparative ref isMoreCriticalThan: [*] Patient
+//     kind testando {
+//         nome: Sympton
+//     }
 
 
-        // @Material ref treatedIn: [1..*] -> [1..*] healthCareSystem.HealhcareProvider
+//     // Definição explícita do genset e suas restrições
+//     // disjoint genset physicalObjects {
+//     //     general PhysicalObject
+//     //     // categorizer opcional
+//     //     specifics Person, Heath, Brain;
+//     // }
+
+//     phase DeceasedPerson specializes Person
+//     phase LivingPerson specializes Person
+
+//     // Referencias que precisam estar declaradas antes
+//     // disjoint complete genset personByLivingCondition {
+//     //     general Person
+//     //     specifics DeceasedPerson, LivingPerson 
+//     // }
+
+//     mode Sympton
+
+//     role Patient specializes LivingPerson {
+//         // Pode usar self para representar a si mesmo talvez?
+//         // ref (comparative) isMoreCriticalThan: [*] -> [*] self
+//         // ref (comparative) isMoreCriticalThan: [*] -> [*] Patient
+//         // // Ou
+//         // comparative ref isMoreCriticalThan: [*] Patient
+
+
+//         // @Material ref treatedIn: [1..*] -> [1..*] healthCareSystem.HealhcareProvider
         
-        // @Characterization
-        // Sympton [1..*] -> Patient [1]
-    }
+//         // @Characterization
+//         // Sympton [1..*] -> Patient [1]
+//     }
 
-    // Como fazer um Relator com uma relação material? juntar tudo?
-    relator Treatment {
-        // mediation ref self [1..*] -> Patient [1]
-        // mediation ref self [1..*] -> healthCareSystem.HealhcareProvider [1]
-    }
-}
+//     // Como fazer um Relator com uma relação material? juntar tudo?
+//     relator Treatment {
+//         // mediation ref self [1..*] -> Patient [1]
+//         // mediation ref self [1..*] -> healthCareSystem.HealhcareProvider [1]
+//     }
+// }
 
 module healthCareSystem {
-    kind Organization
+    // kind Organization
 
-    phase ActiveOrganization specializes Organization
+    // phase ActiveOrganization specializes Organization
 
-    phase ExtinctOrganization specializes Organization
+    // phase ExtinctOrganization specializes Organization
 
 
-    // disjoint complete genset OrganizationByStatus {
-    //     general Organiztion
-    //     specifics ActiveOrganization, ExtinctOrganization
-    // }
+    // // disjoint complete genset OrganizationByStatus {
+    // //     general Organiztion
+    // //     specifics ActiveOrganization, ExtinctOrganization
+    // // }
 
-    role HealhcareProvider specializes ActiveOrganization
+    // role HealhcareProvider specializes ActiveOrganization
 }

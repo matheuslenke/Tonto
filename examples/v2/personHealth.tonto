@@ -11,11 +11,12 @@ module PersonHealth {
     phase NonFunctionalBrain specializes Brain
 
     kind Person specializes PhysicalObject {
-        @composition hasOneHearth [1] : [1] Hearth
-        @composition hasOneBrain [1] : [1] Brain
+        hasOneHearth [1] : [1] Hearth
+        // hasOneBrain [1] : [1] Brain
     }
 
-    Person hasOneHearth -- [1] Hearth
+    Person -- hasOneHearth -- [1] Hearth
+    Person -- hasOneBrain -- [1] Brain
 
 //     phase DeceasedPerson specializes Person
 //     phase LivingPerson specializes Person

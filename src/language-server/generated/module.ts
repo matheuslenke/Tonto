@@ -4,7 +4,7 @@
  ******************************************************************************/
 
 import { LangiumGeneratedServices, LangiumGeneratedSharedServices, LangiumSharedServices, LangiumServices, LanguageMetaData, Module } from 'langium';
-import { tontoAstReflection } from './ast';
+import { TontoAstReflection } from './ast';
 import { TontoGrammar } from './grammar';
 
 export const TontoLanguageMetaData: LanguageMetaData = {
@@ -13,8 +13,8 @@ export const TontoLanguageMetaData: LanguageMetaData = {
     caseInsensitive: false
 };
 
-export const tontoGeneratedSharedModule: Module<LangiumSharedServices, LangiumGeneratedSharedServices> = {
-    AstReflection: () => new tontoAstReflection()
+export const TontoGeneratedSharedModule: Module<LangiumSharedServices, LangiumGeneratedSharedServices> = {
+    AstReflection: () => new TontoAstReflection()
 };
 
 export const TontoGeneratedModule: Module<LangiumServices, LangiumGeneratedServices> = {

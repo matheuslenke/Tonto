@@ -19,7 +19,11 @@ QualifiedName returns string:
 // <--- Elementos e classes --->
 
 Element:
-	Class | Endurant | AuxiliaryDeclarations
+	ClassElement | AuxiliaryDeclarations
+;
+
+ClassElement:
+    Class | Endurant
 ;
 
 AuxiliaryDeclarations:
@@ -56,19 +60,21 @@ ClassPrefix:
 	stereotype=Stereotype?
 ;
 
-Class infers Element:
-	prefix=ClassPrefix? 'class' name=QualifiedName ('specializes' specializationClasses+=[Element:QualifiedName] 
-	(',' specializationClasses+=[Element:QualifiedName])? )?
+Class infers ClassElement:
+	prefix=ClassPrefix? 'class' name=QualifiedName ('specializes' specializationClasses+=[ClassElement:QualifiedName] 
+	(',' specializationClasses+=[ClassElement:QualifiedName])? )?
+    ('instanceOf' instanceOf=[ClassElement:QualifiedName])?
 	('{'
-        // references=EndurantInternalReference*
+         references=EndurantInternalReference*
 	'}')?
 ;
 
-Endurant infers Element:
-    type=EndurantType name=QualifiedName ('specializes' specializationEndurants+=[Element:QualifiedName]
-	(',' specializationEndurants+=[Element:QualifiedName])? 
+Endurant infers ClassElement:
+    type=EndurantType name=QualifiedName ('specializes' specializationEndurants+=[ClassElement:QualifiedName]
+	(',' specializationEndurants+=[ClassElement:QualifiedName])? 
+    ('instanceOf' instanceOf=[ClassElement:QualifiedName])?
 	)? ('{' 
-		// references=EndurantInternalReference*
+		 references=EndurantInternalReference*
     '}')?
 ;
 
@@ -88,27 +94,32 @@ BaseSortalStereotype returns string:
 	'subkind' | 'phase' | 'role' | 'historicalrole' | 'relator'
 ;
 
-// EndurantInternalReference:
-//     ('@'relationType=RelationStereotype)? (name=ID)? firstCardinality=Cardinality?  ':' secondCardinality=Cardinality?  referencedElement=[Element:QualifiedName]
-// 	('{'
-// 		descriptions+=RelationDescription
-// 		(',' descriptions+=RelationDescription)*
-// 	'}')?
-// ;
-
-EndurantExternalReference:
-	'ref' ReferenceFirstExpression {infer EndurantExternalReference.firstEnd=current} ReferenceConnector name=ID
-	secondEnd=[Element:QualifiedName]
-	// 'externalref' ('@'relationType=RelationStereotype)? end1=[Element:QualifiedName] name=ID ReferenceConnector (cardinality=Cardinality)?
-	// end2=[Element:QualifiedName]
+ElementReference:
+    EndurantExternalReference | EndurantInternalReference
 ;
 
-ReferenceFirstExpression:
-	firstEnd=[Element:QualifiedName]
+EndurantInternalReference infers ElementReference:
+    ('@'relationType=RelationStereotype)?
+    firstCardinality=Cardinality?
+    (isAssociation?='--' | isComposition?='<>--')
+    (name=QualifiedName '--')? secondCardinality=Cardinality?  referencedElement=[Element:QualifiedName]
+    ('inverseOf' inverseEnd=([ElementReference:QualifiedName]))?
+	('{'
+		descriptions+=RelationDescription
+		(',' descriptions+=RelationDescription)*
+	'}')?
+ ;
+
+EndurantExternalReference infers ElementReference:
+    firstEnd=[ClassElement:QualifiedName] 
+    (isAssociation?='--' | isComposition?='<>--')
+    ReferenceInfo
 ;
 
-ReferenceConnector returns string:
-	'--' | '<>--'
+fragment ReferenceInfo:
+    (name=QualifiedName '--')?
+    cardinality=Cardinality? secondEnd=[ClassElement:QualifiedName]
+    (hasInverse='inverseOf' inverseEnd=[ElementReference:QualifiedName])?
 ;
 
 RelationDescription:

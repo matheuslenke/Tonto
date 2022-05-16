@@ -1,14 +1,14 @@
 module PersonTypes {
-    category LegalPerson
+    // category LegalPerson
 
-    kind Person specializes LegalPerson
+    // kind Person specializes LegalPerson
 
-    kind Organization specializes LegalPerson
+    // kind Organization specializes LegalPerson
 
-    phase LivingPerson specializes Person
+    // phase LivingPerson specializes Person
 
-    role LegallyRecognizedPerson specializes Person
+    // role LegallyRecognizedPerson specializes Person
 
-    phase CognitivelyCapableLivingPerson specializes LivingPerson,LegallyRecognizedPerson
+    // phase CognitivelyCapableLivingPerson specializes LivingPerson,LegallyRecognizedPerson
 }
 

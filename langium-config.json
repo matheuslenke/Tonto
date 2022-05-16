@@ -1,5 +1,5 @@
 {
-    "projectName": "tonto",
+    "projectName": "Tonto",
     "languages": [{
         "id": "tonto",
         "grammar": "src/language-server/tonto.langium",
