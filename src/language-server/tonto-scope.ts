@@ -7,7 +7,7 @@
  import { AstNode, AstNodeDescription, DefaultScopeComputation, interruptAndCheck, LangiumDocument, LangiumServices, PrecomputedScopes, MultiMap } from 'langium';
  import { CancellationToken } from 'vscode-jsonrpc';
  import { TontoNameProvider } from './tonto-naming';
- import { Model, ContextModule, isContextModule, isClass, isEndurant, isRelator, isDataType } from './generated/ast';
+ import { Model, ContextModule, isContextModule, isElement, isDataType } from './generated/ast';
  
  export class TontoScopeComputation extends DefaultScopeComputation {
  
@@ -27,7 +27,7 @@
 
          for (const element of container.elements) {
              interruptAndCheck(cancelToken);
-             if (isClass(element) || isEndurant(element) || isRelator(element) || isDataType(element)) {
+             if (isElement(element)|| isDataType(element)) {
                  const description = this.descriptions.createDescription(element, element.name, document);
                  localDescriptions.push(description);
              } else if (isContextModule(element)) {

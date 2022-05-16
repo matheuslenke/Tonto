@@ -1,5 +1,5 @@
 import { ValidationAcceptor } from 'langium';
-import { Class, Model, ContextModule } from "../generated/ast";
+import { Element, Model, ContextModule } from "../generated/ast";
 
 export class PackageValidator {
     checkContextModuleStartsWithCapital(packageItem: ContextModule, accept: ValidationAcceptor): void {
@@ -11,7 +11,7 @@ export class PackageValidator {
         }
     }
 
-    checkClassStartsWithCapital(classItem: Class, accept: ValidationAcceptor): void {
+    checkClassStartsWithCapital(classItem: Element, accept: ValidationAcceptor): void {
         if (classItem.name) {
             const firstChar = classItem.name.substring(0, 1);
             if (firstChar.toUpperCase() !== firstChar) {

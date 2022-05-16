@@ -19,7 +19,11 @@ QualifiedName returns string:
 // <--- Elementos e classes --->
 
 Element:
-	Class | Endurant | Relator | DataType | EnumData | GeneralizationSet
+	Class | Endurant | AuxiliaryDeclarations
+;
+
+AuxiliaryDeclarations:
+	DataType | EnumData | GeneralizationSet | EndurantExternalReference
 ;
 
 Stereotype:
@@ -36,7 +40,7 @@ Stereotype:
 	'kind' |
 	'collective' |
 	'quantity' |
-	// 'relator' |
+	'relator' |
 	'quality' |
 	'mode' |
 	'subkind' |
@@ -52,20 +56,19 @@ ClassPrefix:
 	stereotype=Stereotype?
 ;
 
-
-Class:
-	prefix=ClassPrefix? 'class' name=QualifiedName ('specializes' specializationClasses+=[Class:QualifiedName] 
-	(',' specializationClasses+=[Class:QualifiedName])? )?
+Class infers Element:
+	prefix=ClassPrefix? 'class' name=QualifiedName ('specializes' specializationClasses+=[Element:QualifiedName] 
+	(',' specializationClasses+=[Element:QualifiedName])? )?
 	('{'
-        references=EndurantReference*
+        // references=EndurantInternalReference*
 	'}')?
 ;
 
-Endurant:
+Endurant infers Element:
     type=EndurantType name=QualifiedName ('specializes' specializationEndurants+=[Element:QualifiedName]
 	(',' specializationEndurants+=[Element:QualifiedName])? 
 	)? ('{' 
-		references=EndurantReference*
+		// references=EndurantInternalReference*
     '}')?
 ;
 
@@ -82,15 +85,30 @@ UltimateSortalStereotypes returns string:
 ;
 
 BaseSortalStereotype returns string:
-	'subkind' | 'phase' | 'role' | 'historicalrole'
+	'subkind' | 'phase' | 'role' | 'historicalrole' | 'relator'
 ;
 
-EndurantReference:
-    ('@'relationType=RelationStereotype)? 'ref'? (name=ID)? firstCardinality=Cardinality?  ':' secondCardinality=Cardinality?  referencedElement=[Element:QualifiedName]
-	('{'
-		descriptions+=RelationDescription
-		(',' descriptions+=RelationDescription)*
-	'}')?
+// EndurantInternalReference:
+//     ('@'relationType=RelationStereotype)? (name=ID)? firstCardinality=Cardinality?  ':' secondCardinality=Cardinality?  referencedElement=[Element:QualifiedName]
+// 	('{'
+// 		descriptions+=RelationDescription
+// 		(',' descriptions+=RelationDescription)*
+// 	'}')?
+// ;
+
+EndurantExternalReference:
+	'ref' ReferenceFirstExpression {infer EndurantExternalReference.firstEnd=current} ReferenceConnector name=ID
+	secondEnd=[Element:QualifiedName]
+	// 'externalref' ('@'relationType=RelationStereotype)? end1=[Element:QualifiedName] name=ID ReferenceConnector (cardinality=Cardinality)?
+	// end2=[Element:QualifiedName]
+;
+
+ReferenceFirstExpression:
+	firstEnd=[Element:QualifiedName]
+;
+
+ReferenceConnector returns string:
+	'--' | '<>--'
 ;
 
 RelationDescription:
@@ -118,14 +136,15 @@ RelationStereotype returns string:
 	'bringsAbout' |
 	'triggers' |
 	'composition' |
-	'aggregation'
+	'aggregation' |
+	'relator'
 ;
 
-Relator:
-    'relator' name=QualifiedName '{' 
-        references=EndurantReference*
-    '}'
-;
+// Relator:
+//     'relator' name=QualifiedName ('{' 
+//         references=EndurantInternalReference*
+//     '}')?
+// ;
 
 Cardinality:
 	'[' lowerBound=(INT | '*') 
@@ -137,9 +156,9 @@ Cardinality:
 GeneralizationSet:
 	(disjoint='disjoint')? (complete='complete')?
 	'genset' name=ID '{' 
-		'general' generalItem+=[Endurant:QualifiedName] (',' generalItem+=[Endurant:QualifiedName])*
-		('categorizer' categorizerItems+=[Endurant:QualifiedName] (categorizerItems+=[Endurant:QualifiedName])*)?
-		'specifics' specificItems+=[Endurant:QualifiedName] (',' specificItems+=[Endurant:QualifiedName])*
+		'general' generalItem+=[Element:QualifiedName] (',' generalItem+=[Element:QualifiedName])*
+		('categorizer' categorizerItems+=[Element:QualifiedName] (categorizerItems+=[Element:QualifiedName])*)?
+		'specifics' specificItems+=[Element:QualifiedName] (',' specificItems+=[Element:QualifiedName])*
 	'}'
 ;
 

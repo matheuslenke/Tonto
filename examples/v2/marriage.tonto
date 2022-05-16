@@ -1,0 +1,12 @@
+module MarriageModule {
+    kind Person
+
+    relator SocialRelator
+    relator SocialRelatorType specializes SocialRelator
+
+    relator Marriage specializes SocialRelatorType
+    role Spouse specializes Person
+    
+
+    // Spouse isBoundBy -- Marriage
+}
