@@ -29,6 +29,16 @@
                 "scopeName": "source.tonto",
                 "path": "./syntaxes/tonto.tmLanguage.json"
             }
+        ],
+        "commands": [
+            {
+				"command": "extension.helloWorld",
+				"title": "Hello World"
+			},
+            {
+				"command": "extension.validateModel",
+				"title": "Validate Model"
+			}
         ]
     },
     "activationEvents": [
