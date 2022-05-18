@@ -395,6 +395,43 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
             "elements": [
               {
                 "$type": "Keyword",
+                "value": "(",
+                "elements": []
+              },
+              {
+                "$type": "Keyword",
+                "value": "instanceOf"
+              },
+              {
+                "$type": "Assignment",
+                "feature": "instanceOf",
+                "operator": "=",
+                "terminal": {
+                  "$type": "CrossReference",
+                  "type": {
+                    "$refText": "ClassElement"
+                  },
+                  "terminal": {
+                    "$type": "RuleCall",
+                    "arguments": [],
+                    "rule": {
+                      "$refText": "QualifiedName"
+                    }
+                  }
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": ")"
+              }
+            ],
+            "cardinality": "?"
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
                 "value": "specializes",
                 "elements": []
               },
@@ -444,35 +481,6 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
                   }
                 ],
                 "cardinality": "?"
-              }
-            ],
-            "cardinality": "?"
-          },
-          {
-            "$type": "Group",
-            "elements": [
-              {
-                "$type": "Keyword",
-                "value": "instanceOf",
-                "elements": []
-              },
-              {
-                "$type": "Assignment",
-                "feature": "instanceOf",
-                "operator": "=",
-                "terminal": {
-                  "$type": "CrossReference",
-                  "type": {
-                    "$refText": "ClassElement"
-                  },
-                  "terminal": {
-                    "$type": "RuleCall",
-                    "arguments": [],
-                    "rule": {
-                      "$refText": "QualifiedName"
-                    }
-                  }
-                }
               }
             ],
             "cardinality": "?"
@@ -551,6 +559,43 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
             "elements": [
               {
                 "$type": "Keyword",
+                "value": "(",
+                "elements": []
+              },
+              {
+                "$type": "Keyword",
+                "value": "instanceOf"
+              },
+              {
+                "$type": "Assignment",
+                "feature": "instanceOf",
+                "operator": "=",
+                "terminal": {
+                  "$type": "CrossReference",
+                  "type": {
+                    "$refText": "ClassElement"
+                  },
+                  "terminal": {
+                    "$type": "RuleCall",
+                    "arguments": [],
+                    "rule": {
+                      "$refText": "QualifiedName"
+                    }
+                  }
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": ")"
+              }
+            ],
+            "cardinality": "?"
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
                 "value": "specializes",
                 "elements": []
               },
@@ -584,35 +629,6 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
                     "$type": "Assignment",
                     "feature": "specializationEndurants",
                     "operator": "+=",
-                    "terminal": {
-                      "$type": "CrossReference",
-                      "type": {
-                        "$refText": "ClassElement"
-                      },
-                      "terminal": {
-                        "$type": "RuleCall",
-                        "arguments": [],
-                        "rule": {
-                          "$refText": "QualifiedName"
-                        }
-                      }
-                    }
-                  }
-                ],
-                "cardinality": "?"
-              },
-              {
-                "$type": "Group",
-                "elements": [
-                  {
-                    "$type": "Keyword",
-                    "value": "instanceOf",
-                    "elements": []
-                  },
-                  {
-                    "$type": "Assignment",
-                    "feature": "instanceOf",
-                    "operator": "=",
                     "terminal": {
                       "$type": "CrossReference",
                       "type": {

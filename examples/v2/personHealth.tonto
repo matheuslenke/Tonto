@@ -11,7 +11,7 @@ module PersonHealth {
     phase NonFunctionalBrain specializes Brain
 
     kind Person specializes PhysicalObject {
-        hasOneHearth [1] : [1] Hearth
+        -- hasOneHearth -- [1] Hearth
         // hasOneBrain [1] : [1] Brain
     }
 

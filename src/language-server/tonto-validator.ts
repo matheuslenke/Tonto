@@ -15,7 +15,8 @@ export class TontoValidationRegistry extends ValidationRegistry {
         super(services);
         const validator = services.validation.TontoValidator;
         const checks: TontoChecks = {
-            ElementReference: [validator.ClassElementValidator.checksExternalReference]
+            ElementReference: [validator.ClassElementValidator.checksExternalReference],
+            ClassElement: [validator.ClassElementValidator.checkKindSpecialization]
             // EndurantInternalReference: validator.checksExternalReference
             // Person: validator.checkPersonStartsWithCapital
         };

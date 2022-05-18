@@ -61,18 +61,21 @@ ClassPrefix:
 ;
 
 Class infers ClassElement:
-	prefix=ClassPrefix? 'class' name=QualifiedName ('specializes' specializationClasses+=[ClassElement:QualifiedName] 
+	prefix=ClassPrefix? 'class' name=QualifiedName 
+	('(' 'instanceOf' instanceOf=[ClassElement:QualifiedName] ')')?
+	('specializes' specializationClasses+=[ClassElement:QualifiedName] 
 	(',' specializationClasses+=[ClassElement:QualifiedName])? )?
-    ('instanceOf' instanceOf=[ClassElement:QualifiedName])?
 	('{'
          references=EndurantInternalReference*
 	'}')?
 ;
 
 Endurant infers ClassElement:
-    type=EndurantType name=QualifiedName ('specializes' specializationEndurants+=[ClassElement:QualifiedName]
+    type=EndurantType name=QualifiedName 
+    ('(' 'instanceOf' instanceOf=[ClassElement:QualifiedName] ')')?
+	
+	('specializes' specializationEndurants+=[ClassElement:QualifiedName]
 	(',' specializationEndurants+=[ClassElement:QualifiedName])? 
-    ('instanceOf' instanceOf=[ClassElement:QualifiedName])?
 	)? ('{' 
 		 references=EndurantInternalReference*
     '}')?
