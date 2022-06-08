@@ -1,7 +1,8 @@
 grammar Tonto
 
 entry Model:
-	elements+=ContextModule*
+	imports+=Import*
+	modules+=ContextModule*
 ;
 
 // <--- Criação de Módulos --->
@@ -14,6 +15,10 @@ ContextModule:
 
 QualifiedName returns string:
 	ID ('.' ID)*
+;
+
+Import:
+	'import' referencedModel+=[Model:ID]
 ;
 
 // <--- Elementos e classes --->
@@ -66,7 +71,7 @@ Class infers ClassElement:
 	('specializes' specializationClasses+=[ClassElement:QualifiedName] 
 	(',' specializationClasses+=[ClassElement:QualifiedName])? )?
 	('{'
-         references=EndurantInternalReference*
+         references+=EndurantInternalReference*
 	'}')?
 ;
 
@@ -77,7 +82,7 @@ Endurant infers ClassElement:
 	('specializes' specializationEndurants+=[ClassElement:QualifiedName]
 	(',' specializationEndurants+=[ClassElement:QualifiedName])? 
 	)? ('{' 
-		 references=EndurantInternalReference*
+		 references+=EndurantInternalReference*
     '}')?
 ;
 
@@ -86,7 +91,7 @@ EndurantType:
 ;
 
 NonSortalStereotype returns string:
-	'category' | 'mixin' | 'phasemixin' | 'rolemixin' | 'historicalrolemixin' | 'event'
+	'category' | 'mixin' | 'phaseMixin' | 'roleMixin' | 'historicalRoleMixin' | 'event'
 ;
 
 UltimateSortalStereotypes returns string:
@@ -94,18 +99,18 @@ UltimateSortalStereotypes returns string:
 ;
 
 BaseSortalStereotype returns string:
-	'subkind' | 'phase' | 'role' | 'historicalrole' | 'relator'
+	'subkind' | 'phase' | 'role' | 'historicalRole' | 'relator'
 ;
 
 ElementReference:
-    EndurantExternalReference | EndurantInternalReference
+    isExternal?=EndurantExternalReference | isInternal?=EndurantInternalReference
 ;
 
 EndurantInternalReference infers ElementReference:
     ('@'relationType=RelationStereotype)?
     firstCardinality=Cardinality?
     (isAssociation?='--' | isComposition?='<>--')
-    (name=QualifiedName '--')? secondCardinality=Cardinality?  referencedElement=[Element:QualifiedName]
+    (name=QualifiedName '--')? secondCardinality=Cardinality?  referencedElement=[ClassElement:QualifiedName]
     ('inverseOf' inverseEnd=([ElementReference:QualifiedName]))?
 	('{'
 		descriptions+=RelationDescription
