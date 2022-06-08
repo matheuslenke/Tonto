@@ -1,26 +1,51 @@
 {
     "name": "tonto",
     "displayName": "tonto",
-    "description": "Please enter a brief description here",
+    "publisher": "NEMO",
+    "description": "Tonto is a DSL for creating OntoUML models",
     "version": "0.0.1",
+    "license": "MIT",
+    "icon": "docs/images/TontoIcon.png",
+    "repository": {
+        "url": "https://github.com/matheuslenke/Tonto"
+    },
     "engines": {
-        "vscode": "^1.56.0"
+        "vscode": "^1.63.0"
     },
     "categories": [
         "Programming Languages"
     ],
     "contributes": {
-        "languages": [{
-            "id": "tonto",
-            "aliases": ["Tonto", "tonto"],
-            "extensions": [".tonto"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "tonto",
-            "scopeName": "source.tonto",
-            "path": "./syntaxes/tonto.tmLanguage.json"
-        }]
+        "languages": [
+            {
+                "id": "tonto",
+                "aliases": [
+                    "Tonto",
+                    "tonto"
+                ],
+                "extensions": [
+                    ".tonto"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "tonto",
+                "scopeName": "source.tonto",
+                "path": "./syntaxes/tonto.tmLanguage.json"
+            }
+        ],
+        "commands": [
+            {
+                "command": "extension.helloWorld",
+                "title": "Hello World"
+            },
+            {
+                "command": "extension.validateModel",
+                "title": "Validate Model"
+            }
+        ]
     },
     "activationEvents": [
         "onLanguage:tonto"
@@ -33,9 +58,13 @@
     "bin": {
         "tonto-cli": "./bin/cli"
     },
-    "main": "./out/extension.js",
+    "main": "./out/main.js",
     "scripts": {
-        "vscode:prepublish": "npm run build && npm run lint",
+        "vscode:prepublish": "npm run esbuild-base -- --minify",
+        "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+        "esbuild": "npm run esbuild-base -- --sourcemap",
+        "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
+        "package": "vsce package --pre-release --baseContentUrl none",
         "build": "tsc -b tsconfig.json",
         "watch": "tsc -b tsconfig.json --watch",
         "lint": "eslint src --ext ts",
@@ -45,17 +74,25 @@
     "dependencies": {
         "colors": "^1.4.0",
         "commander": "^8.0.0",
-        "langium": "^0.2.0",
+        "langium": "^0.3.0",
+        "node-fetch": "^2.6.1",
+        "ontouml-server": "github:OntoUML/ontouml-server",
         "vscode-languageclient": "^7.0.0",
         "vscode-languageserver": "^7.0.0"
     },
     "devDependencies": {
         "@types/node": "^14.17.3",
+        "@types/node-fetch": "^2.6.1",
         "@types/vscode": "^1.56.0",
         "@typescript-eslint/eslint-plugin": "^4.14.1",
         "@typescript-eslint/parser": "^4.14.1",
+        "esbuild": "^0.14.43",
         "eslint": "^7.19.0",
-        "langium-cli": "^0.2.0",
+        "langium-cli": "^0.3.0",
         "typescript": "^4.1.3"
+    },
+    "resolutions": {
+        "@typescript-eslint/parser": "^1.11.0",
+        "@typescript-eslint/eslint-plugin": "^1.11.0"
     }
 }

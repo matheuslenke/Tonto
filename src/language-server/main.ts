@@ -5,8 +5,8 @@ import { createTontoServices } from './tonto-module';
 // Create a connection to the client
 const connection = createConnection(ProposedFeatures.all);
 
-// Inject the language services
-const services = createTontoServices({ connection });
+// Inject the shared services and language-specific services
+const { shared } = createTontoServices({ connection });
 
-// Start the language server with the language-specific services
-startLanguageServer(services);
+// Start the language server with the shared services
+startLanguageServer(shared);

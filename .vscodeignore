@@ -1,4 +1,12 @@
 .vscode/**
 .vscode-test/**
 .gitignore
+out/test/**
+src/**
+.yarnrc
+**/tsconfig.json
+**/.eslintrc.json
+**/*.map
+**/*.ts
 langium-quickstart.md
+README.md

@@ -5,3 +5,5 @@ out/
 lib/
 coverage
 *.tsbuildinfo
+
+*.vsix

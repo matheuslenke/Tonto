@@ -1,0 +1,188 @@
+/**
+Marriage and its forms
+*/
+
+module Marriage {
+
+    // of relators para especificar o restrictedTo em não sortais (pode ser explicitado quando quiser)
+    // category SocialRelator of relators { }
+    category SocialRelator
+
+
+    // associação anônima, especificada de forma aninhada na classe
+    // cardinalidade default 1 do lado de Marriage
+    relator Marriage specializes SocialRelator {
+        -- [2..*] Spouse
+    }
+
+    // especificação equivalente, não aninhada
+    relator Marriage specializes SocialRelator
+    Marriage -- [2..*] Spouse
+
+    // a associação anônima acima seria idêntica à essa abaixo (alternativa)
+    // não precisamos anotar com @mediation pois é o default se um lado é relator
+    role Spouse specializes Person
+    {
+        [2..*] -- Marriage
+    }
+
+    // especificação equivalente, não aninhada, cardinalidades explícitas
+    // anotação de imutabilidade explícita (nem precisava, 
+    // pois trata-se de mediation em que apenas um lado é relator)
+    relator Marriage specializes SocialRelator
+    // Marriage 1 -- 2..* {const} Spouse
+
+
+    // associação nomeada, especificada de forma aninhada na classe
+    relator Marriage specializes SocialRelator {
+        -- involvesSpouse -- [2..*] Spouse
+    }
+
+    // devemos permitir uso de espaços?
+    // relator Marriage specializes "Social Relator" {
+    //     -- "involves spouse" -- 2..* Spouse
+    // }
+
+    // associação nomeada, com association ends nomeados
+    // especificada de forma aninhada na classe
+    // relator Marriage specializes SocialRelator {
+    //     (marriage) 1 -- involvesSpouse -- 2..* (spouses {const}) Spouse
+    //     <>-- 1..* (duties) MaritalDuty	<>-- 1..* (rights) MaritalRight
+    // }
+
+    
+    // introduzindo tipos de alta ordem	
+    // type SocialRelatorType { }
+
+
+    // instanciando tipo de segunda ordem
+    // relator Marriage : SocialRelatorType specializes SocialRelator {
+    //     (marriage) 1 -- involvesSpouse -- 2..* (spouses {const}) Spouse
+    //     <>-- 1..* MaritalDuty	<>-- 1..* MaritalRight
+    // }
+
+    // relator Marriage : SocialRelatorType specializes SocialRelator
+    // Marriage (marriage) 1 -- involvesSpouse -- 2..* (spouses) Spouse
+    // Marriage <>-- 1..* MaritalDutyMarriage <>-- 1..* MaritalRight
+
+
+    // relator Marriage : SocialRelatorType specializes SocialRelator
+    // Marriage -- involvesSpouse -- 2..* Spouse
+    // Marriage <>-- 1..* MaritalDutyMarriage <>-- 1..* MaritalRight
+
+    // relator Marriage : SocialRelatorType specializes SocialRelator
+    // Marriage -- 2..* Spouse
+    // Marriage (marriage {const}) <>-- 1..* (duties {const}) MaritalDutyMarriage (marriage {const}) <>-- 1..* (rights {const}) MaritalRight
+
+
+    // role Spouse specializes Person
+    // {
+    //     -- isBoundBy –- Marriage inverse of involvesSpouse
+    // }
+
+    // // cardinalidades são redundantes, tipos também, devem ser checados se declarados, e podem ser inferidos se não declarados
+    // role Spouse specializes Person
+    // Spouse 2..* -- isBoundBy –- 1 Marriage inverse of involvesSpouse
+
+    // extrinsic mode MaritalDuty {
+    //     @inherence -- Spouse
+    //     @externalDependence –- Spouse
+    //     @formal {const} –- isCorrelativeOf {symmetric} -- {const} MaritalRight 
+    // // the duty and its correlative are part of the same marriage
+    // }
+
+    // extrinsic mode MaritalRight {
+    //     @inherence -- Spouse
+    //     @externalDependence –- Spouse
+    //     @formal –- isCorrelativeOf -- MaritalDuty 
+    // inverse of MaritalDuty.isCorrelativeOf
+    // }
+
+    // subkind MonogamicMarriage : SocialRelatorType specializes Marriage {
+  	// (marriage) 1 –- involvesSpouseInCouple -- 2 (spousesInCouple {const}) Spouse
+    //     {
+    //         involvesSpouseInCouple specializes involvesSpouse,
+    //         spousesInCouple subsets spouses
+    //     }
+    // }
+
+    kind Person
+    {
+        // name : string
+        // birthDate {const} : Date
+        // @componentof <>-- hasHeart -- Heart
+        // @componentof <>-- hasBrain -- {const} Brain
+        // @componentof <>-- hasLeg -- * {const} Leg
+    }
+
+    // datatype Date
+    // {
+    //     day : number
+    //     month : number
+    //     year : number
+    // }
+
+
+    // collective Group
+    // {
+    //     <>-- 2..* {const} Person
+    // }
+
+
+    // quality Color
+    // {
+    //     @inherence -- PhysicalObject
+    //     @value –- (colorInRGB) RGB
+    // }
+
+    // datatype RGB
+    // {
+    //     red : number
+    //     green : number
+    //     blue : number
+    // }
+
+    // enum Season
+    // {
+    // WINTER, SPRING, SUMMER, FALL
+    // }
+
+
+    // relator Friendship
+    // {
+    //     (friendship) * -- involvesFriend – 2..* (friends) Person
+    // }
+
+
+
+    // kind Person
+    // {
+    //     @material * -- enrolledIn -– * School {derivedFrom Enrollment}
+    // }
+
+
+    // role Student specializes Person {
+    //     @material 1..* -- enrolledIn -- 1..* School {derivedFrom Enrollment}
+    // }
+    // subkind School specializes Organization {}
+}
+
+
+
+
+
+
+
+
+// derived category LegalPerson union of Person, Organization
+// derived role PersonalCustomer intersection of Person, Customer
+// derived role OrganizationalCustomer intersection of Person, Customer
+
+
+
+
+// derived classes
+// disjoint union?
+// Omg dol?
+// Tranf to tptp, fol, clif
+// Proper spec
