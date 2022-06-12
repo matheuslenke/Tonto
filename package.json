@@ -1,12 +1,13 @@
 {
     "name": "tonto",
     "displayName": "tonto",
-    "publisher": "NEMO",
+    "publisher": "Lenke",
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "license": "MIT",
     "icon": "docs/images/TontoIcon.png",
     "repository": {
+        "type": "git",
         "url": "https://github.com/matheuslenke/Tonto"
     },
     "engines": {
@@ -58,16 +59,14 @@
     "bin": {
         "tonto-cli": "./bin/cli"
     },
-    "main": "./out/main.js",
+    "main": "./out/extension.js",
     "scripts": {
-        "vscode:prepublish": "npm run esbuild-base -- --minify",
-        "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
-        "esbuild": "npm run esbuild-base -- --sourcemap",
-        "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
+        "vscode:prepublish": "npm run clean && tsc --noEmit && npm run lint && node esbuild.js --minify",
         "package": "vsce package --pre-release --baseContentUrl none",
-        "build": "tsc -b tsconfig.json",
-        "watch": "tsc -b tsconfig.json --watch",
+        "clean": "rimraf out",
         "lint": "eslint src --ext ts",
+        "build": "node esbuild.js && tsc --noEmit",
+        "watch": "node esbuild.js --watch",
         "langium:generate": "langium generate",
         "langium:watch": "langium generate --watch"
     },

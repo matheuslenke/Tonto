@@ -98,7 +98,7 @@ This is all the tools you need installed to run the project and the versions tha
 ### ⚙️ Initializing
 
  * Run `npm run langium:generate` to generate TypeScript code from the grammar definition.
- * Run `npm run build` to compile all TypeScript code.
+ * Run `npm run build` to compile all TypeScript code or `npm run watch` if you want the compiler to work automatically everytime you update your files
  * Press `F5` to open a new window with your extension loaded.
  * Create a new file with a file name suffix matching your language.
  * Verify that syntax highlighting, validation, completion etc. are working as expected.
@@ -110,10 +110,10 @@ This is all the tools you need installed to run the project and the versions tha
 
  ```bash
   # Run this to generate .vsix file
-  vsce package --yarn --pre-release --baseContentUrl none
+  vsce package --pre-release --baseContentUrl https://github.com/matheuslenke/Tonto
 
   # Installing the extension in your vscode (requires the code extension in path)
-  code --install-extension generatedFile.vsix
+  code --install-extension tonto-x.x.x.vsix
  ```
 
 <!-- LICENSE -->
