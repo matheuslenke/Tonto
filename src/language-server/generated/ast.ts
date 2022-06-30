@@ -17,12 +17,22 @@ export function isAuxiliaryDeclarations(item: unknown): item is AuxiliaryDeclara
 
 export type BaseSortalStereotype = 'historicalRole' | 'phase' | 'relator' | 'role' | 'subkind';
 
+export type BasicDataTypes = 'Date' | 'number' | 'string';
+
 export type Element = AuxiliaryDeclarations | ClassElement;
 
 export const Element = 'Element';
 
 export function isElement(item: unknown): item is Element {
     return reflection.isInstance(item, Element);
+}
+
+export type ElementReference = EndurantExternalReference | EndurantInternalReference;
+
+export const ElementReference = 'ElementReference';
+
+export function isElementReference(item: unknown): item is ElementReference {
+    return reflection.isInstance(item, ElementReference);
 }
 
 export type NonSortalStereotype = 'category' | 'event' | 'historicalRoleMixin' | 'mixin' | 'phaseMixin' | 'roleMixin';
@@ -33,8 +43,20 @@ export type RelationStereotype = 'aggregation' | 'bringsAbout' | 'characterizati
 
 export type UltimateSortalStereotypes = 'collective' | 'kind' | 'mode' | 'quality' | 'quantity';
 
+export interface Attribute extends AstNode {
+    readonly $container: ClassElement;
+    attributeType: BasicDataTypes | Reference<DataType>
+    name: string
+}
+
+export const Attribute = 'Attribute';
+
+export function isAttribute(item: unknown): item is Attribute {
+    return reflection.isInstance(item, Attribute);
+}
+
 export interface Cardinality extends AstNode {
-    readonly $container: ElementReference;
+    readonly $container: EndurantExternalReference | EndurantInternalReference;
     lowerBound: '*' | number
     upperBound: '*' | number
 }
@@ -47,30 +69,18 @@ export function isCardinality(item: unknown): item is Cardinality {
 
 export interface ClassElement extends AstNode {
     readonly $container: ClassElement | ContextModule;
+    attributes: Array<Attribute>
+    classElementType: EndurantType | Stereotype
     instanceOf?: Reference<ClassElement>
-    name: QualifiedName
-    prefix: ClassPrefix
+    name: QualifiedName | string
     references: Array<ElementReference>
-    specializationClasses: Array<Reference<ClassElement>>
     specializationEndurants: Array<Reference<ClassElement>>
-    type: EndurantType
 }
 
 export const ClassElement = 'ClassElement';
 
 export function isClassElement(item: unknown): item is ClassElement {
     return reflection.isInstance(item, ClassElement);
-}
-
-export interface ClassPrefix extends AstNode {
-    readonly $container: ClassElement;
-    stereotype: Stereotype
-}
-
-export const ClassPrefix = 'ClassPrefix';
-
-export function isClassPrefix(item: unknown): item is ClassPrefix {
-    return reflection.isInstance(item, ClassPrefix);
 }
 
 export interface ContextModule extends AstNode {
@@ -88,7 +98,7 @@ export function isContextModule(item: unknown): item is ContextModule {
 export interface DataType extends AstNode {
     readonly $container: ClassElement | ContextModule;
     name: string
-    properties: DataTypeProperty
+    properties: Array<DataTypeProperty>
 }
 
 export const DataType = 'DataType';
@@ -100,7 +110,7 @@ export function isDataType(item: unknown): item is DataType {
 export interface DataTypeProperty extends AstNode {
     readonly $container: DataType;
     name: string
-    type: Reference<DataType>
+    type: BasicDataTypes | Reference<DataType>
 }
 
 export const DataTypeProperty = 'DataTypeProperty';
@@ -109,29 +119,49 @@ export function isDataTypeProperty(item: unknown): item is DataTypeProperty {
     return reflection.isInstance(item, DataTypeProperty);
 }
 
-export interface ElementReference extends AstNode {
+export interface EndurantExternalReference extends AstNode {
     readonly $container: ClassElement | ContextModule;
-    cardinality: Cardinality
     descriptions: Array<RelationDescription>
     firstCardinality: Cardinality
     firstEnd: Reference<ClassElement>
+    firstEndName: QualifiedName
     hasInverse: 'inverseOf'
     inverseEnd?: Reference<ElementReference>
     isAssociation: boolean
     isComposition: boolean
-    isExternal: boolean
-    isInternal: boolean
     name: QualifiedName
-    referencedElement: Reference<ClassElement>
     relationType: RelationStereotype
     secondCardinality: Cardinality
     secondEnd: Reference<ClassElement>
+    secondEndName: string
 }
 
-export const ElementReference = 'ElementReference';
+export const EndurantExternalReference = 'EndurantExternalReference';
 
-export function isElementReference(item: unknown): item is ElementReference {
-    return reflection.isInstance(item, ElementReference);
+export function isEndurantExternalReference(item: unknown): item is EndurantExternalReference {
+    return reflection.isInstance(item, EndurantExternalReference);
+}
+
+export interface EndurantInternalReference extends AstNode {
+    readonly $container: ClassElement | ContextModule;
+    descriptions: Array<RelationDescription>
+    firstCardinality: Cardinality
+    firstEndName: QualifiedName
+    hasInverse: 'inverseOf'
+    inverseEnd?: Reference<ElementReference>
+    isAssociation: boolean
+    isComposition: boolean
+    name: QualifiedName
+    relationType: RelationStereotype
+    secondCardinality: Cardinality
+    secondEnd: Reference<ClassElement>
+    secondEndName: string
+}
+
+export const EndurantInternalReference = 'EndurantInternalReference';
+
+export function isEndurantInternalReference(item: unknown): item is EndurantInternalReference {
+    return reflection.isInstance(item, EndurantInternalReference);
 }
 
 export interface EndurantType extends AstNode {
@@ -207,7 +237,7 @@ export function isModel(item: unknown): item is Model {
 }
 
 export interface RelationDescription extends AstNode {
-    readonly $container: ElementReference;
+    readonly $container: EndurantExternalReference | EndurantInternalReference;
     name: string
 }
 
@@ -218,7 +248,7 @@ export function isRelationDescription(item: unknown): item is RelationDescriptio
 }
 
 export interface Stereotype extends AstNode {
-    readonly $container: ClassPrefix;
+    readonly $container: ClassElement;
     stereotype: 'abstract' | 'category' | 'collective' | 'enumeration' | 'event' | 'historicalRole' | 'historicalRoleMixin' | 'kind' | 'mixin' | 'mode' | 'phase' | 'phaseMixin' | 'quality' | 'quantity' | 'relator' | 'role' | 'roleMixin' | 'situation' | 'subkind' | 'type'
 }
 
@@ -228,14 +258,14 @@ export function isStereotype(item: unknown): item is Stereotype {
     return reflection.isInstance(item, Stereotype);
 }
 
-export type TontoAstType = 'AuxiliaryDeclarations' | 'Cardinality' | 'ClassElement' | 'ClassPrefix' | 'ContextModule' | 'DataType' | 'DataTypeProperty' | 'Element' | 'ElementReference' | 'EndurantType' | 'EnumData' | 'EnumElement' | 'GeneralizationSet' | 'Import' | 'Model' | 'RelationDescription' | 'Stereotype';
+export type TontoAstType = 'Attribute' | 'AuxiliaryDeclarations' | 'Cardinality' | 'ClassElement' | 'ContextModule' | 'DataType' | 'DataTypeProperty' | 'Element' | 'ElementReference' | 'EndurantExternalReference' | 'EndurantInternalReference' | 'EndurantType' | 'EnumData' | 'EnumElement' | 'GeneralizationSet' | 'Import' | 'Model' | 'RelationDescription' | 'Stereotype';
 
-export type TontoAstReference = 'ClassElement:instanceOf' | 'ClassElement:specializationClasses' | 'ClassElement:specializationEndurants' | 'DataTypeProperty:type' | 'ElementReference:firstEnd' | 'ElementReference:inverseEnd' | 'ElementReference:referencedElement' | 'ElementReference:secondEnd' | 'GeneralizationSet:categorizerItems' | 'GeneralizationSet:generalItem' | 'GeneralizationSet:specificItems' | 'Import:referencedModel';
+export type TontoAstReference = 'Attribute:attributeType' | 'ClassElement:instanceOf' | 'ClassElement:specializationEndurants' | 'DataTypeProperty:type' | 'EndurantExternalReference:firstEnd' | 'EndurantExternalReference:inverseEnd' | 'EndurantExternalReference:secondEnd' | 'EndurantInternalReference:inverseEnd' | 'EndurantInternalReference:secondEnd' | 'GeneralizationSet:categorizerItems' | 'GeneralizationSet:generalItem' | 'GeneralizationSet:specificItems' | 'Import:referencedModel';
 
 export class TontoAstReflection implements AstReflection {
 
     getAllTypes(): string[] {
-        return ['AuxiliaryDeclarations', 'Cardinality', 'ClassElement', 'ClassPrefix', 'ContextModule', 'DataType', 'DataTypeProperty', 'Element', 'ElementReference', 'EndurantType', 'EnumData', 'EnumElement', 'GeneralizationSet', 'Import', 'Model', 'RelationDescription', 'Stereotype'];
+        return ['Attribute', 'AuxiliaryDeclarations', 'Cardinality', 'ClassElement', 'ContextModule', 'DataType', 'DataTypeProperty', 'Element', 'ElementReference', 'EndurantExternalReference', 'EndurantInternalReference', 'EndurantType', 'EnumData', 'EnumElement', 'GeneralizationSet', 'Import', 'Model', 'RelationDescription', 'Stereotype'];
     }
 
     isInstance(node: unknown, type: string): boolean {
@@ -252,10 +282,14 @@ export class TontoAstReflection implements AstReflection {
                 return this.isSubtype(Element, supertype);
             }
             case DataType:
-            case ElementReference:
             case EnumData:
-            case GeneralizationSet: {
+            case GeneralizationSet:
+            case ElementReference: {
                 return this.isSubtype(AuxiliaryDeclarations, supertype);
+            }
+            case EndurantExternalReference:
+            case EndurantInternalReference: {
+                return this.isSubtype(ElementReference, supertype);
             }
             default: {
                 return false;
@@ -265,10 +299,10 @@ export class TontoAstReflection implements AstReflection {
 
     getReferenceType(referenceId: TontoAstReference): string {
         switch (referenceId) {
-            case 'ClassElement:instanceOf': {
-                return ClassElement;
+            case 'Attribute:attributeType': {
+                return DataType;
             }
-            case 'ClassElement:specializationClasses': {
+            case 'ClassElement:instanceOf': {
                 return ClassElement;
             }
             case 'ClassElement:specializationEndurants': {
@@ -277,16 +311,19 @@ export class TontoAstReflection implements AstReflection {
             case 'DataTypeProperty:type': {
                 return DataType;
             }
-            case 'ElementReference:firstEnd': {
+            case 'EndurantExternalReference:firstEnd': {
                 return ClassElement;
             }
-            case 'ElementReference:inverseEnd': {
+            case 'EndurantExternalReference:inverseEnd': {
                 return ElementReference;
             }
-            case 'ElementReference:referencedElement': {
+            case 'EndurantExternalReference:secondEnd': {
                 return ClassElement;
             }
-            case 'ElementReference:secondEnd': {
+            case 'EndurantInternalReference:inverseEnd': {
+                return ElementReference;
+            }
+            case 'EndurantInternalReference:secondEnd': {
                 return ClassElement;
             }
             case 'GeneralizationSet:categorizerItems': {

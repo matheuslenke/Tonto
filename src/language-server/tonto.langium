@@ -6,7 +6,10 @@ entry Model:
 ;
 
 // <--- Criação de Módulos --->
-	
+/*
+* ContextModule is the main declaration of a module, that wraps a context of elements. All declarations should
+* go inside this declaration
+*/
 ContextModule:
 	'module' name=QualifiedName '{'
 		elements+=Element*
@@ -28,13 +31,21 @@ Element:
 ;
 
 ClassElement:
-    Class | Endurant
+    Class | Endurant | CustomType
 ;
 
 AuxiliaryDeclarations:
-	DataType | EnumData | GeneralizationSet | EndurantExternalReference
+	DataType | EnumData | GeneralizationSet | ElementReference
 ;
 
+CustomType infers ClassElement:
+	'type' name=ID ('{' 
+	'}')?
+;
+
+/*
+* Stereotype is created so users can use the class syntax that is more similar to what OntoUML was doing as an extension of UML
+*/
 Stereotype:
 	'@' stereotype=(
 	'type' |
@@ -56,33 +67,29 @@ Stereotype:
 	'role' |
 	'phase' |
 	'enumeration' |
-	// 'datatype' |
 	'abstract'
 	)
 ;
 
-ClassPrefix:
-	stereotype=Stereotype?
-;
-
 Class infers ClassElement:
-	prefix=ClassPrefix? 'class' name=QualifiedName 
-	('(' 'instanceOf' instanceOf=[ClassElement:QualifiedName] ')')?
-	('specializes' specializationClasses+=[ClassElement:QualifiedName] 
-	(',' specializationClasses+=[ClassElement:QualifiedName])? )?
-	('{'
-         references+=EndurantInternalReference*
-	'}')?
+	classElementType=Stereotype? 'class' name=QualifiedName 
+	ClassElementInfo
 ;
 
 Endurant infers ClassElement:
-    type=EndurantType name=QualifiedName 
+    classElementType=EndurantType name=QualifiedName 
+	ClassElementInfo
+;
+
+fragment ClassElementInfo:
     ('(' 'instanceOf' instanceOf=[ClassElement:QualifiedName] ')')?
 	
 	('specializes' specializationEndurants+=[ClassElement:QualifiedName]
 	(',' specializationEndurants+=[ClassElement:QualifiedName])? 
-	)? ('{' 
-		 references+=EndurantInternalReference*
+	)? ('{'
+		(attributes+=Attribute |
+		references+=ElementReference
+		)*
     '}')?
 ;
 
@@ -102,36 +109,50 @@ BaseSortalStereotype returns string:
 	'subkind' | 'phase' | 'role' | 'historicalRole' | 'relator'
 ;
 
-ElementReference:
-    isExternal?=EndurantExternalReference | isInternal?=EndurantInternalReference
+ElementReference: 
+	EndurantInternalReference | EndurantExternalReference
 ;
 
-EndurantInternalReference infers ElementReference:
-    ('@'relationType=RelationStereotype)?
+EndurantInternalReference:
+	('@'relationType=RelationStereotype)?
+	('(' firstEndName=QualifiedName ')')?
     firstCardinality=Cardinality?
-    (isAssociation?='--' | isComposition?='<>--')
-    (name=QualifiedName '--')? secondCardinality=Cardinality?  referencedElement=[ClassElement:QualifiedName]
-    ('inverseOf' inverseEnd=([ElementReference:QualifiedName]))?
+	(isAssociation?='--' (name=QualifiedName '--')? 
+	| 
+	isComposition?='<>--' (name=QualifiedName '<>--')? )
+	ReferenceInfo
+ ;
+
+EndurantExternalReference:
+	('@'relationType=RelationStereotype)?
+	'ref'
+	('(' firstEndName=QualifiedName ')')?
+	firstCardinality=Cardinality?
+    firstEnd=[ClassElement:QualifiedName]
+	(isAssociation?='--' (name=QualifiedName '--')? 
+	| 
+	isComposition?='<>--' (name=QualifiedName '<>--')? )
+	ReferenceInfo
+;
+
+fragment ReferenceInfo:
+
+    secondCardinality=Cardinality? 
 	('{'
 		descriptions+=RelationDescription
 		(',' descriptions+=RelationDescription)*
 	'}')?
- ;
-
-EndurantExternalReference infers ElementReference:
-    firstEnd=[ClassElement:QualifiedName] 
-    (isAssociation?='--' | isComposition?='<>--')
-    ReferenceInfo
-;
-
-fragment ReferenceInfo:
-    (name=QualifiedName '--')?
-    cardinality=Cardinality? secondEnd=[ClassElement:QualifiedName]
+	( '(' secondEndName=ID ')')?
+	secondEnd=[ClassElement:QualifiedName]
     (hasInverse='inverseOf' inverseEnd=[ElementReference:QualifiedName])?
 ;
 
 RelationDescription:
 	name=ID	
+;
+
+Attribute:
+	name=ID ':' (attributeType=[DataType] | attributeType=BasicDataTypes)
 ;
 
 RelationStereotype returns string:
@@ -185,12 +206,16 @@ GeneralizationSet:
 
 DataType:
 	'datatype' name=ID ('{'
-		(properties=DataTypeProperty)?
+		properties+=DataTypeProperty*
 	'}')?
 ;
 
 DataTypeProperty:
-	name=ID ':' type=[DataType]
+	name=ID ':' (type=[DataType] | type=BasicDataTypes)
+;
+
+BasicDataTypes returns string:
+	'number' | 'string' | 'Date'
 ;
 
 // <--- Enums --->

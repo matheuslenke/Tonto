@@ -8,7 +8,10 @@ export class ClassElementValidator {
   * Checks if a Kind specializes a unique ultimate sortal (Kind, Collective, Quantity, Relator, Quality or mode)
   */
   checkKindSpecialization(classElement: ClassElement, accept: ValidationAcceptor): void {
-    const endurantType = classElement.type.stereotype
+    if (!classElement.classElementType) {
+      return
+    }
+    const endurantType = classElement.classElementType.stereotype
 
     if (endurantType === null || endurantType === undefined) { return }
     // Check if it is an Sortal
@@ -18,7 +21,10 @@ export class ClassElementValidator {
       
       classElement.specializationEndurants.forEach( specializationItem => {
         const refElement = specializationItem.ref?.$cstNode?.element as ClassElement
-        const refType = refElement.type.stereotype
+        if(!refElement.classElementType) {
+          return
+        }
+        const refType = refElement.classElementType.stereotype
 
         // Check if it specializes another Sortal
         if( refType === EndurantTypes.KIND || refType === EndurantTypes.COLLECTIVE ||
@@ -35,7 +41,7 @@ export class ClassElementValidator {
   * Checks if a Rigid stereotype specializes a anti-rigid stereotype
   */
   checkRigidSpecializesAntiRigid(classElement: ClassElement, accept: ValidationAcceptor): void {
-    const endurantType = classElement.type.stereotype
+    const endurantType = classElement.classElementType.stereotype
 
     if (endurantType === null || endurantType === undefined) { return }
     
@@ -47,7 +53,7 @@ export class ClassElementValidator {
         ) {
           classElement.specializationEndurants.forEach( specializationItem => {
             const refElement = specializationItem.ref?.$cstNode?.element as ClassElement
-            const refType = refElement.type.stereotype
+            const refType = refElement.classElementType.stereotype
       
             if( refType === EndurantTypes.PHASE || refType === EndurantTypes.ROLE ||
               refType === EndurantTypes.PHASE_MIXIN || refType === EndurantTypes.ROLE_MIXIN) {

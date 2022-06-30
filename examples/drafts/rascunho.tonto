@@ -17,7 +17,9 @@ module Marriage {
 
     // especificação equivalente, não aninhada
     relator Marriage specializes SocialRelator
-    Marriage -- [2..*] Spouse
+    ref Marriage -- [2..*] Spouse
+
+    kind Person
 
     // a associação anônima acima seria idêntica à essa abaixo (alternativa)
     // não precisamos anotar com @mediation pois é o default se um lado é relator
@@ -30,7 +32,7 @@ module Marriage {
     // anotação de imutabilidade explícita (nem precisava, 
     // pois trata-se de mediation em que apenas um lado é relator)
     relator Marriage specializes SocialRelator
-    // Marriage 1 -- 2..* {const} Spouse
+    ref Marriage -- [2..*] {const} Spouse
 
 
     // associação nomeada, especificada de forma aninhada na classe
@@ -38,32 +40,33 @@ module Marriage {
         -- involvesSpouse -- [2..*] Spouse
     }
 
-    // devemos permitir uso de espaços?
+    // devemos permitir uso de espaços? Acho que dificultaria um pouco
     // relator Marriage specializes "Social Relator" {
     //     -- "involves spouse" -- 2..* Spouse
     // }
 
     // associação nomeada, com association ends nomeados
     // especificada de forma aninhada na classe
-    // relator Marriage specializes SocialRelator {
-    //     (marriage) 1 -- involvesSpouse -- 2..* (spouses {const}) Spouse
-    //     <>-- 1..* (duties) MaritalDuty	<>-- 1..* (rights) MaritalRight
-    // }
+    relator Marriage specializes SocialRelator {
+        // (marriage) 1 -- involvesSpouse -- [2..*] (spouses {const}) Spouse
+        // <>-- 1..* (duties) MaritalDuty	<>-- [ 1..*] (rights) MaritalRight
+        (marriage) [1] -- involvesSpouse -- [2..*] {const} (spouses) Spouse
+        // (duties) [1..*] <>--  MaritalDuty <>-- [ 1..*] (rights) MaritalRight
+    }
 
-    
     // introduzindo tipos de alta ordem	
-    // type SocialRelatorType { }
+    type SocialRelatorType { }
 
 
     // instanciando tipo de segunda ordem
-    // relator Marriage : SocialRelatorType specializes SocialRelator {
-    //     (marriage) 1 -- involvesSpouse -- 2..* (spouses {const}) Spouse
-    //     <>-- 1..* MaritalDuty	<>-- 1..* MaritalRight
+    // relator Marriage (instanceOf SocialRelatorType) specializes SocialRelator {
+    //     // (marriage) 1 -- involvesSpouse -- 2..* (spouses {const}) Spouse
+    //     // <>-- 1..* MaritalDuty	<>-- 1..* MaritalRight
     // }
 
-    // relator Marriage : SocialRelatorType specializes SocialRelator
-    // Marriage (marriage) 1 -- involvesSpouse -- 2..* (spouses) Spouse
-    // Marriage <>-- 1..* MaritalDutyMarriage <>-- 1..* MaritalRight
+    relator Marriage (instanceOf SocialRelatorType) specializes SocialRelator
+    ref (marriage) [1] Marriage -- involvesSpouse -- [2..*] (spouses) Spouse
+    // ref [1..*] Marriage <>-- MaritalDutyMarriage <>-- [1..*] MaritalRight
 
 
     // relator Marriage : SocialRelatorType specializes SocialRelator
@@ -106,21 +109,24 @@ module Marriage {
     //     }
     // }
 
+    kind Heart 
+
     kind Person
     {
-        // name : string
-        // birthDate {const} : Date
-        // @componentof <>-- hasHeart -- Heart
+        name: string
+        @componentOf <>-- hasHeart <>-- Heart
+        birthDate: Date
         // @componentof <>-- hasBrain -- {const} Brain
         // @componentof <>-- hasLeg -- * {const} Leg
     }
 
-    // datatype Date
-    // {
-    //     day : number
-    //     month : number
-    //     year : number
-    // }
+    datatype DateType
+    {
+        test: number
+        day: number
+        month: number
+        year:number
+    }
 
 
     // collective Group
