@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "drafts"
+		},
+		{
+			"path": "basic-examples"
+		},
+		{
+			"path": "validators"
+		},
+		{
+			"path": "onto-examples"
+		}
+	],
+	"settings": {}
+}

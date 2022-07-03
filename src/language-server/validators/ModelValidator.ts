@@ -38,11 +38,12 @@ export class ModelValidator {
                 if (element.$type === 'ElementReference') {
                     const elementReference = element as ElementReference
                     const nameExists = names.find(name => name === elementReference.name)
+                    const refName = elementReference.name
                     
                     if (nameExists) {
                         accept("error", "Duplicated Reference declaration", { node: elementReference , property: 'name'})
-                    } else {
-                        names.push(elementReference.name)
+                    } else if (refName !== undefined) {
+                        names.push(elementReference.name!)
                     }
                 }
             })

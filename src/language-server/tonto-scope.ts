@@ -41,8 +41,8 @@
          for (const element of elements) {
              await interruptAndCheck(cancelToken);
              if (isElement(element) || isDataType(element) || isElementReference(element) || isClassElement(element)) {
-                 const description = this.descriptions.createDescription(element, element.name, document);
-                 localDescriptions.push(description);
+                const description = this.descriptions.createDescription(element, element.name ?? "unamed", document);
+                localDescriptions.push(description);
              } else if (isContextModule(element) || isClassElement(element)) {
                  const nestedDescriptions = await this.processContainer(element, scopes, document, cancelToken);
                  for (const description of nestedDescriptions) {

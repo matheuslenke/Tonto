@@ -41,6 +41,9 @@ export class ClassElementValidator {
   * Checks if a Rigid stereotype specializes a anti-rigid stereotype
   */
   checkRigidSpecializesAntiRigid(classElement: ClassElement, accept: ValidationAcceptor): void {
+    if (!classElement.classElementType) {
+      return
+    }
     const endurantType = classElement.classElementType.stereotype
 
     if (endurantType === null || endurantType === undefined) { return }
@@ -53,6 +56,9 @@ export class ClassElementValidator {
         ) {
           classElement.specializationEndurants.forEach( specializationItem => {
             const refElement = specializationItem.ref?.$cstNode?.element as ClassElement
+            if (!refElement.classElementType) {
+              return
+            }
             const refType = refElement.classElementType.stereotype
       
             if( refType === EndurantTypes.PHASE || refType === EndurantTypes.ROLE ||

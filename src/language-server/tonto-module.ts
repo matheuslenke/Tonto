@@ -4,7 +4,6 @@ import {
 } from 'langium';
 import { TontoGeneratedModule, TontoGeneratedSharedModule } from './generated/module';
 import { TontoActionProvider } from './tonto-code-actions';
-import { TontoDescriptionProvider } from './tonto-index';
 import { TontoNameProvider } from './tonto-naming';
 import { TontoScopeComputation } from './tonto-scope';
 import { TontoScopeProvider } from './tonto-scope-provider';
@@ -32,6 +31,7 @@ export type TontoServices = LangiumServices & TontoAddedServices
  * selected services, while the custom services must be fully specified.
  */
 export const TontoModule: Module<TontoServices, PartialLangiumServices & TontoAddedServices> = {
+
     references: {
         ScopeComputation: (services) => new TontoScopeComputation(services),
         NameProvider: () => new TontoNameProvider(),
@@ -41,9 +41,9 @@ export const TontoModule: Module<TontoServices, PartialLangiumServices & TontoAd
         ValidationRegistry: (services) => new TontoValidationRegistry(services),
         TontoValidator: () => new TontoValidator(),
     },
-    index: {
-        AstNodeDescriptionProvider: (services) => new TontoDescriptionProvider(services)
-    },
+    // index: {
+    //     AstNodeDescriptionProvider: (services: TontoServices) => new TontoDescriptionProvider(services)
+    // },
     lsp: {
         CodeActionProvider: () => new TontoActionProvider()
     }

@@ -22,8 +22,11 @@
      getQualifiedName(qualifier: ContextModule | ClassElement | ElementReference | string, name: string): string {
          let prefix = qualifier;
          if (isContextModule(prefix) || isClassElement(prefix) || isElementReference(prefix)) {
+            if (!prefix.name) {
+                return "unamed"
+            }
              prefix = (isContextModule(prefix.$container) 
-             ? this.getQualifiedName(prefix.$container, prefix.name) : prefix.name);
+             ? this.getQualifiedName(prefix.$container, prefix.name!) : prefix.name!);
          } 
          return (prefix ? prefix + '.' : '') + name;
      }
