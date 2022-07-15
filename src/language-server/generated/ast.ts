@@ -37,6 +37,8 @@ export function isElementReference(item: unknown): item is ElementReference {
 
 export type NonSortalStereotype = 'category' | 'event' | 'historicalRoleMixin' | 'mixin' | 'phaseMixin' | 'roleMixin';
 
+export type OntologicalNature = 'modes' | 'objects' | 'relators';
+
 export type QualifiedName = string;
 
 export type RelationStereotype = 'aggregation' | 'bringsAbout' | 'characterization' | 'comparative' | 'componentOf' | 'composition' | 'creation' | 'derivation' | 'externalDependence' | 'historicalDependence' | 'instantiation' | 'manifestation' | 'material' | 'mediation' | 'memberOf' | 'participation' | 'participational' | 'relator' | 'subCollectionOf' | 'subQuantityOf' | 'termination' | 'triggers';
@@ -73,6 +75,7 @@ export interface ClassElement extends AstNode {
     classElementType?: EndurantType | Stereotype
     instanceOf?: Reference<ClassElement>
     name: QualifiedName | string
+    ontologicalNatures?: ElementOntologicalNature
     references: Array<ElementReference>
     specializationEndurants: Array<Reference<ClassElement>>
 }
@@ -117,6 +120,17 @@ export const DataTypeProperty = 'DataTypeProperty';
 
 export function isDataTypeProperty(item: unknown): item is DataTypeProperty {
     return reflection.isInstance(item, DataTypeProperty);
+}
+
+export interface ElementOntologicalNature extends AstNode {
+    readonly $container: ClassElement;
+    natures: Array<OntologicalNature>
+}
+
+export const ElementOntologicalNature = 'ElementOntologicalNature';
+
+export function isElementOntologicalNature(item: unknown): item is ElementOntologicalNature {
+    return reflection.isInstance(item, ElementOntologicalNature);
 }
 
 export interface EndurantExternalReference extends AstNode {
@@ -249,7 +263,7 @@ export function isRelationDescription(item: unknown): item is RelationDescriptio
 
 export interface Stereotype extends AstNode {
     readonly $container: ClassElement;
-    stereotype: 'abstract' | 'category' | 'collective' | 'enumeration' | 'event' | 'historicalRole' | 'historicalRoleMixin' | 'kind' | 'mixin' | 'mode' | 'phase' | 'phaseMixin' | 'quality' | 'quantity' | 'relator' | 'role' | 'roleMixin' | 'situation' | 'subkind' | 'type'
+    stereotype: BaseSortalStereotype | NonSortalStereotype | UltimateSortalStereotypes
 }
 
 export const Stereotype = 'Stereotype';
@@ -258,14 +272,14 @@ export function isStereotype(item: unknown): item is Stereotype {
     return reflection.isInstance(item, Stereotype);
 }
 
-export type TontoAstType = 'Attribute' | 'AuxiliaryDeclarations' | 'Cardinality' | 'ClassElement' | 'ContextModule' | 'DataType' | 'DataTypeProperty' | 'Element' | 'ElementReference' | 'EndurantExternalReference' | 'EndurantInternalReference' | 'EndurantType' | 'EnumData' | 'EnumElement' | 'GeneralizationSet' | 'Import' | 'Model' | 'RelationDescription' | 'Stereotype';
+export type TontoAstType = 'Attribute' | 'AuxiliaryDeclarations' | 'Cardinality' | 'ClassElement' | 'ContextModule' | 'DataType' | 'DataTypeProperty' | 'Element' | 'ElementOntologicalNature' | 'ElementReference' | 'EndurantExternalReference' | 'EndurantInternalReference' | 'EndurantType' | 'EnumData' | 'EnumElement' | 'GeneralizationSet' | 'Import' | 'Model' | 'RelationDescription' | 'Stereotype';
 
 export type TontoAstReference = 'Attribute:attributeType' | 'ClassElement:instanceOf' | 'ClassElement:specializationEndurants' | 'DataTypeProperty:type' | 'EndurantExternalReference:firstEnd' | 'EndurantExternalReference:inverseEnd' | 'EndurantExternalReference:secondEnd' | 'EndurantInternalReference:inverseEnd' | 'EndurantInternalReference:secondEnd' | 'GeneralizationSet:categorizerItems' | 'GeneralizationSet:generalItem' | 'GeneralizationSet:specificItems' | 'Import:referencedModel';
 
 export class TontoAstReflection implements AstReflection {
 
     getAllTypes(): string[] {
-        return ['Attribute', 'AuxiliaryDeclarations', 'Cardinality', 'ClassElement', 'ContextModule', 'DataType', 'DataTypeProperty', 'Element', 'ElementReference', 'EndurantExternalReference', 'EndurantInternalReference', 'EndurantType', 'EnumData', 'EnumElement', 'GeneralizationSet', 'Import', 'Model', 'RelationDescription', 'Stereotype'];
+        return ['Attribute', 'AuxiliaryDeclarations', 'Cardinality', 'ClassElement', 'ContextModule', 'DataType', 'DataTypeProperty', 'Element', 'ElementOntologicalNature', 'ElementReference', 'EndurantExternalReference', 'EndurantInternalReference', 'EndurantType', 'EnumData', 'EnumElement', 'GeneralizationSet', 'Import', 'Model', 'RelationDescription', 'Stereotype'];
     }
 
     isInstance(node: unknown, type: string): boolean {
@@ -369,6 +383,14 @@ export class TontoAstReflection implements AstReflection {
                     name: 'DataType',
                     mandatory: [
                         { name: 'properties', type: 'array' }
+                    ]
+                };
+            }
+            case 'ElementOntologicalNature': {
+                return {
+                    name: 'ElementOntologicalNature',
+                    mandatory: [
+                        { name: 'natures', type: 'array' }
                     ]
                 };
             }

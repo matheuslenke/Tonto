@@ -10,7 +10,7 @@
     },
     {
       "name": "keyword.control.tonto",
-      "match": "\\b(abstract|aggregation|bringsAbout|categorizer|category|characterization|class|collective|comparative|complete|componentOf|composition|creation|datatype|Date|derivation|disjoint|enum|enumeration|event|externalDependence|general|genset|historicalDependence|historicalRole|historicalRoleMixin|import|instanceOf|instantiation|inverseOf|kind|manifestation|material|mediation|memberOf|mixin|mode|module|number|participation|participational|phase|phaseMixin|quality|quantity|ref|relator|role|roleMixin|situation|specializes|specifics|string|subCollectionOf|subkind|subQuantityOf|termination|triggers|type)\\b"
+      "match": "\\b(aggregation|bringsAbout|categorizer|category|characterization|class|collective|comparative|complete|componentOf|composition|creation|datatype|Date|derivation|disjoint|enum|event|externalDependence|general|genset|historicalDependence|historicalRole|historicalRoleMixin|import|instanceOf|instantiation|inverseOf|kind|manifestation|material|mediation|memberOf|mixin|mode|modes|module|number|objects|of|participation|participational|phase|phaseMixin|quality|quantity|ref|relator|relators|role|roleMixin|specializes|specifics|string|subCollectionOf|subkind|subQuantityOf|termination|triggers|type)\\b"
     },
     {
       "name": "string.quoted.double.tonto",

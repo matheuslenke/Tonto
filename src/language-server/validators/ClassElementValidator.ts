@@ -8,7 +8,7 @@ export class ClassElementValidator {
   * Checks if a Kind specializes a unique ultimate sortal (Kind, Collective, Quantity, Relator, Quality or mode)
   */
   checkKindSpecialization(classElement: ClassElement, accept: ValidationAcceptor): void {
-    if (!classElement.classElementType) {
+    if (!classElement || !classElement.classElementType) {
       return
     }
     const endurantType = classElement.classElementType.stereotype
@@ -21,7 +21,7 @@ export class ClassElementValidator {
       
       classElement.specializationEndurants.forEach( specializationItem => {
         const refElement = specializationItem.ref?.$cstNode?.element as ClassElement
-        if(!refElement.classElementType) {
+        if(!refElement || !refElement.classElementType) {
           return
         }
         const refType = refElement.classElementType.stereotype

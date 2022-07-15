@@ -357,84 +357,25 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
               "$type": "Alternatives",
               "elements": [
                 {
-                  "$type": "Keyword",
-                  "value": "type"
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "NonSortalStereotype"
+                  },
+                  "arguments": []
                 },
                 {
-                  "$type": "Keyword",
-                  "value": "historicalRole"
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "UltimateSortalStereotypes"
+                  },
+                  "arguments": []
                 },
                 {
-                  "$type": "Keyword",
-                  "value": "historicalRoleMixin"
-                },
-                {
-                  "$type": "Keyword",
-                  "value": "event"
-                },
-                {
-                  "$type": "Keyword",
-                  "value": "situation"
-                },
-                {
-                  "$type": "Keyword",
-                  "value": "category"
-                },
-                {
-                  "$type": "Keyword",
-                  "value": "mixin"
-                },
-                {
-                  "$type": "Keyword",
-                  "value": "roleMixin"
-                },
-                {
-                  "$type": "Keyword",
-                  "value": "phaseMixin"
-                },
-                {
-                  "$type": "Keyword",
-                  "value": "kind"
-                },
-                {
-                  "$type": "Keyword",
-                  "value": "collective"
-                },
-                {
-                  "$type": "Keyword",
-                  "value": "quantity"
-                },
-                {
-                  "$type": "Keyword",
-                  "value": "relator"
-                },
-                {
-                  "$type": "Keyword",
-                  "value": "quality"
-                },
-                {
-                  "$type": "Keyword",
-                  "value": "mode"
-                },
-                {
-                  "$type": "Keyword",
-                  "value": "subkind"
-                },
-                {
-                  "$type": "Keyword",
-                  "value": "role"
-                },
-                {
-                  "$type": "Keyword",
-                  "value": "phase"
-                },
-                {
-                  "$type": "Keyword",
-                  "value": "enumeration"
-                },
-                {
-                  "$type": "Keyword",
-                  "value": "abstract"
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "BaseSortalStereotype"
+                  },
+                  "arguments": []
                 }
               ]
             }
@@ -561,6 +502,19 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
         "$type": "Group",
         "elements": [
           {
+            "$type": "Assignment",
+            "feature": "ontologicalNatures",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "ElementOntologicalNature"
+              },
+              "arguments": []
+            },
+            "cardinality": "?"
+          },
+          {
             "$type": "Group",
             "elements": [
               {
@@ -583,7 +537,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$refText": "QualifiedName"
+                      "$refText": "ID"
                     },
                     "arguments": []
                   },
@@ -616,7 +570,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$refText": "QualifiedName"
+                      "$refText": "ID"
                     },
                     "arguments": []
                   },
@@ -642,7 +596,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
                       "terminal": {
                         "$type": "RuleCall",
                         "rule": {
-                          "$refText": "QualifiedName"
+                          "$refText": "ID"
                         },
                         "arguments": []
                       },
@@ -850,6 +804,87 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
           {
             "$type": "Keyword",
             "value": "relator"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "ElementOntologicalNature",
+      "alternatives": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "of"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "natures",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "OntologicalNature"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": ","
+              },
+              {
+                "$type": "Assignment",
+                "feature": "natures",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "OntologicalNature"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
+            "cardinality": "*"
+          }
+        ]
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "OntologicalNature",
+      "dataType": "string",
+      "alternatives": {
+        "$type": "Alternatives",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "objects"
+          },
+          {
+            "$type": "Keyword",
+            "value": "relators"
+          },
+          {
+            "$type": "Keyword",
+            "value": "modes"
           }
         ]
       },

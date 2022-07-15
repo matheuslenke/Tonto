@@ -16,14 +16,10 @@
      }
  
      async computeScope(document: LangiumDocument, cancelToken = CancellationToken.None): Promise<PrecomputedScopes> {
-        //  console.log("Chamada do computeScope", document.parseResult.value)
          const model = document.parseResult.value as Model;
          const scopes = new MultiMap<AstNode, AstNodeDescription>();
          await this.processContainer(model, scopes, document, cancelToken);
 
-        //  scopes.forEach(scope => {
-        //      console.log(scope.documentUri)
-        //  })
          return scopes;
      }
  
@@ -41,8 +37,10 @@
          for (const element of elements) {
              await interruptAndCheck(cancelToken);
              if (isElement(element) || isDataType(element) || isElementReference(element) || isClassElement(element)) {
-                const description = this.descriptions.createDescription(element, element.name ?? "unamed", document);
-                localDescriptions.push(description);
+                if (element.name) {
+                    const description = this.descriptions.createDescription(element, element.name, document);
+                    localDescriptions.push(description);
+                }
              } else if (isContextModule(element) || isClassElement(element)) {
                  const nestedDescriptions = await this.processContainer(element, scopes, document, cancelToken);
                  for (const description of nestedDescriptions) {
@@ -53,6 +51,7 @@
              }
          }
          scopes.addAll(container, localDescriptions);
+         console.log(localDescriptions)
          return localDescriptions;
      }
  

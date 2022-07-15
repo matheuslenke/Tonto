@@ -4,7 +4,7 @@ module MarriageModule {
     relator SocialRelator
     relator SocialRelatorType specializes SocialRelator
     kind MarriageDuty
-    kind MarriageRight
+    kind MarriageRight specializes Marriage
     
     role Spouse specializes Person {
         -- isBoundBy -- Marriage inverseOf involvesSpouse

@@ -47,28 +47,7 @@ CustomType infers ClassElement:
 * Stereotype is created so users can use the class syntax that is more similar to what OntoUML was doing as an extension of UML
 */
 Stereotype:
-	'@' stereotype=(
-	'type' |
-	'historicalRole' |
-	'historicalRoleMixin' |
-	'event' |
-	'situation' |
-	'category' |
-	'mixin' |
-	'roleMixin' |
-	'phaseMixin' |
-	'kind' |
-	'collective' |
-	'quantity' |
-	'relator' |
-	'quality' |
-	'mode' |
-	'subkind' |
-	'role' |
-	'phase' |
-	'enumeration' |
-	'abstract'
-	)
+	'@' stereotype=(NonSortalStereotype | UltimateSortalStereotypes | BaseSortalStereotype)
 ;
 
 Class infers ClassElement:
@@ -82,10 +61,10 @@ Endurant infers ClassElement:
 ;
 
 fragment ClassElementInfo:
-    ('(' 'instanceOf' instanceOf=[ClassElement:QualifiedName] ')')?
-	
-	('specializes' specializationEndurants+=[ClassElement:QualifiedName]
-	(',' specializationEndurants+=[ClassElement:QualifiedName])? 
+	ontologicalNatures=ElementOntologicalNature?
+    ('(' 'instanceOf' instanceOf=[ClassElement:ID] ')')?
+	('specializes' specializationEndurants+=[ClassElement:ID]
+	(',' specializationEndurants+=[ClassElement:ID])? 
 	)? ('{'
 		(attributes+=Attribute |
 		references+=ElementReference
@@ -107,6 +86,14 @@ UltimateSortalStereotypes returns string:
 
 BaseSortalStereotype returns string:
 	'subkind' | 'phase' | 'role' | 'historicalRole' | 'relator'
+;
+
+ElementOntologicalNature:
+	'of' natures+=OntologicalNature (',' natures+=OntologicalNature)*
+;
+
+OntologicalNature returns string:
+	'objects' | 'relators' | 'modes'
 ;
 
 ElementReference: 

@@ -6,7 +6,7 @@ module Marriage {
 
     // of relators para especificar o restrictedTo em não sortais (pode ser explicitado quando quiser)
     // category SocialRelator of relators { }
-    category SocialRelator
+    category SocialRelator of relators
 
 
     // associação anônima, especificada de forma aninhada na classe
@@ -173,19 +173,9 @@ module Marriage {
     // subkind School specializes Organization {}
 }
 
-
-
-
-
-
-
-
 // derived category LegalPerson union of Person, Organization
 // derived role PersonalCustomer intersection of Person, Customer
 // derived role OrganizationalCustomer intersection of Person, Customer
-
-
-
 
 // derived classes
 // disjoint union?

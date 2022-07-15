@@ -20,7 +20,7 @@ export class TontoValidationRegistry extends ValidationRegistry {
                 validator.ModelValidator.checkDuplicatedReferenceNames,
             ],
             ClassElement: [
-                validator.ClassElementValidator.checkKindSpecialization,
+                // validator.ClassElementValidator.checkKindSpecialization,
                 // validator.ClassElementValidator.checkRigidSpecializesAntiRigid,
                 // validator.ClassElementValidator.checkDuplicatedReferenceNames
             ]

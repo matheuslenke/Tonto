@@ -35,7 +35,7 @@ export const TontoModule: Module<TontoServices, PartialLangiumServices & TontoAd
     references: {
         ScopeComputation: (services) => new TontoScopeComputation(services),
         NameProvider: () => new TontoNameProvider(),
-        ScopeProvider: (services) => new TontoScopeProvider(services),
+        // ScopeProvider: (services) => new TontoScopeProvider(services),
     },
     validation: {
         ValidationRegistry: (services) => new TontoValidationRegistry(services),
