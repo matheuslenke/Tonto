@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "onto-examples"
+		},
+		{
+			"path": "scope-tests"
 		}
 	],
 	"settings": {}

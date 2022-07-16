@@ -74,7 +74,7 @@ export interface ClassElement extends AstNode {
     attributes: Array<Attribute>
     classElementType?: EndurantType | Stereotype
     instanceOf?: Reference<ClassElement>
-    name: QualifiedName | string
+    name: QualifiedName
     ontologicalNatures?: ElementOntologicalNature
     references: Array<ElementReference>
     specializationEndurants: Array<Reference<ClassElement>>

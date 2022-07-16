@@ -7,7 +7,7 @@
  import { AstNodeDescription, DefaultAstNodeDescriptionProvider, interruptAndCheck, LangiumDocument, LangiumServices, streamAllContents } from 'langium';
  import { CancellationToken } from 'vscode-languageserver';
  import { TontoNameProvider } from './tonto-naming';
- import { isContextModule, isElement, ContextModule } from './generated/ast';
+ import { isContextModule, isElement, ContextModule, isClassElement } from './generated/ast';
  
  export class TontoDescriptionProvider extends DefaultAstNodeDescriptionProvider {
  
@@ -22,7 +22,7 @@
          const descr: AstNodeDescription[] = [];
          for (const modelNode of streamAllContents(document.parseResult.value)) {
              await interruptAndCheck(cancelToken);
-             if (isElement(modelNode)) {
+             if (isElement(modelNode) || isClassElement(modelNode)) {
                  let name = this.nameProvider.getName(modelNode);
                  if (name) {
                      if (isContextModule(modelNode.$container)) {

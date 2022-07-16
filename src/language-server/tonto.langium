@@ -39,7 +39,7 @@ AuxiliaryDeclarations:
 ;
 
 CustomType infers ClassElement:
-	'type' name=ID ('{' 
+	'type' name=QualifiedName ('{' 
 	'}')?
 ;
 
@@ -50,21 +50,39 @@ Stereotype:
 	'@' stereotype=(NonSortalStereotype | UltimateSortalStereotypes | BaseSortalStereotype)
 ;
 
+
+
 Class infers ClassElement:
 	classElementType=Stereotype? 'class' name=QualifiedName 
-	ClassElementInfo
+		ontologicalNatures=ElementOntologicalNature?
+    ('(' 'instanceOf' instanceOf=[ClassElement:QualifiedName] ')')?
+	('specializes' specializationEndurants+=[ClassElement:QualifiedName]
+	(',' specializationEndurants+=[ClassElement:QualifiedName])? 
+	)? ('{'
+		(attributes+=Attribute |
+		references+=ElementReference
+		)*
+    '}')?
 ;
 
 Endurant infers ClassElement:
     classElementType=EndurantType name=QualifiedName 
-	ClassElementInfo
+		ontologicalNatures=ElementOntologicalNature?
+    ('(' 'instanceOf' instanceOf=[ClassElement:QualifiedName] ')')?
+	('specializes' specializationEndurants+=[ClassElement:QualifiedName]
+	(',' specializationEndurants+=[ClassElement:QualifiedName])? 
+	)? ('{'
+		(attributes+=Attribute |
+		references+=ElementReference
+		)*
+    '}')?
 ;
 
 fragment ClassElementInfo:
 	ontologicalNatures=ElementOntologicalNature?
-    ('(' 'instanceOf' instanceOf=[ClassElement:ID] ')')?
-	('specializes' specializationEndurants+=[ClassElement:ID]
-	(',' specializationEndurants+=[ClassElement:ID])? 
+    ('(' 'instanceOf' instanceOf=[ClassElement:QualifiedName] ')')?
+	('specializes' specializationEndurants+=[ClassElement:QualifiedName]
+	(',' specializationEndurants+=[ClassElement:QualifiedName])? 
 	)? ('{'
 		(attributes+=Attribute |
 		references+=ElementReference

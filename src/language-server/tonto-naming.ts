@@ -21,12 +21,13 @@
       */
      getQualifiedName(qualifier: ContextModule | ClassElement | ElementReference | string, name: string): string {
          let prefix = qualifier;
-         if (isContextModule(prefix) || isClassElement(prefix) || isElementReference(prefix)) {
-            if (!prefix.name) {
-                return "unamed"
+         if (isContextModule(prefix) || isClassElement(prefix)) {
+            if (prefix.name) {
+                prefix = (isContextModule(prefix.$container) 
+                ? this.getQualifiedName(prefix.$container, prefix.name!) : prefix.name!);
+            } else {
+                return "unamed" + Math.random().toString()
             }
-             prefix = (isContextModule(prefix.$container) 
-             ? this.getQualifiedName(prefix.$container, prefix.name!) : prefix.name!);
          } 
          return (prefix ? prefix + '.' : '') + name;
      }

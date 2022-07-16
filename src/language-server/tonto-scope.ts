@@ -24,6 +24,24 @@
      }
  
      protected async processContainer(container: Model | ContextModule, scopes: PrecomputedScopes, document: LangiumDocument, cancelToken: CancellationToken): Promise<AstNodeDescription[]> {
+        // const localDescriptions: AstNodeDescription[] = [];
+        // for (const element of container.elements) {
+        //     await interruptAndCheck(cancelToken);
+        //     if (isType(element)) {
+        //         const description = this.descriptions.createDescription(element, element.name, document);
+        //         localDescriptions.push(description);
+        //     } else if (isPackageDeclaration(element)) {
+        //         const nestedDescriptions = await this.processContainer(element, scopes, document, cancelToken);
+        //         for (const description of nestedDescriptions) {
+        //             // Add qualified names to the container
+        //             const qualified = this.createQualifiedDescription(element, description, document);
+        //             localDescriptions.push(qualified);
+        //         }
+        //     }
+        // }
+        // scopes.addAll(container, localDescriptions);
+        // return localDescriptions;
+
          const localDescriptions: AstNodeDescription[] = [];
          let elements: (ContextModule | Element)[] = []
          if (container.$type === 'Model') {
@@ -33,15 +51,15 @@
             const contextModule = container as ContextModule
             elements = [...elements, ...contextModule.elements]
          }
-
          for (const element of elements) {
              await interruptAndCheck(cancelToken);
              if (isElement(element) || isDataType(element) || isElementReference(element) || isClassElement(element)) {
                 if (element.name) {
+                    // console.log(element.name)
                     const description = this.descriptions.createDescription(element, element.name, document);
                     localDescriptions.push(description);
                 }
-             } else if (isContextModule(element) || isClassElement(element)) {
+             } else if (isContextModule(element)) {
                  const nestedDescriptions = await this.processContainer(element, scopes, document, cancelToken);
                  for (const description of nestedDescriptions) {
                      // Add qualified names to the container
@@ -51,7 +69,7 @@
              }
          }
          scopes.addAll(container, localDescriptions);
-         console.log(localDescriptions)
+        //  console.log(localDescriptions)
          return localDescriptions;
      }
  
