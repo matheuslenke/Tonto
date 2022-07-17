@@ -1,6 +1,36 @@
 import { ClassElement } from './../generated/ast';
 import { ValidationAcceptor } from "langium";
 import { EndurantTypes } from "../models/EndurantType";
+import {OntologicalNature, natureUtils} from '../models/Natures'
+
+const allowedStereotypeRestrictedToMatches = {
+  [EndurantTypes.ABSTRACT]: [OntologicalNature.abstract],
+  [EndurantTypes.DATATYPE]: [OntologicalNature.abstract],
+  [EndurantTypes.ENUMERATION]: [OntologicalNature.abstract],
+
+  [EndurantTypes.EVENT]: [OntologicalNature.event],
+  [EndurantTypes.SITUATION]: [OntologicalNature.situation],
+
+  [EndurantTypes.CATEGORY]: natureUtils.EndurantNatures,
+  [EndurantTypes.MIXIN]: natureUtils.EndurantNatures,
+  [EndurantTypes.ROLE_MIXIN]: natureUtils.EndurantNatures,
+  [EndurantTypes.PHASE_MIXIN]: natureUtils.EndurantNatures,
+  [EndurantTypes.HISTORICAL_ROLE_MIXIN]: natureUtils.EndurantNatures,
+
+  [EndurantTypes.KIND]: [OntologicalNature.functional_complex],
+  [EndurantTypes.COLLECTIVE]: [OntologicalNature.collective],
+  [EndurantTypes.QUANTITY]: [OntologicalNature.quantity],
+  [EndurantTypes.RELATOR]: [OntologicalNature.relator],
+  [EndurantTypes.MODE]: [OntologicalNature.extrinsic_mode, OntologicalNature.intrinsic_mode],
+  [EndurantTypes.QUALITY]: [OntologicalNature.quality],
+
+  [EndurantTypes.SUBKIND]: natureUtils.EndurantNatures,
+  [EndurantTypes.ROLE]: natureUtils.EndurantNatures,
+  [EndurantTypes.PHASE]: natureUtils.EndurantNatures,
+  [EndurantTypes.HISTORICAL_ROLE]: natureUtils.EndurantNatures,
+
+  [EndurantTypes.TYPE]: [OntologicalNature.type]
+};
 
 export class ClassElementValidator {
 
@@ -80,8 +110,30 @@ export class ClassElementValidator {
       if (nameExists) {
         accept('error', 'Duplicated reference name', { node: reference })
       } else {
-        names.push(reference.name)
+        if (reference.name) {
+          names.push(reference.name)
+        }
       }
     })
+  }
+
+  /*
+  * The element specializations must have ontological natures that are contained in the ontological natures of its superclasses
+  */
+  checkCompatibleNatures(classElement: ClassElement, accept: ValidationAcceptor): void {
+    const ElementNatures = classElement.ontologicalNatures
+    if (ElementNatures) {
+      console.log(ElementNatures.natures)
+      classElement.specializationEndurants.forEach(specializationEndurant => {
+        let specializationNatures = specializationEndurant.ref?.ontologicalNatures
+        specializationNatures?.natures.forEach(nature => {
+          let natureExists = ElementNatures.natures.find(item => item === nature)
+          console.log(nature)
+          if (!natureExists && nature !== 'objects') {
+            accept('error', 'This element cannot be restricted to Natures that its superclass is not restricted', { node: classElement, property: 'ontologicalNatures' })
+          }
+        })
+      })
+    }
   }
 }

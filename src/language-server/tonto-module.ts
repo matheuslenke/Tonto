@@ -1,3 +1,4 @@
+import { TontoFormatter } from './tonto-formatter';
 import {
     createDefaultModule, createDefaultSharedModule, DefaultSharedModuleContext, inject,
     LangiumServices, LangiumSharedServices, Module, PartialLangiumServices
@@ -45,7 +46,8 @@ export const TontoModule: Module<TontoServices, PartialLangiumServices & TontoAd
         AstNodeDescriptionProvider: (services: TontoServices) => new TontoDescriptionProvider(services)
     },
     lsp: {
-        CodeActionProvider: () => new TontoActionProvider()
+        CodeActionProvider: () => new TontoActionProvider(),
+        Formatter: () => new TontoFormatter(),
     }
 };
 

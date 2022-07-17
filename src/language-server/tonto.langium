@@ -50,11 +50,9 @@ Stereotype:
 	'@' stereotype=(NonSortalStereotype | UltimateSortalStereotypes | BaseSortalStereotype)
 ;
 
-
-
 Class infers ClassElement:
 	classElementType=Stereotype? 'class' name=QualifiedName 
-		ontologicalNatures=ElementOntologicalNature?
+	ontologicalNatures=ElementOntologicalNature?
     ('(' 'instanceOf' instanceOf=[ClassElement:QualifiedName] ')')?
 	('specializes' specializationEndurants+=[ClassElement:QualifiedName]
 	(',' specializationEndurants+=[ClassElement:QualifiedName])? 
@@ -67,7 +65,7 @@ Class infers ClassElement:
 
 Endurant infers ClassElement:
     classElementType=EndurantType name=QualifiedName 
-		ontologicalNatures=ElementOntologicalNature?
+	ontologicalNatures=ElementOntologicalNature?
     ('(' 'instanceOf' instanceOf=[ClassElement:QualifiedName] ')')?
 	('specializes' specializationEndurants+=[ClassElement:QualifiedName]
 	(',' specializationEndurants+=[ClassElement:QualifiedName])? 
@@ -111,7 +109,10 @@ ElementOntologicalNature:
 ;
 
 OntologicalNature returns string:
-	'objects' | 'relators' | 'modes'
+	'objects' | 'relators' | 'modes' |
+	'collectives' | 'functional-complex' |
+	'quantity' | 'intrinsic-modes' | 'extrinsic-modes' |
+	'quality' | 'type' | 'abstract' | 'event'
 ;
 
 ElementReference: 
@@ -125,7 +126,14 @@ EndurantInternalReference:
 	(isAssociation?='--' (name=QualifiedName '--')? 
 	| 
 	isComposition?='<>--' (name=QualifiedName '<>--')? )
-	ReferenceInfo
+	secondCardinality=Cardinality? 
+	('{'
+		descriptions+=RelationDescription
+		(',' descriptions+=RelationDescription)*
+	'}')?
+	( '(' secondEndName=ID ')')?
+	secondEnd=[ClassElement:QualifiedName]
+    (hasInverse='inverseOf' inverseEnd=[ElementReference:QualifiedName])?
  ;
 
 EndurantExternalReference:
@@ -137,12 +145,7 @@ EndurantExternalReference:
 	(isAssociation?='--' (name=QualifiedName '--')? 
 	| 
 	isComposition?='<>--' (name=QualifiedName '<>--')? )
-	ReferenceInfo
-;
-
-fragment ReferenceInfo:
-
-    secondCardinality=Cardinality? 
+	    secondCardinality=Cardinality? 
 	('{'
 		descriptions+=RelationDescription
 		(',' descriptions+=RelationDescription)*

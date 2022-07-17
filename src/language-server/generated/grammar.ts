@@ -1175,6 +1175,42 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
           {
             "$type": "Keyword",
             "value": "modes"
+          },
+          {
+            "$type": "Keyword",
+            "value": "collectives"
+          },
+          {
+            "$type": "Keyword",
+            "value": "functional-complex"
+          },
+          {
+            "$type": "Keyword",
+            "value": "quantity"
+          },
+          {
+            "$type": "Keyword",
+            "value": "intrinsic-modes"
+          },
+          {
+            "$type": "Keyword",
+            "value": "extrinsic-modes"
+          },
+          {
+            "$type": "Keyword",
+            "value": "quality"
+          },
+          {
+            "$type": "Keyword",
+            "value": "type"
+          },
+          {
+            "$type": "Keyword",
+            "value": "abstract"
+          },
+          {
+            "$type": "Keyword",
+            "value": "event"
           }
         ]
       },
@@ -1359,11 +1395,144 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
             ]
           },
           {
-            "$type": "RuleCall",
-            "rule": {
-              "$refText": "ReferenceInfo"
+            "$type": "Assignment",
+            "feature": "secondCardinality",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "Cardinality"
+              },
+              "arguments": []
             },
-            "arguments": []
+            "cardinality": "?"
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "{"
+              },
+              {
+                "$type": "Assignment",
+                "feature": "descriptions",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "RelationDescription"
+                  },
+                  "arguments": []
+                }
+              },
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": ","
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "descriptions",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$refText": "RelationDescription"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ],
+                "cardinality": "*"
+              },
+              {
+                "$type": "Keyword",
+                "value": "}"
+              }
+            ],
+            "cardinality": "?"
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "("
+              },
+              {
+                "$type": "Assignment",
+                "feature": "secondEndName",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "ID"
+                  },
+                  "arguments": []
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": ")"
+              }
+            ],
+            "cardinality": "?"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "secondEnd",
+            "operator": "=",
+            "terminal": {
+              "$type": "CrossReference",
+              "type": {
+                "$refText": "ClassElement"
+              },
+              "terminal": {
+                "$type": "RuleCall",
+                "rule": {
+                  "$refText": "QualifiedName"
+                },
+                "arguments": []
+              },
+              "deprecatedSyntax": false
+            }
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Assignment",
+                "feature": "hasInverse",
+                "operator": "=",
+                "terminal": {
+                  "$type": "Keyword",
+                  "value": "inverseOf"
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "inverseEnd",
+                "operator": "=",
+                "terminal": {
+                  "$type": "CrossReference",
+                  "type": {
+                    "$refText": "ElementReference"
+                  },
+                  "terminal": {
+                    "$type": "RuleCall",
+                    "rule": {
+                      "$refText": "QualifiedName"
+                    },
+                    "arguments": []
+                  },
+                  "deprecatedSyntax": false
+                }
+              }
+            ],
+            "cardinality": "?"
           }
         ]
       },
@@ -1542,29 +1711,6 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
             ]
           },
           {
-            "$type": "RuleCall",
-            "rule": {
-              "$refText": "ReferenceInfo"
-            },
-            "arguments": []
-          }
-        ]
-      },
-      "definesHiddenTokens": false,
-      "entry": false,
-      "fragment": false,
-      "hiddenTokens": [],
-      "parameters": [],
-      "wildcard": false
-    },
-    {
-      "$type": "ParserRule",
-      "name": "ReferenceInfo",
-      "fragment": true,
-      "alternatives": {
-        "$type": "Group",
-        "elements": [
-          {
             "$type": "Assignment",
             "feature": "secondCardinality",
             "operator": "=",
@@ -1708,6 +1854,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
       },
       "definesHiddenTokens": false,
       "entry": false,
+      "fragment": false,
       "hiddenTokens": [],
       "parameters": [],
       "wildcard": false

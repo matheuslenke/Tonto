@@ -42,3 +42,7 @@ module MarriageModuleCopy {
     ref Marriage <>-- [1..*] MarriageDuty
     ref Marriage <>-- [1..*] MarriageRight
 }
+
+module Teste {
+    
+}

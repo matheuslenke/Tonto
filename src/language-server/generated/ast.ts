@@ -37,7 +37,7 @@ export function isElementReference(item: unknown): item is ElementReference {
 
 export type NonSortalStereotype = 'category' | 'event' | 'historicalRoleMixin' | 'mixin' | 'phaseMixin' | 'roleMixin';
 
-export type OntologicalNature = 'modes' | 'objects' | 'relators';
+export type OntologicalNature = 'abstract' | 'collectives' | 'event' | 'extrinsic-modes' | 'functional-complex' | 'intrinsic-modes' | 'modes' | 'objects' | 'quality' | 'quantity' | 'relators' | 'type';
 
 export type QualifiedName = string;
 
