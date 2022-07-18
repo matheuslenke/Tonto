@@ -10,7 +10,7 @@
     },
     {
       "name": "keyword.control.tonto",
-      "match": "\\b(abstract|aggregation|bringsAbout|categorizer|category|characterization|class|collective|collectives|comparative|complete|componentOf|composition|creation|datatype|Date|derivation|disjoint|enum|event|externalDependence|extrinsic-modes|functional-complex|general|genset|historicalDependence|historicalRole|historicalRoleMixin|import|instanceOf|instantiation|intrinsic-modes|inverseOf|kind|manifestation|material|mediation|memberOf|mixin|mode|modes|module|number|objects|of|participation|participational|phase|phaseMixin|quality|quantity|ref|relator|relators|role|roleMixin|specializes|specifics|string|subCollectionOf|subkind|subQuantityOf|termination|triggers|type)\\b"
+      "match": "\\b(abstract|aggregation|bringsAbout|categorizer|category|characterization|class|collective|collectives|comparative|complete|componentOf|composition|const|creation|datatype|Date|derivation|disjoint|enum|event|externalDependence|extrinsic-modes|functional-complex|general|genset|historicalDependence|historicalRole|historicalRoleMixin|import|instanceOf|instantiation|intrinsic-modes|inverseOf|kind|manifestation|material|mediation|memberOf|mixin|mode|modes|module|number|objects|of|participation|participational|phase|phaseMixin|quality|quantity|ref|relator|relators|role|roleMixin|specializes|specifics|string|subCollectionOf|subkind|subQuantityOf|termination|triggers|type)\\b"
     },
     {
       "name": "string.quoted.double.tonto",

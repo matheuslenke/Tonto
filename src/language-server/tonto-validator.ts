@@ -24,6 +24,7 @@ export class TontoValidationRegistry extends ValidationRegistry {
                 validator.ClassElementValidator.checkRigidSpecializesAntiRigid,
                 validator.ClassElementValidator.checkDuplicatedReferenceNames,
                 validator.ClassElementValidator.checkCompatibleNatures,
+                validator.ClassElementValidator.checkCircularSpecialization
             ]
         };
         this.register(checks, validator);

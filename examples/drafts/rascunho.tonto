@@ -50,7 +50,7 @@ module Marriage {
     relator Marriage specializes SocialRelator {
         // (marriage) 1 -- involvesSpouse -- [2..*] (spouses {const}) Spouse
         // <>-- 1..* (duties) MaritalDuty	<>-- [ 1..*] (rights) MaritalRight
-        (marriage) [1] -- involvesSpouse -- [2..*] {const} (spouses) Spouse
+        (marriage) [1] -- involvesSpouse -- [2..*] (spouses) {const} Spouse
         // (duties) [1..*] <>--  MaritalDuty <>-- [ 1..*] (rights) MaritalRight
     }
 
@@ -112,12 +112,15 @@ module Marriage {
     kind Heart 
 
     kind Person
+    kind Brain
+    kind Leg
+
     {
         name: string
         @componentOf <>-- hasHeart <>-- Heart
         birthDate: Date
-        // @componentof <>-- hasBrain -- {const} Brain
-        // @componentof <>-- hasLeg -- * {const} Leg
+        @componentOf <>-- hasBrain <>-- {const} Brain
+        @componentOf <>-- hasLeg <>-- [*] {const} Leg
     }
 
     datatype DateType
@@ -129,10 +132,10 @@ module Marriage {
     }
 
 
-    // collective Group
-    // {
-    //     <>-- 2..* {const} Person
-    // }
+    collective Group
+    {
+        <>-- [2..*] {const} Person
+    }
 
 
     // quality Color
@@ -141,12 +144,12 @@ module Marriage {
     //     @value –- (colorInRGB) RGB
     // }
 
-    // datatype RGB
-    // {
-    //     red : number
-    //     green : number
-    //     blue : number
-    // }
+    datatype RGB
+    {
+        red : number
+        green : number
+        blue : number
+    }
 
     // enum Season
     // {

@@ -1,36 +1,37 @@
 import { ClassElement } from './../generated/ast';
 import { ValidationAcceptor } from "langium";
 import { EndurantTypes } from "../models/EndurantType";
-import {OntologicalNature, natureUtils} from '../models/Natures'
+import { checkCircularSpecializationRecursive } from '../utils/CheckCircularSpecializationRecursive';
+// import {OntologicalNature, natureUtils} from '../models/Natures'
 
-const allowedStereotypeRestrictedToMatches = {
-  [EndurantTypes.ABSTRACT]: [OntologicalNature.abstract],
-  [EndurantTypes.DATATYPE]: [OntologicalNature.abstract],
-  [EndurantTypes.ENUMERATION]: [OntologicalNature.abstract],
+// const allowedStereotypeRestrictedToMatches = {
+//   [EndurantTypes.ABSTRACT]: [OntologicalNature.abstract],
+//   [EndurantTypes.DATATYPE]: [OntologicalNature.abstract],
+//   [EndurantTypes.ENUMERATION]: [OntologicalNature.abstract],
 
-  [EndurantTypes.EVENT]: [OntologicalNature.event],
-  [EndurantTypes.SITUATION]: [OntologicalNature.situation],
+//   [EndurantTypes.EVENT]: [OntologicalNature.event],
+//   [EndurantTypes.SITUATION]: [OntologicalNature.situation],
 
-  [EndurantTypes.CATEGORY]: natureUtils.EndurantNatures,
-  [EndurantTypes.MIXIN]: natureUtils.EndurantNatures,
-  [EndurantTypes.ROLE_MIXIN]: natureUtils.EndurantNatures,
-  [EndurantTypes.PHASE_MIXIN]: natureUtils.EndurantNatures,
-  [EndurantTypes.HISTORICAL_ROLE_MIXIN]: natureUtils.EndurantNatures,
+//   [EndurantTypes.CATEGORY]: natureUtils.EndurantNatures,
+//   [EndurantTypes.MIXIN]: natureUtils.EndurantNatures,
+//   [EndurantTypes.ROLE_MIXIN]: natureUtils.EndurantNatures,
+//   [EndurantTypes.PHASE_MIXIN]: natureUtils.EndurantNatures,
+//   [EndurantTypes.HISTORICAL_ROLE_MIXIN]: natureUtils.EndurantNatures,
 
-  [EndurantTypes.KIND]: [OntologicalNature.functional_complex],
-  [EndurantTypes.COLLECTIVE]: [OntologicalNature.collective],
-  [EndurantTypes.QUANTITY]: [OntologicalNature.quantity],
-  [EndurantTypes.RELATOR]: [OntologicalNature.relator],
-  [EndurantTypes.MODE]: [OntologicalNature.extrinsic_mode, OntologicalNature.intrinsic_mode],
-  [EndurantTypes.QUALITY]: [OntologicalNature.quality],
+//   [EndurantTypes.KIND]: [OntologicalNature.functional_complex],
+//   [EndurantTypes.COLLECTIVE]: [OntologicalNature.collective],
+//   [EndurantTypes.QUANTITY]: [OntologicalNature.quantity],
+//   [EndurantTypes.RELATOR]: [OntologicalNature.relator],
+//   [EndurantTypes.MODE]: [OntologicalNature.extrinsic_mode, OntologicalNature.intrinsic_mode],
+//   [EndurantTypes.QUALITY]: [OntologicalNature.quality],
 
-  [EndurantTypes.SUBKIND]: natureUtils.EndurantNatures,
-  [EndurantTypes.ROLE]: natureUtils.EndurantNatures,
-  [EndurantTypes.PHASE]: natureUtils.EndurantNatures,
-  [EndurantTypes.HISTORICAL_ROLE]: natureUtils.EndurantNatures,
+//   [EndurantTypes.SUBKIND]: natureUtils.EndurantNatures,
+//   [EndurantTypes.ROLE]: natureUtils.EndurantNatures,
+//   [EndurantTypes.PHASE]: natureUtils.EndurantNatures,
+//   [EndurantTypes.HISTORICAL_ROLE]: natureUtils.EndurantNatures,
 
-  [EndurantTypes.TYPE]: [OntologicalNature.type]
-};
+//   [EndurantTypes.TYPE]: [OntologicalNature.type]
+// };
 
 export class ClassElementValidator {
 
@@ -67,11 +68,20 @@ export class ClassElementValidator {
     }  
   }
 
+  checkClassElementStartsWithCapital(classElement: ClassElement, accept: ValidationAcceptor): void {
+    if (classElement.name) {
+        const firstChar = classElement.name.substring(0, 1);
+        if (firstChar.toUpperCase() !== firstChar) {
+            accept('warning', 'Class name should start with a capital.', { node: classElement, property: 'name' });
+        }
+    }
+  }
+
   /*
   * Checks if a Rigid stereotype specializes a anti-rigid stereotype
   */
   checkRigidSpecializesAntiRigid(classElement: ClassElement, accept: ValidationAcceptor): void {
-    if (!classElement.classElementType) {
+    if (!classElement || !classElement.classElementType) {
       return
     }
     const endurantType = classElement.classElementType.stereotype
@@ -86,7 +96,7 @@ export class ClassElementValidator {
         ) {
           classElement.specializationEndurants.forEach( specializationItem => {
             const refElement = specializationItem.ref?.$cstNode?.element as ClassElement
-            if (!refElement.classElementType) {
+            if (!refElement || !refElement.classElementType) {
               return
             }
             const refType = refElement.classElementType.stereotype
@@ -123,12 +133,10 @@ export class ClassElementValidator {
   checkCompatibleNatures(classElement: ClassElement, accept: ValidationAcceptor): void {
     const ElementNatures = classElement.ontologicalNatures
     if (ElementNatures) {
-      console.log(ElementNatures.natures)
       classElement.specializationEndurants.forEach(specializationEndurant => {
         let specializationNatures = specializationEndurant.ref?.ontologicalNatures
         specializationNatures?.natures.forEach(nature => {
           let natureExists = ElementNatures.natures.find(item => item === nature)
-          console.log(nature)
           if (!natureExists && nature !== 'objects') {
             accept('error', 'This element cannot be restricted to Natures that its superclass is not restricted', { node: classElement, property: 'ontologicalNatures' })
           }
@@ -136,4 +144,17 @@ export class ClassElementValidator {
       })
     }
   }
+
+  /*
+  * Checks if an Element has a ciclic specialization
+  */
+  checkCircularSpecialization(classElement: ClassElement, accept: ValidationAcceptor): void {
+    classElement.specializationEndurants.forEach(specializationItem => {
+        const specItem = specializationItem.ref
+        if (!specItem) { return }
+        checkCircularSpecializationRecursive(specItem, [], accept)
+    })
+  }
+
+
 }

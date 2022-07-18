@@ -1482,6 +1482,29 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
             "cardinality": "?"
           },
           {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "{"
+              },
+              {
+                "$type": "Assignment",
+                "feature": "isConstant",
+                "operator": "?=",
+                "terminal": {
+                  "$type": "Keyword",
+                  "value": "const"
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": "}"
+              }
+            ],
+            "cardinality": "?"
+          },
+          {
             "$type": "Assignment",
             "feature": "secondEnd",
             "operator": "=",
@@ -1793,6 +1816,29 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
               {
                 "$type": "Keyword",
                 "value": ")"
+              }
+            ],
+            "cardinality": "?"
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "{"
+              },
+              {
+                "$type": "Assignment",
+                "feature": "isConstant",
+                "operator": "?=",
+                "terminal": {
+                  "$type": "Keyword",
+                  "value": "const"
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": "}"
               }
             ],
             "cardinality": "?"

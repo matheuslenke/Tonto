@@ -143,6 +143,7 @@ export interface EndurantExternalReference extends AstNode {
     inverseEnd?: Reference<ElementReference>
     isAssociation: boolean
     isComposition: boolean
+    isConstant: boolean
     name?: QualifiedName
     relationType?: RelationStereotype
     secondCardinality?: Cardinality
@@ -165,6 +166,7 @@ export interface EndurantInternalReference extends AstNode {
     inverseEnd?: Reference<ElementReference>
     isAssociation: boolean
     isComposition: boolean
+    isConstant: boolean
     name?: QualifiedName
     relationType?: RelationStereotype
     secondCardinality?: Cardinality
@@ -400,7 +402,8 @@ export class TontoAstReflection implements AstReflection {
                     mandatory: [
                         { name: 'descriptions', type: 'array' },
                         { name: 'isAssociation', type: 'boolean' },
-                        { name: 'isComposition', type: 'boolean' }
+                        { name: 'isComposition', type: 'boolean' },
+                        { name: 'isConstant', type: 'boolean' }
                     ]
                 };
             }
@@ -410,7 +413,8 @@ export class TontoAstReflection implements AstReflection {
                     mandatory: [
                         { name: 'descriptions', type: 'array' },
                         { name: 'isAssociation', type: 'boolean' },
-                        { name: 'isComposition', type: 'boolean' }
+                        { name: 'isComposition', type: 'boolean' },
+                        { name: 'isConstant', type: 'boolean' }
                     ]
                 };
             }

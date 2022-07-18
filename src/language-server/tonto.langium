@@ -132,6 +132,7 @@ EndurantInternalReference:
 		(',' descriptions+=RelationDescription)*
 	'}')?
 	( '(' secondEndName=ID ')')?
+	('{' isConstant?='const' '}')?
 	secondEnd=[ClassElement:QualifiedName]
     (hasInverse='inverseOf' inverseEnd=[ElementReference:QualifiedName])?
  ;
@@ -151,6 +152,7 @@ EndurantExternalReference:
 		(',' descriptions+=RelationDescription)*
 	'}')?
 	( '(' secondEndName=ID ')')?
+	('{' isConstant?='const' '}')?
 	secondEnd=[ClassElement:QualifiedName]
     (hasInverse='inverseOf' inverseEnd=[ElementReference:QualifiedName])?
 ;
