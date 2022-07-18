@@ -5,7 +5,7 @@
  ******************************************************************************/
 
  import { DefaultNameProvider } from 'langium';
- import { isContextModule, ContextModule, ClassElement, ElementReference, isClassElement, isElementReference } from './generated/ast';
+ import { isContextModule, ContextModule, ClassElement, ElementReference, isClassElement } from './generated/ast';
  
  export function toQualifiedName(pack: ContextModule, childName: string): string {
      return (isContextModule(pack.$container) ? toQualifiedName(pack.$container, pack.name) : pack.name) + '.' + childName;
