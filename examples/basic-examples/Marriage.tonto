@@ -11,12 +11,12 @@ module MarriageModule {
     }
 
     relator Marriage (instanceOf SocialRelatorType) specializes SocialRelator
-    ref Marriage -- involvesSpouse -- [2..*] Spouse
-    ref Marriage <>-- [1..*] MarriageDuty
+    relation Marriage -- involvesSpouse -- [2..*] Spouse
+    relation Marriage <>-- [1..*] MarriageDuty
 
-    ref Marriage -- [2..*] Spouse
-    ref Marriage <>-- [1..*] MarriageDuty
-    ref Marriage <>-- [1..*] MarriageRight
+    relation Marriage -- [2..*] Spouse
+    relation Marriage <>-- [1..*] MarriageDuty
+    relation Marriage <>-- [1..*] MarriageRight
 }
 
 module MarriageModuleCopy {
@@ -35,12 +35,12 @@ module MarriageModuleCopy {
 
     relator Marriage specializes SocialRelatorType
     
-    ref Marriage -- involvesSpouse -- [2..*] Spouse
-    ref Marriage <>-- [1..*] MarriageDuty
+    relation Marriage -- involvesSpouse -- [2..*] Spouse
+    relation Marriage <>-- [1..*] MarriageDuty
 
-    ref Marriage -- [2..*] Spouse
-    ref Marriage <>-- [1..*] MarriageDuty
-    ref Marriage <>-- [1..*] MarriageRight
+    relation Marriage -- [2..*] Spouse
+    relation Marriage <>-- [1..*] MarriageDuty
+    relation Marriage <>-- [1..*] MarriageRight
 }
 
 module Teste {

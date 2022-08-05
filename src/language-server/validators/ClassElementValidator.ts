@@ -145,6 +145,19 @@ export class ClassElementValidator {
     }
   }
 
+  checkNaturesOnlyOnNonSortals(classElement: ClassElement, accept: ValidationAcceptor): void {
+    const ElementNatures = classElement.ontologicalNatures
+    if (ElementNatures) {
+      if (classElement.classElementType?.stereotype !== 'roleMixin' &&
+        classElement.classElementType?.stereotype !== 'category' && 
+        classElement.classElementType?.stereotype !== 'phaseMixin' && 
+        classElement.classElementType?.stereotype !== 'mixin'
+      ) {
+        accept('error', 'Only non-sortal types can specialize natures', { node: classElement, property: 'ontologicalNatures' })
+      }
+    }
+  }
+
   /*
   * Checks if an Element has a ciclic specialization
   */

@@ -87,12 +87,12 @@ module Marriage {
     // role Spouse specializes Person
     // Spouse 2..* -- isBoundBy –- 1 Marriage inverse of involvesSpouse
 
-    // extrinsic mode MaritalDuty {
-    //     @inherence -- Spouse
-    //     @externalDependence –- Spouse
-    //     @formal {const} –- isCorrelativeOf {symmetric} -- {const} MaritalRight 
-    // // the duty and its correlative are part of the same marriage
-    // }
+    extrinsic mode MaritalDuty {
+        @inherence -- Spouse
+        @externalDependence –- Spouse
+        @formal {const} –- isCorrelativeOf {symmetric} -- {const} MaritalRight 
+    // the duty and its correlative are part of the same marriage
+    }
 
     // extrinsic mode MaritalRight {
     //     @inherence -- Spouse

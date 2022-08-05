@@ -15,8 +15,8 @@ module PersonHealth {
         <>-- hasOneBrain <>-- [1] Brain
     }
 
-    ref Person -- hasOneHearth -- [1] Hearth
-    ref Person -- hasOneBrain -- [1] Brain
+    relation Person -- hasOneHearth -- [1] Hearth
+    relation Person -- hasOneBrain -- [1] Brain
 
     phase DeceasedPerson specializes Person
     phase LivingPerson specializes Person

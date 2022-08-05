@@ -6,12 +6,17 @@ entry Model:
 ;
 
 // <--- Criação de Módulos --->
+// interface IContextModule {
+//     name: string;
+// 	elements: Element[];
+// }
+
 /*
 * ContextModule is the main declaration of a module, that wraps a context of elements. All declarations should
 * go inside this declaration
 */
 ContextModule:
-	'module' name=QualifiedName '{'
+	'module' name=ID '{'
 		elements+=Element*
 	'}'
 ;
@@ -76,18 +81,6 @@ Endurant infers ClassElement:
     '}')?
 ;
 
-fragment ClassElementInfo:
-	ontologicalNatures=ElementOntologicalNature?
-    ('(' 'instanceOf' instanceOf=[ClassElement:QualifiedName] ')')?
-	('specializes' specializationEndurants+=[ClassElement:QualifiedName]
-	(',' specializationEndurants+=[ClassElement:QualifiedName])? 
-	)? ('{'
-		(attributes+=Attribute |
-		references+=ElementReference
-		)*
-    '}')?
-;
-
 EndurantType:
     stereotype=(NonSortalStereotype | UltimateSortalStereotypes | BaseSortalStereotype)
 ;
@@ -110,39 +103,49 @@ ElementOntologicalNature:
 
 OntologicalNature returns string:
 	'objects' | 'relators' | 'modes' |
-	'collectives' | 'functional-complex' |
-	'quantity' | 'intrinsic-modes' | 'extrinsic-modes' |
-	'quality' | 'type' | 'abstract' | 'event'
+	'collectives' | 'functional-complexes' |
+	'quantities' | 'intrinsic-modes' | 'extrinsic-modes' |
+	'qualities' | 'types' | 'abstracts' | 'events'
 ;
 
 ElementReference: 
-	EndurantInternalReference | EndurantExternalReference
+	InternalRelation | ExternalRelation
 ;
 
-EndurantInternalReference:
+InternalRelation:
 	('@'relationType=RelationStereotype)?
-	('(' firstEndName=QualifiedName ')')?
+	('(' firstEndName=ID ')')?
+		('{' firstEndMetaAttributes+=RelationMetaAttribute (',' firstEndMetaAttributes+=RelationMetaAttribute )*
+	'}')?
     firstCardinality=Cardinality?
+
 	(isAssociation?='--' (name=QualifiedName '--')? 
 	| 
 	isComposition?='<>--' (name=QualifiedName '<>--')? )
+
 	secondCardinality=Cardinality? 
 	('{'
 		descriptions+=RelationDescription
 		(',' descriptions+=RelationDescription)*
 	'}')?
+
 	( '(' secondEndName=ID ')')?
-	('{' isConstant?='const' '}')?
+
+	('{' secondEndMetaAttributes+=RelationMetaAttribute (',' secondEndMetaAttributes+=RelationMetaAttribute )*
+	'}')?
+
 	secondEnd=[ClassElement:QualifiedName]
     (hasInverse='inverseOf' inverseEnd=[ElementReference:QualifiedName])?
  ;
 
-EndurantExternalReference:
+ExternalRelation:
 	('@'relationType=RelationStereotype)?
-	'ref'
-	('(' firstEndName=QualifiedName ')')?
-	firstCardinality=Cardinality?
+	'relation'
+	('(' firstEndName=ID ')')?
+		('{' firstEndMetaAttributes+=RelationMetaAttribute (',' firstEndMetaAttributes+=RelationMetaAttribute )*
+	'}')?
     firstEnd=[ClassElement:QualifiedName]
+	firstCardinality=Cardinality?
 	(isAssociation?='--' (name=QualifiedName '--')? 
 	| 
 	isComposition?='<>--' (name=QualifiedName '<>--')? )
@@ -151,8 +154,9 @@ EndurantExternalReference:
 		descriptions+=RelationDescription
 		(',' descriptions+=RelationDescription)*
 	'}')?
-	( '(' secondEndName=ID ')')?
-	('{' isConstant?='const' '}')?
+	('(' secondEndName=ID ')')?
+		('{' secondEndMetaAttributes+=RelationMetaAttribute (',' secondEndMetaAttributes+=RelationMetaAttribute )*
+	'}')?
 	secondEnd=[ClassElement:QualifiedName]
     (hasInverse='inverseOf' inverseEnd=[ElementReference:QualifiedName])?
 ;
@@ -164,6 +168,10 @@ RelationDescription:
 Attribute:
 	name=ID ':' (attributeType=[DataType] | attributeType=BasicDataTypes)
 ;
+
+RelationMetaAttribute returns string:
+	'readOnly' | 'const' | 'union'
+	;
 
 RelationStereotype returns string:
 	'material' |
@@ -187,12 +195,15 @@ RelationStereotype returns string:
 	'triggers' |
 	'composition' |
 	'aggregation' |
-	'relator'
+	'relator' |
+	'inherence' | 
+	'value' | 
+	'formal'
 ;
 
 // Relator:
 //     'relator' name=QualifiedName ('{' 
-//         references=EndurantInternalReference*
+//         references=InternalRelation*
 //     '}')?
 // ;
 
@@ -233,6 +244,7 @@ BasicDataTypes returns string:
 EnumData:
 	'enum' name=ID '{'
 		elements+=EnumElement
+		(',' elements+=EnumElement)*
 	'}'
 ;
 
