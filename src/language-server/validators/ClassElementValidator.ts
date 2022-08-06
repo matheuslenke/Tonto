@@ -131,16 +131,25 @@ export class ClassElementValidator {
   * The element specializations must have ontological natures that are contained in the ontological natures of its superclasses
   */
   checkCompatibleNatures(classElement: ClassElement, accept: ValidationAcceptor): void {
-    const ElementNatures = classElement.ontologicalNatures
-    if (ElementNatures) {
-      classElement.specializationEndurants.forEach(specializationEndurant => {
-        let specializationNatures = specializationEndurant.ref?.ontologicalNatures
-        specializationNatures?.natures.forEach(nature => {
-          let natureExists = ElementNatures.natures.find(item => item === nature)
-          if (!natureExists && nature !== 'objects') {
-            accept('error', 'This element cannot be restricted to Natures that its superclass is not restricted', { node: classElement, property: 'ontologicalNatures' })
+    const elementNatures = classElement.ontologicalNatures
+
+    if (elementNatures) {
+      elementNatures.natures.forEach(nature => {
+        let specializationDoesntExistsInParent = true
+        classElement.specializationEndurants.forEach(specializationEndurant => {
+          let specializationNatures = specializationEndurant.ref?.ontologicalNatures
+          const natureExists = specializationNatures?.natures.find(specializationNature => {
+            console.log('Comparando', specializationNature, nature)
+            return specializationNature === nature
+          })
+          if (!natureExists) {
+            specializationDoesntExistsInParent = false
           }
         })
+        
+        if (!specializationDoesntExistsInParent) {
+          accept('error', 'This element cannot be restricted to Natures that its superclass is not restricted', { node: classElement, property: 'ontologicalNatures' })
+        }
       })
     }
   }

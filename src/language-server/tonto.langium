@@ -1,6 +1,11 @@
 grammar Tonto
 
-entry Model:
+interface Model {
+	imports: Import[];
+	modules: ContextModule[];
+}
+
+entry RModel returns Model:
 	imports+=Import*
 	modules+=ContextModule*
 ;
@@ -90,7 +95,7 @@ NonSortalStereotype returns string:
 ;
 
 UltimateSortalStereotypes returns string:
-	'kind' | 'collective' | 'quantity' | 'quality' | 'mode'
+	'kind' | 'collective' | 'quantity' | 'quality' | 'mode' | 'intrinsic' 'mode' | 'extrinsic' 'mode'
 ;
 
 BaseSortalStereotype returns string:
@@ -115,7 +120,8 @@ ElementReference:
 InternalRelation:
 	('@'relationType=RelationStereotype)?
 	('(' firstEndName=ID ')')?
-		('{' firstEndMetaAttributes+=RelationMetaAttribute (',' firstEndMetaAttributes+=RelationMetaAttribute )*
+		('{' firstEndMetaAttributes+=RelationMetaAttribute 
+		(',' firstEndMetaAttributes+=RelationMetaAttribute )*
 	'}')?
     firstCardinality=Cardinality?
 
@@ -130,7 +136,6 @@ InternalRelation:
 	'}')?
 
 	( '(' secondEndName=ID ')')?
-
 	('{' secondEndMetaAttributes+=RelationMetaAttribute (',' secondEndMetaAttributes+=RelationMetaAttribute )*
 	'}')?
 

@@ -10,11 +10,53 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
   "$type": "Grammar",
   "isDeclared": true,
   "name": "Tonto",
+  "interfaces": [
+    {
+      "$type": "Interface",
+      "attributes": [
+        {
+          "$type": "TypeAttribute",
+          "typeAlternatives": [
+            {
+              "$type": "AtomType",
+              "refType": {
+                "$refText": "Import"
+              },
+              "isArray": true,
+              "isRef": false
+            }
+          ],
+          "name": "imports",
+          "isOptional": false
+        },
+        {
+          "$type": "TypeAttribute",
+          "typeAlternatives": [
+            {
+              "$type": "AtomType",
+              "refType": {
+                "$refText": "ContextModule"
+              },
+              "isArray": true,
+              "isRef": false
+            }
+          ],
+          "name": "modules",
+          "isOptional": false
+        }
+      ],
+      "name": "Model",
+      "superTypes": []
+    }
+  ],
   "rules": [
     {
       "$type": "ParserRule",
-      "name": "Model",
+      "name": "RModel",
       "entry": true,
+      "returnType": {
+        "$refText": "Model"
+      },
       "alternatives": {
         "$type": "Group",
         "elements": [
@@ -891,6 +933,32 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
           {
             "$type": "Keyword",
             "value": "mode"
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "intrinsic"
+              },
+              {
+                "$type": "Keyword",
+                "value": "mode"
+              }
+            ]
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "extrinsic"
+              },
+              {
+                "$type": "Keyword",
+                "value": "mode"
+              }
+            ]
           }
         ]
       },
@@ -2706,7 +2774,6 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
   "definesHiddenTokens": false,
   "hiddenTokens": [],
   "imports": [],
-  "interfaces": [],
   "types": [],
   "usedGrammars": []
 }`));
