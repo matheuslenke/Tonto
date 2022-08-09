@@ -3,7 +3,6 @@ module OntologicalNaturesError {
 
     category SpecificFurniture of events specializes Furniture
 
-
     category EventFurniture of events, objects
 
     category ErrorFurniture of events, objects specializes EventFurniture

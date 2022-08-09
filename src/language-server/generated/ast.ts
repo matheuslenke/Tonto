@@ -171,11 +171,10 @@ export function isEnumElement(item: unknown): item is EnumElement {
 
 export interface ExternalRelation extends AstNode {
     readonly $container: ClassElement | ContextModule;
-    descriptions: Array<RelationDescription>
     firstCardinality?: Cardinality
     firstEnd: Reference<ClassElement>
     firstEndMetaAttributes: Array<RelationMetaAttribute>
-    firstEndName?: string
+    firstEndName: string
     hasInverse?: 'inverseOf'
     inverseEnd?: Reference<ElementReference>
     isAssociation: boolean
@@ -185,7 +184,7 @@ export interface ExternalRelation extends AstNode {
     secondCardinality?: Cardinality
     secondEnd: Reference<ClassElement>
     secondEndMetaAttributes: Array<RelationMetaAttribute>
-    secondEndName?: string
+    secondEndName: string
 }
 
 export const ExternalRelation = 'ExternalRelation';
@@ -223,7 +222,6 @@ export function isImport(item: unknown): item is Import {
 
 export interface InternalRelation extends AstNode {
     readonly $container: ClassElement | ContextModule;
-    descriptions: Array<RelationDescription>
     firstCardinality?: Cardinality
     firstEndMetaAttributes: Array<RelationMetaAttribute>
     firstEndName?: string
@@ -256,17 +254,6 @@ export function isModel(item: unknown): item is Model {
     return reflection.isInstance(item, Model);
 }
 
-export interface RelationDescription extends AstNode {
-    readonly $container: ExternalRelation | InternalRelation;
-    name: string
-}
-
-export const RelationDescription = 'RelationDescription';
-
-export function isRelationDescription(item: unknown): item is RelationDescription {
-    return reflection.isInstance(item, RelationDescription);
-}
-
 export interface Stereotype extends AstNode {
     readonly $container: ClassElement;
     stereotype: BaseSortalStereotype | NonSortalStereotype | UltimateSortalStereotypes
@@ -278,14 +265,14 @@ export function isStereotype(item: unknown): item is Stereotype {
     return reflection.isInstance(item, Stereotype);
 }
 
-export type TontoAstType = 'Attribute' | 'AuxiliaryDeclarations' | 'Cardinality' | 'ClassElement' | 'ContextModule' | 'DataType' | 'DataTypeProperty' | 'Element' | 'ElementOntologicalNature' | 'ElementReference' | 'EndurantType' | 'EnumData' | 'EnumElement' | 'ExternalRelation' | 'GeneralizationSet' | 'Import' | 'InternalRelation' | 'Model' | 'RelationDescription' | 'Stereotype';
+export type TontoAstType = 'Attribute' | 'AuxiliaryDeclarations' | 'Cardinality' | 'ClassElement' | 'ContextModule' | 'DataType' | 'DataTypeProperty' | 'Element' | 'ElementOntologicalNature' | 'ElementReference' | 'EndurantType' | 'EnumData' | 'EnumElement' | 'ExternalRelation' | 'GeneralizationSet' | 'Import' | 'InternalRelation' | 'Model' | 'Stereotype';
 
 export type TontoAstReference = 'Attribute:attributeType' | 'ClassElement:instanceOf' | 'ClassElement:specializationEndurants' | 'DataTypeProperty:type' | 'ExternalRelation:firstEnd' | 'ExternalRelation:inverseEnd' | 'ExternalRelation:secondEnd' | 'GeneralizationSet:categorizerItems' | 'GeneralizationSet:generalItem' | 'GeneralizationSet:specificItems' | 'Import:referencedModel' | 'InternalRelation:inverseEnd' | 'InternalRelation:secondEnd';
 
 export class TontoAstReflection implements AstReflection {
 
     getAllTypes(): string[] {
-        return ['Attribute', 'AuxiliaryDeclarations', 'Cardinality', 'ClassElement', 'ContextModule', 'DataType', 'DataTypeProperty', 'Element', 'ElementOntologicalNature', 'ElementReference', 'EndurantType', 'EnumData', 'EnumElement', 'ExternalRelation', 'GeneralizationSet', 'Import', 'InternalRelation', 'Model', 'RelationDescription', 'Stereotype'];
+        return ['Attribute', 'AuxiliaryDeclarations', 'Cardinality', 'ClassElement', 'ContextModule', 'DataType', 'DataTypeProperty', 'Element', 'ElementOntologicalNature', 'ElementReference', 'EndurantType', 'EnumData', 'EnumElement', 'ExternalRelation', 'GeneralizationSet', 'Import', 'InternalRelation', 'Model', 'Stereotype'];
     }
 
     isInstance(node: unknown, type: string): boolean {
@@ -412,7 +399,6 @@ export class TontoAstReflection implements AstReflection {
                 return {
                     name: 'ExternalRelation',
                     mandatory: [
-                        { name: 'descriptions', type: 'array' },
                         { name: 'firstEndMetaAttributes', type: 'array' },
                         { name: 'isAssociation', type: 'boolean' },
                         { name: 'isComposition', type: 'boolean' },
@@ -442,7 +428,6 @@ export class TontoAstReflection implements AstReflection {
                 return {
                     name: 'InternalRelation',
                     mandatory: [
-                        { name: 'descriptions', type: 'array' },
                         { name: 'firstEndMetaAttributes', type: 'array' },
                         { name: 'isAssociation', type: 'boolean' },
                         { name: 'isComposition', type: 'boolean' },

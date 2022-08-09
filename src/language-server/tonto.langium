@@ -119,25 +119,24 @@ ElementReference:
 
 InternalRelation:
 	('@'relationType=RelationStereotype)?
-	('(' firstEndName=ID ')')?
-		('{' firstEndMetaAttributes+=RelationMetaAttribute 
-		(',' firstEndMetaAttributes+=RelationMetaAttribute )*
-	'}')?
-    firstCardinality=Cardinality?
 
+	// 1. First end name and Meta Attributes option one
+	(	('(' firstEndName=ID ')') &
+		('{' firstEndMetaAttributes+=RelationMetaAttribute 
+		(',' firstEndMetaAttributes+=RelationMetaAttribute )* '}')
+	)?
+
+    firstCardinality=Cardinality?
 	(isAssociation?='--' (name=QualifiedName '--')? 
 	| 
 	isComposition?='<>--' (name=QualifiedName '<>--')? )
-
 	secondCardinality=Cardinality? 
-	('{'
-		descriptions+=RelationDescription
-		(',' descriptions+=RelationDescription)*
-	'}')?
 
-	( '(' secondEndName=ID ')')?
-	('{' secondEndMetaAttributes+=RelationMetaAttribute (',' secondEndMetaAttributes+=RelationMetaAttribute )*
-	'}')?
+	(	('{' secondEndMetaAttributes+=RelationMetaAttribute 
+		(',' secondEndMetaAttributes+=RelationMetaAttribute )* '}')
+		&
+		('(' secondEndName=ID ')')
+	)?
 
 	secondEnd=[ClassElement:QualifiedName]
     (hasInverse='inverseOf' inverseEnd=[ElementReference:QualifiedName])?
@@ -146,28 +145,28 @@ InternalRelation:
 ExternalRelation:
 	('@'relationType=RelationStereotype)?
 	'relation'
-	('(' firstEndName=ID ')')?
-		('{' firstEndMetaAttributes+=RelationMetaAttribute (',' firstEndMetaAttributes+=RelationMetaAttribute )*
-	'}')?
+
+	(	('(' firstEndName=ID ')')
+		&
+		('{' firstEndMetaAttributes+=RelationMetaAttribute 
+		(',' firstEndMetaAttributes+=RelationMetaAttribute )* '}')
+	)
+	
     firstEnd=[ClassElement:QualifiedName]
 	firstCardinality=Cardinality?
 	(isAssociation?='--' (name=QualifiedName '--')? 
 	| 
 	isComposition?='<>--' (name=QualifiedName '<>--')? )
 	    secondCardinality=Cardinality? 
-	('{'
-		descriptions+=RelationDescription
-		(',' descriptions+=RelationDescription)*
-	'}')?
-	('(' secondEndName=ID ')')?
-		('{' secondEndMetaAttributes+=RelationMetaAttribute (',' secondEndMetaAttributes+=RelationMetaAttribute )*
-	'}')?
+
+	(	('(' secondEndName=ID ')')
+		&
+		('{' secondEndMetaAttributes+=RelationMetaAttribute 
+		(',' secondEndMetaAttributes+=RelationMetaAttribute )* '}')
+	)
+
 	secondEnd=[ClassElement:QualifiedName]
     (hasInverse='inverseOf' inverseEnd=[ElementReference:QualifiedName])?
-;
-
-RelationDescription:
-	name=ID	
 ;
 
 Attribute:
@@ -176,7 +175,7 @@ Attribute:
 
 RelationMetaAttribute returns string:
 	'readOnly' | 'const' | 'union'
-	;
+;
 
 RelationStereotype returns string:
 	'material' |
