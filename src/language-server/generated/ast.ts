@@ -41,8 +41,6 @@ export type OntologicalNature = 'abstracts' | 'collectives' | 'events' | 'extrin
 
 export type QualifiedName = string;
 
-export type RelationMetaAttribute = 'const' | 'readOnly' | 'union';
-
 export type RelationStereotype = 'aggregation' | 'bringsAbout' | 'characterization' | 'comparative' | 'componentOf' | 'composition' | 'creation' | 'derivation' | 'externalDependence' | 'formal' | 'historicalDependence' | 'inherence' | 'instantiation' | 'manifestation' | 'material' | 'mediation' | 'memberOf' | 'participation' | 'participational' | 'relator' | 'subCollectionOf' | 'subQuantityOf' | 'termination' | 'triggers' | 'value';
 
 export type UltimateSortalStereotypes = string;
@@ -254,6 +252,17 @@ export function isModel(item: unknown): item is Model {
     return reflection.isInstance(item, Model);
 }
 
+export interface RelationMetaAttribute extends AstNode {
+    readonly $container: ExternalRelation | InternalRelation;
+    subsetRelation?: Reference<ElementReference>
+}
+
+export const RelationMetaAttribute = 'RelationMetaAttribute';
+
+export function isRelationMetaAttribute(item: unknown): item is RelationMetaAttribute {
+    return reflection.isInstance(item, RelationMetaAttribute);
+}
+
 export interface Stereotype extends AstNode {
     readonly $container: ClassElement;
     stereotype: BaseSortalStereotype | NonSortalStereotype | UltimateSortalStereotypes
@@ -265,14 +274,14 @@ export function isStereotype(item: unknown): item is Stereotype {
     return reflection.isInstance(item, Stereotype);
 }
 
-export type TontoAstType = 'Attribute' | 'AuxiliaryDeclarations' | 'Cardinality' | 'ClassElement' | 'ContextModule' | 'DataType' | 'DataTypeProperty' | 'Element' | 'ElementOntologicalNature' | 'ElementReference' | 'EndurantType' | 'EnumData' | 'EnumElement' | 'ExternalRelation' | 'GeneralizationSet' | 'Import' | 'InternalRelation' | 'Model' | 'Stereotype';
+export type TontoAstType = 'Attribute' | 'AuxiliaryDeclarations' | 'Cardinality' | 'ClassElement' | 'ContextModule' | 'DataType' | 'DataTypeProperty' | 'Element' | 'ElementOntologicalNature' | 'ElementReference' | 'EndurantType' | 'EnumData' | 'EnumElement' | 'ExternalRelation' | 'GeneralizationSet' | 'Import' | 'InternalRelation' | 'Model' | 'RelationMetaAttribute' | 'Stereotype';
 
-export type TontoAstReference = 'Attribute:attributeType' | 'ClassElement:instanceOf' | 'ClassElement:specializationEndurants' | 'DataTypeProperty:type' | 'ExternalRelation:firstEnd' | 'ExternalRelation:inverseEnd' | 'ExternalRelation:secondEnd' | 'GeneralizationSet:categorizerItems' | 'GeneralizationSet:generalItem' | 'GeneralizationSet:specificItems' | 'Import:referencedModel' | 'InternalRelation:inverseEnd' | 'InternalRelation:secondEnd';
+export type TontoAstReference = 'Attribute:attributeType' | 'ClassElement:instanceOf' | 'ClassElement:specializationEndurants' | 'DataTypeProperty:type' | 'ExternalRelation:firstEnd' | 'ExternalRelation:inverseEnd' | 'ExternalRelation:secondEnd' | 'GeneralizationSet:categorizerItems' | 'GeneralizationSet:generalItem' | 'GeneralizationSet:specificItems' | 'Import:referencedModel' | 'InternalRelation:inverseEnd' | 'InternalRelation:secondEnd' | 'RelationMetaAttribute:subsetRelation';
 
 export class TontoAstReflection implements AstReflection {
 
     getAllTypes(): string[] {
-        return ['Attribute', 'AuxiliaryDeclarations', 'Cardinality', 'ClassElement', 'ContextModule', 'DataType', 'DataTypeProperty', 'Element', 'ElementOntologicalNature', 'ElementReference', 'EndurantType', 'EnumData', 'EnumElement', 'ExternalRelation', 'GeneralizationSet', 'Import', 'InternalRelation', 'Model', 'Stereotype'];
+        return ['Attribute', 'AuxiliaryDeclarations', 'Cardinality', 'ClassElement', 'ContextModule', 'DataType', 'DataTypeProperty', 'Element', 'ElementOntologicalNature', 'ElementReference', 'EndurantType', 'EnumData', 'EnumElement', 'ExternalRelation', 'GeneralizationSet', 'Import', 'InternalRelation', 'Model', 'RelationMetaAttribute', 'Stereotype'];
     }
 
     isInstance(node: unknown, type: string): boolean {
@@ -344,6 +353,9 @@ export class TontoAstReflection implements AstReflection {
             }
             case 'InternalRelation:secondEnd': {
                 return ClassElement;
+            }
+            case 'RelationMetaAttribute:subsetRelation': {
+                return ElementReference;
             }
             default: {
                 throw new Error(`${referenceId} is not a valid reference id.`);

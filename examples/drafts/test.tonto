@@ -12,5 +12,5 @@ module Test {
         @mediation [1] -- hasOne -- [1] Heart
     }
 
-    ref Person <>-- Heart
+    relation Person <>-- Heart
 }

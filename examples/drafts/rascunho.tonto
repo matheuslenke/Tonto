@@ -17,7 +17,7 @@ module Marriage {
 
     // especificação equivalente, não aninhada
     relator Marriage specializes SocialRelator
-    ref Marriage -- [2..*] Spouse
+    relation Marriage -- [2..*] Spouse
 
     kind Person
 
@@ -32,7 +32,7 @@ module Marriage {
     // anotação de imutabilidade explícita (nem precisava, 
     // pois trata-se de mediation em que apenas um lado é relator)
     relator Marriage specializes SocialRelator
-    ref Marriage -- [2..*] {const} Spouse
+    relation Marriage -- [2..*] {const} Spouse
 
 
     // associação nomeada, especificada de forma aninhada na classe
@@ -65,8 +65,8 @@ module Marriage {
     // }
 
     relator Marriage (instanceOf SocialRelatorType) specializes SocialRelator
-    ref (marriage) [1] Marriage -- involvesSpouse -- [2..*] (spouses) Spouse
-    // ref [1..*] Marriage <>-- MaritalDutyMarriage <>-- [1..*] MaritalRight
+    relation (marriage) Marriage [1] -- involvesSpouse -- [2..*] (spouses) Spouse
+    // relation [1..*] Marriage <>-- MaritalDutyMarriage <>-- [1..*] MaritalRight
 
 
     // relator Marriage : SocialRelatorType specializes SocialRelator
@@ -87,12 +87,12 @@ module Marriage {
     // role Spouse specializes Person
     // Spouse 2..* -- isBoundBy –- 1 Marriage inverse of involvesSpouse
 
-    extrinsic mode MaritalDuty {
-        @inherence -- Spouse
-        @externalDependence –- Spouse
-        @formal {const} –- isCorrelativeOf {symmetric} -- {const} MaritalRight 
-    // the duty and its correlative are part of the same marriage
-    }
+    // extrinsic mode MaritalDuty {
+    //     @inherence -- Spouse
+    //     @externalDependence –- Spouse
+    //     @formal {const} –- isCorrelativeOf {symmetric} -- {const} MaritalRight 
+    // // the duty and its correlative are part of the same marriage
+    // }
 
     // extrinsic mode MaritalRight {
     //     @inherence -- Spouse

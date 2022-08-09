@@ -173,8 +173,9 @@ Attribute:
 	name=ID ':' (attributeType=[DataType] | attributeType=BasicDataTypes)
 ;
 
-RelationMetaAttribute returns string:
-	'readOnly' | 'const' | 'union'
+RelationMetaAttribute:
+	'readOnly' | 'const' | 'union' |
+	('subsets' subsetRelation=[ElementReference:QualifiedName] )
 ;
 
 RelationStereotype returns string:

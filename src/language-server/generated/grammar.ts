@@ -1933,7 +1933,6 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
     {
       "$type": "ParserRule",
       "name": "RelationMetaAttribute",
-      "dataType": "string",
       "alternatives": {
         "$type": "Alternatives",
         "elements": [
@@ -1948,6 +1947,34 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
           {
             "$type": "Keyword",
             "value": "union"
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "subsets"
+              },
+              {
+                "$type": "Assignment",
+                "feature": "subsetRelation",
+                "operator": "=",
+                "terminal": {
+                  "$type": "CrossReference",
+                  "type": {
+                    "$refText": "ElementReference"
+                  },
+                  "terminal": {
+                    "$type": "RuleCall",
+                    "rule": {
+                      "$refText": "QualifiedName"
+                    },
+                    "arguments": []
+                  },
+                  "deprecatedSyntax": false
+                }
+              }
+            ]
           }
         ]
       },

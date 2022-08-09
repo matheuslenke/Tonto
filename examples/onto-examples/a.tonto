@@ -24,12 +24,13 @@ mode Weight specializes BiologicalEntity
 quality Size
 
 kind Organization {
-    (organization) [*] -- hasMember -- [*] (member) Person
+   {const} (organization) [*] -- hasMember -- [*] (member) {const} Person
 }
+
 relation Person -- memberIn -- Organization inverseOf hasMember
 
 kind Person (instanceOf Species) specializes Animal {
-    (student) /*{const_}*/ -- enrolledIn /* specializes memberIn */ -- [0..*] {const_, subsets_organizations} (schools) School 
+    (student) /*{const_}*/ -- enrolledIn /* specializes memberIn */ -- [0..*] {const, subsets hasMember} (schools) School 
 }
 
 // ref Person (employer) [*] -- employedIn -- School
