@@ -1,0 +1,36 @@
+module CarRental {
+    category CategoryItem
+    mixin MixinItem
+    phaseMixin PhaseMixinItem
+    roleMixin RoleMixinItem
+    historicalRoleMixin HistoricalRoleMixinItem
+    event EventItem
+    kind PersonItem
+    collective CollectiveItem
+    quantity QuantityItem
+    quality QualityItem
+    mode ModeItem
+    intrinsicMode IntrinsicItem
+    extrinsicMode ExtrinsicItem
+    subkind SubkindItem
+    phase PhaseItem
+    role RoleItem
+    historicalRole HistoricalRoleItem
+    relator RelatorItem
+   
+}
+// EndurantType:
+//     stereotype=(NonSortalStereotype | UltimateSortalStereotypes | BaseSortalStereotype)
+// ;
+
+// NonSortalStereotype returns string:
+// 	'category' | 'mixin' | 'phaseMixin' | 'roleMixin' | 'historicalRoleMixin' | 'event'
+// ;
+
+// UltimateSortalStereotypes returns string:
+// 	'kind' | 'collective' | 'quantity' | 'quality' | 'mode' | 'intrinsic' 'mode' | 'extrinsic' 'mode'
+// ;
+
+// BaseSortalStereotype returns string:
+// 	'subkind' | 'phase' | 'role' | 'historicalRole' | 'relator'
+// ;

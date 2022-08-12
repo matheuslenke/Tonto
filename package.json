@@ -75,7 +75,7 @@
         "commander": "^8.0.0",
         "langium": "^0.4.0",
         "node-fetch": "^2.6.1",
-        "ontouml-server": "github:OntoUML/ontouml-server",
+        "ontouml-js": "../ontouml-js",
         "vscode-languageclient": "^7.0.0",
         "vscode-languageserver": "^7.0.0"
     },

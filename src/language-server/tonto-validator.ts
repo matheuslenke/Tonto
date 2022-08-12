@@ -25,7 +25,10 @@ export class TontoValidationRegistry extends ValidationRegistry {
                 validator.ClassElementValidator.checkDuplicatedReferenceNames,
                 validator.ClassElementValidator.checkCompatibleNatures,
                 validator.ClassElementValidator.checkCircularSpecialization,
-                validator.ClassElementValidator.checkNaturesOnlyOnNonSortals
+                validator.ClassElementValidator.checkNaturesOnlyOnNonSortals,
+            ],
+            ContextModule: [
+                validator.ContextModuleValidator.checkContextModuleStartsWithCapital
             ]
         };
         this.register(checks, validator);

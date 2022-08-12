@@ -1,0 +1,3074 @@
+[
+{
+  "model": {
+    "contents": [
+      {
+        "stereotype": "category",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": true,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1ghn",
+        "name": "CategoryItem",
+        "description": null
+      },
+      {
+        "stereotype": "mixin",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": true,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gho",
+        "name": "CategoryItem",
+        "description": null
+      },
+      {
+        "stereotype": "phaseMixin",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": true,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1ghp",
+        "name": "CategoryItem",
+        "description": null
+      },
+      {
+        "stereotype": "roleMixin",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": true,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1ghq",
+        "name": "CategoryItem",
+        "description": null
+      },
+      {
+        "stereotype": "roleMixin",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": true,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1ghr",
+        "name": "CategoryItem",
+        "description": null
+      },
+      {
+        "stereotype": "event",
+        "restrictedTo": [
+          "event"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1ghs",
+        "name": "CategoryItem",
+        "description": null
+      },
+      {
+        "stereotype": "kind",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1ght",
+        "name": "CategoryItem",
+        "description": null
+      },
+      {
+        "stereotype": "collective",
+        "restrictedTo": [
+          "collective"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1ghu",
+        "name": "CategoryItem",
+        "description": null
+      },
+      {
+        "stereotype": "quantity",
+        "restrictedTo": [
+          "quantity"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1ghv",
+        "name": "CategoryItem",
+        "description": null
+      },
+      {
+        "stereotype": "quality",
+        "restrictedTo": [
+          "quality"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1ghw",
+        "name": "CategoryItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": null,
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1ghx",
+        "name": "CategoryItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "intrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1ghy",
+        "name": "CategoryItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "extrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1ghz",
+        "name": "CategoryItem",
+        "description": null
+      },
+      {
+        "stereotype": "subkind",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gi0",
+        "name": "CategoryItem",
+        "description": null
+      },
+      {
+        "stereotype": "phase",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gi1",
+        "name": "CategoryItem",
+        "description": null
+      },
+      {
+        "stereotype": "role",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gi2",
+        "name": "CategoryItem",
+        "description": null
+      },
+      {
+        "stereotype": "historicalRole",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gi3",
+        "name": "CategoryItem",
+        "description": null
+      },
+      {
+        "stereotype": "relator",
+        "restrictedTo": [
+          "relator"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gi4",
+        "name": "CategoryItem",
+        "description": null
+      },
+      {
+        "stereotype": "mixin",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": true,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gi5",
+        "name": "MixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "phaseMixin",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": true,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gi6",
+        "name": "MixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "roleMixin",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": true,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gi7",
+        "name": "MixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "roleMixin",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": true,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gi8",
+        "name": "MixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "event",
+        "restrictedTo": [
+          "event"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gi9",
+        "name": "MixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "kind",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gia",
+        "name": "MixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "collective",
+        "restrictedTo": [
+          "collective"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gib",
+        "name": "MixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "quantity",
+        "restrictedTo": [
+          "quantity"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gic",
+        "name": "MixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "quality",
+        "restrictedTo": [
+          "quality"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gid",
+        "name": "MixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": null,
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gie",
+        "name": "MixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "intrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gif",
+        "name": "MixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "extrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gig",
+        "name": "MixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "subkind",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gih",
+        "name": "MixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "phase",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gii",
+        "name": "MixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "role",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gij",
+        "name": "MixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "historicalRole",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gik",
+        "name": "MixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "relator",
+        "restrictedTo": [
+          "relator"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gil",
+        "name": "MixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "phaseMixin",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": true,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gim",
+        "name": "PhaseMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "roleMixin",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": true,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gin",
+        "name": "PhaseMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "roleMixin",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": true,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gio",
+        "name": "PhaseMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "event",
+        "restrictedTo": [
+          "event"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gip",
+        "name": "PhaseMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "kind",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1giq",
+        "name": "PhaseMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "collective",
+        "restrictedTo": [
+          "collective"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gir",
+        "name": "PhaseMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "quantity",
+        "restrictedTo": [
+          "quantity"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gis",
+        "name": "PhaseMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "quality",
+        "restrictedTo": [
+          "quality"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1git",
+        "name": "PhaseMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": null,
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1giu",
+        "name": "PhaseMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "intrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1giv",
+        "name": "PhaseMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "extrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1giw",
+        "name": "PhaseMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "subkind",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gix",
+        "name": "PhaseMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "phase",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1giy",
+        "name": "PhaseMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "role",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1giz",
+        "name": "PhaseMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "historicalRole",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gj0",
+        "name": "PhaseMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "relator",
+        "restrictedTo": [
+          "relator"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gj1",
+        "name": "PhaseMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "roleMixin",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": true,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gj2",
+        "name": "RoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "roleMixin",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": true,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gj3",
+        "name": "RoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "event",
+        "restrictedTo": [
+          "event"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gj4",
+        "name": "RoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "kind",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gj5",
+        "name": "RoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "collective",
+        "restrictedTo": [
+          "collective"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gj6",
+        "name": "RoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "quantity",
+        "restrictedTo": [
+          "quantity"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gj7",
+        "name": "RoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "quality",
+        "restrictedTo": [
+          "quality"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gj8",
+        "name": "RoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": null,
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gj9",
+        "name": "RoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "intrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gja",
+        "name": "RoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "extrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjb",
+        "name": "RoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "subkind",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjc",
+        "name": "RoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "phase",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjd",
+        "name": "RoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "role",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gje",
+        "name": "RoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "historicalRole",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjf",
+        "name": "RoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "relator",
+        "restrictedTo": [
+          "relator"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjg",
+        "name": "RoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "roleMixin",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": true,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjh",
+        "name": "HistoricalRoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "event",
+        "restrictedTo": [
+          "event"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gji",
+        "name": "HistoricalRoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "kind",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjj",
+        "name": "HistoricalRoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "collective",
+        "restrictedTo": [
+          "collective"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjk",
+        "name": "HistoricalRoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "quantity",
+        "restrictedTo": [
+          "quantity"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjl",
+        "name": "HistoricalRoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "quality",
+        "restrictedTo": [
+          "quality"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjm",
+        "name": "HistoricalRoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": null,
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjn",
+        "name": "HistoricalRoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "intrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjo",
+        "name": "HistoricalRoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "extrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjp",
+        "name": "HistoricalRoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "subkind",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjq",
+        "name": "HistoricalRoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "phase",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjr",
+        "name": "HistoricalRoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "role",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjs",
+        "name": "HistoricalRoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "historicalRole",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjt",
+        "name": "HistoricalRoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "relator",
+        "restrictedTo": [
+          "relator"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gju",
+        "name": "HistoricalRoleMixinItem",
+        "description": null
+      },
+      {
+        "stereotype": "event",
+        "restrictedTo": [
+          "event"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjv",
+        "name": "EventItem",
+        "description": null
+      },
+      {
+        "stereotype": "kind",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjw",
+        "name": "EventItem",
+        "description": null
+      },
+      {
+        "stereotype": "collective",
+        "restrictedTo": [
+          "collective"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjx",
+        "name": "EventItem",
+        "description": null
+      },
+      {
+        "stereotype": "quantity",
+        "restrictedTo": [
+          "quantity"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjy",
+        "name": "EventItem",
+        "description": null
+      },
+      {
+        "stereotype": "quality",
+        "restrictedTo": [
+          "quality"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gjz",
+        "name": "EventItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": null,
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gk0",
+        "name": "EventItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "intrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gk1",
+        "name": "EventItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "extrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gk2",
+        "name": "EventItem",
+        "description": null
+      },
+      {
+        "stereotype": "subkind",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gk3",
+        "name": "EventItem",
+        "description": null
+      },
+      {
+        "stereotype": "phase",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gk4",
+        "name": "EventItem",
+        "description": null
+      },
+      {
+        "stereotype": "role",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gk5",
+        "name": "EventItem",
+        "description": null
+      },
+      {
+        "stereotype": "historicalRole",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gk6",
+        "name": "EventItem",
+        "description": null
+      },
+      {
+        "stereotype": "relator",
+        "restrictedTo": [
+          "relator"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gk7",
+        "name": "EventItem",
+        "description": null
+      },
+      {
+        "stereotype": "kind",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gk8",
+        "name": "PersonItem",
+        "description": null
+      },
+      {
+        "stereotype": "collective",
+        "restrictedTo": [
+          "collective"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gk9",
+        "name": "PersonItem",
+        "description": null
+      },
+      {
+        "stereotype": "quantity",
+        "restrictedTo": [
+          "quantity"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gka",
+        "name": "PersonItem",
+        "description": null
+      },
+      {
+        "stereotype": "quality",
+        "restrictedTo": [
+          "quality"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gkb",
+        "name": "PersonItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": null,
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gkc",
+        "name": "PersonItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "intrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gkd",
+        "name": "PersonItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "extrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gke",
+        "name": "PersonItem",
+        "description": null
+      },
+      {
+        "stereotype": "subkind",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gkf",
+        "name": "PersonItem",
+        "description": null
+      },
+      {
+        "stereotype": "phase",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gkg",
+        "name": "PersonItem",
+        "description": null
+      },
+      {
+        "stereotype": "role",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gkh",
+        "name": "PersonItem",
+        "description": null
+      },
+      {
+        "stereotype": "historicalRole",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gki",
+        "name": "PersonItem",
+        "description": null
+      },
+      {
+        "stereotype": "relator",
+        "restrictedTo": [
+          "relator"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gkj",
+        "name": "PersonItem",
+        "description": null
+      },
+      {
+        "stereotype": "collective",
+        "restrictedTo": [
+          "collective"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gkk",
+        "name": "CollectiveItem",
+        "description": null
+      },
+      {
+        "stereotype": "quantity",
+        "restrictedTo": [
+          "quantity"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gkl",
+        "name": "CollectiveItem",
+        "description": null
+      },
+      {
+        "stereotype": "quality",
+        "restrictedTo": [
+          "quality"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gkm",
+        "name": "CollectiveItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": null,
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gkn",
+        "name": "CollectiveItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "intrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gko",
+        "name": "CollectiveItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "extrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gkp",
+        "name": "CollectiveItem",
+        "description": null
+      },
+      {
+        "stereotype": "subkind",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gkq",
+        "name": "CollectiveItem",
+        "description": null
+      },
+      {
+        "stereotype": "phase",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gkr",
+        "name": "CollectiveItem",
+        "description": null
+      },
+      {
+        "stereotype": "role",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gks",
+        "name": "CollectiveItem",
+        "description": null
+      },
+      {
+        "stereotype": "historicalRole",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gkt",
+        "name": "CollectiveItem",
+        "description": null
+      },
+      {
+        "stereotype": "relator",
+        "restrictedTo": [
+          "relator"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gku",
+        "name": "CollectiveItem",
+        "description": null
+      },
+      {
+        "stereotype": "quantity",
+        "restrictedTo": [
+          "quantity"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gkv",
+        "name": "QuantityItem",
+        "description": null
+      },
+      {
+        "stereotype": "quality",
+        "restrictedTo": [
+          "quality"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gkw",
+        "name": "QuantityItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": null,
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gkx",
+        "name": "QuantityItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "intrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gky",
+        "name": "QuantityItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "extrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gkz",
+        "name": "QuantityItem",
+        "description": null
+      },
+      {
+        "stereotype": "subkind",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gl0",
+        "name": "QuantityItem",
+        "description": null
+      },
+      {
+        "stereotype": "phase",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gl1",
+        "name": "QuantityItem",
+        "description": null
+      },
+      {
+        "stereotype": "role",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gl2",
+        "name": "QuantityItem",
+        "description": null
+      },
+      {
+        "stereotype": "historicalRole",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gl3",
+        "name": "QuantityItem",
+        "description": null
+      },
+      {
+        "stereotype": "relator",
+        "restrictedTo": [
+          "relator"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gl4",
+        "name": "QuantityItem",
+        "description": null
+      },
+      {
+        "stereotype": "quality",
+        "restrictedTo": [
+          "quality"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gl5",
+        "name": "QualityItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": null,
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gl6",
+        "name": "QualityItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "intrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gl7",
+        "name": "QualityItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "extrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gl8",
+        "name": "QualityItem",
+        "description": null
+      },
+      {
+        "stereotype": "subkind",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gl9",
+        "name": "QualityItem",
+        "description": null
+      },
+      {
+        "stereotype": "phase",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gla",
+        "name": "QualityItem",
+        "description": null
+      },
+      {
+        "stereotype": "role",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1glb",
+        "name": "QualityItem",
+        "description": null
+      },
+      {
+        "stereotype": "historicalRole",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1glc",
+        "name": "QualityItem",
+        "description": null
+      },
+      {
+        "stereotype": "relator",
+        "restrictedTo": [
+          "relator"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gld",
+        "name": "QualityItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": null,
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gle",
+        "name": "ModeItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "intrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1glf",
+        "name": "ModeItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "extrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1glg",
+        "name": "ModeItem",
+        "description": null
+      },
+      {
+        "stereotype": "subkind",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1glh",
+        "name": "ModeItem",
+        "description": null
+      },
+      {
+        "stereotype": "phase",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gli",
+        "name": "ModeItem",
+        "description": null
+      },
+      {
+        "stereotype": "role",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1glj",
+        "name": "ModeItem",
+        "description": null
+      },
+      {
+        "stereotype": "historicalRole",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1glk",
+        "name": "ModeItem",
+        "description": null
+      },
+      {
+        "stereotype": "relator",
+        "restrictedTo": [
+          "relator"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gll",
+        "name": "ModeItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "intrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1glm",
+        "name": "IntrinsicItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "extrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gln",
+        "name": "IntrinsicItem",
+        "description": null
+      },
+      {
+        "stereotype": "subkind",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1glo",
+        "name": "IntrinsicItem",
+        "description": null
+      },
+      {
+        "stereotype": "phase",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1glp",
+        "name": "IntrinsicItem",
+        "description": null
+      },
+      {
+        "stereotype": "role",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1glq",
+        "name": "IntrinsicItem",
+        "description": null
+      },
+      {
+        "stereotype": "historicalRole",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1glr",
+        "name": "IntrinsicItem",
+        "description": null
+      },
+      {
+        "stereotype": "relator",
+        "restrictedTo": [
+          "relator"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gls",
+        "name": "IntrinsicItem",
+        "description": null
+      },
+      {
+        "stereotype": "mode",
+        "restrictedTo": [
+          "extrinsic-mode"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1glt",
+        "name": "ExtrinsicItem",
+        "description": null
+      },
+      {
+        "stereotype": "subkind",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1glu",
+        "name": "ExtrinsicItem",
+        "description": null
+      },
+      {
+        "stereotype": "phase",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1glv",
+        "name": "ExtrinsicItem",
+        "description": null
+      },
+      {
+        "stereotype": "role",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1glw",
+        "name": "ExtrinsicItem",
+        "description": null
+      },
+      {
+        "stereotype": "historicalRole",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1glx",
+        "name": "ExtrinsicItem",
+        "description": null
+      },
+      {
+        "stereotype": "relator",
+        "restrictedTo": [
+          "relator"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gly",
+        "name": "ExtrinsicItem",
+        "description": null
+      },
+      {
+        "stereotype": "subkind",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1glz",
+        "name": "SubkindItem",
+        "description": null
+      },
+      {
+        "stereotype": "phase",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gm0",
+        "name": "SubkindItem",
+        "description": null
+      },
+      {
+        "stereotype": "role",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gm1",
+        "name": "SubkindItem",
+        "description": null
+      },
+      {
+        "stereotype": "historicalRole",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gm2",
+        "name": "SubkindItem",
+        "description": null
+      },
+      {
+        "stereotype": "relator",
+        "restrictedTo": [
+          "relator"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gm3",
+        "name": "SubkindItem",
+        "description": null
+      },
+      {
+        "stereotype": "phase",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gm4",
+        "name": "PhaseItem",
+        "description": null
+      },
+      {
+        "stereotype": "role",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gm5",
+        "name": "PhaseItem",
+        "description": null
+      },
+      {
+        "stereotype": "historicalRole",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gm6",
+        "name": "PhaseItem",
+        "description": null
+      },
+      {
+        "stereotype": "relator",
+        "restrictedTo": [
+          "relator"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gm7",
+        "name": "PhaseItem",
+        "description": null
+      },
+      {
+        "stereotype": "role",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gm8",
+        "name": "RoleItem",
+        "description": null
+      },
+      {
+        "stereotype": "historicalRole",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gm9",
+        "name": "RoleItem",
+        "description": null
+      },
+      {
+        "stereotype": "relator",
+        "restrictedTo": [
+          "relator"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gma",
+        "name": "RoleItem",
+        "description": null
+      },
+      {
+        "stereotype": "historicalRole",
+        "restrictedTo": [
+          "functional-complex"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gmb",
+        "name": "HistoricalRoleItem",
+        "description": null
+      },
+      {
+        "stereotype": "relator",
+        "restrictedTo": [
+          "relator"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gmc",
+        "name": "HistoricalRoleItem",
+        "description": null
+      },
+      {
+        "stereotype": "relator",
+        "restrictedTo": [
+          "relator"
+        ],
+        "properties": null,
+        "literals": null,
+        "isAbstract": false,
+        "isDerived": false,
+        "isExtensional": false,
+        "isPowertype": false,
+        "order": "1",
+        "propertyAssignments": {},
+        "type": "Class",
+        "id": "1jyr6mvl6pr1gmd",
+        "name": "RelatorItem",
+        "description": null
+      }
+    ],
+    "propertyAssignments": {},
+    "type": "Package",
+    "id": "1jyr6mvl6pr1ghm",
+    "name": "CarRental",
+    "description": null
+  },
+  "diagrams": null,
+  "type": "Project",
+  "id": "1jyr6mvl6pr1ghl",
+  "name": "generating-CarRental",
+  "description": null
+}
+]

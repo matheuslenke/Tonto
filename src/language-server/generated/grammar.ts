@@ -383,56 +383,6 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
     },
     {
       "$type": "ParserRule",
-      "name": "Stereotype",
-      "alternatives": {
-        "$type": "Group",
-        "elements": [
-          {
-            "$type": "Keyword",
-            "value": "@"
-          },
-          {
-            "$type": "Assignment",
-            "feature": "stereotype",
-            "operator": "=",
-            "terminal": {
-              "$type": "Alternatives",
-              "elements": [
-                {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$refText": "NonSortalStereotype"
-                  },
-                  "arguments": []
-                },
-                {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$refText": "UltimateSortalStereotypes"
-                  },
-                  "arguments": []
-                },
-                {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$refText": "BaseSortalStereotype"
-                  },
-                  "arguments": []
-                }
-              ]
-            }
-          }
-        ]
-      },
-      "definesHiddenTokens": false,
-      "entry": false,
-      "fragment": false,
-      "hiddenTokens": [],
-      "parameters": [],
-      "wildcard": false
-    },
-    {
-      "$type": "ParserRule",
       "name": "Class",
       "inferredType": {
         "$type": "InferredType",
@@ -442,16 +392,25 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
         "$type": "Group",
         "elements": [
           {
-            "$type": "Assignment",
-            "feature": "classElementType",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$refText": "Stereotype"
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "@"
               },
-              "arguments": []
-            },
+              {
+                "$type": "Assignment",
+                "feature": "classElementType",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$refText": "EndurantType"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
             "cardinality": "?"
           },
           {
@@ -935,30 +894,12 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
             "value": "mode"
           },
           {
-            "$type": "Group",
-            "elements": [
-              {
-                "$type": "Keyword",
-                "value": "intrinsic"
-              },
-              {
-                "$type": "Keyword",
-                "value": "mode"
-              }
-            ]
+            "$type": "Keyword",
+            "value": "intrinsicMode"
           },
           {
-            "$type": "Group",
-            "elements": [
-              {
-                "$type": "Keyword",
-                "value": "extrinsic"
-              },
-              {
-                "$type": "Keyword",
-                "value": "mode"
-              }
-            ]
+            "$type": "Keyword",
+            "value": "extrinsicMode"
           }
         ]
       },
@@ -1154,6 +1095,10 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
     {
       "$type": "ParserRule",
       "name": "InternalRelation",
+      "inferredType": {
+        "$type": "InferredType",
+        "name": "ElementReference"
+      },
       "alternatives": {
         "$type": "Group",
         "elements": [
@@ -1503,6 +1448,10 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
     {
       "$type": "ParserRule",
       "name": "ExternalRelation",
+      "inferredType": {
+        "$type": "InferredType",
+        "name": "ElementReference"
+      },
       "alternatives": {
         "$type": "Group",
         "elements": [

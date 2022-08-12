@@ -56,12 +56,10 @@ CustomType infers ClassElement:
 /*
 * Stereotype is created so users can use the class syntax that is more similar to what OntoUML was doing as an extension of UML
 */
-Stereotype:
-	'@' stereotype=(NonSortalStereotype | UltimateSortalStereotypes | BaseSortalStereotype)
-;
 
 Class infers ClassElement:
-	classElementType=Stereotype? 'class' name=QualifiedName 
+	('@' classElementType=EndurantType)?
+	'class' name=QualifiedName 
 	ontologicalNatures=ElementOntologicalNature?
     ('(' 'instanceOf' instanceOf=[ClassElement:QualifiedName] ')')?
 	('specializes' specializationEndurants+=[ClassElement:QualifiedName]
@@ -95,7 +93,7 @@ NonSortalStereotype returns string:
 ;
 
 UltimateSortalStereotypes returns string:
-	'kind' | 'collective' | 'quantity' | 'quality' | 'mode' | 'intrinsic' 'mode' | 'extrinsic' 'mode'
+	'kind' | 'collective' | 'quantity' | 'quality' | 'mode' | 'intrinsicMode' | 'extrinsicMode'
 ;
 
 BaseSortalStereotype returns string:
@@ -117,7 +115,7 @@ ElementReference:
 	InternalRelation | ExternalRelation
 ;
 
-InternalRelation:
+InternalRelation infers ElementReference:
 	('@'relationType=RelationStereotype)?
 
 	// 1. First end name and Meta Attributes option one
@@ -142,7 +140,7 @@ InternalRelation:
     (hasInverse='inverseOf' inverseEnd=[ElementReference:QualifiedName])?
  ;
 
-ExternalRelation:
+ExternalRelation infers ElementReference:
 	('@'relationType=RelationStereotype)?
 	'relation'
 
