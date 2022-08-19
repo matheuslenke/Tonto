@@ -1,5 +1,0 @@
-[
-{"model":{"contents":null,"propertyAssignments":{},"type":"Package","id":"1jyrqtsl6p561q9","name":"CarRental","description":null},"diagrams":null,"type":"Project","id":"1jyrqtsl6p561q8","name":"CarRental-CarRental","description":null},
-{"model":{"contents":null,"propertyAssignments":{},"type":"Package","id":"1jyrqtsl6p561qb","name":"Employment","description":null},"diagrams":null,"type":"Project","id":"1jyrqtsl6p561qa","name":"CarRental-Employment","description":null},
-{"model":{"contents":null,"propertyAssignments":{},"type":"Package","id":"1jyrqtsl6p561qd","name":"CarOwnership","description":null},"diagrams":null,"type":"Project","id":"1jyrqtsl6p561qc","name":"CarRental-CarOwnership","description":null}
-]

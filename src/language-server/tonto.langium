@@ -45,7 +45,7 @@ ClassElement:
 ;
 
 AuxiliaryDeclarations:
-	DataType | EnumData | GeneralizationSet | ElementReference
+	DataType | EnumData | GeneralizationSet | ElementRelation
 ;
 
 CustomType infers ClassElement:
@@ -66,7 +66,7 @@ Class infers ClassElement:
 	(',' specializationEndurants+=[ClassElement:QualifiedName])? 
 	)? ('{'
 		(attributes+=Attribute |
-		references+=ElementReference
+		references+=ElementRelation
 		)*
     '}')?
 ;
@@ -79,7 +79,7 @@ Endurant infers ClassElement:
 	(',' specializationEndurants+=[ClassElement:QualifiedName])? 
 	)? ('{'
 		(attributes+=Attribute |
-		references+=ElementReference
+		references+=ElementRelation
 		)*
     '}')?
 ;
@@ -111,11 +111,11 @@ OntologicalNature returns string:
 	'qualities' | 'types' | 'abstracts' | 'events'
 ;
 
-ElementReference: 
+ElementRelation: 
 	InternalRelation | ExternalRelation
 ;
 
-InternalRelation infers ElementReference:
+InternalRelation infers ElementRelation:
 	('@'relationType=RelationStereotype)?
 
 	// 1. First end name and Meta Attributes option one
@@ -125,9 +125,9 @@ InternalRelation infers ElementReference:
 	)?
 
     firstCardinality=Cardinality?
-	(isAssociation?='--' (name=QualifiedName '--')? 
+	(isAssociation?='--' (name=QualifiedName ('specializes' specializeRelation=[ElementRelation:QualifiedName])? '--')? 
 	| 
-	isComposition?='<>--' (name=QualifiedName '<>--')? )
+	isComposition?='<>--' (name=QualifiedName ('specializes' specializeRelation=[ElementRelation:QualifiedName])? '<>--')? )
 	secondCardinality=Cardinality? 
 
 	(	('{' secondEndMetaAttributes+=RelationMetaAttribute 
@@ -137,10 +137,10 @@ InternalRelation infers ElementReference:
 	)?
 
 	secondEnd=[ClassElement:QualifiedName]
-    (hasInverse='inverseOf' inverseEnd=[ElementReference:QualifiedName])?
+    (hasInverse='inverseOf' inverseEnd=[ElementRelation:QualifiedName])?
  ;
 
-ExternalRelation infers ElementReference:
+ExternalRelation infers ElementRelation:
 	('@'relationType=RelationStereotype)?
 	'relation'
 
@@ -152,9 +152,9 @@ ExternalRelation infers ElementReference:
 	
     firstEnd=[ClassElement:QualifiedName]
 	firstCardinality=Cardinality?
-	(isAssociation?='--' (name=QualifiedName '--')? 
+	(isAssociation?='--' (name=QualifiedName ('specializes' specializeRelation=[ElementRelation:QualifiedName])? '--')? 
 	| 
-	isComposition?='<>--' (name=QualifiedName '<>--')? )
+	isComposition?='<>--' (name=QualifiedName ('specializes' specializeRelation=[ElementRelation:QualifiedName])? '<>--')? )
 	    secondCardinality=Cardinality? 
 
 	(	('(' secondEndName=ID ')')
@@ -164,7 +164,7 @@ ExternalRelation infers ElementReference:
 	)
 
 	secondEnd=[ClassElement:QualifiedName]
-    (hasInverse='inverseOf' inverseEnd=[ElementReference:QualifiedName])?
+    (hasInverse='inverseOf' inverseEnd=[ElementRelation:QualifiedName])?
 ;
 
 Attribute:
@@ -173,7 +173,7 @@ Attribute:
 
 RelationMetaAttribute:
 	'readOnly' | 'const' | 'union' |
-	('subsets' subsetRelation=[ElementReference:QualifiedName] )
+	('subsets' subsetRelation=[ElementRelation:QualifiedName] )
 ;
 
 RelationStereotype returns string:
@@ -239,7 +239,7 @@ DataTypeProperty:
 ;
 
 BasicDataTypes returns string:
-	'number' | 'string' | 'Date'
+	'number' | 'string' | 'Date' | 'boolean'
 ;
 
 // <--- Enums --->

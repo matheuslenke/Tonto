@@ -47,7 +47,7 @@ module Marriage {
 
     // associação nomeada, com association ends nomeados
     // especificada de forma aninhada na classe
-    relator Marriage specializes SocialRelator {
+    relator Marriage (instanceOf SocialRelatorType) specializes SocialRelator {
         // (marriage) 1 -- involvesSpouse -- [2..*] (spouses {const}) Spouse
         // <>-- 1..* (duties) MaritalDuty	<>-- [ 1..*] (rights) MaritalRight
         (marriage) [1] -- involvesSpouse -- [2..*] (spouses) {const} Spouse

@@ -7,7 +7,7 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import { AstNode, AstReflection, Reference, isAstNode, TypeMetaData } from 'langium';
 
-export type AuxiliaryDeclarations = DataType | ElementReference | EnumData | GeneralizationSet;
+export type AuxiliaryDeclarations = DataType | ElementRelation | EnumData | GeneralizationSet;
 
 export const AuxiliaryDeclarations = 'AuxiliaryDeclarations';
 
@@ -17,7 +17,7 @@ export function isAuxiliaryDeclarations(item: unknown): item is AuxiliaryDeclara
 
 export type BaseSortalStereotype = 'historicalRole' | 'phase' | 'relator' | 'role' | 'subkind';
 
-export type BasicDataTypes = 'Date' | 'number' | 'string';
+export type BasicDataTypes = 'Date' | 'boolean' | 'number' | 'string';
 
 export type Element = AuxiliaryDeclarations | ClassElement;
 
@@ -50,7 +50,7 @@ export function isAttribute(item: unknown): item is Attribute {
 }
 
 export interface Cardinality extends AstNode {
-    readonly $container: ElementReference;
+    readonly $container: ElementRelation;
     lowerBound: '*' | number
     upperBound?: '*' | number
 }
@@ -68,7 +68,7 @@ export interface ClassElement extends AstNode {
     instanceOf?: Reference<ClassElement>
     name: QualifiedName
     ontologicalNatures?: ElementOntologicalNature
-    references: Array<ElementReference>
+    references: Array<ElementRelation>
     specializationEndurants: Array<Reference<ClassElement>>
 }
 
@@ -125,14 +125,14 @@ export function isElementOntologicalNature(item: unknown): item is ElementOntolo
     return reflection.isInstance(item, ElementOntologicalNature);
 }
 
-export interface ElementReference extends AstNode {
+export interface ElementRelation extends AstNode {
     readonly $container: ClassElement | ContextModule;
     firstCardinality?: Cardinality
     firstEnd?: Reference<ClassElement>
     firstEndMetaAttributes: Array<RelationMetaAttribute>
     firstEndName?: string
     hasInverse?: 'inverseOf'
-    inverseEnd?: Reference<ElementReference>
+    inverseEnd?: Reference<ElementRelation>
     isAssociation: boolean
     isComposition: boolean
     name?: QualifiedName
@@ -141,12 +141,13 @@ export interface ElementReference extends AstNode {
     secondEnd: Reference<ClassElement>
     secondEndMetaAttributes: Array<RelationMetaAttribute>
     secondEndName?: string
+    specializeRelation?: Reference<ElementRelation>
 }
 
-export const ElementReference = 'ElementReference';
+export const ElementRelation = 'ElementRelation';
 
-export function isElementReference(item: unknown): item is ElementReference {
-    return reflection.isInstance(item, ElementReference);
+export function isElementRelation(item: unknown): item is ElementRelation {
+    return reflection.isInstance(item, ElementRelation);
 }
 
 export interface EndurantType extends AstNode {
@@ -222,8 +223,8 @@ export function isModel(item: unknown): item is Model {
 }
 
 export interface RelationMetaAttribute extends AstNode {
-    readonly $container: ElementReference;
-    subsetRelation?: Reference<ElementReference>
+    readonly $container: ElementRelation;
+    subsetRelation?: Reference<ElementRelation>
 }
 
 export const RelationMetaAttribute = 'RelationMetaAttribute';
@@ -232,14 +233,14 @@ export function isRelationMetaAttribute(item: unknown): item is RelationMetaAttr
     return reflection.isInstance(item, RelationMetaAttribute);
 }
 
-export type TontoAstType = 'Attribute' | 'AuxiliaryDeclarations' | 'Cardinality' | 'ClassElement' | 'ContextModule' | 'DataType' | 'DataTypeProperty' | 'Element' | 'ElementOntologicalNature' | 'ElementReference' | 'EndurantType' | 'EnumData' | 'EnumElement' | 'GeneralizationSet' | 'Import' | 'Model' | 'RelationMetaAttribute';
+export type TontoAstType = 'Attribute' | 'AuxiliaryDeclarations' | 'Cardinality' | 'ClassElement' | 'ContextModule' | 'DataType' | 'DataTypeProperty' | 'Element' | 'ElementOntologicalNature' | 'ElementRelation' | 'EndurantType' | 'EnumData' | 'EnumElement' | 'GeneralizationSet' | 'Import' | 'Model' | 'RelationMetaAttribute';
 
-export type TontoAstReference = 'Attribute:attributeType' | 'ClassElement:instanceOf' | 'ClassElement:specializationEndurants' | 'DataTypeProperty:type' | 'ElementReference:firstEnd' | 'ElementReference:inverseEnd' | 'ElementReference:secondEnd' | 'GeneralizationSet:categorizerItems' | 'GeneralizationSet:generalItem' | 'GeneralizationSet:specificItems' | 'Import:referencedModel' | 'RelationMetaAttribute:subsetRelation';
+export type TontoAstReference = 'Attribute:attributeType' | 'ClassElement:instanceOf' | 'ClassElement:specializationEndurants' | 'DataTypeProperty:type' | 'ElementRelation:firstEnd' | 'ElementRelation:inverseEnd' | 'ElementRelation:secondEnd' | 'ElementRelation:specializeRelation' | 'GeneralizationSet:categorizerItems' | 'GeneralizationSet:generalItem' | 'GeneralizationSet:specificItems' | 'Import:referencedModel' | 'RelationMetaAttribute:subsetRelation';
 
 export class TontoAstReflection implements AstReflection {
 
     getAllTypes(): string[] {
-        return ['Attribute', 'AuxiliaryDeclarations', 'Cardinality', 'ClassElement', 'ContextModule', 'DataType', 'DataTypeProperty', 'Element', 'ElementOntologicalNature', 'ElementReference', 'EndurantType', 'EnumData', 'EnumElement', 'GeneralizationSet', 'Import', 'Model', 'RelationMetaAttribute'];
+        return ['Attribute', 'AuxiliaryDeclarations', 'Cardinality', 'ClassElement', 'ContextModule', 'DataType', 'DataTypeProperty', 'Element', 'ElementOntologicalNature', 'ElementRelation', 'EndurantType', 'EnumData', 'EnumElement', 'GeneralizationSet', 'Import', 'Model', 'RelationMetaAttribute'];
     }
 
     isInstance(node: unknown, type: string): boolean {
@@ -256,7 +257,7 @@ export class TontoAstReflection implements AstReflection {
                 return this.isSubtype(Element, supertype);
             }
             case DataType:
-            case ElementReference:
+            case ElementRelation:
             case EnumData:
             case GeneralizationSet: {
                 return this.isSubtype(AuxiliaryDeclarations, supertype);
@@ -281,14 +282,17 @@ export class TontoAstReflection implements AstReflection {
             case 'DataTypeProperty:type': {
                 return DataType;
             }
-            case 'ElementReference:firstEnd': {
+            case 'ElementRelation:firstEnd': {
                 return ClassElement;
             }
-            case 'ElementReference:inverseEnd': {
-                return ElementReference;
+            case 'ElementRelation:inverseEnd': {
+                return ElementRelation;
             }
-            case 'ElementReference:secondEnd': {
+            case 'ElementRelation:secondEnd': {
                 return ClassElement;
+            }
+            case 'ElementRelation:specializeRelation': {
+                return ElementRelation;
             }
             case 'GeneralizationSet:categorizerItems': {
                 return Element;
@@ -303,7 +307,7 @@ export class TontoAstReflection implements AstReflection {
                 return Model;
             }
             case 'RelationMetaAttribute:subsetRelation': {
-                return ElementReference;
+                return ElementRelation;
             }
             default: {
                 throw new Error(`${referenceId} is not a valid reference id.`);
@@ -347,9 +351,9 @@ export class TontoAstReflection implements AstReflection {
                     ]
                 };
             }
-            case 'ElementReference': {
+            case 'ElementRelation': {
                 return {
-                    name: 'ElementReference',
+                    name: 'ElementRelation',
                     mandatory: [
                         { name: 'firstEndMetaAttributes', type: 'array' },
                         { name: 'isAssociation', type: 'boolean' },

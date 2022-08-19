@@ -42,7 +42,3 @@ module MarriageModuleCopy {
     relation Marriage <>-- [1..*] MarriageDuty
     relation Marriage <>-- [1..*] MarriageRight
 }
-
-module Teste {
-    
-}

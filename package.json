@@ -3,7 +3,7 @@
     "displayName": "tonto",
     "publisher": "Lenke",
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "license": "MIT",
     "icon": "docs/images/TontoIcon.png",
     "repository": {
@@ -83,10 +83,10 @@
         "@types/node": "^14.17.3",
         "@types/node-fetch": "^2.6.1",
         "@types/vscode": "^1.56.0",
-        "@typescript-eslint/eslint-plugin": "^4.14.1",
-        "@typescript-eslint/parser": "^4.14.1",
+        "@typescript-eslint/eslint-plugin": "^5.33.1",
+        "@typescript-eslint/parser": "^5.33.1",
         "esbuild": "^0.14.43",
-        "eslint": "^7.19.0",
+        "eslint": "^8.22.0",
         "langium-cli": "^0.4.0",
         "typescript": "^4.1.3"
     },

@@ -319,7 +319,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
           {
             "$type": "RuleCall",
             "rule": {
-              "$refText": "ElementReference"
+              "$refText": "ElementRelation"
             },
             "arguments": []
           }
@@ -566,7 +566,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$refText": "ElementReference"
+                        "$refText": "ElementRelation"
                       },
                       "arguments": []
                     }
@@ -761,7 +761,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$refText": "ElementReference"
+                        "$refText": "ElementRelation"
                       },
                       "arguments": []
                     }
@@ -1065,7 +1065,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
     },
     {
       "$type": "ParserRule",
-      "name": "ElementReference",
+      "name": "ElementRelation",
       "alternatives": {
         "$type": "Alternatives",
         "elements": [
@@ -1097,7 +1097,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
       "name": "InternalRelation",
       "inferredType": {
         "$type": "InferredType",
-        "name": "ElementReference"
+        "name": "ElementRelation"
       },
       "alternatives": {
         "$type": "Group",
@@ -1246,6 +1246,35 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
                         }
                       },
                       {
+                        "$type": "Group",
+                        "elements": [
+                          {
+                            "$type": "Keyword",
+                            "value": "specializes"
+                          },
+                          {
+                            "$type": "Assignment",
+                            "feature": "specializeRelation",
+                            "operator": "=",
+                            "terminal": {
+                              "$type": "CrossReference",
+                              "type": {
+                                "$refText": "ElementRelation"
+                              },
+                              "terminal": {
+                                "$type": "RuleCall",
+                                "rule": {
+                                  "$refText": "QualifiedName"
+                                },
+                                "arguments": []
+                              },
+                              "deprecatedSyntax": false
+                            }
+                          }
+                        ],
+                        "cardinality": "?"
+                      },
+                      {
                         "$type": "Keyword",
                         "value": "--"
                       }
@@ -1280,6 +1309,35 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
                           },
                           "arguments": []
                         }
+                      },
+                      {
+                        "$type": "Group",
+                        "elements": [
+                          {
+                            "$type": "Keyword",
+                            "value": "specializes"
+                          },
+                          {
+                            "$type": "Assignment",
+                            "feature": "specializeRelation",
+                            "operator": "=",
+                            "terminal": {
+                              "$type": "CrossReference",
+                              "type": {
+                                "$refText": "ElementRelation"
+                              },
+                              "terminal": {
+                                "$type": "RuleCall",
+                                "rule": {
+                                  "$refText": "QualifiedName"
+                                },
+                                "arguments": []
+                              },
+                              "deprecatedSyntax": false
+                            }
+                          }
+                        ],
+                        "cardinality": "?"
                       },
                       {
                         "$type": "Keyword",
@@ -1421,7 +1479,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
                 "terminal": {
                   "$type": "CrossReference",
                   "type": {
-                    "$refText": "ElementReference"
+                    "$refText": "ElementRelation"
                   },
                   "terminal": {
                     "$type": "RuleCall",
@@ -1450,7 +1508,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
       "name": "ExternalRelation",
       "inferredType": {
         "$type": "InferredType",
-        "name": "ElementReference"
+        "name": "ElementRelation"
       },
       "alternatives": {
         "$type": "Group",
@@ -1621,6 +1679,35 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
                         }
                       },
                       {
+                        "$type": "Group",
+                        "elements": [
+                          {
+                            "$type": "Keyword",
+                            "value": "specializes"
+                          },
+                          {
+                            "$type": "Assignment",
+                            "feature": "specializeRelation",
+                            "operator": "=",
+                            "terminal": {
+                              "$type": "CrossReference",
+                              "type": {
+                                "$refText": "ElementRelation"
+                              },
+                              "terminal": {
+                                "$type": "RuleCall",
+                                "rule": {
+                                  "$refText": "QualifiedName"
+                                },
+                                "arguments": []
+                              },
+                              "deprecatedSyntax": false
+                            }
+                          }
+                        ],
+                        "cardinality": "?"
+                      },
+                      {
                         "$type": "Keyword",
                         "value": "--"
                       }
@@ -1655,6 +1742,35 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
                           },
                           "arguments": []
                         }
+                      },
+                      {
+                        "$type": "Group",
+                        "elements": [
+                          {
+                            "$type": "Keyword",
+                            "value": "specializes"
+                          },
+                          {
+                            "$type": "Assignment",
+                            "feature": "specializeRelation",
+                            "operator": "=",
+                            "terminal": {
+                              "$type": "CrossReference",
+                              "type": {
+                                "$refText": "ElementRelation"
+                              },
+                              "terminal": {
+                                "$type": "RuleCall",
+                                "rule": {
+                                  "$refText": "QualifiedName"
+                                },
+                                "arguments": []
+                              },
+                              "deprecatedSyntax": false
+                            }
+                          }
+                        ],
+                        "cardinality": "?"
                       },
                       {
                         "$type": "Keyword",
@@ -1795,7 +1911,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
                 "terminal": {
                   "$type": "CrossReference",
                   "type": {
-                    "$refText": "ElementReference"
+                    "$refText": "ElementRelation"
                   },
                   "terminal": {
                     "$type": "RuleCall",
@@ -1911,7 +2027,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
                 "terminal": {
                   "$type": "CrossReference",
                   "type": {
-                    "$refText": "ElementReference"
+                    "$refText": "ElementRelation"
                   },
                   "terminal": {
                     "$type": "RuleCall",
@@ -2473,6 +2589,10 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
           {
             "$type": "Keyword",
             "value": "Date"
+          },
+          {
+            "$type": "Keyword",
+            "value": "boolean"
           }
         ]
       },

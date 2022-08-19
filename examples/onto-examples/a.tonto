@@ -24,7 +24,7 @@ mode Weight specializes BiologicalEntity
 quality Size
 
 kind Organization {
-   {const} (organization) [*] -- hasMember -- [*] (member) {const} Person
+   {const} (organization) [*] -- hasMember specializes enrolledIn -- [*] (member) {const} Person
 }
 
 relation Person -- memberIn -- Organization inverseOf hasMember
