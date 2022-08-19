@@ -5,13 +5,15 @@ import { TontoLanguageMetaData } from "../language-server/generated/module";
 import { createTontoServices } from "../language-server/tonto-module";
 import { extractAstNode } from "./cli-util";
 import { generateJSONFile } from "./jsonGenerator";
-import fs from "fs";
-import { serializationUtils } from "ontouml-js";
+import { readFile } from "fs/promises";
+import { OntoumlElement, serializationUtils } from "ontouml-js";
+import { generateTontoFile } from "./tontoGenerator";
 
 export const generateAction = async (
   fileName: string,
   opts: GenerateOptions
 ): Promise<void> => {
+  console.log(opts);
   const services = createTontoServices().Tonto;
   const model = await extractAstNode<Model>(fileName, services);
   const generatedFilePath = generateJSONFile(model, fileName, opts.destination);
@@ -20,22 +22,54 @@ export const generateAction = async (
   );
 };
 
+interface JsonElement {
+  model?: any;
+  diagrams?: any;
+  type: string;
+  id: string;
+  name: string;
+  description?: string;
+}
+
 export const importAction = async (
   fileName: string,
   opts: GenerateOptions
 ): Promise<void> => {
-  // const services = createTontoServices().Tonto;
-  // const model = await extractAstNode<Model>(fileName, services);
-  console.log("Importando!");
-  var obj = JSON.parse(fs.readFileSync(fileName, "utf8"));
+  console.log("Importing JSON!");
+  try {
+    let data = await readFile(fileName, { encoding: "utf8" });
+    let obj: JsonElement[] = JSON.parse(data);
+    let ontoumlElements: OntoumlElement[] = [];
 
-  const ontoUMLModel = serializationUtils.parse(obj, false);
-  console.log(ontoUMLModel.name);
+    if (Array.isArray(obj)) {
+      obj.forEach((item) => {
+        const ontoUMLModel = serializationUtils.parse(
+          JSON.stringify(item),
+          false
+        );
 
-  // const generatedFilePath = generateJSONFile(model, fileName, opts.destination);
-  // console.log(
-  //   colors.green(`JSON File generated successfully: ${generatedFilePath}`)
-  // );
+        ontoumlElements.push(ontoUMLModel);
+      });
+    } else {
+      const element: JsonElement = obj;
+      const ontoUMLModel = serializationUtils.parse(
+        JSON.stringify(element),
+        false
+      );
+      ontoumlElements.push(ontoUMLModel);
+    }
+    console.log(opts);
+    const generatedFilePath = generateTontoFile(
+      ontoumlElements,
+      fileName,
+      opts.destination
+    );
+    console.log(
+      colors.green(`JSON File generated successfully: ${generatedFilePath}`)
+    );
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export type GenerateOptions = {
@@ -62,7 +96,7 @@ export default function(): void {
 
   program
     .command("import")
-    .argument("<file>", `source file (possible file extensions: .json)`)
+    .argument("<file>", `source file (possible file extensions: json)`)
     .option("-d, --destination <dir>", "destination directory of generating")
     .description("generates a tonto file from a JSON file")
     .action(importAction);

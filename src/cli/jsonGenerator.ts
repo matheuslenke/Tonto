@@ -26,7 +26,7 @@ export function generateJSONFile(
   destination: string | undefined
 ): string {
   const data = extractDestinationAndName(filePath, destination);
-
+  console.log(destination, data);
   const ctx = <GeneratorContext>{
     model,
     name: data.name,
