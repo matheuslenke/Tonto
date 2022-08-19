@@ -134,7 +134,7 @@ module Marriage {
 
     collective Group
     {
-        <>-- [2..*] {const} Person
+        <>-- [2..*] {const, ordered} Person
     }
 
 

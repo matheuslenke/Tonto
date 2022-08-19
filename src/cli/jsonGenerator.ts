@@ -102,6 +102,7 @@ function contextModuleGenerator(
         break;
     }
   });
+  generateInternalRelations(contextModule, classes, packageItem);
   generateSpecializations(contextModule, classes, packageItem);
   generateExternalRelations(contextModule, classes, packageItem);
 
@@ -159,6 +160,23 @@ function generateExternalRelations(
       case "ElementRelation":
         const elementRelation = element as ElementRelation;
         relationGenerator(elementRelation, packageItem, classes);
+    }
+  });
+}
+
+function generateInternalRelations(
+  contextModule: ContextModule,
+  classes: Class[],
+  packageItem: Package
+): void {
+  contextModule.elements.forEach((element) => {
+    if (element.$type === 'ClassElement') {
+      const classElement = element as ClassElement;
+
+      classElement.references.forEach(reference => {
+        console.log(reference.name)
+        relationGenerator(reference, packageItem, classes, classElement);
+      })
     }
   });
 }

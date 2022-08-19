@@ -40,6 +40,9 @@ export type UltimateSortalStereotypes = 'collective' | 'extrinsicMode' | 'intrin
 export interface Attribute extends AstNode {
     readonly $container: ClassElement;
     attributeType: BasicDataTypes | Reference<DataType>
+    cardinality?: Cardinality
+    isConst: boolean
+    isOrdered: boolean
     name: string
 }
 
@@ -50,7 +53,7 @@ export function isAttribute(item: unknown): item is Attribute {
 }
 
 export interface Cardinality extends AstNode {
-    readonly $container: ElementRelation;
+    readonly $container: Attribute | DataTypeProperty | ElementRelation;
     lowerBound: '*' | number
     upperBound?: '*' | number
 }
@@ -104,6 +107,9 @@ export function isDataType(item: unknown): item is DataType {
 
 export interface DataTypeProperty extends AstNode {
     readonly $container: DataType;
+    cardinality?: Cardinality
+    isConst: boolean
+    isOrdered: boolean
     name: string
     type: BasicDataTypes | Reference<DataType>
 }
@@ -224,6 +230,10 @@ export function isModel(item: unknown): item is Model {
 
 export interface RelationMetaAttribute extends AstNode {
     readonly $container: ElementRelation;
+    isConst: boolean
+    isDerived: boolean
+    isOrdered: boolean
+    redefinesRelation?: Reference<ElementRelation>
     subsetRelation?: Reference<ElementRelation>
 }
 
@@ -235,7 +245,7 @@ export function isRelationMetaAttribute(item: unknown): item is RelationMetaAttr
 
 export type TontoAstType = 'Attribute' | 'AuxiliaryDeclarations' | 'Cardinality' | 'ClassElement' | 'ContextModule' | 'DataType' | 'DataTypeProperty' | 'Element' | 'ElementOntologicalNature' | 'ElementRelation' | 'EndurantType' | 'EnumData' | 'EnumElement' | 'GeneralizationSet' | 'Import' | 'Model' | 'RelationMetaAttribute';
 
-export type TontoAstReference = 'Attribute:attributeType' | 'ClassElement:instanceOf' | 'ClassElement:specializationEndurants' | 'DataTypeProperty:type' | 'ElementRelation:firstEnd' | 'ElementRelation:inverseEnd' | 'ElementRelation:secondEnd' | 'ElementRelation:specializeRelation' | 'GeneralizationSet:categorizerItems' | 'GeneralizationSet:generalItem' | 'GeneralizationSet:specificItems' | 'Import:referencedModel' | 'RelationMetaAttribute:subsetRelation';
+export type TontoAstReference = 'Attribute:attributeType' | 'ClassElement:instanceOf' | 'ClassElement:specializationEndurants' | 'DataTypeProperty:type' | 'ElementRelation:firstEnd' | 'ElementRelation:inverseEnd' | 'ElementRelation:secondEnd' | 'ElementRelation:specializeRelation' | 'GeneralizationSet:categorizerItems' | 'GeneralizationSet:generalItem' | 'GeneralizationSet:specificItems' | 'Import:referencedModel' | 'RelationMetaAttribute:redefinesRelation' | 'RelationMetaAttribute:subsetRelation';
 
 export class TontoAstReflection implements AstReflection {
 
@@ -306,6 +316,9 @@ export class TontoAstReflection implements AstReflection {
             case 'Import:referencedModel': {
                 return Model;
             }
+            case 'RelationMetaAttribute:redefinesRelation': {
+                return ElementRelation;
+            }
             case 'RelationMetaAttribute:subsetRelation': {
                 return ElementRelation;
             }
@@ -317,6 +330,15 @@ export class TontoAstReflection implements AstReflection {
 
     getTypeMetaData(type: string): TypeMetaData {
         switch (type) {
+            case 'Attribute': {
+                return {
+                    name: 'Attribute',
+                    mandatory: [
+                        { name: 'isConst', type: 'boolean' },
+                        { name: 'isOrdered', type: 'boolean' }
+                    ]
+                };
+            }
             case 'ClassElement': {
                 return {
                     name: 'ClassElement',
@@ -340,6 +362,15 @@ export class TontoAstReflection implements AstReflection {
                     name: 'DataType',
                     mandatory: [
                         { name: 'properties', type: 'array' }
+                    ]
+                };
+            }
+            case 'DataTypeProperty': {
+                return {
+                    name: 'DataTypeProperty',
+                    mandatory: [
+                        { name: 'isConst', type: 'boolean' },
+                        { name: 'isOrdered', type: 'boolean' }
                     ]
                 };
             }
@@ -394,6 +425,16 @@ export class TontoAstReflection implements AstReflection {
                     mandatory: [
                         { name: 'imports', type: 'array' },
                         { name: 'modules', type: 'array' }
+                    ]
+                };
+            }
+            case 'RelationMetaAttribute': {
+                return {
+                    name: 'RelationMetaAttribute',
+                    mandatory: [
+                        { name: 'isConst', type: 'boolean' },
+                        { name: 'isDerived', type: 'boolean' },
+                        { name: 'isOrdered', type: 'boolean' }
                     ]
                 };
             }

@@ -62,7 +62,8 @@
     "main": "./out/extension.js",
     "scripts": {
         "vscode:prepublish": "npm run clean && tsc --noEmit && npm run lint && node esbuild.js --minify",
-        "package": "vsce package --pre-release --baseContentUrl none",
+        "package": "vsce package --pre-release --baseContentUrl https://github.com/matheuslenke/Tonto --yarn",
+        "publish": "vsce publish --baseContentUrl https://github.com/matheuslenke/Tonto --yarn",
         "clean": "rimraf out",
         "lint": "eslint src --ext ts",
         "build": "node esbuild.js && tsc --noEmit",

@@ -1,5 +1,5 @@
-import { EnumData } from "./../../language-server/generated/ast";
-import { Class, ClassStereotype, Package } from "ontouml-js";
+import { Cardinality, EnumData } from "./../../language-server/generated/ast";
+import { CardinalityValues, Class, ClassStereotype, Package, Property } from "ontouml-js";
 import { ClassElement, DataType } from "../../language-server/generated/ast";
 
 export function classElementGenerator(
@@ -57,45 +57,87 @@ export function attributeGenerator(
   dataTypes: Class[]
 ): void {
   classElement.attributes.forEach((attribute) => {
+    let createdAttribute: Property | undefined
     switch (attribute.attributeType) {
       case "Date":
         const dateType = dataTypes.find(
           (item) => item.name.getText() === "Date"
         );
-        if (dateType) createdClass.createAttribute(dateType, attribute.name);
+        if (dateType) {
+          createdAttribute = createdClass.createAttribute(dateType, attribute.name);
+        } 
         break;
       case "number":
         const numberType = dataTypes.find(
           (item) => item.name.getText() === "number"
         );
-        if (numberType)
-          createdClass.createAttribute(numberType, attribute.name);
+        if (numberType) {
+          createdAttribute = createdClass.createAttribute(numberType, attribute.name);
+          createdAttribute.cardinality.setOneToOne()
+        }
         break;
 
       case "boolean":
         const booleanType = dataTypes.find(
           (item) => item.name.getText() === "boolean"
         );
-        if (booleanType)
-          createdClass.createAttribute(booleanType, attribute.name);
+        if (booleanType) {
+          createdAttribute = createdClass.createAttribute(booleanType, attribute.name);
+        }
         break;
 
       case "string":
         const stringType = dataTypes.find(
           (item) => item.name.getText() === "string"
         );
-        if (stringType)
-          createdClass.createAttribute(stringType, attribute.name);
+        if (stringType) {
+          createdAttribute = createdClass.createAttribute(stringType, attribute.name);
+        }
         break;
 
       default:
         const customType = dataTypes.find(
           (item) => item.name.getText() === attribute.attributeType.toString()
         );
-        if (customType)
-          createdClass.createAttribute(customType, attribute.name);
+        if (customType) {
+          createdAttribute = createdClass.createAttribute(customType, attribute.name);
+        }
+    }
+    if (createdAttribute) {
+      // Set the attribute cardinality
+      setAttributeCardinality(attribute.cardinality, createdAttribute)
+
+      // Set the attribute isOrdered meta-attribute
+      createdAttribute.isOrdered = attribute.isOrdered
+
+      // Set the attribute isDerived meta-attribute
+      createdAttribute.isDerived = !attribute.isConst
     }
   });
+}
+
+function setAttributeCardinality(
+  cardinality: Cardinality | undefined,
+  end: Property
+): void {
+  if (cardinality) {
+    if (cardinality.lowerBound === "*") {
+      end.cardinality.setZeroToMany();
+      return;
+    } else if (typeof cardinality.lowerBound === "number") {
+      end.cardinality.setLowerBoundFromNumber(cardinality.lowerBound);
+    }
+    if (cardinality.upperBound && cardinality.upperBound === "*") {
+      end.cardinality.upperBound = CardinalityValues.MANY;
+    } else if (
+      cardinality.upperBound &&
+      typeof cardinality.upperBound === "number"
+    ) {
+      end.cardinality.setUpperBoundFromNumber(cardinality.upperBound);
+    }
+  } else {
+    end.cardinality.setOneToOne(); // Default Value
+  }
 }
 
 export function generalizationGenerator(
@@ -111,15 +153,52 @@ export function customDataTypeGenerator(
   model: Package,
   dataTypes: Class[]
 ) {
-  model.createDatatype(dataType.name);
+  const dataTypeClass = model.createDatatype(dataType.name);
   console.log(dataType.name);
-  // dataType.properties.forEach((element) => {
-  //   // const;
-  // });
+  dataType.properties.forEach((element) => {
+    switch (element.type) {
+      case "Date":
+        const dateType = dataTypes.find(
+          (item) => item.name.getText() === "Date"
+        );
+        if (dateType) dataTypeClass.createAttribute(dateType, element.name);
+        break;
+      case "number":
+        const numberType = dataTypes.find(
+          (item) => item.name.getText() === "number"
+        );
+        if (numberType)
+        dataTypeClass.createAttribute(numberType, element.name);
+        break;
+
+      case "boolean":
+        const booleanType = dataTypes.find(
+          (item) => item.name.getText() === "boolean"
+        );
+        if (booleanType)
+        dataTypeClass.createAttribute(booleanType, element.name);
+        break;
+
+      case "string":
+        const stringType = dataTypes.find(
+          (item) => item.name.getText() === "string"
+        );
+        if (stringType)
+        dataTypeClass.createAttribute(stringType, element.name);
+        break;
+
+      default:
+        const customType = dataTypes.find(
+          (item) => item.name.getText() === element.type.toString()
+        );
+        if (customType)
+        dataTypeClass.createAttribute(customType, element.name);
+    }
+  });
 }
 
 export function enumGenerator(enumData: EnumData, model: Package) {
-  const createdEnum = model.createEnumeration();
+  // const createdEnum = model.createEnumeration();
   // enumData.elements.forEach((element) => {
   //   createdEnum.createLiteral(element.name);
   // });

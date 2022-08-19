@@ -10,7 +10,7 @@
     },
     {
       "name": "keyword.control.tonto",
-      "match": "\\b(abstracts|aggregation|boolean|bringsAbout|categorizer|category|characterization|class|collective|collectives|comparative|complete|componentOf|composition|const|creation|datatype|Date|derivation|disjoint|enum|event|events|externalDependence|extrinsic-modes|extrinsicMode|formal|functional-complexes|general|genset|historicalDependence|historicalRole|historicalRoleMixin|import|inherence|instanceOf|instantiation|intrinsic-modes|intrinsicMode|inverseOf|kind|manifestation|material|mediation|memberOf|mixin|mode|modes|module|number|objects|of|participation|participational|phase|phaseMixin|qualities|quality|quantities|quantity|readOnly|relation|relator|relators|role|roleMixin|specializes|specifics|string|subCollectionOf|subkind|subQuantityOf|subsets|termination|triggers|type|types|union|value)\\b"
+      "match": "\\b(abstracts|aggregation|boolean|bringsAbout|categorizer|category|characterization|class|collective|collectives|comparative|complete|componentOf|composition|const|creation|datatype|Date|derivation|derived|disjoint|enum|event|events|externalDependence|extrinsic-modes|extrinsicMode|formal|functional-complexes|general|genset|historicalDependence|historicalRole|historicalRoleMixin|import|inherence|instanceOf|instantiation|intrinsic-modes|intrinsicMode|inverseOf|kind|manifestation|material|mediation|memberOf|mixin|mode|modes|module|number|objects|of|ordered|participation|participational|phase|phaseMixin|qualities|quality|quantities|quantity|redefines|relation|relator|relators|role|roleMixin|specializes|specifics|string|subCollectionOf|subkind|subQuantityOf|subsets|termination|triggers|type|types|value)\\b"
     },
     {
       "name": "string.quoted.double.tonto",

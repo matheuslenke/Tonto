@@ -1,0 +1,15 @@
+module TestingDataTypes {
+    datatype RGB
+    {
+        red: number
+        green: number
+        blue: number // boolean, string, Date, oasdfkaof
+    }
+
+    kind Car {
+        // cor: Set<RGB> [0..*]
+        // cor: Bag RGB
+        // cor: Sequence(RGB)
+        cor: RGB { ordered }
+    }
+}

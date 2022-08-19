@@ -168,12 +168,15 @@ ExternalRelation infers ElementRelation:
 ;
 
 Attribute:
-	name=ID ':' (attributeType=[DataType] | attributeType=BasicDataTypes)
+ 	name=ID ':' (attributeType=[DataType] | attributeType=BasicDataTypes)
+	cardinality=Cardinality?
+	('{' isOrdered?='ordered' & isConst?='const' '}')?
 ;
 
 RelationMetaAttribute:
-	'readOnly' | 'const' | 'union' |
-	('subsets' subsetRelation=[ElementRelation:QualifiedName] )
+	isOrdered?='ordered' | isConst?='const' | isDerived?='derived' |
+	('subsets' subsetRelation=[ElementRelation:QualifiedName] ) | 
+	('redefines' redefinesRelation=[ElementRelation:QualifiedName] )
 ;
 
 RelationStereotype returns string:
@@ -235,7 +238,9 @@ DataType:
 ;
 
 DataTypeProperty:
-	name=ID ':' (type=[DataType] | type=BasicDataTypes)
+	name=ID ':' (type=[DataType] | type=BasicDataTypes) 
+	cardinality=Cardinality?
+	('{' isOrdered?='ordered' & isConst?='const' '}')?
 ;
 
 BasicDataTypes returns string:

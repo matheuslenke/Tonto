@@ -1,4 +1,4 @@
-import { CompositeGeneratorNode, NL, processGeneratorNode } from "langium";
+import { CompositeGeneratorNode, processGeneratorNode } from "langium";
 import fs from "fs";
 import path from "path";
 import { Class, OntoumlElement } from "ontouml-js";

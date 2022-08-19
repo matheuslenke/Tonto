@@ -11,7 +11,7 @@ module MarriageModule {
     relator MarriageRight specializes Marriage
     
     role Spouse specializes Person {
-        -- isBoundBy -- Marriage inverseOf involvesSpouse
+       [2] -- isBoundBy -- [1..*] Marriage inverseOf involvesSpouse
     }
 
     relation Marriage -- involvesSpouse -- [2..*] Spouse

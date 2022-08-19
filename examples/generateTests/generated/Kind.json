@@ -16,7 +16,7 @@
         "order": "1",
         "propertyAssignments": {},
         "type": "Class",
-        "id": "1jyrsavl6zwkw2f",
+        "id": "1jyrafbl7105c3r",
         "name": "Date",
         "description": null
       },
@@ -34,7 +34,7 @@
         "order": "1",
         "propertyAssignments": {},
         "type": "Class",
-        "id": "1jyrsavl6zwkw2g",
+        "id": "1jyrafbl7105c3s",
         "name": "string",
         "description": null
       },
@@ -52,7 +52,7 @@
         "order": "1",
         "propertyAssignments": {},
         "type": "Class",
-        "id": "1jyrsavl6zwkw2h",
+        "id": "1jyrafbl7105c3t",
         "name": "number",
         "description": null
       },
@@ -70,7 +70,7 @@
         "order": "1",
         "propertyAssignments": {},
         "type": "Class",
-        "id": "1jyrsavl6zwkw2i",
+        "id": "1jyrafbl7105c3u",
         "name": "boolean",
         "description": null
       },
@@ -88,7 +88,7 @@
         "order": "1",
         "propertyAssignments": {},
         "type": "Class",
-        "id": "1jyrsavl6zwkw2j",
+        "id": "1jyrafbl7105c3v",
         "name": "Person",
         "description": null
       },
@@ -106,7 +106,7 @@
         "order": "1",
         "propertyAssignments": {},
         "type": "Class",
-        "id": "1jyrsavl6zwkw2k",
+        "id": "1jyrafbl7105c3w",
         "name": "SocialRelator",
         "description": null
       },
@@ -124,7 +124,7 @@
         "order": "1",
         "propertyAssignments": {},
         "type": "Class",
-        "id": "1jyrsavl6zwkw2l",
+        "id": "1jyrafbl7105c3x",
         "name": "SocialRelatorType",
         "description": null
       },
@@ -136,39 +136,39 @@
         "properties": [
           {
             "stereotype": null,
-            "cardinality": "0..*",
+            "cardinality": "1..1",
             "propertyType": {
               "type": "Class",
-              "id": "1jyrsavl6zwkw2f"
+              "id": "1jyrafbl7105c3r"
             },
             "subsettedProperties": null,
             "redefinedProperties": null,
             "aggregationKind": "NONE",
-            "isDerived": false,
+            "isDerived": true,
             "isOrdered": false,
             "isReadOnly": false,
             "propertyAssignments": {},
             "type": "Property",
-            "id": "1jyrsavl6zwkw2n",
+            "id": "1jyrafbl7105c3z",
             "name": "marriageStartDate",
             "description": null
           },
           {
             "stereotype": null,
-            "cardinality": "0..*",
+            "cardinality": "1..1",
             "propertyType": {
               "type": "Class",
-              "id": "1jyrsavl6zwkw2i"
+              "id": "1jyrafbl7105c3u"
             },
             "subsettedProperties": null,
             "redefinedProperties": null,
             "aggregationKind": "NONE",
-            "isDerived": false,
+            "isDerived": true,
             "isOrdered": false,
             "isReadOnly": false,
             "propertyAssignments": {},
             "type": "Property",
-            "id": "1jyrsavl6zwkw2o",
+            "id": "1jyrafbl7105c40",
             "name": "isActive",
             "description": null
           }
@@ -181,7 +181,7 @@
         "order": "1",
         "propertyAssignments": {},
         "type": "Class",
-        "id": "1jyrsavl6zwkw2m",
+        "id": "1jyrafbl7105c3y",
         "name": "Marriage",
         "description": null
       },
@@ -199,7 +199,7 @@
         "order": "1",
         "propertyAssignments": {},
         "type": "Class",
-        "id": "1jyrsavl6zwkw2p",
+        "id": "1jyrafbl7105c41",
         "name": "MarriageDuty",
         "description": null
       },
@@ -217,7 +217,7 @@
         "order": "1",
         "propertyAssignments": {},
         "type": "Class",
-        "id": "1jyrsavl6zwkw2q",
+        "id": "1jyrafbl7105c42",
         "name": "MarriageRight",
         "description": null
       },
@@ -235,67 +235,117 @@
         "order": "1",
         "propertyAssignments": {},
         "type": "Class",
-        "id": "1jyrsavl6zwkw2r",
+        "id": "1jyrafbl7105c43",
         "name": "Spouse",
         "description": null
       },
       {
+        "stereotype": null,
+        "properties": [
+          {
+            "stereotype": null,
+            "cardinality": "3..3",
+            "propertyType": {
+              "type": "Class",
+              "id": "1jyrafbl7105c43"
+            },
+            "subsettedProperties": null,
+            "redefinedProperties": null,
+            "aggregationKind": "NONE",
+            "isDerived": false,
+            "isOrdered": false,
+            "isReadOnly": false,
+            "propertyAssignments": {},
+            "type": "Property",
+            "id": "1jyrafbl7105c45",
+            "name": null,
+            "description": null
+          },
+          {
+            "stereotype": null,
+            "cardinality": "1..*",
+            "propertyType": {
+              "type": "Class",
+              "id": "1jyrafbl7105c3y"
+            },
+            "subsettedProperties": null,
+            "redefinedProperties": null,
+            "aggregationKind": "NONE",
+            "isDerived": false,
+            "isOrdered": false,
+            "isReadOnly": false,
+            "propertyAssignments": {},
+            "type": "Property",
+            "id": "1jyrafbl7105c46",
+            "name": null,
+            "description": null
+          }
+        ],
+        "isAbstract": false,
+        "isDerived": false,
+        "propertyAssignments": {},
+        "type": "Relation",
+        "id": "1jyrafbl7105c44",
+        "name": "isBoundBy",
+        "description": null
+      },
+      {
         "general": {
           "type": "Class",
-          "id": "1jyrsavl6zwkw2l"
+          "id": "1jyrafbl7105c3x"
         },
         "specific": {
           "type": "Class",
-          "id": "1jyrsavl6zwkw2k"
+          "id": "1jyrafbl7105c3w"
         },
         "propertyAssignments": {},
         "type": "Generalization",
-        "id": "1jyrsavl6zwkw2s",
+        "id": "1jyrafbl7105c47",
         "name": null,
         "description": null
       },
       {
         "general": {
           "type": "Class",
-          "id": "1jyrsavl6zwkw2m"
+          "id": "1jyrafbl7105c3y"
         },
         "specific": {
           "type": "Class",
-          "id": "1jyrsavl6zwkw2k"
+          "id": "1jyrafbl7105c3w"
         },
         "propertyAssignments": {},
         "type": "Generalization",
-        "id": "1jyrsavl6zwkw2t",
+        "id": "1jyrafbl7105c48",
         "name": null,
         "description": null
       },
       {
         "general": {
           "type": "Class",
-          "id": "1jyrsavl6zwkw2q"
+          "id": "1jyrafbl7105c42"
         },
         "specific": {
           "type": "Class",
-          "id": "1jyrsavl6zwkw2m"
+          "id": "1jyrafbl7105c3y"
         },
         "propertyAssignments": {},
         "type": "Generalization",
-        "id": "1jyrsavl6zwkw2u",
+        "id": "1jyrafbl7105c49",
         "name": null,
         "description": null
       },
       {
         "general": {
           "type": "Class",
-          "id": "1jyrsavl6zwkw2r"
+          "id": "1jyrafbl7105c43"
         },
         "specific": {
           "type": "Class",
-          "id": "1jyrsavl6zwkw2j"
+          "id": "1jyrafbl7105c3v"
         },
         "propertyAssignments": {},
         "type": "Generalization",
-        "id": "1jyrsavl6zwkw2v",
+        "id": "1jyrafbl7105c4a",
         "name": null,
         "description": null
       },
@@ -307,7 +357,7 @@
             "cardinality": "0..*",
             "propertyType": {
               "type": "Class",
-              "id": "1jyrsavl6zwkw2m"
+              "id": "1jyrafbl7105c3y"
             },
             "subsettedProperties": null,
             "redefinedProperties": null,
@@ -317,7 +367,7 @@
             "isReadOnly": false,
             "propertyAssignments": {},
             "type": "Property",
-            "id": "1jyrsavl6zwkw2x",
+            "id": "1jyrafbl7105c4c",
             "name": null,
             "description": null
           },
@@ -326,7 +376,7 @@
             "cardinality": "2..*",
             "propertyType": {
               "type": "Class",
-              "id": "1jyrsavl6zwkw2r"
+              "id": "1jyrafbl7105c43"
             },
             "subsettedProperties": null,
             "redefinedProperties": null,
@@ -336,7 +386,7 @@
             "isReadOnly": false,
             "propertyAssignments": {},
             "type": "Property",
-            "id": "1jyrsavl6zwkw2y",
+            "id": "1jyrafbl7105c4d",
             "name": null,
             "description": null
           }
@@ -345,7 +395,7 @@
         "isDerived": false,
         "propertyAssignments": {},
         "type": "Relation",
-        "id": "1jyrsavl6zwkw2w",
+        "id": "1jyrafbl7105c4b",
         "name": "involvesSpouse",
         "description": null
       },
@@ -357,7 +407,7 @@
             "cardinality": "0..*",
             "propertyType": {
               "type": "Class",
-              "id": "1jyrsavl6zwkw2m"
+              "id": "1jyrafbl7105c3y"
             },
             "subsettedProperties": null,
             "redefinedProperties": null,
@@ -367,7 +417,7 @@
             "isReadOnly": false,
             "propertyAssignments": {},
             "type": "Property",
-            "id": "1jyrsavl6zwkw30",
+            "id": "1jyrafbl7105c4f",
             "name": null,
             "description": null
           },
@@ -376,7 +426,7 @@
             "cardinality": "1..*",
             "propertyType": {
               "type": "Class",
-              "id": "1jyrsavl6zwkw2p"
+              "id": "1jyrafbl7105c41"
             },
             "subsettedProperties": null,
             "redefinedProperties": null,
@@ -386,7 +436,7 @@
             "isReadOnly": false,
             "propertyAssignments": {},
             "type": "Property",
-            "id": "1jyrsavl6zwkw31",
+            "id": "1jyrafbl7105c4g",
             "name": null,
             "description": null
           }
@@ -395,7 +445,7 @@
         "isDerived": false,
         "propertyAssignments": {},
         "type": "Relation",
-        "id": "1jyrsavl6zwkw2z",
+        "id": "1jyrafbl7105c4e",
         "name": null,
         "description": null
       },
@@ -407,7 +457,7 @@
             "cardinality": "0..*",
             "propertyType": {
               "type": "Class",
-              "id": "1jyrsavl6zwkw2m"
+              "id": "1jyrafbl7105c3y"
             },
             "subsettedProperties": null,
             "redefinedProperties": null,
@@ -417,7 +467,7 @@
             "isReadOnly": false,
             "propertyAssignments": {},
             "type": "Property",
-            "id": "1jyrsavl6zwkw33",
+            "id": "1jyrafbl7105c4i",
             "name": null,
             "description": null
           },
@@ -426,7 +476,7 @@
             "cardinality": "2..*",
             "propertyType": {
               "type": "Class",
-              "id": "1jyrsavl6zwkw2r"
+              "id": "1jyrafbl7105c43"
             },
             "subsettedProperties": null,
             "redefinedProperties": null,
@@ -436,7 +486,7 @@
             "isReadOnly": false,
             "propertyAssignments": {},
             "type": "Property",
-            "id": "1jyrsavl6zwkw34",
+            "id": "1jyrafbl7105c4j",
             "name": null,
             "description": null
           }
@@ -445,7 +495,7 @@
         "isDerived": false,
         "propertyAssignments": {},
         "type": "Relation",
-        "id": "1jyrsavl6zwkw32",
+        "id": "1jyrafbl7105c4h",
         "name": null,
         "description": null
       },
@@ -457,7 +507,7 @@
             "cardinality": "0..*",
             "propertyType": {
               "type": "Class",
-              "id": "1jyrsavl6zwkw2m"
+              "id": "1jyrafbl7105c3y"
             },
             "subsettedProperties": null,
             "redefinedProperties": null,
@@ -467,7 +517,7 @@
             "isReadOnly": false,
             "propertyAssignments": {},
             "type": "Property",
-            "id": "1jyrsavl6zwkw36",
+            "id": "1jyrafbl7105c4l",
             "name": null,
             "description": null
           },
@@ -476,7 +526,7 @@
             "cardinality": "1..*",
             "propertyType": {
               "type": "Class",
-              "id": "1jyrsavl6zwkw2p"
+              "id": "1jyrafbl7105c41"
             },
             "subsettedProperties": null,
             "redefinedProperties": null,
@@ -486,7 +536,7 @@
             "isReadOnly": false,
             "propertyAssignments": {},
             "type": "Property",
-            "id": "1jyrsavl6zwkw37",
+            "id": "1jyrafbl7105c4m",
             "name": null,
             "description": null
           }
@@ -495,7 +545,7 @@
         "isDerived": false,
         "propertyAssignments": {},
         "type": "Relation",
-        "id": "1jyrsavl6zwkw35",
+        "id": "1jyrafbl7105c4k",
         "name": null,
         "description": null
       },
@@ -507,7 +557,7 @@
             "cardinality": "0..*",
             "propertyType": {
               "type": "Class",
-              "id": "1jyrsavl6zwkw2m"
+              "id": "1jyrafbl7105c3y"
             },
             "subsettedProperties": null,
             "redefinedProperties": null,
@@ -517,7 +567,7 @@
             "isReadOnly": false,
             "propertyAssignments": {},
             "type": "Property",
-            "id": "1jyrsavl6zwkw39",
+            "id": "1jyrafbl7105c4o",
             "name": null,
             "description": null
           },
@@ -526,7 +576,7 @@
             "cardinality": "1..*",
             "propertyType": {
               "type": "Class",
-              "id": "1jyrsavl6zwkw2q"
+              "id": "1jyrafbl7105c42"
             },
             "subsettedProperties": null,
             "redefinedProperties": null,
@@ -536,7 +586,7 @@
             "isReadOnly": false,
             "propertyAssignments": {},
             "type": "Property",
-            "id": "1jyrsavl6zwkw3a",
+            "id": "1jyrafbl7105c4p",
             "name": null,
             "description": null
           }
@@ -545,20 +595,20 @@
         "isDerived": false,
         "propertyAssignments": {},
         "type": "Relation",
-        "id": "1jyrsavl6zwkw38",
+        "id": "1jyrafbl7105c4n",
         "name": null,
         "description": null
       }
     ],
     "propertyAssignments": {},
     "type": "Package",
-    "id": "1jyrsavl6zwkw2e",
+    "id": "1jyrafbl7105c3q",
     "name": "MarriageModule",
     "description": null
   },
   "diagrams": null,
   "type": "Project",
-  "id": "1jyrsavl6zwkw2d",
+  "id": "1jyrafbl7105c3p",
   "name": "Kind-MarriageModule",
   "description": null
 }

@@ -1,5 +1,6 @@
 import {
   Cardinality,
+  ClassElement,
   ElementRelation,
   RelationStereotype as MRelationStereotype,
 } from "../../language-server/generated/ast";
@@ -14,9 +15,10 @@ import {
 export function relationGenerator(
   relationItem: ElementRelation,
   packageItem: Package,
-  classes: Class[]
+  classes: Class[],
+  sourceClassIncoming?: ClassElement,
 ): void {
-  const sourceClass = relationItem.firstEnd?.ref;
+  const sourceClass = sourceClassIncoming ?? relationItem.firstEnd?.ref;
   const destinationClass = relationItem.secondEnd.ref;
 
   let relationStereotype = getStereotype(relationItem.relationType);
@@ -47,11 +49,16 @@ function setCardinality(
   end: Property
 ): void {
   if (cardinality) {
+    console.log(cardinality.lowerBound, cardinality.upperBound)
     if (cardinality.lowerBound === "*") {
       end.cardinality.setZeroToMany();
       return;
     } else if (typeof cardinality.lowerBound === "number") {
-      end.cardinality.setLowerBoundFromNumber(cardinality.lowerBound);
+      if (!cardinality.upperBound) {
+        end.cardinality.setCardinalityFromNumbers(cardinality.lowerBound, cardinality.lowerBound)
+      } else {
+        end.cardinality.setLowerBoundFromNumber(cardinality.lowerBound);
+      }
     }
     if (cardinality.upperBound && cardinality.upperBound === "*") {
       end.cardinality.upperBound = CardinalityValues.MANY;
