@@ -2000,15 +2000,15 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
             "cardinality": "?"
           },
           {
-            "$type": "UnorderedGroup",
+            "$type": "Group",
             "elements": [
               {
-                "$type": "Group",
+                "$type": "Keyword",
+                "value": "{"
+              },
+              {
+                "$type": "UnorderedGroup",
                 "elements": [
-                  {
-                    "$type": "Keyword",
-                    "value": "{"
-                  },
                   {
                     "$type": "Assignment",
                     "feature": "isOrdered",
@@ -2017,12 +2017,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
                       "$type": "Keyword",
                       "value": "ordered"
                     }
-                  }
-                ]
-              },
-              {
-                "$type": "Group",
-                "elements": [
+                  },
                   {
                     "$type": "Assignment",
                     "feature": "isConst",
@@ -2031,12 +2026,13 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
                       "$type": "Keyword",
                       "value": "const"
                     }
-                  },
-                  {
-                    "$type": "Keyword",
-                    "value": "}"
                   }
-                ]
+                ],
+                "cardinality": "?"
+              },
+              {
+                "$type": "Keyword",
+                "value": "}"
               }
             ],
             "cardinality": "?"
@@ -2348,7 +2344,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
           {
             "$type": "Assignment",
             "feature": "disjoint",
-            "operator": "=",
+            "operator": "?=",
             "terminal": {
               "$type": "Keyword",
               "value": "disjoint"
@@ -2358,7 +2354,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
           {
             "$type": "Assignment",
             "feature": "complete",
-            "operator": "=",
+            "operator": "?=",
             "terminal": {
               "$type": "Keyword",
               "value": "complete"
@@ -2392,7 +2388,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
           {
             "$type": "Assignment",
             "feature": "generalItem",
-            "operator": "+=",
+            "operator": "=",
             "terminal": {
               "$type": "CrossReference",
               "type": {
@@ -2407,35 +2403,6 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
               },
               "deprecatedSyntax": false
             }
-          },
-          {
-            "$type": "Group",
-            "elements": [
-              {
-                "$type": "Keyword",
-                "value": ","
-              },
-              {
-                "$type": "Assignment",
-                "feature": "generalItem",
-                "operator": "+=",
-                "terminal": {
-                  "$type": "CrossReference",
-                  "type": {
-                    "$refText": "Element"
-                  },
-                  "terminal": {
-                    "$type": "RuleCall",
-                    "rule": {
-                      "$refText": "QualifiedName"
-                    },
-                    "arguments": []
-                  },
-                  "deprecatedSyntax": false
-                }
-              }
-            ],
-            "cardinality": "*"
           },
           {
             "$type": "Group",
@@ -2582,12 +2549,12 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
               },
               {
                 "$type": "Assignment",
-                "feature": "properties",
+                "feature": "attributes",
                 "operator": "+=",
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$refText": "DataTypeProperty"
+                    "$refText": "Attribute"
                   },
                   "arguments": []
                 },
@@ -2596,121 +2563,6 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
               {
                 "$type": "Keyword",
                 "value": "}"
-              }
-            ],
-            "cardinality": "?"
-          }
-        ]
-      },
-      "definesHiddenTokens": false,
-      "entry": false,
-      "fragment": false,
-      "hiddenTokens": [],
-      "parameters": [],
-      "wildcard": false
-    },
-    {
-      "$type": "ParserRule",
-      "name": "DataTypeProperty",
-      "alternatives": {
-        "$type": "Group",
-        "elements": [
-          {
-            "$type": "Assignment",
-            "feature": "name",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$refText": "ID"
-              },
-              "arguments": []
-            }
-          },
-          {
-            "$type": "Keyword",
-            "value": ":"
-          },
-          {
-            "$type": "Alternatives",
-            "elements": [
-              {
-                "$type": "Assignment",
-                "feature": "type",
-                "operator": "=",
-                "terminal": {
-                  "$type": "CrossReference",
-                  "type": {
-                    "$refText": "DataType"
-                  },
-                  "deprecatedSyntax": false
-                }
-              },
-              {
-                "$type": "Assignment",
-                "feature": "type",
-                "operator": "=",
-                "terminal": {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$refText": "BasicDataTypes"
-                  },
-                  "arguments": []
-                }
-              }
-            ]
-          },
-          {
-            "$type": "Assignment",
-            "feature": "cardinality",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$refText": "Cardinality"
-              },
-              "arguments": []
-            },
-            "cardinality": "?"
-          },
-          {
-            "$type": "UnorderedGroup",
-            "elements": [
-              {
-                "$type": "Group",
-                "elements": [
-                  {
-                    "$type": "Keyword",
-                    "value": "{"
-                  },
-                  {
-                    "$type": "Assignment",
-                    "feature": "isOrdered",
-                    "operator": "?=",
-                    "terminal": {
-                      "$type": "Keyword",
-                      "value": "ordered"
-                    }
-                  }
-                ]
-              },
-              {
-                "$type": "Group",
-                "elements": [
-                  {
-                    "$type": "Assignment",
-                    "feature": "isConst",
-                    "operator": "?=",
-                    "terminal": {
-                      "$type": "Keyword",
-                      "value": "const"
-                    }
-                  },
-                  {
-                    "$type": "Keyword",
-                    "value": "}"
-                  }
-                ]
               }
             ],
             "cardinality": "?"
@@ -2783,24 +2635,8 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
             "value": "{"
           },
           {
-            "$type": "Assignment",
-            "feature": "elements",
-            "operator": "+=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$refText": "EnumElement"
-              },
-              "arguments": []
-            }
-          },
-          {
             "$type": "Group",
             "elements": [
-              {
-                "$type": "Keyword",
-                "value": ","
-              },
               {
                 "$type": "Assignment",
                 "feature": "elements",
@@ -2812,9 +2648,31 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
                   },
                   "arguments": []
                 }
+              },
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": ","
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "elements",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$refText": "EnumElement"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ],
+                "cardinality": "*"
               }
             ],
-            "cardinality": "*"
+            "cardinality": "?"
           },
           {
             "$type": "Keyword",

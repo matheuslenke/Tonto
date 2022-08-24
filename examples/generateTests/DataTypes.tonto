@@ -2,7 +2,7 @@ module TestingDataTypes {
     datatype RGB
     {
         red: number
-        green: number
+        green: number [1] {ordered}
         blue: number // boolean, string, Date, oasdfkaof
     }
 
@@ -10,6 +10,20 @@ module TestingDataTypes {
         // cor: Set<RGB> [0..*]
         // cor: Bag RGB
         // cor: Sequence(RGB)
-        cor: RGB { ordered }
+        cor: RGB [1] {ordered const}
+    }
+
+    subkind BMW
+    subkind Ferrari
+
+    enum Testando {
+        TEST, 
+        TEST2,
+        TEST3
+    }
+
+    disjoint complete genset TesteGenset {
+        general Car
+        specifics BMW, Ferrari
     }
 }

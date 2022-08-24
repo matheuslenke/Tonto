@@ -10,14 +10,16 @@ import {
   RelationStereotype,
   Property,
   CardinalityValues,
+  Relation,
+  AggregationKind,
 } from "ontouml-js";
 
 export function relationGenerator(
   relationItem: ElementRelation,
   packageItem: Package,
   classes: Class[],
-  sourceClassIncoming?: ClassElement,
-): void {
+  sourceClassIncoming?: ClassElement
+): Relation | undefined {
   const sourceClass = sourceClassIncoming ?? relationItem.firstEnd?.ref;
   const destinationClass = relationItem.secondEnd.ref;
 
@@ -40,8 +42,19 @@ export function relationGenerator(
       );
       setCardinality(relationItem.firstCardinality, relation.getSourceEnd());
       setCardinality(relationItem.secondCardinality, relation.getTargetEnd());
+
+      if (relationItem.isComposition) {
+        relation.getSourceEnd().aggregationKind = AggregationKind.COMPOSITE;
+        relation.getTargetEnd().aggregationKind = AggregationKind.COMPOSITE;
+      } else if (relationItem.isAssociation) {
+        relation.getSourceEnd().aggregationKind = AggregationKind.SHARED;
+        relation.getTargetEnd().aggregationKind = AggregationKind.SHARED;
+      }
+
+      return relation;
     }
   }
+  return undefined;
 }
 
 function setCardinality(
@@ -49,13 +62,15 @@ function setCardinality(
   end: Property
 ): void {
   if (cardinality) {
-    console.log(cardinality.lowerBound, cardinality.upperBound)
     if (cardinality.lowerBound === "*") {
       end.cardinality.setZeroToMany();
       return;
     } else if (typeof cardinality.lowerBound === "number") {
       if (!cardinality.upperBound) {
-        end.cardinality.setCardinalityFromNumbers(cardinality.lowerBound, cardinality.lowerBound)
+        end.cardinality.setCardinalityFromNumbers(
+          cardinality.lowerBound,
+          cardinality.lowerBound
+        );
       } else {
         end.cardinality.setLowerBoundFromNumber(cardinality.lowerBound);
       }
@@ -71,6 +86,14 @@ function setCardinality(
   } else {
     end.cardinality.setZeroToMany();
   }
+}
+
+export function relationGeneralizationGenerator(
+  model: Package,
+  sourceRelation: Relation,
+  targetRelation: Relation
+) {
+  model.createGeneralization(sourceRelation, targetRelation);
 }
 
 function getStereotype(

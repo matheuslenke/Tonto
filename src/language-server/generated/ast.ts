@@ -38,7 +38,7 @@ export type RelationStereotype = 'aggregation' | 'bringsAbout' | 'characterizati
 export type UltimateSortalStereotypes = 'collective' | 'extrinsicMode' | 'intrinsicMode' | 'kind' | 'mode' | 'quality' | 'quantity';
 
 export interface Attribute extends AstNode {
-    readonly $container: ClassElement;
+    readonly $container: ClassElement | DataType;
     attributeType: BasicDataTypes | Reference<DataType>
     cardinality?: Cardinality
     isConst: boolean
@@ -53,7 +53,7 @@ export function isAttribute(item: unknown): item is Attribute {
 }
 
 export interface Cardinality extends AstNode {
-    readonly $container: Attribute | DataTypeProperty | ElementRelation;
+    readonly $container: Attribute | ElementRelation;
     lowerBound: '*' | number
     upperBound?: '*' | number
 }
@@ -95,29 +95,14 @@ export function isContextModule(item: unknown): item is ContextModule {
 
 export interface DataType extends AstNode {
     readonly $container: ClassElement | ContextModule;
+    attributes: Array<Attribute>
     name: string
-    properties: Array<DataTypeProperty>
 }
 
 export const DataType = 'DataType';
 
 export function isDataType(item: unknown): item is DataType {
     return reflection.isInstance(item, DataType);
-}
-
-export interface DataTypeProperty extends AstNode {
-    readonly $container: DataType;
-    cardinality?: Cardinality
-    isConst: boolean
-    isOrdered: boolean
-    name: string
-    type: BasicDataTypes | Reference<DataType>
-}
-
-export const DataTypeProperty = 'DataTypeProperty';
-
-export function isDataTypeProperty(item: unknown): item is DataTypeProperty {
-    return reflection.isInstance(item, DataTypeProperty);
 }
 
 export interface ElementOntologicalNature extends AstNode {
@@ -193,9 +178,9 @@ export function isEnumElement(item: unknown): item is EnumElement {
 export interface GeneralizationSet extends AstNode {
     readonly $container: ClassElement | ContextModule;
     categorizerItems: Array<Reference<Element>>
-    complete?: 'complete'
-    disjoint?: 'disjoint'
-    generalItem: Array<Reference<Element>>
+    complete: boolean
+    disjoint: boolean
+    generalItem: Reference<Element>
     name: string
     specificItems: Array<Reference<Element>>
 }
@@ -243,14 +228,14 @@ export function isRelationMetaAttribute(item: unknown): item is RelationMetaAttr
     return reflection.isInstance(item, RelationMetaAttribute);
 }
 
-export type TontoAstType = 'Attribute' | 'AuxiliaryDeclarations' | 'Cardinality' | 'ClassElement' | 'ContextModule' | 'DataType' | 'DataTypeProperty' | 'Element' | 'ElementOntologicalNature' | 'ElementRelation' | 'EndurantType' | 'EnumData' | 'EnumElement' | 'GeneralizationSet' | 'Import' | 'Model' | 'RelationMetaAttribute';
+export type TontoAstType = 'Attribute' | 'AuxiliaryDeclarations' | 'Cardinality' | 'ClassElement' | 'ContextModule' | 'DataType' | 'Element' | 'ElementOntologicalNature' | 'ElementRelation' | 'EndurantType' | 'EnumData' | 'EnumElement' | 'GeneralizationSet' | 'Import' | 'Model' | 'RelationMetaAttribute';
 
-export type TontoAstReference = 'Attribute:attributeType' | 'ClassElement:instanceOf' | 'ClassElement:specializationEndurants' | 'DataTypeProperty:type' | 'ElementRelation:firstEnd' | 'ElementRelation:inverseEnd' | 'ElementRelation:secondEnd' | 'ElementRelation:specializeRelation' | 'GeneralizationSet:categorizerItems' | 'GeneralizationSet:generalItem' | 'GeneralizationSet:specificItems' | 'Import:referencedModel' | 'RelationMetaAttribute:redefinesRelation' | 'RelationMetaAttribute:subsetRelation';
+export type TontoAstReference = 'Attribute:attributeType' | 'ClassElement:instanceOf' | 'ClassElement:specializationEndurants' | 'ElementRelation:firstEnd' | 'ElementRelation:inverseEnd' | 'ElementRelation:secondEnd' | 'ElementRelation:specializeRelation' | 'GeneralizationSet:categorizerItems' | 'GeneralizationSet:generalItem' | 'GeneralizationSet:specificItems' | 'Import:referencedModel' | 'RelationMetaAttribute:redefinesRelation' | 'RelationMetaAttribute:subsetRelation';
 
 export class TontoAstReflection implements AstReflection {
 
     getAllTypes(): string[] {
-        return ['Attribute', 'AuxiliaryDeclarations', 'Cardinality', 'ClassElement', 'ContextModule', 'DataType', 'DataTypeProperty', 'Element', 'ElementOntologicalNature', 'ElementRelation', 'EndurantType', 'EnumData', 'EnumElement', 'GeneralizationSet', 'Import', 'Model', 'RelationMetaAttribute'];
+        return ['Attribute', 'AuxiliaryDeclarations', 'Cardinality', 'ClassElement', 'ContextModule', 'DataType', 'Element', 'ElementOntologicalNature', 'ElementRelation', 'EndurantType', 'EnumData', 'EnumElement', 'GeneralizationSet', 'Import', 'Model', 'RelationMetaAttribute'];
     }
 
     isInstance(node: unknown, type: string): boolean {
@@ -288,9 +273,6 @@ export class TontoAstReflection implements AstReflection {
             }
             case 'ClassElement:specializationEndurants': {
                 return ClassElement;
-            }
-            case 'DataTypeProperty:type': {
-                return DataType;
             }
             case 'ElementRelation:firstEnd': {
                 return ClassElement;
@@ -361,16 +343,7 @@ export class TontoAstReflection implements AstReflection {
                 return {
                     name: 'DataType',
                     mandatory: [
-                        { name: 'properties', type: 'array' }
-                    ]
-                };
-            }
-            case 'DataTypeProperty': {
-                return {
-                    name: 'DataTypeProperty',
-                    mandatory: [
-                        { name: 'isConst', type: 'boolean' },
-                        { name: 'isOrdered', type: 'boolean' }
+                        { name: 'attributes', type: 'array' }
                     ]
                 };
             }
@@ -406,7 +379,8 @@ export class TontoAstReflection implements AstReflection {
                     name: 'GeneralizationSet',
                     mandatory: [
                         { name: 'categorizerItems', type: 'array' },
-                        { name: 'generalItem', type: 'array' },
+                        { name: 'complete', type: 'boolean' },
+                        { name: 'disjoint', type: 'boolean' },
                         { name: 'specificItems', type: 'array' }
                     ]
                 };

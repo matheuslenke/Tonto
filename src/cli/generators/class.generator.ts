@@ -1,5 +1,11 @@
 import { Cardinality, EnumData } from "./../../language-server/generated/ast";
-import { CardinalityValues, Class, ClassStereotype, Package, Property } from "ontouml-js";
+import {
+  CardinalityValues,
+  Class,
+  ClassStereotype,
+  Package,
+  Property,
+} from "ontouml-js";
 import { ClassElement, DataType } from "../../language-server/generated/ast";
 
 export function classElementGenerator(
@@ -52,28 +58,34 @@ export function classElementGenerator(
 }
 
 export function attributeGenerator(
-  classElement: ClassElement,
+  classElement: ClassElement | DataType,
   createdClass: Class,
   dataTypes: Class[]
 ): void {
   classElement.attributes.forEach((attribute) => {
-    let createdAttribute: Property | undefined
+    let createdAttribute: Property | undefined;
     switch (attribute.attributeType) {
       case "Date":
         const dateType = dataTypes.find(
           (item) => item.name.getText() === "Date"
         );
         if (dateType) {
-          createdAttribute = createdClass.createAttribute(dateType, attribute.name);
-        } 
+          createdAttribute = createdClass.createAttribute(
+            dateType,
+            attribute.name
+          );
+        }
         break;
       case "number":
         const numberType = dataTypes.find(
           (item) => item.name.getText() === "number"
         );
         if (numberType) {
-          createdAttribute = createdClass.createAttribute(numberType, attribute.name);
-          createdAttribute.cardinality.setOneToOne()
+          createdAttribute = createdClass.createAttribute(
+            numberType,
+            attribute.name
+          );
+          createdAttribute.cardinality.setOneToOne();
         }
         break;
 
@@ -82,7 +94,10 @@ export function attributeGenerator(
           (item) => item.name.getText() === "boolean"
         );
         if (booleanType) {
-          createdAttribute = createdClass.createAttribute(booleanType, attribute.name);
+          createdAttribute = createdClass.createAttribute(
+            booleanType,
+            attribute.name
+          );
         }
         break;
 
@@ -91,7 +106,10 @@ export function attributeGenerator(
           (item) => item.name.getText() === "string"
         );
         if (stringType) {
-          createdAttribute = createdClass.createAttribute(stringType, attribute.name);
+          createdAttribute = createdClass.createAttribute(
+            stringType,
+            attribute.name
+          );
         }
         break;
 
@@ -100,27 +118,31 @@ export function attributeGenerator(
           (item) => item.name.getText() === attribute.attributeType.toString()
         );
         if (customType) {
-          createdAttribute = createdClass.createAttribute(customType, attribute.name);
+          createdAttribute = createdClass.createAttribute(
+            customType,
+            attribute.name
+          );
         }
     }
     if (createdAttribute) {
       // Set the attribute cardinality
-      setAttributeCardinality(attribute.cardinality, createdAttribute)
+      setAttributeCardinality(attribute.cardinality, createdAttribute);
 
       // Set the attribute isOrdered meta-attribute
-      createdAttribute.isOrdered = attribute.isOrdered
+      createdAttribute.isOrdered = attribute.isOrdered;
 
       // Set the attribute isDerived meta-attribute
-      createdAttribute.isDerived = !attribute.isConst
+      createdAttribute.isDerived = !attribute.isConst;
     }
   });
 }
 
-function setAttributeCardinality(
+export function setAttributeCardinality(
   cardinality: Cardinality | undefined,
   end: Property
 ): void {
   if (cardinality) {
+    console.log("Cardinalidade", cardinality.lowerBound);
     if (cardinality.lowerBound === "*") {
       end.cardinality.setZeroToMany();
       return;
@@ -134,6 +156,11 @@ function setAttributeCardinality(
       typeof cardinality.upperBound === "number"
     ) {
       end.cardinality.setUpperBoundFromNumber(cardinality.upperBound);
+    } else if (!cardinality.upperBound) {
+      end.cardinality.setCardinalityFromNumbers(
+        cardinality.lowerBound,
+        cardinality.lowerBound
+      );
     }
   } else {
     end.cardinality.setOneToOne(); // Default Value
@@ -146,60 +173,4 @@ export function generalizationGenerator(
   targetClass: Class
 ) {
   model.createGeneralization(sourceClass, targetClass);
-}
-
-export function customDataTypeGenerator(
-  dataType: DataType,
-  model: Package,
-  dataTypes: Class[]
-) {
-  const dataTypeClass = model.createDatatype(dataType.name);
-  console.log(dataType.name);
-  dataType.properties.forEach((element) => {
-    switch (element.type) {
-      case "Date":
-        const dateType = dataTypes.find(
-          (item) => item.name.getText() === "Date"
-        );
-        if (dateType) dataTypeClass.createAttribute(dateType, element.name);
-        break;
-      case "number":
-        const numberType = dataTypes.find(
-          (item) => item.name.getText() === "number"
-        );
-        if (numberType)
-        dataTypeClass.createAttribute(numberType, element.name);
-        break;
-
-      case "boolean":
-        const booleanType = dataTypes.find(
-          (item) => item.name.getText() === "boolean"
-        );
-        if (booleanType)
-        dataTypeClass.createAttribute(booleanType, element.name);
-        break;
-
-      case "string":
-        const stringType = dataTypes.find(
-          (item) => item.name.getText() === "string"
-        );
-        if (stringType)
-        dataTypeClass.createAttribute(stringType, element.name);
-        break;
-
-      default:
-        const customType = dataTypes.find(
-          (item) => item.name.getText() === element.type.toString()
-        );
-        if (customType)
-        dataTypeClass.createAttribute(customType, element.name);
-    }
-  });
-}
-
-export function enumGenerator(enumData: EnumData, model: Package) {
-  // const createdEnum = model.createEnumeration();
-  // enumData.elements.forEach((element) => {
-  //   createdEnum.createLiteral(element.name);
-  // });
 }

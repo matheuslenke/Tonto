@@ -13,7 +13,7 @@ export const generateAction = async (
   fileName: string,
   opts: GenerateOptions
 ): Promise<void> => {
-  console.log(opts);
+  
   const services = createTontoServices().Tonto;
   const model = await extractAstNode<Model>(fileName, services);
   const generatedFilePath = generateJSONFile(model, fileName, opts.destination);

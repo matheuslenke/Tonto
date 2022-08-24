@@ -170,7 +170,7 @@ ExternalRelation infers ElementRelation:
 Attribute:
  	name=ID ':' (attributeType=[DataType] | attributeType=BasicDataTypes)
 	cardinality=Cardinality?
-	('{' isOrdered?='ordered' & isConst?='const' '}')?
+	('{'((isOrdered?='ordered') & (isConst?='const'))? '}')?
 ;
 
 RelationMetaAttribute:
@@ -221,9 +221,9 @@ Cardinality:
 // <--- Generalization Set --->
 
 GeneralizationSet:
-	(disjoint='disjoint')? (complete='complete')?
+	(disjoint?='disjoint')? (complete?='complete')?
 	'genset' name=ID '{' 
-		'general' generalItem+=[Element:QualifiedName] (',' generalItem+=[Element:QualifiedName])*
+		'general' generalItem=[Element:QualifiedName]
 		('categorizer' categorizerItems+=[Element:QualifiedName] (categorizerItems+=[Element:QualifiedName])*)?
 		'specifics' specificItems+=[Element:QualifiedName] (',' specificItems+=[Element:QualifiedName])*
 	'}'
@@ -233,14 +233,8 @@ GeneralizationSet:
 
 DataType:
 	'datatype' name=ID ('{'
-		properties+=DataTypeProperty*
+		(attributes+=Attribute)*
 	'}')?
-;
-
-DataTypeProperty:
-	name=ID ':' (type=[DataType] | type=BasicDataTypes) 
-	cardinality=Cardinality?
-	('{' isOrdered?='ordered' & isConst?='const' '}')?
 ;
 
 BasicDataTypes returns string:
@@ -251,8 +245,8 @@ BasicDataTypes returns string:
 
 EnumData:
 	'enum' name=ID '{'
-		elements+=EnumElement
-		(',' elements+=EnumElement)*
+		(elements+=EnumElement
+		(',' elements+=EnumElement)*)?
 	'}'
 ;
 

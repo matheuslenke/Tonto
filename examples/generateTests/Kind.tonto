@@ -12,6 +12,7 @@ module MarriageModule {
     
     role Spouse specializes Person {
        [2] -- isBoundBy -- [1..*] Marriage inverseOf involvesSpouse
+       [2] -- isBoundByTest specializes involvesSpouse -- [1..*] Marriage
     }
 
     relation Marriage -- involvesSpouse -- [2..*] Spouse
@@ -19,5 +20,10 @@ module MarriageModule {
 
     relation Marriage -- [2..*] Spouse
     relation Marriage <>-- [1..*] MarriageDuty
+
     relation Marriage <>-- [1..*] MarriageRight
+}
+
+module Testing {
+    kind Testando
 }

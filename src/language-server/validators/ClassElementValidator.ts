@@ -139,7 +139,6 @@ export class ClassElementValidator {
         classElement.specializationEndurants.forEach(specializationEndurant => {
           let specializationNatures = specializationEndurant.ref?.ontologicalNatures
           const natureExists = specializationNatures?.natures.find(specializationNature => {
-            console.log('Comparando', specializationNature, nature)
             return specializationNature === nature
           })
           if (!natureExists) {
