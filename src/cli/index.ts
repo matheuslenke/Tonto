@@ -4,7 +4,7 @@ import { Model } from "../language-server/generated/ast";
 import { TontoLanguageMetaData } from "../language-server/generated/module";
 import { createTontoServices } from "../language-server/tonto-module";
 import { extractAstNode } from "./cli-util";
-import { generateJSONFile, parseProject } from "./jsonGenerator";
+import { generateJSONFile } from "./jsonGenerator";
 import { readFile } from "fs/promises";
 import { OntoumlElement, serializationUtils } from "ontouml-js";
 import { generateTontoFile } from "./tontoGenerator";
