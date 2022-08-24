@@ -28,11 +28,6 @@ interface GeneratorContext {
 }
 
 function generate(ctx: GeneratorContext): string {
-  // Every OntoUML element can be created from a constructor that can receive a partial object
-  // as references for its creation
-
-  //   ctx.fileNode.append(`\\ Generated Tonto File`);
-
   ctx.ontoumlElements.forEach((ontoumlElement) => {
     createTontoModule(ontoumlElement, ctx.fileNode);
   });

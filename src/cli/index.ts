@@ -4,16 +4,25 @@ import { Model } from "../language-server/generated/ast";
 import { TontoLanguageMetaData } from "../language-server/generated/module";
 import { createTontoServices } from "../language-server/tonto-module";
 import { extractAstNode } from "./cli-util";
-import { generateJSONFile } from "./jsonGenerator";
+import { generateJSONFile, parseProject } from "./jsonGenerator";
 import { readFile } from "fs/promises";
 import { OntoumlElement, serializationUtils } from "ontouml-js";
 import { generateTontoFile } from "./tontoGenerator";
+import { ResultResponse, validateTontoFile } from "./ontoumljsValidator";
+
+export const validateAction = async (
+  fileName: string
+): Promise<ResultResponse[] | void> => {
+  const services = createTontoServices().Tonto;
+  const model = await extractAstNode<Model>(fileName, services);
+  const validationResult = validateTontoFile(model, fileName);
+  return validationResult;
+};
 
 export const generateAction = async (
   fileName: string,
   opts: GenerateOptions
 ): Promise<void> => {
-  
   const services = createTontoServices().Tonto;
   const model = await extractAstNode<Model>(fileName, services);
   const generatedFilePath = generateJSONFile(model, fileName, opts.destination);

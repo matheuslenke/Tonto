@@ -1,4 +1,4 @@
-import { Cardinality, EnumData } from "./../../language-server/generated/ast";
+import { Cardinality } from "./../../language-server/generated/ast";
 import {
   CardinalityValues,
   Class,

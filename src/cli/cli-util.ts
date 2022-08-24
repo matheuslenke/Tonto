@@ -72,3 +72,8 @@ export function extractDestinationAndName(
     name: path.basename(filePath),
   };
 }
+
+export function extractName(filePath: string): string {
+  filePath = filePath.replace(/\..*$/, "").replace(/[.-]/g, "");
+  return path.basename(filePath);
+}

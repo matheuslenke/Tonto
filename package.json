@@ -39,8 +39,12 @@
         ],
         "commands": [
             {
-                "command": "extension.helloWorld",
-                "title": "Hello World"
+                "command": "extension.generateTonto",
+                "title": "Generate Tonto"
+            },
+            {
+                "command": "extension.generateJSON",
+                "title": "Generate JSON"
             },
             {
                 "command": "extension.validateModel",
@@ -77,6 +81,7 @@
         "jsonfile": "^6.1.0",
         "langium": "^0.4.0",
         "node-fetch": "^2.6.1",
+        "node-fetch-native": "^0.1.4",
         "ontouml-js": "../ontouml-js",
         "vscode-languageclient": "^7.0.0",
         "vscode-languageserver": "^7.0.0"

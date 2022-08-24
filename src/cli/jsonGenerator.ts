@@ -34,7 +34,20 @@ interface GeneratorContext {
 function generate(ctx: GeneratorContext): string {
   // Every OntoUML element can be created from a constructor that can receive a partial object
   // as references for its creation
+  const project = parseProject(ctx);
 
+  const projectSerialization = JSON.stringify(project, null, 2);
+  ctx.fileNode.append(projectSerialization);
+
+  if (!fs.existsSync(ctx.destination)) {
+    fs.mkdirSync(ctx.destination, { recursive: true });
+  }
+  const generatedFilePath = path.join(ctx.destination, ctx.fileName);
+  fs.writeFileSync(generatedFilePath, processGeneratorNode(ctx.fileNode));
+  return generatedFilePath;
+}
+
+export function parseProject(ctx: GeneratorContext): Project {
   const project = new Project({
     name: new MultilingualText(`${ctx.name}`),
   }); // creates an OntoUML projects
@@ -47,13 +60,5 @@ function generate(ctx: GeneratorContext): string {
     // Generate a contextModule
     contextModuleGenerator(contextModule, createdPackage);
   });
-  const projectSerialization = JSON.stringify(project, null, 2);
-  ctx.fileNode.append(projectSerialization);
-
-  if (!fs.existsSync(ctx.destination)) {
-    fs.mkdirSync(ctx.destination, { recursive: true });
-  }
-  const generatedFilePath = path.join(ctx.destination, ctx.fileName);
-  fs.writeFileSync(generatedFilePath, processGeneratorNode(ctx.fileNode));
-  return generatedFilePath;
+  return project;
 }
