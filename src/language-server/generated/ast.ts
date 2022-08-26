@@ -27,7 +27,7 @@ export function isElement(item: unknown): item is Element {
     return reflection.isInstance(item, Element);
 }
 
-export type NonSortalStereotype = 'category' | 'event' | 'historicalRoleMixin' | 'mixin' | 'phaseMixin' | 'roleMixin';
+export type NonSortalStereotype = 'category' | 'event' | 'historicalRoleMixin' | 'mixin' | 'phaseMixin' | 'roleMixin' | 'situation';
 
 export type OntologicalNature = 'abstracts' | 'collectives' | 'events' | 'extrinsic-modes' | 'functional-complexes' | 'intrinsic-modes' | 'modes' | 'objects' | 'qualities' | 'quantities' | 'relators' | 'types';
 
@@ -42,6 +42,7 @@ export interface Attribute extends AstNode {
     attributeType: BasicDataTypes | Reference<DataType>
     cardinality?: Cardinality
     isConst: boolean
+    isDerived: boolean
     isOrdered: boolean
     name: string
 }
@@ -317,6 +318,7 @@ export class TontoAstReflection implements AstReflection {
                     name: 'Attribute',
                     mandatory: [
                         { name: 'isConst', type: 'boolean' },
+                        { name: 'isDerived', type: 'boolean' },
                         { name: 'isOrdered', type: 'boolean' }
                     ]
                 };

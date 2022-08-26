@@ -1,0 +1,23 @@
+module MarriageModule {
+    kind Person {
+        (firstName){derived, ordered, const} [2..2] -- isBoundBy --  [1..*] {derived, ordered, const}( secondName ) Marriage
+         [2..2] -- isBoundByTest specializes involvesSpouse --  [1..*]  Marriage
+    }
+    relator SocialRelator {
+        marriageStartDate : Date { const derived } 
+        isActive : boolean { ordered  } 
+         [0..*] -- involvesSpouse --  [2..*]  Spouse
+         [0..*] <>--  [1..*]  MarriageDuty
+         [0..*] --  [2..*]  Spouse
+         [0..*] <>--  [1..*]  MarriageDuty
+         [0..*] <>--  [1..*]  MarriageRight
+    }
+    relator SocialRelatorType  specializes SocialRelator, Person
+    relator Marriage  specializes SocialRelator
+    kind MarriageDuty 
+    relator MarriageRight  specializes Marriage
+    role Spouse  specializes Person
+}
+module Testing {
+    kind Testando 
+}

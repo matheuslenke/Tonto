@@ -2,7 +2,7 @@ import { CompositeGeneratorNode } from "langium";
 import { Model } from "../language-server/generated/ast";
 import { extractName } from "./cli-util";
 import { Project, MultilingualText } from "ontouml-js";
-import { contextModuleGenerator } from "./generators/contextModule.generator";
+import { contextModuleGenerator } from "./JsonGenerators/contextModule.generator";
 import fetch from "node-fetch";
 
 export interface ResultResponse {

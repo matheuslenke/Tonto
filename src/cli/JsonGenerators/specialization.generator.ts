@@ -4,8 +4,8 @@ import {
   ElementRelation,
 } from "../../language-server/generated/ast";
 import { Package, Class, Relation } from "ontouml-js";
-import { generalizationGenerator } from "../generators/class.generator";
-import { relationGeneralizationGenerator } from "../generators/relation.generator";
+import { generalizationGenerator } from "./class.generator";
+import { relationGeneralizationGenerator } from "./relation.generator";
 
 export function generateSpecializations(
   contextModule: ContextModule,

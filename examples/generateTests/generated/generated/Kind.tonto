@@ -1,9 +1,0 @@
-module MarriageModule {
-kind Person
-relator SocialRelator
-relator SocialRelatorType
-relator Marriage
-kind MarriageDuty
-relator MarriageRight
-class Spouse
-}

@@ -2,16 +2,16 @@ module MarriageModule {
     kind Person
 
     relator SocialRelator
-    relator SocialRelatorType specializes SocialRelator
+    relator SocialRelatorType specializes SocialRelator, Person
     relator Marriage (instanceOf SocialRelatorType) specializes SocialRelator {
-        marriageStartDate: Date
-        isActive: boolean
+        marriageStartDate: Date {const derived}
+        isActive: boolean {ordered}
     }
     kind MarriageDuty
     relator MarriageRight specializes Marriage
     
     role Spouse specializes Person {
-       [2] -- isBoundBy -- [1..*] Marriage inverseOf involvesSpouse
+       (firstName) {const, ordered, derived} [2]  -- isBoundBy -- [1..*] (secondName) {const, ordered, derived} Marriage inverseOf involvesSpouse
        [2] -- isBoundByTest specializes involvesSpouse -- [1..*] Marriage
     }
 

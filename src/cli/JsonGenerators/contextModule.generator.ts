@@ -1,4 +1,4 @@
-import { GeneralizationSet } from "./../../language-server/generated/ast";
+import { GeneralizationSet } from "../../language-server/generated/ast";
 import {
   ContextModule,
   ClassElement,
@@ -7,10 +7,7 @@ import {
   ElementRelation,
 } from "../../language-server/generated/ast";
 import { Package, Class, Relation } from "ontouml-js";
-import {
-  attributeGenerator,
-  classElementGenerator,
-} from "../generators/class.generator";
+import { attributeGenerator, classElementGenerator } from "./class.generator";
 import { relationGenerator } from "./relation.generator";
 import { generateSpecializations } from "./specialization.generator";
 import { enumGenerator } from "./enum.generator";

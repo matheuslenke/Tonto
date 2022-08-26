@@ -1,4 +1,4 @@
-import { GeneralizationSet as GenSetData } from "./../../language-server/generated/ast";
+import { GeneralizationSet as GenSetData } from "../../language-server/generated/ast";
 import { Class, GeneralizationSet, Package } from "ontouml-js";
 
 export function generalizationSetGenerator(

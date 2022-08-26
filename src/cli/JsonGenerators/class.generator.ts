@@ -1,10 +1,14 @@
-import { Cardinality } from "./../../language-server/generated/ast";
+import {
+  Cardinality,
+  OntologicalNature as Nature,
+} from "../../language-server/generated/ast";
 import {
   CardinalityValues,
   Class,
   ClassStereotype,
   Package,
   Property,
+  OntologicalNature,
 } from "ontouml-js";
 import { ClassElement, DataType } from "../../language-server/generated/ast";
 
@@ -14,17 +18,21 @@ export function classElementGenerator(
 ): Class {
   if (!!classElement.classElementType) {
     const stereotype = classElement.classElementType.stereotype;
+    let natures: OntologicalNature[] = [];
+    if (classElement.ontologicalNatures) {
+      natures = getOntoUMLNatures(classElement.ontologicalNatures.natures);
+    }
     switch (stereotype) {
       case "category":
-        return packageItem.createCategory(classElement.name);
+        return packageItem.createCategory(classElement.name, natures);
       case "mixin":
-        return packageItem.createMixin(classElement.name);
+        return packageItem.createMixin(classElement.name, natures);
       case "phaseMixin":
-        return packageItem.createPhaseMixin(classElement.name);
+        return packageItem.createPhaseMixin(classElement.name, natures);
       case "roleMixin":
-        return packageItem.createRoleMixin(classElement.name);
+        return packageItem.createRoleMixin(classElement.name, natures);
       case "historicalRoleMixin":
-        return packageItem.createRoleMixin(classElement.name);
+        return packageItem.createRoleMixin(classElement.name, natures);
       case "event":
         return packageItem.createEvent(classElement.name);
       case "kind":
@@ -36,7 +44,11 @@ export function classElementGenerator(
       case "quality":
         return packageItem.createQuality(classElement.name);
       case "mode":
-        return packageItem.createClass(classElement.name, ClassStereotype.MODE);
+        return packageItem.createClass(
+          classElement.name,
+          ClassStereotype.MODE,
+          natures
+        );
       case "intrinsicMode":
         return packageItem.createIntrinsicMode(classElement.name);
       case "extrinsicMode":
@@ -52,9 +64,8 @@ export function classElementGenerator(
       case "relator":
         return packageItem.createRelator(classElement.name);
     }
-  } else {
-    return packageItem.createClass(classElement.name);
   }
+  return packageItem.createClass(classElement.name);
 }
 
 export function attributeGenerator(
@@ -128,11 +139,9 @@ export function attributeGenerator(
       // Set the attribute cardinality
       setAttributeCardinality(attribute.cardinality, createdAttribute);
 
-      // Set the attribute isOrdered meta-attribute
       createdAttribute.isOrdered = attribute.isOrdered;
-
-      // Set the attribute isDerived meta-attribute
-      createdAttribute.isDerived = !attribute.isConst;
+      createdAttribute.isDerived = attribute.isDerived;
+      createdAttribute.isReadOnly = attribute.isConst;
     }
   });
 }
@@ -173,4 +182,37 @@ export function generalizationGenerator(
   targetClass: Class
 ) {
   model.createGeneralization(sourceClass, targetClass);
+}
+
+function getOntoUMLNatures(natures: Nature[]): OntologicalNature[] {
+  return natures.map((nature) => {
+    switch (nature) {
+      case "abstracts":
+        return OntologicalNature.abstract;
+      case "collectives":
+        return OntologicalNature.collective;
+      case "events":
+        return OntologicalNature.event;
+      case "extrinsic-modes":
+        return OntologicalNature.extrinsic_mode;
+      case "functional-complexes":
+        return OntologicalNature.functional_complex;
+      case "intrinsic-modes":
+        return OntologicalNature.intrinsic_mode;
+      case "modes":
+        return OntologicalNature.intrinsic_mode;
+      case "objects":
+        return OntologicalNature.abstract;
+      case "qualities":
+        return OntologicalNature.quality;
+      case "quantities":
+        return OntologicalNature.quantity;
+      case "relators":
+        return OntologicalNature.relator;
+      case "types":
+        return OntologicalNature.type;
+      default:
+        return OntologicalNature.abstract;
+    }
+  });
 }

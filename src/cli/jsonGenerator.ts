@@ -4,7 +4,7 @@ import { extractDestinationAndName } from "./cli-util";
 import fs from "fs";
 import path from "path";
 import { Project, MultilingualText } from "ontouml-js";
-import { contextModuleGenerator } from "./generators/contextModule.generator";
+import { contextModuleGenerator } from "./JsonGenerators/contextModule.generator";
 
 export function generateJSONFile(
   model: Model,

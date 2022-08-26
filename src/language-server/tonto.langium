@@ -89,7 +89,7 @@ EndurantType:
 ;
 
 NonSortalStereotype returns string:
-	'category' | 'mixin' | 'phaseMixin' | 'roleMixin' | 'historicalRoleMixin' | 'event'
+	'category' | 'mixin' | 'phaseMixin' | 'roleMixin' | 'historicalRoleMixin' | 'event' | 'situation'
 ;
 
 UltimateSortalStereotypes returns string:
@@ -170,7 +170,7 @@ ExternalRelation infers ElementRelation:
 Attribute:
  	name=ID ':' (attributeType=[DataType] | attributeType=BasicDataTypes)
 	cardinality=Cardinality?
-	('{'((isOrdered?='ordered') & (isConst?='const'))? '}')?
+	('{'((isOrdered?='ordered') & (isConst?='const') & (isDerived?='derived'))? '}')?
 ;
 
 RelationMetaAttribute:

@@ -856,6 +856,10 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
           {
             "$type": "Keyword",
             "value": "event"
+          },
+          {
+            "$type": "Keyword",
+            "value": "situation"
           }
         ]
       },
@@ -2025,6 +2029,15 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
                     "terminal": {
                       "$type": "Keyword",
                       "value": "const"
+                    }
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "isDerived",
+                    "operator": "?=",
+                    "terminal": {
+                      "$type": "Keyword",
+                      "value": "derived"
                     }
                   }
                 ],

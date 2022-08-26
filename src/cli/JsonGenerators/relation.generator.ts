@@ -2,6 +2,7 @@ import {
   Cardinality,
   ClassElement,
   ElementRelation,
+  RelationMetaAttribute,
   RelationStereotype as MRelationStereotype,
 } from "../../language-server/generated/ast";
 import {
@@ -40,8 +41,19 @@ export function relationGenerator(
         relationItem.name,
         relationStereotype
       );
-      setCardinality(relationItem.firstCardinality, relation.getSourceEnd());
-      setCardinality(relationItem.secondCardinality, relation.getTargetEnd());
+
+      const sourceEnd = relation.getSourceEnd();
+      const targetEnd = relation.getTargetEnd();
+
+      setMetaAttributes(sourceEnd, relationItem.firstEndMetaAttributes);
+      setMetaAttributes(targetEnd, relationItem.secondEndMetaAttributes);
+
+      relationItem.firstEndName && sourceEnd.setName(relationItem.firstEndName);
+      relationItem.secondEndName &&
+        targetEnd.setName(relationItem.secondEndName);
+
+      setCardinality(relationItem.firstCardinality, sourceEnd);
+      setCardinality(relationItem.secondCardinality, targetEnd);
 
       if (relationItem.isComposition) {
         relation.getSourceEnd().aggregationKind = AggregationKind.COMPOSITE;
@@ -55,6 +67,17 @@ export function relationGenerator(
     }
   }
   return undefined;
+}
+
+function setMetaAttributes(
+  end: Property,
+  metaAttributes: RelationMetaAttribute[]
+) {
+  metaAttributes.forEach((attribute) => {
+    if (attribute.isOrdered) end.isOrdered = attribute.isOrdered;
+    if (attribute.isConst) end.isReadOnly = attribute.isConst;
+    if (attribute.isDerived) end.isDerived = attribute.isDerived;
+  });
 }
 
 function setCardinality(

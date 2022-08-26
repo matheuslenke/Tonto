@@ -1,7 +1,8 @@
 import { CompositeGeneratorNode, processGeneratorNode } from "langium";
 import fs from "fs";
 import path from "path";
-import { Class, OntoumlElement } from "ontouml-js";
+import { OntoumlElement } from "ontouml-js";
+import { createTontoModule } from "./TontoConstructors/contextModule.constructor";
 
 export function generateTontoFile(
   ontoumlElements: OntoumlElement[],
@@ -38,38 +39,6 @@ function generate(ctx: GeneratorContext): string {
   const generatedFilePath = path.join(ctx.destination, ctx.fileName);
   fs.writeFileSync(generatedFilePath, processGeneratorNode(ctx.fileNode));
   return generatedFilePath;
-}
-
-function createTontoModule(
-  element: OntoumlElement,
-  fileNode: CompositeGeneratorNode
-) {
-  const name = element.project.name.getText().replace(/.*-/, "");
-  fileNode.append(`module ${name} {\n`);
-  element.project.getAllPackages().forEach((packageItem) => {
-    packageItem.getAllClasses().forEach((classItem) => {
-      createClassElement(classItem, fileNode);
-    });
-  });
-
-  fileNode.append("}");
-}
-
-function createClassElement(element: Class, fileNode: CompositeGeneratorNode) {
-  switch (element.stereotype) {
-    case "kind":
-      fileNode.append(`kind ${element.name.getText()}\n`);
-      break;
-    case "relator":
-      fileNode.append(`relator ${element.name.getText()}\n`);
-      break;
-
-    case "datatype":
-      //   fileNode.append(`datatype ${element.name.getText()}\n`);
-      break;
-    default:
-      fileNode.append(`class ${element.name.getText()}\n`);
-  }
 }
 
 interface FilePathData {
