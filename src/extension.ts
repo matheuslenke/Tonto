@@ -1,3 +1,4 @@
+import { ErrorResultResponse, ResultResponse } from "./cli/ontoumljsValidator";
 import * as vscode from "vscode";
 import * as path from "path";
 import {
@@ -249,12 +250,22 @@ async function validateModel(uri: vscode.Uri, event?: string) {
       } else if (document.languageId === "tonto") {
         const result = await validateAction(document.fileName);
         if (result) {
-          const resultMessages = result.map(
-            (item) => `${item.title}${NL.lineDelimiter}`
-          );
-          vscode.window.showInformationMessage(
-            `Model Validated! ${resultMessages}`
-          );
+          if ((<ErrorResultResponse>result).info) {
+            const error = result as ErrorResultResponse;
+            let message = `Error ${error.status} (${error.id}):${error.message}: \n`;
+            error.info.forEach((info) => {
+              message += ` keyword ${info.keyword}: ${info.message}; `;
+            });
+            vscode.window.showInformationMessage(message);
+          } else {
+            const response = result as ResultResponse[];
+            const resultMessages = response.map(
+              (item) => `${item.title}${NL.lineDelimiter}`
+            );
+            vscode.window.showInformationMessage(
+              `Model Validated! ${resultMessages}`
+            );
+          }
         } else {
           vscode.window.showInformationMessage(
             `Failed! Validation request returned nothing`

@@ -6,24 +6,38 @@ import { contextModuleGenerator } from "./JsonGenerators/contextModule.generator
 import fetch from "node-fetch";
 
 export interface ResultResponse {
-  code: string;
-  data: {
-    source: {
-      id: string;
-      description: string;
-      stereotype: string;
-      type: string;
+  code?: string;
+  data?: {
+    source?: {
+      id?: string;
+      description?: string;
+      stereotype?: string;
+      type?: string;
     };
   };
-  description: string;
-  severity: string;
-  title: string;
+  description?: string;
+  severity?: string;
+  title?: string;
+}
+
+export interface ErrorResultResponse {
+  id?: string;
+  message?: string;
+  status?: number;
+  info: ErrorInfo[];
+}
+
+interface ErrorInfo {
+  keyword?: string;
+  message?: string;
+  dataPath?: string;
+  schemaPath?: string;
 }
 
 export async function validateTontoFile(
   model: Model,
   filePath: string
-): Promise<ResultResponse[] | undefined> {
+): Promise<ResultResponse[] | ErrorResultResponse | undefined> {
   const name = extractName(filePath);
 
   const ctx = <GeneratorContext>{
@@ -45,7 +59,12 @@ export async function validateTontoFile(
       headers: { "Content-Type": "application/json" },
     });
     const json = await response.json();
-    return json.result as ResultResponse[];
+    const resultResponse = json.result as ResultResponse[];
+    if (resultResponse) {
+      return resultResponse;
+    } else {
+      return json as ErrorResultResponse;
+    }
   } catch (error) {
     console.log(error);
   }
