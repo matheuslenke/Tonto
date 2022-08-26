@@ -7,3 +7,6 @@ coverage
 *.tsbuildinfo
 
 *.vsix
+
+**/generated/*.tonto
+**/generated/*.json

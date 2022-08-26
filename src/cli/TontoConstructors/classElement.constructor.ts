@@ -25,12 +25,12 @@ export function constructClassElement(
   fileNode.append(`${stereotypeWord} ${element.getName()} `);
 
   // Construct specializations
-  const generalizations = element.getGeneralizationsWhereGeneral();
+  const generalizations = element.getGeneralizationsWhereSpecific();
 
   if (generalizations.length > 0) {
     fileNode.append(" specializes ");
     generalizations.forEach((generalization, index) => {
-      fileNode.append(`${generalization.getSpecificClass().getName()}`);
+      fileNode.append(`${generalization.getGeneralClass().getName()}`);
       if (index < generalizations.length - 1) {
         fileNode.append(", ");
       }

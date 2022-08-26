@@ -17,21 +17,17 @@ export function generateSpecializations(
     if (element.$type === "ClassElement") {
       const classElement = element as ClassElement;
       if (classElement.specializationEndurants) {
-        const classElementCreated = classes.find(
+        const sourceClass = classes.find(
           (item) => item.name.getText() === classElement.name
         );
 
-        if (classElementCreated) {
+        if (sourceClass) {
           classElement.specializationEndurants.forEach((endurant) => {
             const targetClass = classes.find(
               (item) => item.name.getText() === endurant.ref?.name
             );
             if (targetClass) {
-              generalizationGenerator(
-                packageItem,
-                classElementCreated,
-                targetClass
-              );
+              generalizationGenerator(packageItem, targetClass, sourceClass);
               generateInternalRelationSpecialization(
                 classElement,
                 relations,
