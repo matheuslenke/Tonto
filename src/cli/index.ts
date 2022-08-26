@@ -8,11 +8,15 @@ import { generateJSONFile } from "./jsonGenerator";
 import { readFile } from "fs/promises";
 import { OntoumlElement, serializationUtils } from "ontouml-js";
 import { generateTontoFile } from "./tontoGenerator";
-import { ResultResponse, validateTontoFile } from "./ontoumljsValidator";
+import {
+  ErrorResultResponse,
+  ResultResponse,
+  validateTontoFile,
+} from "./ontoumljsValidator";
 
 export const validateAction = async (
   fileName: string
-): Promise<ResultResponse[] | void> => {
+): Promise<ResultResponse[] | ErrorResultResponse | void> => {
   const services = createTontoServices().Tonto;
   const model = await extractAstNode<Model>(fileName, services);
   const validationResult = validateTontoFile(model, fileName);

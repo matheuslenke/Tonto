@@ -8,7 +8,6 @@ import {
   TransportKind,
 } from "vscode-languageclient/node";
 import { generateAction, importAction, validateAction } from "./cli";
-import { NL } from "langium";
 
 let client: LanguageClient;
 let generateJsonStatusBarItem: vscode.StatusBarItem;
@@ -250,8 +249,8 @@ async function validateModel(uri: vscode.Uri, event?: string) {
       } else if (document.languageId === "tonto") {
         const result = await validateAction(document.fileName);
         if (result) {
-          if ((<ErrorResultResponse>result).info) {
-            const error = result as ErrorResultResponse;
+          if (isErrorResultResponse(result)) {
+            const error = (result as unknown) as ErrorResultResponse;
             let message = `Error ${error.status} (${error.id}):${error.message}: \n`;
             error.info.forEach((info) => {
               message += ` keyword ${info.keyword}: ${info.message}; `;
@@ -259,8 +258,9 @@ async function validateModel(uri: vscode.Uri, event?: string) {
             vscode.window.showInformationMessage(message);
           } else {
             const response = result as ResultResponse[];
-            const resultMessages = response.map(
-              (item) => `${item.title}${NL.lineDelimiter}`
+            const resultMessages = response.reduce(
+              (oldValue, item) => oldValue + `${item.title}, `,
+              ""
             );
             vscode.window.showInformationMessage(
               `Model Validated! ${resultMessages}`
@@ -278,4 +278,10 @@ async function validateModel(uri: vscode.Uri, event?: string) {
       }
     });
   }
+}
+
+function isErrorResultResponse(
+  response: void | ErrorResultResponse | ResultResponse[]
+): response is ErrorResultResponse {
+  return (response as ErrorResultResponse).info !== undefined;
 }
