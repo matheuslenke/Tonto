@@ -50,3 +50,4 @@ export class TontoNameProvider extends DefaultNameProvider {
     return (prefix ? prefix + "." : "") + name;
   }
 }
+
