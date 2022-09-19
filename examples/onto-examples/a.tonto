@@ -1,4 +1,4 @@
-module a {
+module TestingA {
 
     // uso de high-order types
     // regras ainda não haviam sido incorporadas
@@ -15,7 +15,6 @@ module a {
     phaseMixin InactiveEntity of objects, relators
     mixin InsurableItem of objects, relators
     // kind testando of objects
-    //
     historicalRoleMixin test
 
     // of não é usado em sortais, pois natureza ontológica já
@@ -26,6 +25,7 @@ module a {
     kind Organization {
    {const} (organization) [*] -- hasMember specializes enrolledIn -- [*] (member) {const} Person
 }
+    kind School
     relation Person [0..*] -- memberIn -- Organization inverseOf hasMember
     kind Person (instanceOf Species) specializes Animal {
     (student) /*{const_}*/ -- enrolledIn /* specializes memberIn */ -- [0..*] {const, subsets hasMember} (schools) School 
@@ -33,8 +33,8 @@ module a {
 
     // ref Person (employer) [*] -- employedIn -- School
     // ref School -- hasEmployees -- Person inverseOf employedIn
-    subkind School specializes Organization
-{
-    -- hasStudents -- Person inverseOf enrolledIn 
-}
+//     subkind School specializes Organization
+// {
+//     -- hasStudents -- Person inverseOf enrolledIn 
+// }
 }

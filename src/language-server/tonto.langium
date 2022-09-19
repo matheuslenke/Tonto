@@ -93,11 +93,11 @@ NonSortalStereotype returns string:
 ;
 
 UltimateSortalStereotypes returns string:
-	'kind' | 'collective' | 'quantity' | 'quality' | 'mode' | 'intrinsicMode' | 'extrinsicMode'
+	'kind' | 'collective' | 'quantity' | 'quality' | 'mode' | 'intrinsicMode' | 'extrinsicMode' | 'relator'
 ;
 
 BaseSortalStereotype returns string:
-	'subkind' | 'phase' | 'role' | 'historicalRole' | 'relator'
+	'subkind' | 'phase' | 'role' | 'historicalRole'
 ;
 
 ElementOntologicalNature:
@@ -105,7 +105,7 @@ ElementOntologicalNature:
 ;
 
 OntologicalNature returns string:
-	'objects' | 'relators' | 'modes' |
+	'objects' | 'relators' |
 	'collectives' | 'functional-complexes' |
 	'quantities' | 'intrinsic-modes' | 'extrinsic-modes' |
 	'qualities' | 'types' | 'abstracts' | 'events'
@@ -223,7 +223,7 @@ Cardinality:
 GeneralizationSet:
 	(disjoint?='disjoint')? (complete?='complete')?
 	'genset' name=ID '{' 
-		'general' generalItem=[Element:QualifiedName]
+		('general' generalItem=[Element:QualifiedName])
 		('categorizer' categorizerItems+=[Element:QualifiedName] (categorizerItems+=[Element:QualifiedName])*)?
 		'specifics' specificItems+=[Element:QualifiedName] (',' specificItems+=[Element:QualifiedName])*
 	'}'

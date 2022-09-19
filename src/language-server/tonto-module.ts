@@ -8,6 +8,7 @@ import {
   LangiumSharedServices,
   Module,
   PartialLangiumServices,
+  DocumentHighlighter,
 } from "langium";
 import {
   TontoGeneratedModule,

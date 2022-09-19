@@ -47,7 +47,7 @@ export function classElementGenerator(
         return packageItem.createClass(
           classElement.name,
           ClassStereotype.MODE,
-          natures
+          [OntologicalNature.extrinsic_mode, OntologicalNature.intrinsic_mode]
         );
       case "intrinsicMode":
         return packageItem.createIntrinsicMode(classElement.name);
@@ -199,10 +199,6 @@ function getOntoUMLNatures(natures: Nature[]): OntologicalNature[] {
         return OntologicalNature.functional_complex;
       case "intrinsic-modes":
         return OntologicalNature.intrinsic_mode;
-      case "modes":
-        return OntologicalNature.intrinsic_mode;
-      case "objects":
-        return OntologicalNature.abstract;
       case "qualities":
         return OntologicalNature.quality;
       case "quantities":
@@ -211,6 +207,8 @@ function getOntoUMLNatures(natures: Nature[]): OntologicalNature[] {
         return OntologicalNature.relator;
       case "types":
         return OntologicalNature.type;
+      case "objects":
+        return OntologicalNature.functional_complex;
       default:
         return OntologicalNature.abstract;
     }

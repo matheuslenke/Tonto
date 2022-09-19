@@ -1,7 +1,8 @@
-import { ClassElement } from './../generated/ast';
+import { ClassElement } from "./../generated/ast";
 import { ValidationAcceptor } from "langium";
 import { EndurantTypes } from "../models/EndurantType";
-import { checkCircularSpecializationRecursive } from '../utils/CheckCircularSpecializationRecursive';
+import { checkCircularSpecializationRecursive } from "../utils/CheckCircularSpecializationRecursive";
+import { checkSpecializesUltimateSortalRecursive } from "../utils/CheckSpecializesUltimateSortalRecursive";
 // import {OntologicalNature, natureUtils} from '../models/Natures'
 
 // const allowedStereotypeRestrictedToMatches = {
@@ -34,148 +35,191 @@ import { checkCircularSpecializationRecursive } from '../utils/CheckCircularSpec
 // };
 
 export class ClassElementValidator {
-
   /*
-  * Checks if a Kind specializes a unique ultimate sortal (Kind, Collective, Quantity, Relator, Quality or mode)
-  */
-  checkKindSpecialization(classElement: ClassElement, accept: ValidationAcceptor): void {
+   * Checks if a Kind specializes a unique ultimate sortal (Kind, Collective, Quantity, Relator, Quality or mode)
+   */
+  checkKindSpecialization(
+    classElement: ClassElement,
+    accept: ValidationAcceptor
+  ): void {
     if (!classElement || !classElement.classElementType) {
-      return
+      return;
     }
-    const endurantType = classElement.classElementType.stereotype
+    const endurantType = classElement.classElementType.stereotype;
 
-    if (endurantType === null || endurantType === undefined) { return }
+    if (endurantType === null || endurantType === undefined) {
+      return;
+    }
     // Check if it is an Sortal
-    if (endurantType === EndurantTypes.KIND ||
+    if (
+      endurantType === EndurantTypes.KIND ||
       endurantType === EndurantTypes.SUBKIND ||
-      endurantType === EndurantTypes.COLLECTIVE  ) {
-      
-      classElement.specializationEndurants.forEach( specializationItem => {
-        const refElement = specializationItem.ref?.$cstNode?.element as ClassElement
-        if(!refElement || !refElement.classElementType) {
-          return
-        }
-        const refType = refElement.classElementType.stereotype
-
-        // Check if it specializes another Sortal
-        if( refType === EndurantTypes.KIND || refType === EndurantTypes.COLLECTIVE ||
-          refType === EndurantTypes.QUANTITY ||
-          refType === EndurantTypes.QUALITY || refType === EndurantTypes.MODE ) {
-          // console.log("Error na referencia")
-          accept('warning', 'Every sortal class must specialize a unique ultimate sortal (Kind, Collective, Quantity, Relator, Quality or mode)', { node: classElement } )
-        }
-      })
-    }  
+      endurantType === EndurantTypes.QUALITY ||
+      endurantType === EndurantTypes.QUANTITY ||
+      endurantType === EndurantTypes.RELATOR ||
+      endurantType === EndurantTypes.MODE ||
+      endurantType === EndurantTypes.INTRINSIC_MODE ||
+      endurantType === EndurantTypes.EXTRINSIC_MODE ||
+      endurantType === EndurantTypes.COLLECTIVE
+    ) {
+      checkSpecializesUltimateSortalRecursive(classElement, [], 0 , accept)
+    }
   }
 
-  checkClassElementStartsWithCapital(classElement: ClassElement, accept: ValidationAcceptor): void {
+  checkClassElementStartsWithCapital(
+    classElement: ClassElement,
+    accept: ValidationAcceptor
+  ): void {
     if (classElement.name) {
-        const firstChar = classElement.name.substring(0, 1);
-        if (firstChar.toUpperCase() !== firstChar) {
-            accept('warning', 'Class name should start with a capital.', { node: classElement, property: 'name' });
-        }
+      const firstChar = classElement.name.substring(0, 1);
+      if (firstChar.toUpperCase() !== firstChar) {
+        accept("warning", "Class name should start with a capital.", {
+          node: classElement,
+          property: "name",
+        });
+      }
     }
   }
 
   /*
-  * Checks if a Rigid stereotype specializes a anti-rigid stereotype
-  */
-  checkRigidSpecializesAntiRigid(classElement: ClassElement, accept: ValidationAcceptor): void {
+   * Checks if a Rigid stereotype specializes a anti-rigid stereotype
+   */
+  checkRigidSpecializesAntiRigid(
+    classElement: ClassElement,
+    accept: ValidationAcceptor
+  ): void {
     if (!classElement || !classElement.classElementType) {
-      return
+      return;
     }
-    const endurantType = classElement.classElementType.stereotype
+    const endurantType = classElement.classElementType.stereotype;
 
-    if (endurantType === null || endurantType === undefined) { return }
-    
+    if (endurantType === null || endurantType === undefined) {
+      return;
+    }
+
     // Check if it is a rigid stereotype
-    if (endurantType === EndurantTypes.KIND 
-        || endurantType === EndurantTypes.SUBKIND
-        || endurantType === EndurantTypes.COLLECTIVE
-        || endurantType === EndurantTypes.CATEGORY
+    if (
+      endurantType === EndurantTypes.KIND ||
+      endurantType === EndurantTypes.SUBKIND ||
+      endurantType === EndurantTypes.COLLECTIVE ||
+      endurantType === EndurantTypes.CATEGORY
+    ) {
+      classElement.specializationEndurants.forEach((specializationItem) => {
+        const refElement = specializationItem.ref?.$cstNode
+          ?.element as ClassElement;
+        if (!refElement || !refElement.classElementType) {
+          return;
+        }
+        const refType = refElement.classElementType.stereotype;
+
+        if (
+          refType === EndurantTypes.PHASE ||
+          refType === EndurantTypes.ROLE ||
+          refType === EndurantTypes.PHASE_MIXIN ||
+          refType === EndurantTypes.ROLE_MIXIN
         ) {
-          classElement.specializationEndurants.forEach( specializationItem => {
-            const refElement = specializationItem.ref?.$cstNode?.element as ClassElement
-            if (!refElement || !refElement.classElementType) {
-              return
-            }
-            const refType = refElement.classElementType.stereotype
-      
-            if( refType === EndurantTypes.PHASE || refType === EndurantTypes.ROLE ||
-              refType === EndurantTypes.PHASE_MIXIN || refType === EndurantTypes.ROLE_MIXIN) {
-              // console.log("Error na referencia")
-              accept('warning', `Prohibited specialization: rigid/semi-rigid specializing an anti-rigid. The rigid/semi-rigid class ${classElement.name} cannot specialize the anti-rigid class ${refElement.name}`, {node: classElement} )
-            }
-          })
+          // console.log("Error na referencia")
+          accept(
+            "warning",
+            `Prohibited specialization: rigid/semi-rigid specializing an anti-rigid. The rigid/semi-rigid class ${classElement.name} cannot specialize the anti-rigid class ${refElement.name}`,
+            { node: classElement }
+          );
+        }
+      });
     }
   }
 
-  checkDuplicatedReferenceNames(classElement: ClassElement, accept: ValidationAcceptor): void {
-    const references = classElement.references
+  checkDuplicatedReferenceNames(
+    classElement: ClassElement,
+    accept: ValidationAcceptor
+  ): void {
+    const references = classElement.references;
 
-    let names: string[] = []
+    let names: string[] = [];
 
-    references.forEach( reference => {
-      const nameExists = names.find(name => name === reference.name)
+    references.forEach((reference) => {
+      const nameExists = names.find((name) => name === reference.name);
       if (nameExists) {
-        accept('error', 'Duplicated reference name', { node: reference })
+        accept("error", "Duplicated reference name", { node: reference });
       } else {
         if (reference.name) {
-          names.push(reference.name)
+          names.push(reference.name);
         }
       }
-    })
+    });
   }
 
   /*
-  * The element specializations must have ontological natures that are contained in the ontological natures of its superclasses
-  */
-  checkCompatibleNatures(classElement: ClassElement, accept: ValidationAcceptor): void {
-    const elementNatures = classElement.ontologicalNatures
+   * The element specializations must have ontological natures that are contained in the ontological natures of its superclasses
+   */
+  checkCompatibleNatures(
+    classElement: ClassElement,
+    accept: ValidationAcceptor
+  ): void {
+    const elementNatures = classElement.ontologicalNatures;
 
     if (elementNatures) {
-      elementNatures.natures.forEach(nature => {
-        let specializationDoesntExistsInParent = true
-        classElement.specializationEndurants.forEach(specializationEndurant => {
-          let specializationNatures = specializationEndurant.ref?.ontologicalNatures
-          const natureExists = specializationNatures?.natures.find(specializationNature => {
-            return specializationNature === nature
-          })
-          if (!natureExists) {
-            specializationDoesntExistsInParent = false
+      elementNatures.natures.forEach((nature) => {
+        let specializationDoesntExistsInParent = true;
+        classElement.specializationEndurants.forEach(
+          (specializationEndurant) => {
+            let specializationNatures =
+              specializationEndurant.ref?.ontologicalNatures;
+            const natureExists = specializationNatures?.natures.find(
+              (specializationNature) => {
+                return specializationNature === nature;
+              }
+            );
+            if (!natureExists) {
+              specializationDoesntExistsInParent = false;
+            }
           }
-        })
-        
+        );
+
         if (!specializationDoesntExistsInParent) {
-          accept('error', 'This element cannot be restricted to Natures that its superclass is not restricted', { node: classElement, property: 'ontologicalNatures' })
+          accept(
+            "error",
+            "This element cannot be restricted to Natures that its superclass is not restricted",
+            { node: classElement, property: "ontologicalNatures" }
+          );
         }
-      })
+      });
     }
   }
 
-  checkNaturesOnlyOnNonSortals(classElement: ClassElement, accept: ValidationAcceptor): void {
-    const ElementNatures = classElement.ontologicalNatures
+  checkNaturesOnlyOnNonSortals(
+    classElement: ClassElement,
+    accept: ValidationAcceptor
+  ): void {
+    const ElementNatures = classElement.ontologicalNatures;
     if (ElementNatures) {
-      if (classElement.classElementType?.stereotype !== 'roleMixin' &&
-        classElement.classElementType?.stereotype !== 'category' && 
-        classElement.classElementType?.stereotype !== 'phaseMixin' && 
-        classElement.classElementType?.stereotype !== 'mixin'
+      if (
+        classElement.classElementType?.stereotype !== "roleMixin" &&
+        classElement.classElementType?.stereotype !== "category" &&
+        classElement.classElementType?.stereotype !== "phaseMixin" &&
+        classElement.classElementType?.stereotype !== "mixin"
       ) {
-        accept('error', 'Only non-sortal types can specialize natures', { node: classElement, property: 'ontologicalNatures' })
+        accept("error", "Only non-sortal types can specialize natures", {
+          node: classElement,
+          property: "ontologicalNatures",
+        });
       }
     }
   }
 
   /*
-  * Checks if an Element has a ciclic specialization
-  */
-  checkCircularSpecialization(classElement: ClassElement, accept: ValidationAcceptor): void {
-    classElement.specializationEndurants.forEach(specializationItem => {
-        const specItem = specializationItem.ref
-        if (!specItem) { return }
-        checkCircularSpecializationRecursive(specItem, [], accept)
-    })
+   * Checks if an Element has a ciclic specialization
+   */
+  checkCircularSpecialization(
+    classElement: ClassElement,
+    accept: ValidationAcceptor
+  ): void {
+    classElement.specializationEndurants.forEach((specializationItem) => {
+      const specItem = specializationItem.ref;
+      if (!specItem) {
+        return;
+      }
+      checkCircularSpecializationRecursive(specItem, [], accept);
+    });
   }
-
-
 }

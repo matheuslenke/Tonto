@@ -15,7 +15,7 @@ export function isAuxiliaryDeclarations(item: unknown): item is AuxiliaryDeclara
     return reflection.isInstance(item, AuxiliaryDeclarations);
 }
 
-export type BaseSortalStereotype = 'historicalRole' | 'phase' | 'relator' | 'role' | 'subkind';
+export type BaseSortalStereotype = 'historicalRole' | 'phase' | 'role' | 'subkind';
 
 export type BasicDataTypes = 'Date' | 'boolean' | 'number' | 'string';
 
@@ -29,13 +29,13 @@ export function isElement(item: unknown): item is Element {
 
 export type NonSortalStereotype = 'category' | 'event' | 'historicalRoleMixin' | 'mixin' | 'phaseMixin' | 'roleMixin' | 'situation';
 
-export type OntologicalNature = 'abstracts' | 'collectives' | 'events' | 'extrinsic-modes' | 'functional-complexes' | 'intrinsic-modes' | 'modes' | 'objects' | 'qualities' | 'quantities' | 'relators' | 'types';
+export type OntologicalNature = 'abstracts' | 'collectives' | 'events' | 'extrinsic-modes' | 'functional-complexes' | 'intrinsic-modes' | 'objects' | 'qualities' | 'quantities' | 'relators' | 'types';
 
 export type QualifiedName = string;
 
 export type RelationStereotype = 'aggregation' | 'bringsAbout' | 'characterization' | 'comparative' | 'componentOf' | 'composition' | 'creation' | 'derivation' | 'externalDependence' | 'formal' | 'historicalDependence' | 'inherence' | 'instantiation' | 'manifestation' | 'material' | 'mediation' | 'memberOf' | 'participation' | 'participational' | 'relator' | 'subCollectionOf' | 'subQuantityOf' | 'termination' | 'triggers' | 'value';
 
-export type UltimateSortalStereotypes = 'collective' | 'extrinsicMode' | 'intrinsicMode' | 'kind' | 'mode' | 'quality' | 'quantity';
+export type UltimateSortalStereotypes = 'collective' | 'extrinsicMode' | 'intrinsicMode' | 'kind' | 'mode' | 'quality' | 'quantity' | 'relator';
 
 export interface Attribute extends AstNode {
     readonly $container: ClassElement | DataType;

@@ -2,4 +2,14 @@ module KindValidator {
     kind Person
 
     kind PersonTest specializes Person
+    relator PersonTest2 specializes Person
+    collective PersonTest3 specializes Person
+    quantity PersonTest4 specializes Person
+    quality PersonTest5 specializes Person
+    mode PersonTest6 specializes Person
+    intrinsicMode PersonTest7 specializes Person
+    extrinsicMode PersonTest8 specializes Person
+
+    // Todos os ultimate sortals
+    // 'kind' | 'relator' | 'collective' | 'quantity' | 'quality' | 'mode' | 'intrinsicMode' | 'extrinsicMode'
 }

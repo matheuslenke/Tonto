@@ -16,13 +16,14 @@ export function generateSpecializations(
   contextModule.elements.forEach((element) => {
     if (element.$type === "ClassElement") {
       const classElement = element as ClassElement;
-      if (classElement.specializationEndurants) {
+      if (classElement.specializationEndurants.length > 0) {
         const sourceClass = classes.find(
           (item) => item.name.getText() === classElement.name
         );
 
         if (sourceClass) {
           classElement.specializationEndurants.forEach((endurant) => {
+            console.log(endurant.ref?.name)
             const targetClass = classes.find(
               (item) => item.name.getText() === endurant.ref?.name
             );

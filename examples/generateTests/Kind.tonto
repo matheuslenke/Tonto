@@ -1,29 +1,33 @@
 module MarriageModule {
     kind Person
+    category Relator of relators
 
-    relator SocialRelator
+    category SocialRelator of relators
     relator SocialRelatorType specializes SocialRelator, Person
-    relator Marriage (instanceOf SocialRelatorType) specializes SocialRelator {
+    relator Marriage (instanceOf SocialRelatorType) {
         marriageStartDate: Date {const derived}
         isActive: boolean {ordered}
     }
-    kind MarriageDuty
-    relator MarriageRight specializes Marriage
-    
-    role Spouse specializes Person {
-       (firstName) {const, ordered, derived} [2]  -- isBoundBy -- [1..*] (secondName) {const, ordered, derived} Marriage inverseOf involvesSpouse
-       [2] -- isBoundByTest specializes involvesSpouse -- [1..*] Marriage
+
+    genset Marriage_SocialRelatorType {
+        general Relator
+        categorizer SocialRelatorType
+        specifics Marriage
     }
 
-    relation Marriage -- involvesSpouse -- [2..*] Spouse
-    relation Marriage <>-- [1..*] MarriageDuty
+    // kind MarriageDuty
+    // relator MarriageRight specializes Marriage
+    
+    // role Spouse specializes Person {
+    //    (firstName) {const, ordered, derived} [2]  -- isBoundBy -- [1..*] (secondName) {const, ordered, derived} Marriage inverseOf involvesSpouse
+    //    [2] -- isBoundByTest specializes involvesSpouse -- [1..*] Marriage
+    // }
 
-    relation Marriage -- [2..*] Spouse
-    relation Marriage <>-- [1..*] MarriageDuty
+    // relation Spouse -- involvesSpouseTest -- [2..*] Marriage
+    // relation Marriage <>-- [1..*] MarriageDuty
 
-    relation Marriage <>-- [1..*] MarriageRight
-}
+    // relation Marriage -- [2..*] Spouse
+    // relation Marriage <>-- [1..*] MarriageDuty
 
-module Testing {
-    kind Testando
+    // relation Marriage <>-- [1..*] MarriageRight
 }

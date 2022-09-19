@@ -904,6 +904,10 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
           {
             "$type": "Keyword",
             "value": "extrinsicMode"
+          },
+          {
+            "$type": "Keyword",
+            "value": "relator"
           }
         ]
       },
@@ -936,10 +940,6 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
           {
             "$type": "Keyword",
             "value": "historicalRole"
-          },
-          {
-            "$type": "Keyword",
-            "value": "relator"
           }
         ]
       },
@@ -1017,10 +1017,6 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
           {
             "$type": "Keyword",
             "value": "relators"
-          },
-          {
-            "$type": "Keyword",
-            "value": "modes"
           },
           {
             "$type": "Keyword",
@@ -2395,27 +2391,32 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
             "value": "{"
           },
           {
-            "$type": "Keyword",
-            "value": "general"
-          },
-          {
-            "$type": "Assignment",
-            "feature": "generalItem",
-            "operator": "=",
-            "terminal": {
-              "$type": "CrossReference",
-              "type": {
-                "$refText": "Element"
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "general"
               },
-              "terminal": {
-                "$type": "RuleCall",
-                "rule": {
-                  "$refText": "QualifiedName"
-                },
-                "arguments": []
-              },
-              "deprecatedSyntax": false
-            }
+              {
+                "$type": "Assignment",
+                "feature": "generalItem",
+                "operator": "=",
+                "terminal": {
+                  "$type": "CrossReference",
+                  "type": {
+                    "$refText": "Element"
+                  },
+                  "terminal": {
+                    "$type": "RuleCall",
+                    "rule": {
+                      "$refText": "QualifiedName"
+                    },
+                    "arguments": []
+                  },
+                  "deprecatedSyntax": false
+                }
+              }
+            ]
           },
           {
             "$type": "Group",
