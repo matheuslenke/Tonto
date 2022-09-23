@@ -86,7 +86,6 @@ export class TontoScopeComputation extends DefaultScopeComputation {
         isClassElement(element)
       ) {
         if (element.name) {
-          // console.log(element.name)
           const description = this.descriptions.createDescription(
             element,
             element.name,
@@ -113,7 +112,6 @@ export class TontoScopeComputation extends DefaultScopeComputation {
       }
     }
     scopes.addAll(container, localDescriptions);
-    //  console.log(localDescriptions)
     return localDescriptions;
   }
 

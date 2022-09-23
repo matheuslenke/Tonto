@@ -17,7 +17,6 @@ export class TontoValidationRegistry extends ValidationRegistry {
         const checks: TontoChecks = {
             Model: [
                 validator.ModelValidator.checkDuplicatedContextModuleNames,
-                validator.ModelValidator.checkDuplicatedReferenceNames,
             ],
             ClassElement: [
                 validator.ClassElementValidator.checkKindSpecialization,
@@ -28,7 +27,9 @@ export class TontoValidationRegistry extends ValidationRegistry {
                 validator.ClassElementValidator.checkNaturesOnlyOnNonSortals,
             ],
             ContextModule: [
-                validator.ContextModuleValidator.checkContextModuleStartsWithCapital
+                validator.ContextModuleValidator.checkContextModuleStartsWithCapital,
+                validator.ContextModuleValidator.checkDuplicatedClassName,
+                validator.ContextModuleValidator.checkDuplicatedRelationName
             ]
         };
         this.register(checks, validator);

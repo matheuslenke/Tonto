@@ -10,12 +10,6 @@ entry RModel returns Model:
 	modules+=ContextModule*
 ;
 
-// <--- Criação de Módulos --->
-// interface IContextModule {
-//     name: string;
-// 	elements: Element[];
-// }
-
 /*
 * ContextModule is the main declaration of a module, that wraps a context of elements. All declarations should
 * go inside this declaration

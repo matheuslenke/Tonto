@@ -3,36 +3,6 @@ import { ValidationAcceptor } from "langium";
 import { EndurantTypes } from "../models/EndurantType";
 import { checkCircularSpecializationRecursive } from "../utils/CheckCircularSpecializationRecursive";
 import { checkSpecializesUltimateSortalRecursive } from "../utils/CheckSpecializesUltimateSortalRecursive";
-// import {OntologicalNature, natureUtils} from '../models/Natures'
-
-// const allowedStereotypeRestrictedToMatches = {
-//   [EndurantTypes.ABSTRACT]: [OntologicalNature.abstract],
-//   [EndurantTypes.DATATYPE]: [OntologicalNature.abstract],
-//   [EndurantTypes.ENUMERATION]: [OntologicalNature.abstract],
-
-//   [EndurantTypes.EVENT]: [OntologicalNature.event],
-//   [EndurantTypes.SITUATION]: [OntologicalNature.situation],
-
-//   [EndurantTypes.CATEGORY]: natureUtils.EndurantNatures,
-//   [EndurantTypes.MIXIN]: natureUtils.EndurantNatures,
-//   [EndurantTypes.ROLE_MIXIN]: natureUtils.EndurantNatures,
-//   [EndurantTypes.PHASE_MIXIN]: natureUtils.EndurantNatures,
-//   [EndurantTypes.HISTORICAL_ROLE_MIXIN]: natureUtils.EndurantNatures,
-
-//   [EndurantTypes.KIND]: [OntologicalNature.functional_complex],
-//   [EndurantTypes.COLLECTIVE]: [OntologicalNature.collective],
-//   [EndurantTypes.QUANTITY]: [OntologicalNature.quantity],
-//   [EndurantTypes.RELATOR]: [OntologicalNature.relator],
-//   [EndurantTypes.MODE]: [OntologicalNature.extrinsic_mode, OntologicalNature.intrinsic_mode],
-//   [EndurantTypes.QUALITY]: [OntologicalNature.quality],
-
-//   [EndurantTypes.SUBKIND]: natureUtils.EndurantNatures,
-//   [EndurantTypes.ROLE]: natureUtils.EndurantNatures,
-//   [EndurantTypes.PHASE]: natureUtils.EndurantNatures,
-//   [EndurantTypes.HISTORICAL_ROLE]: natureUtils.EndurantNatures,
-
-//   [EndurantTypes.TYPE]: [OntologicalNature.type]
-// };
 
 export class ClassElementValidator {
   /*
@@ -62,7 +32,7 @@ export class ClassElementValidator {
       endurantType === EndurantTypes.EXTRINSIC_MODE ||
       endurantType === EndurantTypes.COLLECTIVE
     ) {
-      checkSpecializesUltimateSortalRecursive(classElement, [], 0 , accept)
+      checkSpecializesUltimateSortalRecursive(classElement, [], 0, accept);
     }
   }
 

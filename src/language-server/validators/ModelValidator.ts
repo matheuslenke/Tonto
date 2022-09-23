@@ -29,37 +29,4 @@ export class ModelValidator {
       }
     });
   }
-
-  /*
-   * Checks for duplicate external reference names
-   */
-  checkDuplicatedReferenceNames(
-    model: Model,
-    accept: ValidationAcceptor
-  ): void {
-    const modules = model.modules;
-
-    modules.forEach((module) => {
-      let names: string[] = [];
-
-      module.elements.forEach((element) => {
-        if (element.$type === "ElementRelation") {
-          const ElementRelation = element as ElementRelation;
-          const nameExists = names.find(
-            (name) => name === ElementRelation.name
-          );
-          const refName = ElementRelation.name;
-
-          if (nameExists) {
-            accept("error", "Duplicated Reference declaration", {
-              node: ElementRelation,
-              property: "name",
-            });
-          } else if (refName !== undefined) {
-            names.push(ElementRelation.name!);
-          }
-        }
-      });
-    });
-  }
 }

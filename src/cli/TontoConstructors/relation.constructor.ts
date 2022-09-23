@@ -105,7 +105,6 @@ function constructRelationSpecializations(
   if (generalizations.length > 0) {
     fileNode.append(" specializes ");
     generalizations.forEach((generalization, index) => {
-      console.debug(generalization.getSpecificRelation().getName());
       fileNode.append(`${generalization.getSpecificRelation().getName()}`);
       if (index < generalizations.length - 1) {
         fileNode.append(",");
