@@ -1,0 +1,215 @@
+{
+    "@type": "Model",
+    "uri": "https://ontouml.org/archive/sales2018towards",
+    "authors": [
+        "Sales, Tiago Prince",
+        "Guarino, Nicola",
+        "Guizzardi, Giancarlo",
+        "Mylopoulos, John"
+    ],
+    "name": "Towards an Ontology of Competition",
+    "structuralElements": [
+        {
+            "@type": "Class",
+            "name": "Agent",
+            "uri": "model:#/class/Agent",
+            "stereotypes": [
+                "ontouml/1.0/category"
+            ]
+        },
+        {
+            "@type": "Class",
+            "name": "Competitor",
+            "uri": "model:#/class/Competitor",
+            "stereotypes": [
+                "ontouml/1.0/roleMixin"
+            ]
+        },
+        {
+            "@type": "GeneralizationLink",
+            "uri": "model:#/generalization/AgentCompetitor",
+            "tuple": [
+                "model:#/class/Agent",
+                "model:#/class/Competitor"
+            ]
+        },
+        {
+            "@type": "Class",
+            "name": "ResourceDemand",
+            "uri": "model:#/class/ResourceDemand",
+            "stereotypes": [
+                "ontouml/1.0/mode"
+            ],
+            "properties": [
+                {
+                    "@type": "Property",
+                    "name": "quantity",
+                    "uri":"model:#/property/quantity"
+                }
+            ]
+        },
+        {
+            "@type": "Class",
+            "name": "Collective Demand",
+            "uri": "model:#/class/CollectiveDemand",
+            "stereotypes": [
+                "ontouml/1.0/relator"
+            ],
+            "properties": [
+                {
+                    "@type": "Property",
+                    "name": "/collective quantity",
+                    "uri":"model:#/property/collectiveQuantity"
+                },
+                {
+                    "@type": "Property",
+                    "name": "/competitiviness",
+                    "uri":"model:#/property/competitiviness"
+                }
+            ]
+        },
+        {
+            "@type": "Class",
+            "name": "Competition",
+            "uri": "model:#/class/Competition",
+            "stereotypes": [
+                "ontouml/1.0/phase"
+            ]
+        },
+        {
+            "@type": "Class",
+            "name": "Non-Competition",
+            "uri": "model:#/class/Non-Competition",
+            "stereotypes": [
+                "ontouml/1.0/phase"
+            ]
+        },
+        {
+            "@type": "GeneralizationLink",
+            "uri": "model:#/generalization/CollectiveDemandCompetition",
+            "tuple": [
+                "model:#/class/CollectiveDemand",
+                "model:#/class/Competition"
+            ]
+        },
+        {
+            "@type": "GeneralizationLink",
+            "uri": "model:#/generalization/CollectiveDemandNon-Competition",
+            "tuple": [
+                "model:#/class/CollectiveDemand",
+                "model:#/class/Non-Competition"
+            ]
+        },
+        {
+            "@type": "GeneralizationSet",
+            "uri": "model:#/generalizationSet/CollectiveDemandCompetitionNon-Competition",
+            "isDisjoint": true,
+            "isComplete": true,
+            "tuple": [
+                "model:#/generalization/CollectiveDemandCompetition",
+                "model:#/generalization/CollectiveDemandNon-Competition"
+            ]
+        },
+        {
+            "@type": "Class",
+            "name": "Resource",
+            "uri": "model:#/class/Resource",
+            "stereotypes": [
+                "ontouml/1.0/mixin"
+            ]
+        },
+        {
+            "@type": "Class",
+            "name": "Scarce Resoure",
+            "uri": "model:#/class/ScarceResource",
+            "stereotypes": [
+                "ontouml/1.0/roleMixin"
+            ]
+        },
+        {
+            "@type": "GeneralizationLink",
+            "uri": "model:#/generalization/ResourceScarceResource",
+            "tuple": [
+                "model:#/class/Resource",
+                "model:#/class/ScarceResource"
+            ]
+        },
+        {
+            "@type": "Class",
+            "name": "Single Resource",
+            "uri": "model:#/class/SingleResource",
+            "stereotypes": [
+                "ontouml/1.0/roleMixin"
+            ]
+        },
+        {
+            "@type": "Class",
+            "name": "Resource Type",
+            "uri": "model:#/class/ResourceType",
+            "stereotypes": [
+                "uml/powertype"
+            ]
+        },
+        {
+            "@type": "Class",
+            "name": "Resource Stock",
+            "uri": "model:#/class/ResourceStock",
+            "stereotypes": [
+                "ontouml/1.0/collective"
+            ]
+        },
+        {
+            "@type": "GeneralizationLink",
+            "uri": "model:#/generalization/ResourceSingleResource",
+            "tuple": [
+                "model:#/class/Resource",
+                "model:#/class/SingleResource"
+            ]
+        },
+        {
+            "@type": "GeneralizationLink",
+            "uri": "model:#/generalization/ResourceResourceType",
+            "tuple": [
+                "model:#/class/Resource",
+                "model:#/class/ResourceType"
+            ]
+        },
+        {
+            "@type": "GeneralizationLink",
+            "uri": "model:#/generalization/ResourceResourceStock",
+            "tuple": [
+                "model:#/class/Resource",
+                "model:#/class/ResourceStock"
+            ]
+        },
+        {
+            "@type": "GeneralizationSet",
+            "uri": "model:#/generalizationSet/ResourceSingleResourceResourceTypeResourceStock",
+            "tuple": [
+                "model:#/generalization/ResourceSingleResource",
+                "model:#/generalization/ResourceResourceType",
+                "model:#/generalization/ResourceResourceStock"
+            ]
+        },
+        {
+            "@type": "Relation",
+            "uri": "model:#/relation/ResourceDemandCollectiveDemand",
+            "properties": [
+                {
+                    "@type": "Property",
+                    "uri":"model:#/property/ResourceDemand",
+                    "propertyType": "model:#/class/ResourceDemand",
+                    "lowerbound": 2,
+                    "upperbound": "*"
+                },
+                {
+                    "@type": "Property",
+                    "uri":"model:#/property/CollectiveDemand",
+                    "propertyType": "model:#/class/CollectiveDemand",
+                    "lowerbound": 0,
+                    "upperbound": "*"
+                }
+            ]
+        }
+    ]
+  }

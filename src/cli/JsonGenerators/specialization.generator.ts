@@ -23,7 +23,6 @@ export function generateSpecializations(
 
         if (sourceClass) {
           classElement.specializationEndurants.forEach((endurant) => {
-            console.log(endurant.ref?.name)
             const targetClass = classes.find(
               (item) => item.name.getText() === endurant.ref?.name
             );

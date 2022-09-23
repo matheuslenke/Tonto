@@ -184,6 +184,12 @@ export function generalizationGenerator(
   model.createGeneralization(sourceClass, targetClass);
 }
 
+export function createInstantiation(  model: Package,
+  sourceClass: Class,
+  targetClass: Class) {
+    model.createInstantiationRelation(sourceClass, targetClass)
+}
+
 function getOntoUMLNatures(natures: Nature[]): OntologicalNature[] {
   return natures.map((nature) => {
     switch (nature) {

@@ -7,24 +7,10 @@ module PersonPhases {
         [1] -- isChildOf -- [1..*] (mother) Person
     }
 
-    // phase LivingPerson specializes Person
-    // phase DeceasedPerson specializes Person
+    phase LivingPerson (instanceOf Person) specializes Person
+    phase DeceasedPerson specializes Person
 
-    // phase Child specializes LivingPerson
-    // phase Teenager specializes LivingPerson
-    // phase Adult specializes LivingPerson
-
-}
-
-module CarRelations {
-    kind Organization
-
-    kind Car
-    subkind CarAgency specializes Organization
-
-    relator CarOwnership {
-        @mediation [1] -- [1] Car
-        @mediation [0..*] -- boughtFrom -- [1] CarAgency
-        @mediation (firstEnd) [1..*] <>-- relationName specializes boughtFrom <>-- [1] (secondEnd) CarAgency inverseOf boughtFrom
-    }
+    phase Child specializes LivingPerson
+    phase Teenager specializes LivingPerson
+    phase Adult specializes LivingPerson
 }

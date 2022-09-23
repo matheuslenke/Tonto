@@ -13,6 +13,7 @@ import {
   ResultResponse,
   validateTontoFile,
 } from "./ontoumljsValidator";
+import Ajv from "ajv";
 
 export const validateAction = async (
   fileName: string
@@ -71,7 +72,7 @@ export const importAction = async (
       );
       ontoumlElements.push(ontoUMLModel);
     }
-    console.log(opts);
+
     const generatedFilePath = generateTontoFile(
       ontoumlElements,
       fileName,

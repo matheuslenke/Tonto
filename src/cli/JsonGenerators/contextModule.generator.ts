@@ -13,6 +13,7 @@ import { generateSpecializations } from "./specialization.generator";
 import { enumGenerator } from "./enum.generator";
 import { customDataTypeGenerator } from "./datatype.generator";
 import { generalizationSetGenerator } from "./genset.generator";
+import { generateInstantiations } from "./instantiation.generator";
 
 export function contextModuleGenerator(
   contextModule: ContextModule,
@@ -53,6 +54,7 @@ export function contextModuleGenerator(
   generateInternalRelations(contextModule, classes, relations, packageItem);
   generateExternalRelations(contextModule, classes, relations, packageItem);
   generateSpecializations(contextModule, classes, relations, packageItem);
+  generateInstantiations(contextModule, classes, relations, packageItem);
 }
 
 function createBaseDatatypes(model: Package): Class[] {

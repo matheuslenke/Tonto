@@ -1,7 +1,9 @@
 import { CompositeGeneratorNode, NL } from "langium";
 import { Class, ClassStereotype, OntoumlType, Package } from "ontouml-js";
 import { constructAttributes } from "./attributes.constructor";
+import { createInstantiation } from "./instantiation.constructor";
 import { constructInternalRelations } from "./relation.constructor";
+import { createSpecializations } from "./specialization.constructor";
 
 export function constructClassElement(
   packageItem: Package,
@@ -24,21 +26,13 @@ export function constructClassElement(
 
   fileNode.append(`${stereotypeWord} ${element.getName()} `);
 
-  // Construct specializations
-  const generalizations = element.getGeneralizationsWhereSpecific();
+  createInstantiation(element, fileNode);
 
-  if (generalizations.length > 0) {
-    fileNode.append(" specializes ");
-    generalizations.forEach((generalization, index) => {
-      fileNode.append(`${generalization.getGeneralClass().getName()}`);
-      if (index < generalizations.length - 1) {
-        fileNode.append(", ");
-      }
-    });
-  }
+  // Construct specializations
+  createSpecializations(element, fileNode);
 
   // Construct Nature restrictions
-  const relations = element.getAllOutgoingRelations();
+  const relations = element.getOwnOutgoingRelations();
   const attributes = element.getAllAttributes();
 
   if (relations.length > 0) {

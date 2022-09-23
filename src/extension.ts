@@ -230,9 +230,10 @@ async function generateTonto(uri: vscode.Uri, event?: string) {
     vscode.workspace.openTextDocument(uri).then(async (document) => {
       if (document.languageId === "json") {
         const destination = path.dirname(uri.fsPath);
-        importAction(document.fileName, {
+        const result = await importAction(document.fileName, {
           destination: destination,
         });
+
         vscode.window.showInformationMessage(`Tonto File generated!`);
       } else {
         vscode.window.showInformationMessage(`Failed! File is not a JSON`);

@@ -76,6 +76,7 @@
         "langium:watch": "langium generate --watch"
     },
     "dependencies": {
+        "ajv": "^8.11.0",
         "colors": "^1.4.0",
         "commander": "^8.0.0",
         "jsonfile": "^6.1.0",
@@ -83,6 +84,7 @@
         "node-fetch": "^2.6.1",
         "node-fetch-native": "^0.1.4",
         "ontouml-js": "../ontouml-js",
+        "ontouml-schema": "../ontouml-schema",
         "vscode-languageclient": "^7.0.0",
         "vscode-languageserver": "^7.0.0"
     },
