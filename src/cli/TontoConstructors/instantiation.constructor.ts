@@ -5,8 +5,6 @@ export function createInstantiation(
   element: Class,
   fileNode: CompositeGeneratorNode
 ) {
-  const relations = element.getAllOutgoingRelations();
-  const ancestors = element.getBaseSortalAncestors();
   const ownRelations = element.getOwnIncomingRelations();
 
   const instantiationRelation = ownRelations.find(

@@ -1,5 +1,5 @@
 import { CompositeGeneratorNode, NL } from "langium";
-import { Class, ModelElement, OntoumlElement, OntoumlType } from "ontouml-js";
+import { Class, OntoumlElement, OntoumlType } from "ontouml-js";
 import { constructClassElement } from "../TontoConstructors/classElement.constructor";
 
 export function createTontoModule(
@@ -23,10 +23,4 @@ export function createTontoModule(
       }
     });
   }
-}
-
-function isOntoumlModel(
-  pet: OntoumlElement | ModelElement
-): pet is ModelElement {
-  return (<ModelElement>pet).name !== undefined;
 }

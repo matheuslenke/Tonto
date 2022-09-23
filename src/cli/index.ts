@@ -70,7 +70,10 @@ export const importAction = async (
         JSON.stringify(element),
         false
       );
-      ontoumlElements.push(ontoUMLModel);
+      const isValid = serializationUtils.validate(ontoUMLModel);
+      if (isValid) {
+        ontoumlElements.push(ontoUMLModel);
+      }
     }
 
     const generatedFilePath = generateTontoFile(
