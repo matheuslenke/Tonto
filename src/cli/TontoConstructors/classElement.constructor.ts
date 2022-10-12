@@ -1,5 +1,7 @@
+import { privateEncrypt } from "crypto";
 import { CompositeGeneratorNode, NL } from "langium";
 import { Class, ClassStereotype, OntoumlType, Package } from "ontouml-js";
+import { replaceWhitespace } from "../utils/replaceWhitespace";
 import { constructAttributes } from "./attributes.constructor";
 import { createInstantiation } from "./instantiation.constructor";
 import { constructInternalRelations } from "./relation.constructor";
@@ -23,31 +25,73 @@ export function constructClassElement(
   ) {
     return;
   }
+  if (element.stereotype === ClassStereotype.ENUMERATION) {
+    createEnumeration(element, fileNode);
+  } else if (element.stereotype === ClassStereotype.DATATYPE) {
+    createDatatype(element, fileNode);
+  } else {
+    fileNode.append(
+      `${stereotypeWord} ${replaceWhitespace(element.getName())} `
+    );
 
-  fileNode.append(`${stereotypeWord} ${element.getName()} `);
+    createInstantiation(element, fileNode);
 
-  createInstantiation(element, fileNode);
+    // Construct specializations
+    createSpecializations(element, fileNode);
 
-  // Construct specializations
-  createSpecializations(element, fileNode);
+    // Construct Nature restrictions
+    const relations = element.getOwnOutgoingRelations();
+    const attributes = element.getAllAttributes();
 
-  // Construct Nature restrictions
-  const relations = element.getOwnOutgoingRelations();
-  const attributes = element.getAllAttributes();
-
-  if (relations.length > 0) {
-    fileNode.append("{", NL);
-    if (attributes.length > 0) {
+    if (relations.length > 0) {
+      fileNode.append("{", NL);
+      if (attributes.length > 0) {
+        fileNode.indent((ident) => {
+          // constructAttributes(packageItem, element, attributes, ident);
+        });
+      }
       fileNode.indent((ident) => {
-        constructAttributes(packageItem, element, attributes, ident);
+        constructInternalRelations(element, relations, ident);
       });
+      fileNode.append("}");
     }
-    fileNode.indent((ident) => {
-      constructInternalRelations(element, relations, ident);
-    });
-    fileNode.append("}");
+    fileNode.append(NL);
   }
-  fileNode.append(NL);
+}
+
+function createEnumeration(element: Class, fileNode: CompositeGeneratorNode) {
+  fileNode.append(`enum ${replaceWhitespace(element.getName())} {`, NL);
+
+  const literals = element.getOwnLiterals();
+  fileNode.indent((ident) => {
+    literals.forEach((literal, index) => {
+      if (index < literals.length - 1) {
+        ident.append(replaceWhitespace(literal.getNameOrId()), ",", NL);
+      } else {
+        ident.append(replaceWhitespace(literal.getNameOrId()), NL);
+      }
+    });
+  });
+
+  fileNode.append("}", NL);
+}
+
+function createDatatype(element: Class, fileNode: CompositeGeneratorNode) {
+  fileNode.append(`datatype ${replaceWhitespace(element.getName())} {`, NL);
+
+  const literals = element.getAllAttributes();
+  console.log(literals);
+  // fileNode.indent((ident) => {
+  //   literals.forEach((literal, index) => {
+  //     if (index < literals.length - 1) {
+  //       ident.append(replaceWhitespace(literal.getNameOrId()), ",", NL);
+  //     } else {
+  //       ident.append(replaceWhitespace(literal.getNameOrId()), NL);
+  //     }
+  //   });
+  // });
+
+  fileNode.append("}", NL);
 }
 
 function getStereotypeWord(stereotype: ClassStereotype): string {

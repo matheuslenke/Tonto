@@ -1,6 +1,7 @@
 import { CompositeGeneratorNode, NL } from "langium";
 import { Class, OntoumlElement, OntoumlType } from "ontouml-js";
 import { constructClassElement } from "../TontoConstructors/classElement.constructor";
+import { replaceWhitespace } from "../utils/replaceWhitespace";
 
 export function createTontoModule(
   element: OntoumlElement,
@@ -9,8 +10,11 @@ export function createTontoModule(
   const project = element.project;
   if (project) {
     project.getAllPackages().forEach((packageItem) => {
-      if (packageItem.name.getText() !== "root") {
-        fileNode.append(`module ${packageItem.getName()} {`, NL);
+      if (packageItem.getName() !== "root") {
+        fileNode.append(
+          `module ${replaceWhitespace(packageItem.getName())} {`,
+          NL
+        );
         fileNode.indent((indent) => {
           packageItem.getAllContents().forEach((content) => {
             if (content.type === OntoumlType.CLASS_TYPE) {

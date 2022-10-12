@@ -1,5 +1,6 @@
 import { CompositeGeneratorNode, NL } from "langium";
 import { Class, Package, Property } from "ontouml-js";
+import { replaceWhitespace } from "../utils/replaceWhitespace";
 
 export function constructAttributes(
   packageItem: Package,
@@ -9,19 +10,25 @@ export function constructAttributes(
 ) {
   attributes.forEach((attribute) => {
     const propertyType = attribute.propertyType;
-    const attributeType = packageItem
-      .getAllClasses()
-      .find((classItem) => classItem.getName() === propertyType.getName());
-    fileNode.append(`${attribute.getName()} : ${attributeType?.getName()}`);
+    if (propertyType) {
+      const attributeType = packageItem
+        .getAllClasses()
+        .find((classItem) => classItem.getName() === propertyType.getName());
+      fileNode.append(
+        `${replaceWhitespace(
+          attribute.getName()
+        )} : ${attributeType?.getName()}`
+      );
 
-    if (attribute.isReadOnly || attribute.isOrdered || attribute.isDerived) {
-      fileNode.append(` { `);
-      attribute.isReadOnly && fileNode.append("const ");
-      attribute.isOrdered && fileNode.append("ordered ");
-      attribute.isDerived && fileNode.append("derived");
-      fileNode.append(` } `);
+      if (attribute.isReadOnly || attribute.isOrdered || attribute.isDerived) {
+        fileNode.append(` { `);
+        attribute.isReadOnly && fileNode.append("const ");
+        attribute.isOrdered && fileNode.append("ordered ");
+        attribute.isDerived && fileNode.append("derived");
+        fileNode.append(` } `);
+      }
+
+      fileNode.append(NL);
     }
-
-    fileNode.append(NL);
   });
 }
