@@ -50,24 +50,6 @@ export class TontoScopeComputation extends DefaultScopeComputation {
     document: LangiumDocument,
     cancelToken: CancellationToken
   ): Promise<AstNodeDescription[]> {
-    // const localDescriptions: AstNodeDescription[] = [];
-    // for (const element of container.elements) {
-    //     await interruptAndCheck(cancelToken);
-    //     if (isType(element)) {
-    //         const description = this.descriptions.createDescription(element, element.name, document);
-    //         localDescriptions.push(description);
-    //     } else if (isPackageDeclaration(element)) {
-    //         const nestedDescriptions = await this.processContainer(element, scopes, document, cancelToken);
-    //         for (const description of nestedDescriptions) {
-    //             // Add qualified names to the container
-    //             const qualified = this.createQualifiedDescription(element, description, document);
-    //             localDescriptions.push(qualified);
-    //         }
-    //     }
-    // }
-    // scopes.addAll(container, localDescriptions);
-    // return localDescriptions;
-
     const localDescriptions: AstNodeDescription[] = [];
     let elements: (ContextModule | Element)[] = [];
     if (container.$type === "Model") {

@@ -2,13 +2,14 @@ import { ClassElement } from "./../generated/ast";
 import { ValidationAcceptor } from "langium";
 import { EndurantTypes } from "../models/EndurantType";
 import { checkCircularSpecializationRecursive } from "../utils/CheckCircularSpecializationRecursive";
-import { checkSpecializesUltimateSortalRecursive } from "../utils/CheckSpecializesUltimateSortalRecursive";
+import { checkSortalSpecializesUniqueUltimateSortalRecursive } from "../utils/CheckSortalSpecializesUniqueUltimateSortalRecursive";
+import { checkUltimateSortalSpecializesUltimateSortalRecursive } from "../utils/CheckUltimateSortalSpecializesUltimateSortalRecursive";
 
 export class ClassElementValidator {
   /*
    * Checks if a Kind specializes a unique ultimate sortal (Kind, Collective, Quantity, Relator, Quality or mode)
    */
-  checkKindSpecialization(
+  checkSortalSpecializeUniqueUltimateSortal(
     classElement: ClassElement,
     accept: ValidationAcceptor
   ): void {
@@ -24,6 +25,8 @@ export class ClassElementValidator {
     if (
       endurantType === EndurantTypes.KIND ||
       endurantType === EndurantTypes.SUBKIND ||
+      endurantType === EndurantTypes.PHASE ||
+      endurantType === EndurantTypes.ROLE ||
       endurantType === EndurantTypes.QUALITY ||
       endurantType === EndurantTypes.QUANTITY ||
       endurantType === EndurantTypes.RELATOR ||
@@ -32,7 +35,43 @@ export class ClassElementValidator {
       endurantType === EndurantTypes.EXTRINSIC_MODE ||
       endurantType === EndurantTypes.COLLECTIVE
     ) {
-      checkSpecializesUltimateSortalRecursive(classElement, [], 0, accept);
+      checkSortalSpecializesUniqueUltimateSortalRecursive(
+        classElement,
+        [],
+        0,
+        accept
+      );
+    }
+  }
+
+  checkUltimateSortalSpecializeUltimateSortal(
+    classElement: ClassElement,
+    accept: ValidationAcceptor
+  ): void {
+    if (!classElement || !classElement.classElementType) {
+      return;
+    }
+    const endurantType = classElement.classElementType.stereotype;
+
+    if (endurantType === null || endurantType === undefined) {
+      return;
+    }
+    // Check if it is an UltimateSortal
+    // 'kind' | 'collective' | 'quantity' | 'quality' | 'mode' | 'intrinsicMode' | 'extrinsicMode' | 'relator'
+    if (
+      endurantType === EndurantTypes.KIND ||
+      endurantType === EndurantTypes.COLLECTIVE ||
+      endurantType === EndurantTypes.QUANTITY ||
+      endurantType === EndurantTypes.QUALITY ||
+      endurantType === EndurantTypes.RELATOR ||
+      endurantType === EndurantTypes.MODE ||
+      endurantType === EndurantTypes.INTRINSIC_MODE ||
+      endurantType === EndurantTypes.EXTRINSIC_MODE
+    ) {
+      checkUltimateSortalSpecializesUltimateSortalRecursive(
+        classElement,
+        accept
+      );
     }
   }
 

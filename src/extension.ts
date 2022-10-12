@@ -7,7 +7,9 @@ import {
   ServerOptions,
   TransportKind,
 } from "vscode-languageclient/node";
-import { generateAction, importAction, validateAction } from "./cli";
+import { validateAction } from "./cli/actions/validateAction";
+import { importCommand } from "./cli/actions/importAction";
+import { generateAction } from "./cli/actions/generateAction";
 
 let client: LanguageClient;
 let generateJsonStatusBarItem: vscode.StatusBarItem;
@@ -230,11 +232,14 @@ async function generateTonto(uri: vscode.Uri, event?: string) {
     vscode.workspace.openTextDocument(uri).then(async (document) => {
       if (document.languageId === "json") {
         const destination = path.dirname(uri.fsPath);
-        const result = await importAction(document.fileName, {
+        const result = await importCommand(document.fileName, {
           destination: destination,
         });
-
-        vscode.window.showInformationMessage(`Tonto File generated!`);
+        if (result.success) {
+          vscode.window.showInformationMessage(`Success! ${result.message}`);
+        } else {
+          vscode.window.showInformationMessage(`Error! ${result.message}`);
+        }
       } else {
         vscode.window.showInformationMessage(`Failed! File is not a JSON`);
       }

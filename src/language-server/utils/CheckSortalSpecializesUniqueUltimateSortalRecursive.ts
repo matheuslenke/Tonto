@@ -2,7 +2,7 @@ import { ValidationAcceptor } from "langium";
 import { ClassElement } from "../generated/ast";
 import { EndurantTypes } from "../models/EndurantType";
 
-const checkSpecializesUltimateSortalRecursive = (
+const checkSortalSpecializesUniqueUltimateSortalRecursive = (
   actualElement: ClassElement,
   verificationList: ClassElement[],
   totalUltimateSortalSpecialized: number,
@@ -34,8 +34,8 @@ const checkSpecializesUltimateSortalRecursive = (
           { node: specItem }
         );
       } else {
-        totalUltimateSortalSpecialized += 1
-        checkSpecializesUltimateSortalRecursive(
+        totalUltimateSortalSpecialized += 1;
+        checkSortalSpecializesUniqueUltimateSortalRecursive(
           specItem,
           verificationList,
           totalUltimateSortalSpecialized,
@@ -46,4 +46,4 @@ const checkSpecializesUltimateSortalRecursive = (
   });
 };
 
-export { checkSpecializesUltimateSortalRecursive };
+export { checkSortalSpecializesUniqueUltimateSortalRecursive };

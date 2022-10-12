@@ -17,6 +17,9 @@
 		},
 		{
 			"path": "generateTests"
+		},
+		{
+			"path": "ontouml-models"
 		}
 	],
 	"settings": {}

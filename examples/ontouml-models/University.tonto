@@ -1,0 +1,148 @@
+module University_Ontology {
+    phase ActiveClass  specializes Class
+    phase ActiveCurriculum  specializes Curriculum
+    phase ActiveProfessor  specializes Professor
+    subkind Center  specializes Organization{
+         [1..*] --  [1..1]  Higher_Education_Institution
+    }
+    role Class 
+    relator ClassEnrollment {
+         [1..1] --  [1..1]  {const} Class
+         [1..1] --  [1..1]  {const}(student) Student
+    }
+    role Colegiado 
+    kind Course {
+         [1..*] -- boundTo --  [1..1] (center) Center
+    }
+    role CourseCoordinator  specializes Professor{
+         [1..1] -- coordinatedBy --  [1..1] (colegiado) Colegiado
+         [1..1] -- manages --  [1..1] (course) Course
+    }
+    kind Curriculum {
+         [1..*] -- organizes --  [1..1] (course) Course
+    }
+    subkind Department  specializes Organization{
+         [1..*] --  [1..1]  Center
+    }
+    role DepartmentChief  specializes Professor
+    kind Discipline {
+         [1..1] -- provided_trough --  [0..*]  Class
+         [*..*] --  [*..*]  Curriculum
+         [1..*] -- offers --  [1..1]  Department
+    }
+    phase EgressStudent  specializes Student
+    relator Enrollment {
+         [0..*] --  [1..1]  {const} Course
+         [1..*] --  [1..1]  {const} Student
+    }
+    subkind Higher_Education_Institution  specializes Organization
+    phase InactiveClass  specializes Class
+    phase InactiveCurriculum  specializes Curriculum
+    phase InactiveProfessor  specializes Professor
+    kind Organization 
+    kind Person 
+    role Professor  specializes Person{
+         [1..*] -- teaches --  [0..*]  Class
+         [1..*] -- composedBy --  [0..*]  Colegiado
+    }
+    relator ProfessorMandate {
+         [1..*] --  [1..1]  {const} Colegiado
+         [1..*] --  [1..1]  {const} Professor
+    }
+    phase RegularStudent  specializes Student
+    quality Semester {
+         [1..1] --  [0..*]  {const} Class
+    }
+    role Student  specializes Person{
+         [0..*] -- fullfiledBy --  [1..1] (curriculum) Curriculum
+         [0..*] -- hasStudent --  [1..*]  Course
+         [1..1] --  [1..1]  Colegiado
+         [0..*] -- groups --  [1..*]  Class
+    }
+    relator StudentMandate {
+         [1..*] --  [1..1]  {const} Colegiado
+         [1..*] --  [1..1]  {const} Student
+    }
+    phase SuspendedStudent  specializes Student
+    quality Field {
+         [1..1] --  [1..1]  {const} Discipline
+    }
+    datatype Parity {
+    }
+    datatype Year {
+    }
+}
+module The_University_Model {
+    phase ActiveClass  specializes Class
+    phase ActiveCurriculum  specializes Curriculum
+    phase ActiveProfessor  specializes Professor
+    subkind Center  specializes Organization{
+         [1..*] --  [1..1]  Higher_Education_Institution
+    }
+    role Class 
+    relator ClassEnrollment {
+         [1..1] --  [1..1]  {const} Class
+         [1..1] --  [1..1]  {const}(student) Student
+    }
+    role Colegiado 
+    kind Course {
+         [1..*] -- boundTo --  [1..1] (center) Center
+    }
+    role CourseCoordinator  specializes Professor{
+         [1..1] -- coordinatedBy --  [1..1] (colegiado) Colegiado
+         [1..1] -- manages --  [1..1] (course) Course
+    }
+    kind Curriculum {
+         [1..*] -- organizes --  [1..1] (course) Course
+    }
+    subkind Department  specializes Organization{
+         [1..*] --  [1..1]  Center
+    }
+    role DepartmentChief  specializes Professor
+    kind Discipline {
+         [1..1] -- provided_trough --  [0..*]  Class
+         [*..*] --  [*..*]  Curriculum
+         [1..*] -- offers --  [1..1]  Department
+    }
+    phase EgressStudent  specializes Student
+    relator Enrollment {
+         [0..*] --  [1..1]  {const} Course
+         [1..*] --  [1..1]  {const} Student
+    }
+    subkind Higher_Education_Institution  specializes Organization
+    phase InactiveClass  specializes Class
+    phase InactiveCurriculum  specializes Curriculum
+    phase InactiveProfessor  specializes Professor
+    kind Organization 
+    kind Person 
+    role Professor  specializes Person{
+         [1..*] -- teaches --  [0..*]  Class
+         [1..*] -- composedBy --  [0..*]  Colegiado
+    }
+    relator ProfessorMandate {
+         [1..*] --  [1..1]  {const} Colegiado
+         [1..*] --  [1..1]  {const} Professor
+    }
+    phase RegularStudent  specializes Student
+    quality Semester {
+         [1..1] --  [0..*]  {const} Class
+    }
+    role Student  specializes Person{
+         [0..*] -- fullfiledBy --  [1..1] (curriculum) Curriculum
+         [0..*] -- hasStudent --  [1..*]  Course
+         [1..1] --  [1..1]  Colegiado
+         [0..*] -- groups --  [1..*]  Class
+    }
+    relator StudentMandate {
+         [1..*] --  [1..1]  {const} Colegiado
+         [1..*] --  [1..1]  {const} Student
+    }
+    phase SuspendedStudent  specializes Student
+    quality Field {
+         [1..1] --  [1..1]  {const} Discipline
+    }
+    datatype Parity {
+    }
+    datatype Year {
+    }
+}

@@ -1,19 +1,20 @@
 module MarriageModule {
-    kind Person
     category Relator of relators
 
     category SocialRelator of relators
     relator SocialRelatorType specializes SocialRelator, Person
-    relator Marriage (instanceOf SocialRelatorType) {
-        marriageStartDate: Date {const derived}
-        isActive: boolean {ordered}
-    }
 
-    genset Marriage_SocialRelatorType {
-        general Relator
-        categorizer SocialRelatorType
-        specifics Marriage
-    }
+    // relator Marriage (instanceOf SocialRelatorType) {
+    //     marriageStartDate: Date {const derived}
+    //     isActive: boolean {ordered}
+    // }
+    kind Person
+
+    // genset Marriage_SocialRelatorType {
+    //     general Relator
+    //     categorizer SocialRelatorType
+    //     specifics Marriage
+    // }
 
     // kind MarriageDuty
     // relator MarriageRight specializes Marriage
@@ -30,4 +31,8 @@ module MarriageModule {
     // relation Marriage <>-- [1..*] MarriageDuty
 
     // relation Marriage <>-- [1..*] MarriageRight
+}
+
+module Testing {
+    kind Test specializes MarriageModule.Relator
 }

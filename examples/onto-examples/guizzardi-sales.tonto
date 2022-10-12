@@ -22,7 +22,7 @@ module Sales {
         [1..*] -- inheresIn -- [1] Provider
     }
 
-    event EconomicEvent 
+    event EconomicEvent
     event EconomicExchange
 
     kind SellEvent specializes EconomicEvent {

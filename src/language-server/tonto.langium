@@ -17,6 +17,7 @@ entry RModel returns Model:
 ContextModule:
 	'module' name=ID '{'
 		elements+=Element*
+		modules+=ContextModule*
 	'}'
 ;
 

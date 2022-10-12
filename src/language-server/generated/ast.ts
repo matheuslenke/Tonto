@@ -83,8 +83,9 @@ export function isClassElement(item: unknown): item is ClassElement {
 }
 
 export interface ContextModule extends AstNode {
-    readonly $container: Model;
+    readonly $container: ContextModule | Model;
     elements: Array<Element>
+    modules: Array<ContextModule>
     name: string
 }
 
@@ -337,7 +338,8 @@ export class TontoAstReflection implements AstReflection {
                 return {
                     name: 'ContextModule',
                     mandatory: [
-                        { name: 'elements', type: 'array' }
+                        { name: 'elements', type: 'array' },
+                        { name: 'modules', type: 'array' }
                     ]
                 };
             }

@@ -1,9 +1,9 @@
 module PersonPhases {
 
-    datatype Person
-
     kind Person {
         name: string
+        birthDate: Date
+        isAlive: boolean
         [1] -- isChildOf -- [1..*] (mother) Person
     }
 

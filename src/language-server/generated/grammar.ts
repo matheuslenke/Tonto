@@ -134,6 +134,19 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ||(loadedTontoGram
             "cardinality": "*"
           },
           {
+            "$type": "Assignment",
+            "feature": "modules",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "ContextModule"
+              },
+              "arguments": []
+            },
+            "cardinality": "*"
+          },
+          {
             "$type": "Keyword",
             "value": "}"
           }

@@ -63,6 +63,24 @@ export class ContextModuleValidator {
         } else if (refName !== undefined) {
           names.push(elementRelation.name!);
         }
+      } else if (element.$type === "ClassElement") {
+        const classElement = element as ClassElement;
+        classElement.references.forEach((elementRelation) => {
+          const nameExists = names.find(
+            (name) => name === elementRelation.name
+          );
+          const refName = elementRelation.name;
+
+          if (nameExists) {
+            console.log("Duplicado!", elementRelation.name);
+            accept("error", "Duplicated Reference declaration", {
+              node: elementRelation,
+              property: "name",
+            });
+          } else if (refName !== undefined) {
+            names.push(elementRelation.name!);
+          }
+        });
       }
     });
   }
