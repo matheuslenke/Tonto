@@ -55,7 +55,6 @@ export class ContextModuleValidator {
         const refName = elementRelation.name;
 
         if (nameExists) {
-          console.log("Duplicado!", elementRelation.name);
           accept("error", "Duplicated Reference declaration", {
             node: elementRelation,
             property: "name",
@@ -72,7 +71,6 @@ export class ContextModuleValidator {
           const refName = elementRelation.name;
 
           if (nameExists) {
-            console.log("Duplicado!", elementRelation.name);
             accept("error", "Duplicated Reference declaration", {
               node: elementRelation,
               property: "name",

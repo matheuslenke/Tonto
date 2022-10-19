@@ -7,6 +7,5 @@ module CarRelations {
     relator CarOwnership {
         @mediation [1] -- [1] Car
         @mediation [0..*] -- boughtFrom -- [1] CarAgency
-        @mediation (firstEnd) [1..*] <>-- relationName specializes boughtFrom <>-- [1] (secondEnd) CarAgency inverseOf boughtFrom
     }
 }

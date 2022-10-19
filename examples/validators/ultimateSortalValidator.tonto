@@ -1,6 +1,5 @@
-module KindValidator {
+module UltimateSortalValidator {
     kind Person
-
     kind PersonTest specializes Person
     relator PersonTest2 specializes Person
     collective PersonTest3 specializes Person

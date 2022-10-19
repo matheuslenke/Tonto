@@ -8,14 +8,12 @@ import {
   LangiumSharedServices,
   Module,
   PartialLangiumServices,
-  DocumentHighlighter,
 } from "langium";
 import {
   TontoGeneratedModule,
   TontoGeneratedSharedModule,
 } from "./generated/module";
 import { TontoActionProvider } from "./tonto-code-actions";
-import { TontoDescriptionProvider } from "./tonto-index";
 import { TontoNameProvider } from "./tonto-naming";
 import { TontoScopeComputation } from "./tonto-scope";
 import { TontoValidationRegistry } from "./tonto-validator";
@@ -54,10 +52,6 @@ export const TontoModule: Module<
     ValidationRegistry: (services) => new TontoValidationRegistry(services),
     TontoValidator: () => new TontoValidator(),
   },
-  workspace: {
-    AstNodeDescriptionProvider: (services: TontoServices) =>
-      new TontoDescriptionProvider(services),
-  },
   lsp: {
     CodeActionProvider: () => new TontoActionProvider(),
     Formatter: () => new TontoFormatter(),
@@ -80,7 +74,7 @@ export const TontoModule: Module<
  * @returns An object wrapping the shared services and the language-specific services
  */
 export function createTontoServices(
-  context?: DefaultSharedModuleContext
+  context: DefaultSharedModuleContext
 ): {
   shared: LangiumSharedServices;
   Tonto: TontoServices;

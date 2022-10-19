@@ -1,9 +1,9 @@
-import { ClassElement } from "./../generated/ast";
 import { ValidationAcceptor } from "langium";
 import { EndurantTypes } from "../models/EndurantType";
 import { checkCircularSpecializationRecursive } from "../utils/CheckCircularSpecializationRecursive";
 import { checkSortalSpecializesUniqueUltimateSortalRecursive } from "../utils/CheckSortalSpecializesUniqueUltimateSortalRecursive";
 import { checkUltimateSortalSpecializesUltimateSortalRecursive } from "../utils/CheckUltimateSortalSpecializesUltimateSortalRecursive";
+import { ClassElement } from "./../generated/ast";
 
 export class ClassElementValidator {
   /*
@@ -35,6 +35,7 @@ export class ClassElementValidator {
       endurantType === EndurantTypes.EXTRINSIC_MODE ||
       endurantType === EndurantTypes.COLLECTIVE
     ) {
+      console.debug("Entrou para o elemento: " + classElement.name)
       checkSortalSpecializesUniqueUltimateSortalRecursive(
         classElement,
         [],

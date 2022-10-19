@@ -6,11 +6,12 @@ import {
   ResultResponse,
   validateTontoFile,
 } from "../ontoumljsValidator";
+import { NodeFileSystem } from 'langium/node';
 
 export const validateAction = async (
   fileName: string
 ): Promise<ResultResponse[] | ErrorResultResponse | void> => {
-  const services = createTontoServices().Tonto;
+  const services = createTontoServices({...NodeFileSystem}).Tonto;
   const model = await extractAstNode<Model>(fileName, services);
   const validationResult = validateTontoFile(model, fileName);
   return validationResult;

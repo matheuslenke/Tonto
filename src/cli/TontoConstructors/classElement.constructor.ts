@@ -1,8 +1,6 @@
-import { privateEncrypt } from "crypto";
 import { CompositeGeneratorNode, NL } from "langium";
 import { Class, ClassStereotype, OntoumlType, Package } from "ontouml-js";
 import { replaceWhitespace } from "../utils/replaceWhitespace";
-import { constructAttributes } from "./attributes.constructor";
 import { createInstantiation } from "./instantiation.constructor";
 import { constructInternalRelations } from "./relation.constructor";
 import { createSpecializations } from "./specialization.constructor";

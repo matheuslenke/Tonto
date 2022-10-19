@@ -13,6 +13,7 @@ import {
   LangiumServices,
   PrecomputedScopes,
   MultiMap,
+  streamAllContents,
 } from "langium";
 import { CancellationToken } from "vscode-jsonrpc";
 import { TontoNameProvider } from "./tonto-naming";
@@ -33,10 +34,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
     super(services);
   }
 
-  async computeScope(
-    document: LangiumDocument,
-    cancelToken = CancellationToken.None
-  ): Promise<PrecomputedScopes> {
+  async computeLocalScopes(document: LangiumDocument<AstNode>, cancelToken?: CancellationToken | undefined): Promise<PrecomputedScopes> {
     const model = document.parseResult.value as Model;
     const scopes = new MultiMap<AstNode, AstNodeDescription>();
     await this.processContainer(model, scopes, document, cancelToken);
@@ -48,7 +46,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
     container: Model | ContextModule,
     scopes: PrecomputedScopes,
     document: LangiumDocument,
-    cancelToken: CancellationToken
+    cancelToken?: CancellationToken
   ): Promise<AstNodeDescription[]> {
     const localDescriptions: AstNodeDescription[] = [];
     let elements: (ContextModule | Element)[] = [];
@@ -60,7 +58,9 @@ export class TontoScopeComputation extends DefaultScopeComputation {
       elements = [...elements, ...contextModule.elements];
     }
     for (const element of elements) {
-      await interruptAndCheck(cancelToken);
+      if (cancelToken) {
+        await interruptAndCheck(cancelToken);
+      }
       if (
         isElement(element) ||
         isDataType(element) ||
@@ -112,5 +112,31 @@ export class TontoScopeComputation extends DefaultScopeComputation {
       name,
       document
     );
+  }
+
+  /**
+ * Exports only types (`DataType or `Entity`) with their qualified names.
+ */
+    async createDescriptions(
+    document: LangiumDocument,
+    cancelToken = CancellationToken.None
+  ): Promise<AstNodeDescription[]> {
+    const descr: AstNodeDescription[] = [];
+    for (const modelNode of streamAllContents(document.parseResult.value)) {
+      await interruptAndCheck(cancelToken);
+      if (isElement(modelNode) || isClassElement(modelNode)) {
+        let name = this.nameProvider.getName(modelNode);
+        if (name) {
+          if (isContextModule(modelNode.$container)) {
+            name = (this.nameProvider as TontoNameProvider).getQualifiedName(
+              modelNode.$container as ContextModule,
+              name
+            );
+          }
+          descr.push(this.descriptions.createDescription(modelNode, name, document));
+        }
+      }
+    }
+    return descr;
   }
 }

@@ -202,12 +202,6 @@ RelationStereotype returns string:
 	'formal'
 ;
 
-// Relator:
-//     'relator' name=QualifiedName ('{' 
-//         references=InternalRelation*
-//     '}')?
-// ;
-
 Cardinality:
 	'[' lowerBound=(INT | '*') 
 	('..' upperBound=(INT | '*'))? ']'

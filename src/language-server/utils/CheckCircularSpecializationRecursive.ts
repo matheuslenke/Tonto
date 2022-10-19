@@ -16,7 +16,6 @@ const checkCircularSpecializationRecursive = (
     );
 
     if (specializationExists) {
-      console.log("Ciclo detectado!");
       accept(
         "error",
         "There is a ciclic specialization. Please review all Elements specializations",

@@ -14,24 +14,24 @@ const checkSortalSpecializesUniqueUltimateSortalRecursive = (
       return;
     }
 
-    const refType = specItem.$type;
-
+    const stereotype = specItem.classElementType?.stereotype;
+    console.debug("Referência:" + stereotype)
     if (
-      refType === EndurantTypes.KIND ||
-      refType === EndurantTypes.SUBKIND ||
-      refType === EndurantTypes.QUALITY ||
-      refType === EndurantTypes.QUANTITY ||
-      refType === EndurantTypes.RELATOR ||
-      refType === EndurantTypes.MODE ||
-      refType === EndurantTypes.INTRINSIC_MODE ||
-      refType === EndurantTypes.EXTRINSIC_MODE ||
-      refType === EndurantTypes.COLLECTIVE
+      stereotype === EndurantTypes.KIND ||
+      stereotype === EndurantTypes.SUBKIND ||
+      stereotype === EndurantTypes.QUALITY ||
+      stereotype === EndurantTypes.QUANTITY ||
+      stereotype === EndurantTypes.RELATOR ||
+      stereotype === EndurantTypes.MODE ||
+      stereotype === EndurantTypes.INTRINSIC_MODE ||
+      stereotype === EndurantTypes.EXTRINSIC_MODE ||
+      stereotype === EndurantTypes.COLLECTIVE
     ) {
       if (totalUltimateSortalSpecialized > 0) {
         accept(
           "warning",
           "Every sortal class must specialize a unique ultimate sortal (Kind, Collective, Quantity, Relator, Quality or mode)",
-          { node: specItem }
+          { node: actualElement }
         );
       } else {
         totalUltimateSortalSpecialized += 1;

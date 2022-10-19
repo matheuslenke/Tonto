@@ -1,4 +1,3 @@
-import { ElementRelation } from "./../generated/ast";
 import { ValidationAcceptor } from "langium";
 import { Model, ContextModule } from "../generated/ast";
 

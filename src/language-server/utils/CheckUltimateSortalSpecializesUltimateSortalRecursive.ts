@@ -12,8 +12,8 @@ const checkUltimateSortalSpecializesUltimateSortalRecursive = (
       return;
     }
 
-    const refType = specItem.$type;
-
+    const refType = specItem.classElementType?.stereotype;
+    
     if (
       refType === EndurantTypes.KIND ||
       refType === EndurantTypes.COLLECTIVE ||
@@ -27,18 +27,12 @@ const checkUltimateSortalSpecializesUltimateSortalRecursive = (
       accept(
         "warning",
         "Classes representing ultimate sortals cannot specialize other ultimate sortals",
-        { node: specItem }
+        { node: actualElement }
       );
       return;
+    } else {
+        checkUltimateSortalSpecializesUltimateSortalRecursive(specItem, accept);
     }
-  });
-
-  actualElement.specializationEndurants.forEach((specializationItem) => {
-    const specItem = specializationItem.ref;
-    if (!specItem) {
-      return;
-    }
-    checkUltimateSortalSpecializesUltimateSortalRecursive(specItem, accept);
   });
 };
 

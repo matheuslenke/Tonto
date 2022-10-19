@@ -3,6 +3,7 @@ import { Model } from "../../language-server/generated/ast";
 import { createTontoServices } from "../../language-server/tonto-module";
 import { extractAstNode } from "../cli-util";
 import { generateJSONFile } from "../jsonGenerator";
+import { NodeFileSystem } from 'langium/node';
 
 export type GenerateOptions = {
   destination?: string;
@@ -22,7 +23,7 @@ export const generateCommand = async (
   fileName: string,
   opts: GenerateOptions
 ): Promise<string | undefined> => {
-  const services = createTontoServices().Tonto;
+  const services = createTontoServices({...NodeFileSystem }).Tonto;
   const model = await extractAstNode<Model>(fileName, services);
   const generatedFilePath = generateJSONFile(model, fileName, opts.destination);
   return generatedFilePath;
