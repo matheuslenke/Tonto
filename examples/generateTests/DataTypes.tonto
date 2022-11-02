@@ -6,11 +6,11 @@ module TestingDataTypes {
         blue: number // boolean, string, Date, oasdfkaof
     }
 
+    datatype double
+
     kind Car {
-        // cor: Set<RGB> [0..*]
-        // cor: Bag RGB
-        // cor: Sequence(RGB)
         cor: RGB [1] {ordered const}
+        peso: double
     }
 
     subkind BMW

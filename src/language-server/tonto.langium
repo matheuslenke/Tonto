@@ -54,7 +54,7 @@ CustomType infers ClassElement:
 
 Class infers ClassElement:
 	('@' classElementType=EndurantType)?
-	'class' name=QualifiedName 
+	isClass?='class' name=QualifiedName 
 	ontologicalNatures=ElementOntologicalNature?
     ('(' 'instanceOf' instanceOf=[ClassElement:QualifiedName] ')')?
 	('specializes' specializationEndurants+=[ClassElement:QualifiedName]

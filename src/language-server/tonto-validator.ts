@@ -26,6 +26,8 @@ export class TontoValidationRegistry extends ValidationRegistry {
                 validator.ClassElementValidator.checkCompatibleNatures,
                 validator.ClassElementValidator.checkCircularSpecialization,
                 validator.ClassElementValidator.checkNaturesOnlyOnNonSortals,
+                validator.ClassElementValidator.checkSpecializationOfCorrectNature,
+                validator.ClassElementValidator.checkClassWithoutStereotype
             ],
             ContextModule: [
                 validator.ContextModuleValidator.checkContextModuleStartsWithCapital,

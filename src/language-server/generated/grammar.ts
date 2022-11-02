@@ -427,8 +427,13 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
             "cardinality": "?"
           },
           {
-            "$type": "Keyword",
-            "value": "class"
+            "$type": "Assignment",
+            "feature": "isClass",
+            "operator": "?=",
+            "terminal": {
+              "$type": "Keyword",
+              "value": "class"
+            }
           },
           {
             "$type": "Assignment",

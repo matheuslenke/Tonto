@@ -70,6 +70,7 @@ export interface ClassElement extends AstNode {
     attributes: Array<Attribute>
     classElementType?: EndurantType
     instanceOf?: Reference<ClassElement>
+    isClass: boolean
     name: QualifiedName
     ontologicalNatures?: ElementOntologicalNature
     references: Array<ElementRelation>
@@ -328,6 +329,7 @@ export class TontoAstReflection implements AstReflection {
                     name: 'ClassElement',
                     mandatory: [
                         { name: 'attributes', type: 'array' },
+                        { name: 'isClass', type: 'boolean' },
                         { name: 'references', type: 'array' },
                         { name: 'specializationEndurants', type: 'array' }
                     ]

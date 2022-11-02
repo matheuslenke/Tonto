@@ -1,8 +1,10 @@
 import { ValidationAcceptor } from "langium";
 import { EndurantTypes } from "../models/EndurantType";
 import { checkCircularSpecializationRecursive } from "../utils/CheckCircularSpecializationRecursive";
+import { checkNatureCompatibleWithStereotype } from "../utils/checkNatureCompatibleWithStereotype";
 import { checkSortalSpecializesUniqueUltimateSortalRecursive } from "../utils/CheckSortalSpecializesUniqueUltimateSortalRecursive";
 import { checkUltimateSortalSpecializesUltimateSortalRecursive } from "../utils/CheckUltimateSortalSpecializesUltimateSortalRecursive";
+import { getStereotypeIsSortal } from "../utils/getStereotypeIsSortal";
 import { ClassElement } from "./../generated/ast";
 
 export class ClassElementValidator {
@@ -35,7 +37,7 @@ export class ClassElementValidator {
       endurantType === EndurantTypes.EXTRINSIC_MODE ||
       endurantType === EndurantTypes.COLLECTIVE
     ) {
-      console.debug("Entrou para o elemento: " + classElement.name)
+      console.debug("Entrou para o elemento: " + classElement.name);
       checkSortalSpecializesUniqueUltimateSortalRecursive(
         classElement,
         [],
@@ -197,18 +199,45 @@ export class ClassElementValidator {
     }
   }
 
+  checkSpecializationOfCorrectNature(
+    classElement: ClassElement,
+    accept: ValidationAcceptor
+  ): void {
+    const specializations = classElement.specializationEndurants;
+    const stereotype = classElement.classElementType?.stereotype;
+    if (getStereotypeIsSortal(stereotype) === false) {
+      return;
+    }
+
+    specializations.forEach((specialization) => {
+      let natures = specialization.ref?.ontologicalNatures?.natures;
+      if (natures) {
+        let hasCompatibleNatures = false;
+        natures.forEach((nature) => {
+          checkNatureCompatibleWithStereotype(nature, stereotype);
+        });
+        if (hasCompatibleNatures === false) {
+          let naturesList = natures.reduce((nature, lastString) => {
+            return `${lastString}, ${nature}`;
+          }, "");
+          naturesList = naturesList.slice(0, naturesList.length - 2);
+          accept(
+            "error",
+            `This element cannot be of this type when its superclass has other nature restrictions. The allowed natures are: ${naturesList}`,
+            { node: classElement }
+          );
+        }
+      }
+    });
+  }
+
   checkNaturesOnlyOnNonSortals(
     classElement: ClassElement,
     accept: ValidationAcceptor
   ): void {
     const ElementNatures = classElement.ontologicalNatures;
     if (ElementNatures) {
-      if (
-        classElement.classElementType?.stereotype !== "roleMixin" &&
-        classElement.classElementType?.stereotype !== "category" &&
-        classElement.classElementType?.stereotype !== "phaseMixin" &&
-        classElement.classElementType?.stereotype !== "mixin"
-      ) {
+      if (getStereotypeIsSortal(classElement.classElementType?.stereotype)) {
         accept("error", "Only non-sortal types can specialize natures", {
           node: classElement,
           property: "ontologicalNatures",
@@ -231,5 +260,18 @@ export class ClassElementValidator {
       }
       checkCircularSpecializationRecursive(specItem, [], accept);
     });
+  }
+
+  checkClassWithoutStereotype(
+    classElement: ClassElement,
+    accept: ValidationAcceptor
+  ): void {
+    if (classElement.classElementType?.stereotype === undefined) {
+      accept(
+        "warning",
+        "Consider using an annotation or a more specific class",
+        { node: classElement, property: "isClass" }
+      );
+    }
   }
 }

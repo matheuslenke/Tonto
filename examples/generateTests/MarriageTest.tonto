@@ -1,0 +1,63 @@
+// 'use strict'
+
+module MarriageModule {
+    category Relator of collectives
+
+    category SocialRelator of abstracts, collectives, functional-complexes
+    relator SocialRelatorType specializes SocialRelator
+
+    relator Marriage (instanceOf SocialRelatorType) {
+        marriageStartDate: Date {const derived}
+        isActive: boolean
+    }
+
+    kind Person
+
+    genset Marriage_SocialRelatorType {
+        general Relator
+        categorizer SocialRelatorType
+        specifics Marriage
+    }
+
+    kind MarriageDuty
+    relator MarriageRight specializes Marriage
+
+    event Wedding
+
+    // Adicionar Warning caso a pessoa crie um estereótipo diferente
+    class Kind {
+
+    }
+
+    // @characterization
+    // relation RelationName {
+    //     ends: [
+            
+    //     ]
+
+    // }
+    relator Marriage2 {
+        [1] -- [2] Spouse
+    }
+
+    // @Params: 
+    // @Description: This is a class
+    role Spouse specializes Person {
+       @aggregation 
+       (firstName) {const, ordered, derived} [2]  -- isBoundBy specializes involvesSpouse -- [1..*] (secondName) {const, ordered, derived} Marriage inverseOf involvesSpouse
+    //    relation isBoundBy {
+    //     firstEnd: [1] name Class
+    //     secondEnd: [*]
+    //    }
+    
+       [2] -- isBoundByTest -- [1..*] Marriage
+    }
+
+    relation Spouse -- involvesSpouse -- [2..*] Marriage
+    relation Marriage <>-- [1..*] MarriageDuty
+
+    relation Marriage -- [2..*] Spouse
+    relation Marriage <>-- [1..*] MarriageDuty
+
+    relation Marriage <>-- [1..*] MarriageRight
+}
