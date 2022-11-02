@@ -1,16 +1,13 @@
 import {
-  Cardinality,
-  OntologicalNature as Nature,
-} from "../../language-server/generated/ast";
-import {
   CardinalityValues,
   Class,
-  ClassStereotype,
-  Package,
-  Property,
-  OntologicalNature,
+  ClassStereotype, OntologicalNature, Package,
+  Property
 } from "ontouml-js";
-import { ClassElement, DataType } from "../../language-server/generated/ast";
+import {
+  Cardinality, ClassElement, DataType, OntologicalNature as Nature
+} from "../../language-server/generated/ast";
+import { EndurantTypes } from "../../language-server/models/EndurantType";
 
 export function classElementGenerator(
   classElement: ClassElement,
@@ -21,6 +18,8 @@ export function classElementGenerator(
     let natures: OntologicalNature[] = [];
     if (classElement.ontologicalNatures) {
       natures = getOntoUMLNatures(classElement.ontologicalNatures.natures);
+    } else {
+      natures = getDefaultOntoUMLNature(classElement)
     }
     switch (stereotype) {
       case "category":
@@ -216,7 +215,23 @@ function getOntoUMLNatures(natures: Nature[]): OntologicalNature[] {
       case "objects":
         return OntologicalNature.functional_complex;
       default:
-        return OntologicalNature.abstract;
+        return OntologicalNature.functional_complex;
     }
   });
+}
+
+function getDefaultOntoUMLNature(element: ClassElement): OntologicalNature[] {
+  if (
+    element.classElementType?.stereotype === EndurantTypes.CATEGORY ||
+    element.classElementType?.stereotype === EndurantTypes.MIXIN ||
+    element.classElementType?.stereotype === EndurantTypes.PHASE_MIXIN ||
+    element.classElementType?.stereotype === EndurantTypes.ROLE_MIXIN ||
+    element.classElementType?.stereotype === EndurantTypes.HISTORICAL_ROLE_MIXIN ||
+    element.classElementType?.stereotype === EndurantTypes.EVENT ||
+    element.classElementType?.stereotype === EndurantTypes.SITUATION
+    ) {
+      return [OntologicalNature.functional_complex]
+    } else {
+      return []
+    }
 }

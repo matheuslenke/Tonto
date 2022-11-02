@@ -1,19 +1,15 @@
 import {
+  AggregationKind, CardinalityValues, Class,
+  Package, Property, Relation, RelationStereotype
+} from "ontouml-js";
+import {
   Cardinality,
   ClassElement,
   ElementRelation,
   RelationMetaAttribute,
-  RelationStereotype as MRelationStereotype,
+  RelationStereotype as MRelationStereotype
 } from "../../language-server/generated/ast";
-import {
-  Class,
-  Package,
-  RelationStereotype,
-  Property,
-  CardinalityValues,
-  Relation,
-  AggregationKind,
-} from "ontouml-js";
+import { RelationTypes } from "../../language-server/models/RelationType";
 
 export function relationGenerator(
   relationItem: ElementRelation,
@@ -55,12 +51,16 @@ export function relationGenerator(
       setCardinality(relationItem.firstCardinality, sourceEnd);
       setCardinality(relationItem.secondCardinality, targetEnd);
 
-      if (relationItem.isComposition) {
+      if (relationItem.relationType === RelationTypes.SUBQUANTITY_OF) {
         relation.getSourceEnd().aggregationKind = AggregationKind.COMPOSITE;
-        relation.getTargetEnd().aggregationKind = AggregationKind.COMPOSITE;
-      } else if (relationItem.isAssociation) {
+        relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
+      }
+      else if (relationItem.isComposition) {
         relation.getSourceEnd().aggregationKind = AggregationKind.SHARED;
-        relation.getTargetEnd().aggregationKind = AggregationKind.SHARED;
+        relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
+      } else if (relationItem.isAssociation) {
+        relation.getSourceEnd().aggregationKind = AggregationKind.NONE;
+        relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
       }
 
       return relation;
