@@ -37,7 +37,6 @@ export class ClassElementValidator {
       endurantType === EndurantTypes.EXTRINSIC_MODE ||
       endurantType === EndurantTypes.COLLECTIVE
     ) {
-      console.debug("Entrou para o elemento: " + classElement.name);
       checkSortalSpecializesUniqueUltimateSortalRecursive(
         classElement,
         [],

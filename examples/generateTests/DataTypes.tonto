@@ -3,7 +3,7 @@ module TestingDataTypes {
     {
         red: number
         green: number [1] {ordered}
-        blue: number // boolean, string, Date, oasdfkaof
+        blue: number
     }
 
     datatype double

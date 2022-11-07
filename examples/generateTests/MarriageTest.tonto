@@ -3,7 +3,7 @@
 module MarriageModule {
     category Relator of collectives
 
-    category SocialRelator of abstracts, collectives, functional-complexes
+    category SocialRelator of relators
     relator SocialRelatorType specializes SocialRelator
 
     relator Marriage (instanceOf SocialRelatorType) {

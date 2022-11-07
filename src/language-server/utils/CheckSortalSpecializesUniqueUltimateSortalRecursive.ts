@@ -15,7 +15,6 @@ const checkSortalSpecializesUniqueUltimateSortalRecursive = (
     }
 
     const stereotype = specItem.classElementType?.stereotype;
-    console.debug("Referência:" + stereotype)
     if (
       stereotype === EndurantTypes.KIND ||
       stereotype === EndurantTypes.SUBKIND ||

@@ -13,11 +13,12 @@ import {
   TontoGeneratedModule,
   TontoGeneratedSharedModule,
 } from "./generated/module";
-import { TontoActionProvider } from "./tonto-code-actions";
+import { TontoActionProvider } from "./lsp/tonto-code-actions";
 import { TontoNameProvider } from "./tonto-naming";
 import { TontoScopeComputation } from "./tonto-scope";
 import { TontoValidationRegistry } from "./tonto-validator";
 import { TontoValidator } from "./validators/TontoValidator";
+import { TontoSemanticTokenProvider } from "./lsp/tonto-semantic-token-provider";
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -55,6 +56,8 @@ export const TontoModule: Module<
   lsp: {
     CodeActionProvider: () => new TontoActionProvider(),
     Formatter: () => new TontoFormatter(),
+    SemanticTokenProvider: (services) =>
+      new TontoSemanticTokenProvider(services),
   },
 };
 
