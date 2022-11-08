@@ -171,7 +171,7 @@ export class ClassElementValidator {
 
     if (elementNatures) {
       elementNatures.natures.forEach((nature) => {
-        let specializationDoesntExistsInParent = true;
+        let specializationDoesntExistsInParent = false;
         classElement.specializationEndurants.forEach(
           (specializationEndurant) => {
             let specializationNatures =
@@ -181,13 +181,13 @@ export class ClassElementValidator {
                 return specializationNature === nature;
               }
             );
-            if (!natureExists) {
-              specializationDoesntExistsInParent = false;
+            if (natureExists === undefined) {
+              specializationDoesntExistsInParent = true;
             }
           }
         );
 
-        if (!specializationDoesntExistsInParent) {
+        if (specializationDoesntExistsInParent) {
           accept(
             "error",
             "This element cannot be restricted to Natures that its superclass is not restricted",
@@ -204,16 +204,19 @@ export class ClassElementValidator {
   ): void {
     const specializations = classElement.specializationEndurants;
     const stereotype = classElement.classElementType?.ontologicalCategory;
-    if (getStereotypeIsSortal(stereotype) === false) {
-      return;
-    }
+    // if (getStereotypeIsSortal(stereotype) === false) {
+    //   return;
+    // }
 
     specializations.forEach((specialization) => {
       let natures = specialization.ref?.ontologicalNatures?.natures;
       if (natures) {
         let hasCompatibleNatures = false;
         natures.forEach((nature) => {
-          checkNatureCompatibleWithStereotype(nature, stereotype);
+          const isCompatible = checkNatureCompatibleWithStereotype(nature, stereotype);
+          if (isCompatible === true) {
+            hasCompatibleNatures = true;
+          }
         });
         if (hasCompatibleNatures === false) {
           let naturesList = natures.reduce((nature, lastString) => {

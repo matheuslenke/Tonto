@@ -1,6 +1,6 @@
 import { Class, Package, Relation } from "ontouml-js";
 import {
-    ClassDeclaration, ContextModule, ElementRelation
+  ClassDeclaration, ContextModule, ElementRelation
 } from "../../language-server/generated/ast";
 import { generalizationGenerator } from "./class.generator";
 import { relationGeneralizationGenerator } from "./relation.generator";
@@ -11,9 +11,9 @@ export function generateSpecializations(
   relations: Relation[],
   packageItem: Package
 ): void {
-  contextModule.elements.forEach((element) => {
-    if (element.$type === "ClassDeclaration") {
-      const classElement = element as ClassDeclaration;
+  contextModule.declarations.forEach((declaration) => {
+    if (declaration.$type === "ClassDeclaration") {
+      const classElement = declaration as ClassDeclaration;
       if (classElement.specializationEndurants.length > 0) {
         const sourceClass = classes.find(
           (item) => item.name.getText() === classElement.name
@@ -36,8 +36,8 @@ export function generateSpecializations(
         }
       }
       // Generate external ElementRelation specializations
-    } else if (element.$type === "ElementRelation") {
-      const elementRelation = element as ElementRelation;
+    } else if (declaration.$type === "ElementRelation") {
+      const elementRelation = declaration as ElementRelation;
       if (elementRelation.specializeRelation) {
         const elementRelationCreated = relations.find(
           (item) => item.name.getText() === elementRelation.name

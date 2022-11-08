@@ -1,11 +1,12 @@
 import {
-    CardinalityValues,
-    Class,
-    ClassStereotype, OntologicalNature, Package,
-    Property
+  CardinalityValues,
+  Class,
+  ClassStereotype, OntologicalNature, Package,
+  Property
 } from "ontouml-js";
 import {
-    Cardinality, ClassDeclaration, DataType, OntologicalNature as Nature
+  Attribute,
+  Cardinality, ClassDeclaration, ComplexDataType, OntologicalNature as Nature
 } from "../../language-server/generated/ast";
 import { EndurantTypes } from "../../language-server/models/EndurantType";
 
@@ -14,7 +15,7 @@ export function classElementGenerator(
   packageItem: Package
 ): Class {
   if (!!classElement.classElementType) {
-    const stereotype = classElement.classElementType.stereotype;
+    const stereotype = classElement.classElementType.ontologicalCategory;
     let natures: OntologicalNature[] = [];
     if (classElement.ontologicalNatures) {
       natures = getOntoUMLNatures(classElement.ontologicalNatures.natures);
@@ -68,11 +69,11 @@ export function classElementGenerator(
 }
 
 export function attributeGenerator(
-  classElement: ClassDeclaration | DataType,
+  classElement: ClassDeclaration | ComplexDataType,
   createdClass: Class,
   dataTypes: Class[]
 ): void {
-  classElement.attributes.forEach((attribute) => {
+  classElement.attributes.forEach((attribute: Attribute) => {
     let createdAttribute: Property | undefined;
     switch (attribute.attributeType) {
       case "Date":
@@ -190,14 +191,10 @@ export function createInstantiation(  model: Package,
 }
 
 function getOntoUMLNatures(natures: Nature[]): OntologicalNature[] {
-  return natures.map((nature) => {
+  return natures.flatMap((nature) => {
     switch (nature) {
-      case "abstracts":
-        return OntologicalNature.abstract;
       case "collectives":
         return OntologicalNature.collective;
-      case "events":
-        return OntologicalNature.event;
       case "extrinsic-modes":
         return OntologicalNature.extrinsic_mode;
       case "functional-complexes":
@@ -213,7 +210,7 @@ function getOntoUMLNatures(natures: Nature[]): OntologicalNature[] {
       case "types":
         return OntologicalNature.type;
       case "objects":
-        return OntologicalNature.functional_complex;
+        return [OntologicalNature.functional_complex, OntologicalNature.collective, OntologicalNature.quantity];
       default:
         return OntologicalNature.functional_complex;
     }
@@ -222,13 +219,13 @@ function getOntoUMLNatures(natures: Nature[]): OntologicalNature[] {
 
 function getDefaultOntoUMLNature(element: ClassDeclaration): OntologicalNature[] {
   if (
-    element.classElementType?.stereotype === EndurantTypes.CATEGORY ||
-    element.classElementType?.stereotype === EndurantTypes.MIXIN ||
-    element.classElementType?.stereotype === EndurantTypes.PHASE_MIXIN ||
-    element.classElementType?.stereotype === EndurantTypes.ROLE_MIXIN ||
-    element.classElementType?.stereotype === EndurantTypes.HISTORICAL_ROLE_MIXIN ||
-    element.classElementType?.stereotype === EndurantTypes.EVENT ||
-    element.classElementType?.stereotype === EndurantTypes.SITUATION
+    element.classElementType?.ontologicalCategory === EndurantTypes.CATEGORY ||
+    element.classElementType?.ontologicalCategory === EndurantTypes.MIXIN ||
+    element.classElementType?.ontologicalCategory === EndurantTypes.PHASE_MIXIN ||
+    element.classElementType?.ontologicalCategory === EndurantTypes.ROLE_MIXIN ||
+    element.classElementType?.ontologicalCategory === EndurantTypes.HISTORICAL_ROLE_MIXIN ||
+    element.classElementType?.ontologicalCategory === EndurantTypes.EVENT ||
+    element.classElementType?.ontologicalCategory === EndurantTypes.SITUATION
     ) {
       return [OntologicalNature.functional_complex]
     } else {

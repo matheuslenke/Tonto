@@ -12,17 +12,17 @@ const checkUltimateSortalSpecializesUltimateSortalRecursive = (
       return;
     }
 
-    const refType = specItem.classElementType?.stereotype;
+    const refOntologicalCategory = specItem.classElementType?.ontologicalCategory;
     
     if (
-      refType === EndurantTypes.KIND ||
-      refType === EndurantTypes.COLLECTIVE ||
-      refType === EndurantTypes.QUANTITY ||
-      refType === EndurantTypes.QUALITY ||
-      refType === EndurantTypes.RELATOR ||
-      refType === EndurantTypes.MODE ||
-      refType === EndurantTypes.INTRINSIC_MODE ||
-      refType === EndurantTypes.EXTRINSIC_MODE
+      refOntologicalCategory === EndurantTypes.KIND ||
+      refOntologicalCategory === EndurantTypes.COLLECTIVE ||
+      refOntologicalCategory === EndurantTypes.QUANTITY ||
+      refOntologicalCategory === EndurantTypes.QUALITY ||
+      refOntologicalCategory === EndurantTypes.RELATOR ||
+      refOntologicalCategory === EndurantTypes.MODE ||
+      refOntologicalCategory === EndurantTypes.INTRINSIC_MODE ||
+      refOntologicalCategory === EndurantTypes.EXTRINSIC_MODE
     ) {
       accept(
         "warning",

@@ -1,6 +1,6 @@
 import { Class, Package, Relation } from "ontouml-js";
 import {
-    ClassDeclaration, ContextModule
+  ClassDeclaration, ContextModule
 } from "../../language-server/generated/ast";
 import { createInstantiation } from "./class.generator";
 
@@ -10,9 +10,9 @@ export function generateInstantiations(
   relations: Relation[],
   packageItem: Package
 ): void {
-  contextModule.elements.forEach((element) => {
-    if (element.$type === "ClassDeclaration") {
-      const classElement = element as ClassDeclaration;
+  contextModule.declarations.forEach((declaration) => {
+    if (declaration.$type === "ClassDeclaration") {
+      const classElement = declaration as ClassDeclaration;
       const instanceOfClass = classElement.instanceOf?.ref;
 
       if (instanceOfClass) {

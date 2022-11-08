@@ -2,26 +2,20 @@
 
 module MarriageModule {
     category Relator of collectives
-
-    category SocialRelator of relators
+    category SocialRelator of functional-complexes
     relator SocialRelatorType specializes SocialRelator
-
     relator Marriage (instanceOf SocialRelatorType) {
         marriageStartDate: Date {const derived}
         isActive: boolean
     }
-
     kind Person
-
     genset Marriage_SocialRelatorType {
         general Relator
         categorizer SocialRelatorType
         specifics Marriage
     }
-
     kind MarriageDuty
     relator MarriageRight specializes Marriage
-
     event Wedding
 
     // Adicionar Warning caso a pessoa crie um estereótipo diferente
@@ -52,12 +46,9 @@ module MarriageModule {
     
        [2] -- isBoundByTest -- [1..*] Marriage
     }
-
     relation Spouse -- involvesSpouse -- [2..*] Marriage
     relation Marriage <>-- [1..*] MarriageDuty
-
     relation Marriage -- [2..*] Spouse
     relation Marriage <>-- [1..*] MarriageDuty
-
     relation Marriage <>-- [1..*] MarriageRight
 }

@@ -1,18 +1,19 @@
 import {
-  BaseSortalStereotype,
-  NonSortalStereotype,
-  OntologicalNature,
-  UltimateSortalStereotypes,
+  NonSortal,
+  OntologicalNature, Sortal, UltimateSortal
 } from "../generated/ast";
 
 function checkNatureCompatibleWithStereotype(
   nature: OntologicalNature,
   stereotype:
-    | BaseSortalStereotype
-    | NonSortalStereotype
-    | UltimateSortalStereotypes
+    | UltimateSortal
+    | NonSortal
+    | Sortal
     | undefined
-) {
+    | string
+): boolean {
+  console.debug(nature, stereotype)
+
   switch (nature) {
     case "relators":
       if (stereotype === "relator") {
@@ -26,11 +27,6 @@ function checkNatureCompatibleWithStereotype(
       }
       return false;
 
-    case "events":
-      if (stereotype === "event") {
-        return true;
-      }
-      return false;
     case "extrinsic-modes":
       if (stereotype === "extrinsicMode") {
         return true;
@@ -54,11 +50,20 @@ function checkNatureCompatibleWithStereotype(
       }
       return false;
 
+    case "quantities":
+        if (stereotype === "quantity") {
+          return true;
+        }
+        return false;
+
     case "types":
-      return true;
+      if (stereotype === "type") {
+        return true;
+      }
+      return false;
 
     default:
-      return true;
+      return false;
   }
 }
 

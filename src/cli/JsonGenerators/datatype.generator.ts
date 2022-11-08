@@ -1,9 +1,9 @@
 import { Class, Package, Property } from "ontouml-js";
-import { DataType } from "../../language-server/generated/ast";
+import { ComplexDataType } from "../../language-server/generated/ast";
 import { setAttributeCardinality } from "./class.generator";
 
 export function customDataTypeGenerator(
-  dataType: DataType,
+  dataType: ComplexDataType,
   model: Package,
   dataTypes: Class[]
 ): Class {

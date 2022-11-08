@@ -14,17 +14,17 @@ const checkSortalSpecializesUniqueUltimateSortalRecursive = (
       return;
     }
 
-    const stereotype = specItem.classElementType?.stereotype;
+    const category = specItem.classElementType?.ontologicalCategory;
     if (
-      stereotype === EndurantTypes.KIND ||
-      stereotype === EndurantTypes.SUBKIND ||
-      stereotype === EndurantTypes.QUALITY ||
-      stereotype === EndurantTypes.QUANTITY ||
-      stereotype === EndurantTypes.RELATOR ||
-      stereotype === EndurantTypes.MODE ||
-      stereotype === EndurantTypes.INTRINSIC_MODE ||
-      stereotype === EndurantTypes.EXTRINSIC_MODE ||
-      stereotype === EndurantTypes.COLLECTIVE
+      category === EndurantTypes.KIND ||
+      category === EndurantTypes.SUBKIND ||
+      category === EndurantTypes.QUALITY ||
+      category === EndurantTypes.QUANTITY ||
+      category === EndurantTypes.RELATOR ||
+      category === EndurantTypes.MODE ||
+      category === EndurantTypes.INTRINSIC_MODE ||
+      category === EndurantTypes.EXTRINSIC_MODE ||
+      category === EndurantTypes.COLLECTIVE
     ) {
       if (totalUltimateSortalSpecialized > 0) {
         accept(

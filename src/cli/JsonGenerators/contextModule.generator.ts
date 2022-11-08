@@ -1,5 +1,5 @@
 import { Class, Package, Relation } from "ontouml-js";
-import { ClassDeclaration, ContextModule, DataType, ElementRelation, EnumData, GeneralizationSet } from "../../language-server/generated/ast";
+import { ClassDeclaration, ComplexDataType, ContextModule, ElementRelation, Enum, GeneralizationSet } from "../../language-server/generated/ast";
 import { attributeGenerator, classElementGenerator } from "./class.generator";
 import { customDataTypeGenerator } from "./datatype.generator";
 import { enumGenerator } from "./enum.generator";
@@ -17,17 +17,17 @@ export function contextModuleGenerator(
   let relations: Relation[] = [];
   // Creating base datatypes
 
-  contextModule.elements.forEach((element) => {
-    switch (element.$type) {
+  contextModule.declarations.forEach((declaration) => {
+    switch (declaration.$type) {
       case "ClassDeclaration":
-        const classElement = element as ClassDeclaration;
+        const classElement = declaration as ClassDeclaration;
         const newClass = classElementGenerator(classElement, packageItem);
         attributeGenerator(classElement, newClass, dataTypes);
         classes.push(newClass);
         break;
 
       case "DataType":
-        const dataType = element as DataType;
+        const dataType = declaration as ComplexDataType;
         const newDataType = customDataTypeGenerator(
           dataType,
           packageItem,
@@ -37,7 +37,7 @@ export function contextModuleGenerator(
         break;
 
       case "EnumData":
-        const enumData = element as EnumData;
+        const enumData = declaration as Enum;
         enumGenerator(enumData, packageItem);
         break;
     }
@@ -64,9 +64,9 @@ function generateGenSets(
   classes: Class[],
   packageItem: Package
 ) {
-  contextModule.elements.forEach((element) => {
-    if (element.$type === "GeneralizationSet") {
-      const gensetData = element as GeneralizationSet;
+  contextModule.declarations.forEach((declaration) => {
+    if (declaration.$type === "GeneralizationSet") {
+      const gensetData = declaration as GeneralizationSet;
       generalizationSetGenerator(gensetData, classes, packageItem);
     }
   });
@@ -78,10 +78,10 @@ function generateExternalRelations(
   relations: Relation[],
   packageItem: Package
 ): void {
-  contextModule.elements.forEach((element) => {
-    switch (element.$type) {
+  contextModule.declarations.forEach((declaration) => {
+    switch (declaration.$type) {
       case "ElementRelation":
-        const elementRelation = element as ElementRelation;
+        const elementRelation = declaration as ElementRelation;
         const createdRelation = relationGenerator(
           elementRelation,
           packageItem,
@@ -100,16 +100,16 @@ function generateInternalRelations(
   relations: Relation[],
   packageItem: Package
 ): void {
-  contextModule.elements.forEach((element) => {
-    if (element.$type === "ClassDeclaration") {
-      const classElement = element as ClassDeclaration;
+  contextModule.declarations.forEach((declaration) => {
+    if (declaration.$type === "ClassDeclaration") {
+      const classDeclaration = declaration as ClassDeclaration;
 
-      classElement.references.forEach((reference) => {
+      classDeclaration.references.forEach((reference) => {
         const createdRelation = relationGenerator(
           reference,
           packageItem,
           classes,
-          classElement
+          classDeclaration
         );
         if (createdRelation) {
           relations.push(createdRelation);
