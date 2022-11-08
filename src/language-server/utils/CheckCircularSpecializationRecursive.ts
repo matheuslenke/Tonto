@@ -1,9 +1,9 @@
 import { ValidationAcceptor } from "langium";
-import { ClassElement } from "../generated/ast";
+import { ClassDeclaration } from "../generated/ast";
 
 const checkCircularSpecializationRecursive = (
-  actualElement: ClassElement,
-  verificationList: ClassElement[],
+  actualElement: ClassDeclaration,
+  verificationList: ClassDeclaration[],
   accept: ValidationAcceptor
 ): void => {
   actualElement.specializationEndurants.forEach((specializationItem) => {

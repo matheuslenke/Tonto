@@ -1,9 +1,9 @@
 import { ValidationAcceptor } from "langium";
-import { ClassElement } from "../generated/ast";
+import { ClassDeclaration } from "../generated/ast";
 import { EndurantTypes } from "../models/EndurantType";
 
 const checkUltimateSortalSpecializesUltimateSortalRecursive = (
-  actualElement: ClassElement,
+  actualElement: ClassDeclaration,
   accept: ValidationAcceptor
 ): void => {
   actualElement.specializationEndurants.forEach((specializationItem) => {

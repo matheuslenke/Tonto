@@ -18,7 +18,7 @@ export class TontoValidationRegistry extends ValidationRegistry {
             Model: [
                 validator.ModelValidator.checkDuplicatedContextModuleNames,
             ],
-            ClassElement: [
+            ClassDeclaration: [
                 validator.ClassElementValidator.checkSortalSpecializeUniqueUltimateSortal,
                 validator.ClassElementValidator.checkUltimateSortalSpecializeUltimateSortal,
                 validator.ClassElementValidator.checkRigidSpecializesAntiRigid,

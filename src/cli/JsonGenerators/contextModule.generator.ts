@@ -1,19 +1,12 @@
-import { GeneralizationSet } from "../../language-server/generated/ast";
-import {
-  ContextModule,
-  ClassElement,
-  DataType,
-  EnumData,
-  ElementRelation,
-} from "../../language-server/generated/ast";
-import { Package, Class, Relation } from "ontouml-js";
+import { Class, Package, Relation } from "ontouml-js";
+import { ClassDeclaration, ContextModule, DataType, ElementRelation, EnumData, GeneralizationSet } from "../../language-server/generated/ast";
 import { attributeGenerator, classElementGenerator } from "./class.generator";
-import { relationGenerator } from "./relation.generator";
-import { generateSpecializations } from "./specialization.generator";
-import { enumGenerator } from "./enum.generator";
 import { customDataTypeGenerator } from "./datatype.generator";
+import { enumGenerator } from "./enum.generator";
 import { generalizationSetGenerator } from "./genset.generator";
 import { generateInstantiations } from "./instantiation.generator";
+import { relationGenerator } from "./relation.generator";
+import { generateSpecializations } from "./specialization.generator";
 
 export function contextModuleGenerator(
   contextModule: ContextModule,
@@ -26,8 +19,8 @@ export function contextModuleGenerator(
 
   contextModule.elements.forEach((element) => {
     switch (element.$type) {
-      case "ClassElement":
-        const classElement = element as ClassElement;
+      case "ClassDeclaration":
+        const classElement = element as ClassDeclaration;
         const newClass = classElementGenerator(classElement, packageItem);
         attributeGenerator(classElement, newClass, dataTypes);
         classes.push(newClass);
@@ -108,8 +101,8 @@ function generateInternalRelations(
   packageItem: Package
 ): void {
   contextModule.elements.forEach((element) => {
-    if (element.$type === "ClassElement") {
-      const classElement = element as ClassElement;
+    if (element.$type === "ClassDeclaration") {
+      const classElement = element as ClassDeclaration;
 
       classElement.references.forEach((reference) => {
         const createdRelation = relationGenerator(

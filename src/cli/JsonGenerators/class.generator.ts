@@ -1,16 +1,16 @@
 import {
-  CardinalityValues,
-  Class,
-  ClassStereotype, OntologicalNature, Package,
-  Property
+    CardinalityValues,
+    Class,
+    ClassStereotype, OntologicalNature, Package,
+    Property
 } from "ontouml-js";
 import {
-  Cardinality, ClassElement, DataType, OntologicalNature as Nature
+    Cardinality, ClassDeclaration, DataType, OntologicalNature as Nature
 } from "../../language-server/generated/ast";
 import { EndurantTypes } from "../../language-server/models/EndurantType";
 
 export function classElementGenerator(
-  classElement: ClassElement,
+  classElement: ClassDeclaration,
   packageItem: Package
 ): Class {
   if (!!classElement.classElementType) {
@@ -68,7 +68,7 @@ export function classElementGenerator(
 }
 
 export function attributeGenerator(
-  classElement: ClassElement | DataType,
+  classElement: ClassDeclaration | DataType,
   createdClass: Class,
   dataTypes: Class[]
 ): void {
@@ -220,7 +220,7 @@ function getOntoUMLNatures(natures: Nature[]): OntologicalNature[] {
   });
 }
 
-function getDefaultOntoUMLNature(element: ClassElement): OntologicalNature[] {
+function getDefaultOntoUMLNature(element: ClassDeclaration): OntologicalNature[] {
   if (
     element.classElementType?.stereotype === EndurantTypes.CATEGORY ||
     element.classElementType?.stereotype === EndurantTypes.MIXIN ||

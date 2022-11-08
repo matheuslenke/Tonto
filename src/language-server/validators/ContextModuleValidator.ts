@@ -1,5 +1,5 @@
 import { ValidationAcceptor } from "langium";
-import { ClassElement, ContextModule, ElementRelation } from "../generated/ast";
+import { ClassDeclaration, ContextModule, ElementRelation } from "../generated/ast";
 
 export class ContextModuleValidator {
   checkContextModuleStartsWithCapital(
@@ -21,12 +21,12 @@ export class ContextModuleValidator {
     contextModule: ContextModule,
     accept: ValidationAcceptor
   ): void {
-    const elements = contextModule.elements;
+    const elements = contextModule.declarations;
     const names: string[] = [];
 
-    elements.forEach((element) => {
-      if (element.$type === "ClassElement") {
-        const classElement = element as ClassElement;
+    elements.forEach((declaration) => {
+      if (declaration.$type === "ClassDeclaration") {
+        const classElement = declaration as ClassDeclaration;
         const nameExists = names.find((name) => name === classElement.name);
         const refName = classElement.name;
 
@@ -48,9 +48,9 @@ export class ContextModuleValidator {
   ): void {
     let names: string[] = [];
 
-    contextModule.elements.forEach((element) => {
-      if (element.$type === "ElementRelation") {
-        const elementRelation = element as ElementRelation;
+    contextModule.declarations.forEach((declaration) => {
+      if (declaration.$type === "ElementRelation") {
+        const elementRelation = declaration as ElementRelation;
         const nameExists = names.find((name) => name === elementRelation.name);
         const refName = elementRelation.name;
 
@@ -62,8 +62,8 @@ export class ContextModuleValidator {
         } else if (refName !== undefined) {
           names.push(elementRelation.name!);
         }
-      } else if (element.$type === "ClassElement") {
-        const classElement = element as ClassElement;
+      } else if (declaration.$type === "ClassDeclaration") {
+        const classElement = declaration as ClassDeclaration;
         classElement.references.forEach((elementRelation) => {
           const nameExists = names.find(
             (name) => name === elementRelation.name

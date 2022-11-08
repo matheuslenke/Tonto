@@ -16,7 +16,7 @@ entry RModel returns Model:
 */
 ContextModule:
 	'module' name=ID '{'
-		elements+=Element*
+		declarations+=Declaration*
 		modules+=ContextModule*
 	'}'
 ;
@@ -29,36 +29,22 @@ Import:
 	'import' referencedModel+=[Model:ID]
 ;
 
-// <--- Elementos e classes --->
+// <--- Declarations --->
 
-Element:
-	ClassElement | AuxiliaryDeclarations
+Declaration:
+	ClassDeclaration | AuxiliaryDeclaration
 ;
 
-ClassElement:
-    Class | Endurant | CustomType
+AuxiliaryDeclaration:
+	ComplexDataType | Enum | GeneralizationSet | ElementRelation
 ;
 
-AuxiliaryDeclarations:
-	DataType | EnumData | GeneralizationSet | ElementRelation
-;
-
-CustomType infers ClassElement:
-	'type' name=QualifiedName ('{' 
-	'}')?
-;
-
-/*
-* Stereotype is created so users can use the class syntax that is more similar to what OntoUML was doing as an extension of UML
-*/
-
-Class infers ClassElement:
-	('@' classElementType=EndurantType)?
-	isClass?='class' name=QualifiedName 
+ClassDeclaration:
+	classElementType=OntologicalCategory name=QualifiedName 
 	ontologicalNatures=ElementOntologicalNature?
-    ('(' 'instanceOf' instanceOf=[ClassElement:QualifiedName] ')')?
-	('specializes' specializationEndurants+=[ClassElement:QualifiedName]
-	(',' specializationEndurants+=[ClassElement:QualifiedName])? 
+    ('(' 'instanceOf' instanceOf=[ClassDeclaration:QualifiedName] ')')?
+	('specializes' specializationEndurants+=[ClassDeclaration:QualifiedName]
+	(',' specializationEndurants+=[ClassDeclaration:QualifiedName])? 
 	)? ('{'
 		(attributes+=Attribute |
 		references+=ElementRelation
@@ -66,32 +52,32 @@ Class infers ClassElement:
     '}')?
 ;
 
-Endurant infers ClassElement:
-    classElementType=EndurantType name=QualifiedName 
-	ontologicalNatures=ElementOntologicalNature?
-    ('(' 'instanceOf' instanceOf=[ClassElement:QualifiedName] ')')?
-	('specializes' specializationEndurants+=[ClassElement:QualifiedName]
-	(',' specializationEndurants+=[ClassElement:QualifiedName])? 
-	)? ('{'
-		(attributes+=Attribute |
-		references+=ElementRelation
-		)*
-    '}')?
+OntologicalCategory:
+	ontologicalCategory=(UnspecifiedType | NonEndurantType | EndurantType)
 ;
 
-EndurantType:
-    stereotype=(NonSortalStereotype | UltimateSortalStereotypes | BaseSortalStereotype)
+UnspecifiedType returns string:
+	'class'
 ;
 
-NonSortalStereotype returns string:
-	'category' | 'mixin' | 'phaseMixin' | 'roleMixin' | 'historicalRoleMixin' | 'event' | 'situation'
+NonEndurantType returns string:
+	'event' | 'situation'
 ;
 
-UltimateSortalStereotypes returns string:
-	'kind' | 'collective' | 'quantity' | 'quality' | 'mode' | 'intrinsicMode' | 'extrinsicMode' | 'relator'
+EndurantType returns string:
+	NonSortal | UltimateSortal | Sortal;
+
+
+NonSortal returns string:
+	'category' | 'mixin' | 'phaseMixin' | 'roleMixin' | 'historicalRoleMixin'
 ;
 
-BaseSortalStereotype returns string:
+UltimateSortal returns string:
+	'kind' | 'collective' | 'quantity' | 'quality' | 'mode' | 'intrinsicMode' | 'extrinsicMode' | 'relator' | 'type'
+  // do we keep mode here? 
+;
+
+Sortal returns string:
 	'subkind' | 'phase' | 'role' | 'historicalRole'
 ;
 
@@ -100,13 +86,13 @@ ElementOntologicalNature:
 ;
 
 OntologicalNature returns string:
-	'objects' | 'relators' |
-	'collectives' | 'functional-complexes' |
-	'quantities' | 'intrinsic-modes' | 'extrinsic-modes' |
-	'qualities' | 'types' | 'abstracts' | 'events'
+	'objects' | 'functional-complexes' |
+	'collectives'  | 'quantities' | 'qualities' | 'intrinsic-modes' | 'extrinsic-modes' |
+    'relators' | 'types' 
+  // Note: 'objects' = 'functional-complexes' or 'collectives' or 'quantities'
 ;
 
-ElementRelation: 
+ElementRelation:
 	InternalRelation | ExternalRelation
 ;
 
@@ -122,7 +108,7 @@ InternalRelation infers ElementRelation:
     firstCardinality=Cardinality?
 	(isAssociation?='--' (name=QualifiedName ('specializes' specializeRelation=[ElementRelation:QualifiedName])? '--')? 
 	| 
-	isComposition?='<>--' (name=QualifiedName ('specializes' specializeRelation=[ElementRelation:QualifiedName])? '<>--')? )
+	isComposition?='<>--' (name=QualifiedName ('specializes' specializeRelation=[ElementRelation:QualifiedName])? '--')? )
 	secondCardinality=Cardinality? 
 
 	(	('{' secondEndMetaAttributes+=RelationMetaAttribute 
@@ -131,9 +117,9 @@ InternalRelation infers ElementRelation:
 		('(' secondEndName=ID ')')
 	)?
 
-	secondEnd=[ClassElement:QualifiedName]
+	secondEnd=[ClassDeclaration:QualifiedName]
     (hasInverse='inverseOf' inverseEnd=[ElementRelation:QualifiedName])?
- ;
+;
 
 ExternalRelation infers ElementRelation:
 	('@'relationType=RelationStereotype)?
@@ -145,7 +131,7 @@ ExternalRelation infers ElementRelation:
 		(',' firstEndMetaAttributes+=RelationMetaAttribute )* '}')
 	)
 	
-    firstEnd=[ClassElement:QualifiedName]
+    firstEnd=[ClassDeclaration:QualifiedName]
 	firstCardinality=Cardinality?
 	(isAssociation?='--' (name=QualifiedName ('specializes' specializeRelation=[ElementRelation:QualifiedName])? '--')? 
 	| 
@@ -158,12 +144,12 @@ ExternalRelation infers ElementRelation:
 		(',' secondEndMetaAttributes+=RelationMetaAttribute )* '}')
 	)
 
-	secondEnd=[ClassElement:QualifiedName]
+	secondEnd=[ClassDeclaration:QualifiedName]
     (hasInverse='inverseOf' inverseEnd=[ElementRelation:QualifiedName])?
 ;
 
 Attribute:
- 	name=ID ':' (attributeType=[DataType] | attributeType=BasicDataTypes)
+	name=ID ':' (attributeType=[ComplexDataType] | attributeType=BasicDataType)
 	cardinality=Cardinality?
 	('{'((isOrdered?='ordered') & (isConst?='const') & (isDerived?='derived'))? '}')?
 ;
@@ -212,27 +198,28 @@ Cardinality:
 GeneralizationSet:
 	(disjoint?='disjoint')? (complete?='complete')?
 	'genset' name=ID '{' 
-		('general' generalItem=[Element:QualifiedName])
-		('categorizer' categorizerItems+=[Element:QualifiedName] (categorizerItems+=[Element:QualifiedName])*)?
-		'specifics' specificItems+=[Element:QualifiedName] (',' specificItems+=[Element:QualifiedName])*
+  // TODO: remove order
+		('general' generalItem=[ClassDeclaration:QualifiedName])
+		('categorizer' categorizerItems+=[ClassDeclaration:QualifiedName] (categorizerItems+=[ClassDeclaration:QualifiedName])*)?
+		'specifics' specificItems+=[ClassDeclaration:QualifiedName] (',' specificItems+=[ClassDeclaration:QualifiedName])*
 	'}'
 ;
 
 // <--- DataTypes --->
 
-DataType:
+ComplexDataType:
 	'datatype' name=ID ('{'
 		(attributes+=Attribute)*
 	'}')?
 ;
 
-BasicDataTypes returns string:
+BasicDataType returns string:
 	'number' | 'string' | 'Date' | 'boolean'
 ;
 
 // <--- Enums --->
 
-EnumData:
+Enum:
 	'enum' name=ID '{'
 		(elements+=EnumElement
 		(',' elements+=EnumElement)*)?

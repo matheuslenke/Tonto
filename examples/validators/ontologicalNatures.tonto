@@ -1,11 +1,7 @@
 module OntologicalNaturesError {
     category Furniture of objects
-
-    category SpecificFurniture of events specializes Furniture
-
-    category EventFurniture of events, objects
-
-    category ErrorFurniture of events, objects specializes EventFurniture
-
-    category ErrorFurniture of events, objects specializes EventFurniture
+    category SpecificFurniture of collectives specializes Furniture
+    category EventFurniture of collectives, objects
+    category ErrorFurniture of collectives, objects specializes EventFurniture
+    category ErrorFurniture2 of collectives, objects specializes EventFurniture
 }

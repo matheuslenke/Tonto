@@ -10,24 +10,13 @@ import {
   DefaultScopeComputation,
   interruptAndCheck,
   LangiumDocument,
-  LangiumServices,
-  PrecomputedScopes,
-  MultiMap,
-  streamAllContents,
+  LangiumServices, MultiMap, PrecomputedScopes, streamAllContents
 } from "langium";
 import { CancellationToken } from "vscode-jsonrpc";
-import { TontoNameProvider } from "./tonto-naming";
 import {
-  Model,
-  ContextModule,
-  isContextModule,
-  isElement,
-  isDataType,
-  isClassElement,
-  isElementRelation,
-  ClassElement,
-  Element,
+  ClassDeclaration, ContextModule, Declaration, isClassDeclaration, isComplexDataType, isContextModule, isDeclaration, isElementRelation, Model
 } from "./generated/ast";
+import { TontoNameProvider } from "./tonto-naming";
 
 export class TontoScopeComputation extends DefaultScopeComputation {
   constructor(services: LangiumServices) {
@@ -49,35 +38,35 @@ export class TontoScopeComputation extends DefaultScopeComputation {
     cancelToken?: CancellationToken
   ): Promise<AstNodeDescription[]> {
     const localDescriptions: AstNodeDescription[] = [];
-    let elements: (ContextModule | Element)[] = [];
+    let elements: (ContextModule | Declaration)[] = [];
     if (container.$type === "Model") {
       const model = container as Model;
       elements = [...elements, ...model.modules];
     } else {
       const contextModule = container as ContextModule;
-      elements = [...elements, ...contextModule.elements];
+      elements = [...elements, ...contextModule.declarations];
     }
-    for (const element of elements) {
+    for (const declaration of elements) {
       if (cancelToken) {
         await interruptAndCheck(cancelToken);
       }
       if (
-        isElement(element) ||
-        isDataType(element) ||
-        isElementRelation(element) ||
-        isClassElement(element)
+        isDeclaration(declaration) ||
+        isComplexDataType(declaration) ||
+        isElementRelation(declaration) ||
+        isClassDeclaration(declaration)
       ) {
-        if (element.name) {
+        if (declaration.name) {
           const description = this.descriptions.createDescription(
-            element,
-            element.name,
+            declaration,
+            declaration.name,
             document
           );
           localDescriptions.push(description);
         }
-      } else if (isContextModule(element)) {
+      } else if (isContextModule(declaration)) {
         const nestedDescriptions = await this.processContainer(
-          element,
+          declaration,
           scopes,
           document,
           cancelToken
@@ -85,7 +74,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
         for (const description of nestedDescriptions) {
           // Add qualified names to the container
           const qualified = this.createQualifiedDescription(
-            element,
+            declaration,
             description,
             document
           );
@@ -98,7 +87,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
   }
 
   protected createQualifiedDescription(
-    pack: ContextModule | ClassElement,
+    pack: ContextModule | ClassDeclaration,
     description: AstNodeDescription,
     document: LangiumDocument
   ): AstNodeDescription {
@@ -124,7 +113,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
     const descr: AstNodeDescription[] = [];
     for (const modelNode of streamAllContents(document.parseResult.value)) {
       await interruptAndCheck(cancelToken);
-      if (isElement(modelNode) || isClassElement(modelNode)) {
+      if (isDeclaration(modelNode) || isClassDeclaration(modelNode)) {
         let name = this.nameProvider.getName(modelNode);
         if (name) {
           if (isContextModule(modelNode.$container)) {

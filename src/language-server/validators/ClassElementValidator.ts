@@ -5,20 +5,20 @@ import { checkNatureCompatibleWithStereotype } from "../utils/checkNatureCompati
 import { checkSortalSpecializesUniqueUltimateSortalRecursive } from "../utils/CheckSortalSpecializesUniqueUltimateSortalRecursive";
 import { checkUltimateSortalSpecializesUltimateSortalRecursive } from "../utils/CheckUltimateSortalSpecializesUltimateSortalRecursive";
 import { getStereotypeIsSortal } from "../utils/getStereotypeIsSortal";
-import { ClassElement } from "./../generated/ast";
+import { ClassDeclaration } from "./../generated/ast";
 
 export class ClassElementValidator {
   /*
    * Checks if a Kind specializes a unique ultimate sortal (Kind, Collective, Quantity, Relator, Quality or mode)
    */
   checkSortalSpecializeUniqueUltimateSortal(
-    classElement: ClassElement,
+    classElement: ClassDeclaration,
     accept: ValidationAcceptor
   ): void {
     if (!classElement || !classElement.classElementType) {
       return;
     }
-    const endurantType = classElement.classElementType.stereotype;
+    const endurantType = classElement.classElementType.ontologicalCategory;
 
     if (endurantType === null || endurantType === undefined) {
       return;
@@ -47,13 +47,13 @@ export class ClassElementValidator {
   }
 
   checkUltimateSortalSpecializeUltimateSortal(
-    classElement: ClassElement,
+    classElement: ClassDeclaration,
     accept: ValidationAcceptor
   ): void {
     if (!classElement || !classElement.classElementType) {
       return;
     }
-    const endurantType = classElement.classElementType.stereotype;
+    const endurantType = classElement.classElementType.ontologicalCategory;
 
     if (endurantType === null || endurantType === undefined) {
       return;
@@ -78,7 +78,7 @@ export class ClassElementValidator {
   }
 
   checkClassElementStartsWithCapital(
-    classElement: ClassElement,
+    classElement: ClassDeclaration,
     accept: ValidationAcceptor
   ): void {
     if (classElement.name) {
@@ -96,13 +96,13 @@ export class ClassElementValidator {
    * Checks if a Rigid stereotype specializes a anti-rigid stereotype
    */
   checkRigidSpecializesAntiRigid(
-    classElement: ClassElement,
+    classElement: ClassDeclaration,
     accept: ValidationAcceptor
   ): void {
     if (!classElement || !classElement.classElementType) {
       return;
     }
-    const endurantType = classElement.classElementType.stereotype;
+    const endurantType = classElement.classElementType.ontologicalCategory;
 
     if (endurantType === null || endurantType === undefined) {
       return;
@@ -117,11 +117,11 @@ export class ClassElementValidator {
     ) {
       classElement.specializationEndurants.forEach((specializationItem) => {
         const refElement = specializationItem.ref?.$cstNode
-          ?.element as ClassElement;
+          ?.element as ClassDeclaration;
         if (!refElement || !refElement.classElementType) {
           return;
         }
-        const refType = refElement.classElementType.stereotype;
+        const refType = refElement.classElementType.ontologicalCategory;
 
         if (
           refType === EndurantTypes.PHASE ||
@@ -141,7 +141,7 @@ export class ClassElementValidator {
   }
 
   checkDuplicatedReferenceNames(
-    classElement: ClassElement,
+    classElement: ClassDeclaration,
     accept: ValidationAcceptor
   ): void {
     const references = classElement.references;
@@ -164,7 +164,7 @@ export class ClassElementValidator {
    * The element specializations must have ontological natures that are contained in the ontological natures of its superclasses
    */
   checkCompatibleNatures(
-    classElement: ClassElement,
+    classElement: ClassDeclaration,
     accept: ValidationAcceptor
   ): void {
     const elementNatures = classElement.ontologicalNatures;
@@ -199,11 +199,11 @@ export class ClassElementValidator {
   }
 
   checkSpecializationOfCorrectNature(
-    classElement: ClassElement,
+    classElement: ClassDeclaration,
     accept: ValidationAcceptor
   ): void {
     const specializations = classElement.specializationEndurants;
-    const stereotype = classElement.classElementType?.stereotype;
+    const stereotype = classElement.classElementType?.ontologicalCategory;
     if (getStereotypeIsSortal(stereotype) === false) {
       return;
     }
@@ -231,12 +231,12 @@ export class ClassElementValidator {
   }
 
   checkNaturesOnlyOnNonSortals(
-    classElement: ClassElement,
+    classElement: ClassDeclaration,
     accept: ValidationAcceptor
   ): void {
     const ElementNatures = classElement.ontologicalNatures;
     if (ElementNatures) {
-      if (getStereotypeIsSortal(classElement.classElementType?.stereotype)) {
+      if (getStereotypeIsSortal(classElement.classElementType?.ontologicalCategory)) {
         accept("error", "Only non-sortal types can specialize natures", {
           node: classElement,
           property: "ontologicalNatures",
@@ -249,7 +249,7 @@ export class ClassElementValidator {
    * Checks if an Element has a ciclic specialization
    */
   checkCircularSpecialization(
-    classElement: ClassElement,
+    classElement: ClassDeclaration,
     accept: ValidationAcceptor
   ): void {
     classElement.specializationEndurants.forEach((specializationItem) => {
@@ -262,14 +262,14 @@ export class ClassElementValidator {
   }
 
   checkClassWithoutStereotype(
-    classElement: ClassElement,
+    classDeclaration: ClassDeclaration,
     accept: ValidationAcceptor
   ): void {
-    if (classElement.classElementType?.stereotype === undefined) {
+    if (classDeclaration.classElementType?.ontologicalCategory === undefined) {
       accept(
         "warning",
         "Consider using an annotation or a more specific class",
-        { node: classElement, property: "isClass" }
+        { node: classDeclaration, property: "classElementType" }
       );
     }
   }

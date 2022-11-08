@@ -6,11 +6,8 @@
 
 import { DefaultNameProvider } from "langium";
 import {
-  isContextModule,
-  ContextModule,
-  ClassElement,
-  ElementRelation,
-  isClassElement,
+    ClassDeclaration, ContextModule, ElementRelation,
+    isClassDeclaration, isContextModule
 } from "./generated/ast";
 
 export function toQualifiedName(
@@ -34,11 +31,11 @@ export class TontoNameProvider extends DefaultNameProvider {
    * @returns qualified name separated by `.`
    */
   getQualifiedName(
-    qualifier: ContextModule | ClassElement | ElementRelation | string,
+    qualifier: ContextModule | ClassDeclaration | ElementRelation | string,
     name: string
   ): string {
     let prefix = qualifier;
-    if (isContextModule(prefix) || isClassElement(prefix)) {
+    if (isContextModule(prefix) || isClassDeclaration(prefix)) {
       if (prefix.name) {
         prefix = isContextModule(prefix.$container)
           ? this.getQualifiedName(prefix.$container, prefix.name!)

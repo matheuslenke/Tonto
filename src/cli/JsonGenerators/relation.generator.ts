@@ -1,13 +1,13 @@
 import {
-  AggregationKind, CardinalityValues, Class,
-  Package, Property, Relation, RelationStereotype
+    AggregationKind, CardinalityValues, Class,
+    Package, Property, Relation, RelationStereotype
 } from "ontouml-js";
 import {
-  Cardinality,
-  ClassElement,
-  ElementRelation,
-  RelationMetaAttribute,
-  RelationStereotype as MRelationStereotype
+    Cardinality,
+    ClassDeclaration,
+    ElementRelation,
+    RelationMetaAttribute,
+    RelationStereotype as MRelationStereotype
 } from "../../language-server/generated/ast";
 import { RelationTypes } from "../../language-server/models/RelationType";
 
@@ -15,7 +15,7 @@ export function relationGenerator(
   relationItem: ElementRelation,
   packageItem: Package,
   classes: Class[],
-  sourceClassIncoming?: ClassElement
+  sourceClassIncoming?: ClassDeclaration
 ): Relation | undefined {
   const sourceClass = sourceClassIncoming ?? relationItem.firstEnd?.ref;
   const destinationClass = relationItem.secondEnd.ref;

@@ -3,7 +3,7 @@ module UFES {
   kind Person specializes Agent
   role Spouse specializes Person
   relator Marriage {
-    [0..*] <>-- involvedSpouses <>-- [0..*] Spouse
+    [0..*] <>-- involvedSpouses -- [0..*] Spouse
     [0..*] -- children -- [0..*] Person
   }
 }

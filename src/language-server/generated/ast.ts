@@ -7,39 +7,45 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import { AstNode, AstReflection, Reference, ReferenceInfo, isAstNode, TypeMetaData } from 'langium';
 
-export type AuxiliaryDeclarations = DataType | ElementRelation | EnumData | GeneralizationSet;
+export type AuxiliaryDeclaration = ComplexDataType | ElementRelation | Enum | GeneralizationSet;
 
-export const AuxiliaryDeclarations = 'AuxiliaryDeclarations';
+export const AuxiliaryDeclaration = 'AuxiliaryDeclaration';
 
-export function isAuxiliaryDeclarations(item: unknown): item is AuxiliaryDeclarations {
-    return reflection.isInstance(item, AuxiliaryDeclarations);
+export function isAuxiliaryDeclaration(item: unknown): item is AuxiliaryDeclaration {
+    return reflection.isInstance(item, AuxiliaryDeclaration);
 }
 
-export type BaseSortalStereotype = 'historicalRole' | 'phase' | 'role' | 'subkind';
+export type BasicDataType = 'Date' | 'boolean' | 'number' | 'string';
 
-export type BasicDataTypes = 'Date' | 'boolean' | 'number' | 'string';
+export type Declaration = AuxiliaryDeclaration | ClassDeclaration;
 
-export type Element = AuxiliaryDeclarations | ClassElement;
+export const Declaration = 'Declaration';
 
-export const Element = 'Element';
-
-export function isElement(item: unknown): item is Element {
-    return reflection.isInstance(item, Element);
+export function isDeclaration(item: unknown): item is Declaration {
+    return reflection.isInstance(item, Declaration);
 }
 
-export type NonSortalStereotype = 'category' | 'event' | 'historicalRoleMixin' | 'mixin' | 'phaseMixin' | 'roleMixin' | 'situation';
+export type EndurantType = string;
 
-export type OntologicalNature = 'abstracts' | 'collectives' | 'events' | 'extrinsic-modes' | 'functional-complexes' | 'intrinsic-modes' | 'objects' | 'qualities' | 'quantities' | 'relators' | 'types';
+export type NonEndurantType = 'event' | 'situation';
+
+export type NonSortal = 'category' | 'historicalRoleMixin' | 'mixin' | 'phaseMixin' | 'roleMixin';
+
+export type OntologicalNature = 'collectives' | 'extrinsic-modes' | 'functional-complexes' | 'intrinsic-modes' | 'objects' | 'qualities' | 'quantities' | 'relators' | 'types';
 
 export type QualifiedName = string;
 
 export type RelationStereotype = 'aggregation' | 'bringsAbout' | 'characterization' | 'comparative' | 'componentOf' | 'composition' | 'creation' | 'derivation' | 'externalDependence' | 'formal' | 'historicalDependence' | 'inherence' | 'instantiation' | 'manifestation' | 'material' | 'mediation' | 'memberOf' | 'participation' | 'participational' | 'relator' | 'subCollectionOf' | 'subQuantityOf' | 'termination' | 'triggers' | 'value';
 
-export type UltimateSortalStereotypes = 'collective' | 'extrinsicMode' | 'intrinsicMode' | 'kind' | 'mode' | 'quality' | 'quantity' | 'relator';
+export type Sortal = 'historicalRole' | 'phase' | 'role' | 'subkind';
+
+export type UltimateSortal = 'collective' | 'extrinsicMode' | 'intrinsicMode' | 'kind' | 'mode' | 'quality' | 'quantity' | 'relator' | 'type';
+
+export type UnspecifiedType = string;
 
 export interface Attribute extends AstNode {
-    readonly $container: ClassElement | DataType;
-    attributeType: BasicDataTypes | Reference<DataType>
+    readonly $container: ClassDeclaration | ComplexDataType;
+    attributeType: BasicDataType | Reference<ComplexDataType>
     cardinality?: Cardinality
     isConst: boolean
     isDerived: boolean
@@ -65,27 +71,38 @@ export function isCardinality(item: unknown): item is Cardinality {
     return reflection.isInstance(item, Cardinality);
 }
 
-export interface ClassElement extends AstNode {
-    readonly $container: ClassElement | ContextModule;
+export interface ClassDeclaration extends AstNode {
+    readonly $container: ClassDeclaration | ContextModule;
     attributes: Array<Attribute>
-    classElementType?: EndurantType
-    instanceOf?: Reference<ClassElement>
-    isClass: boolean
+    classElementType: OntologicalCategory
+    instanceOf?: Reference<ClassDeclaration>
     name: QualifiedName
     ontologicalNatures?: ElementOntologicalNature
     references: Array<ElementRelation>
-    specializationEndurants: Array<Reference<ClassElement>>
+    specializationEndurants: Array<Reference<ClassDeclaration>>
 }
 
-export const ClassElement = 'ClassElement';
+export const ClassDeclaration = 'ClassDeclaration';
 
-export function isClassElement(item: unknown): item is ClassElement {
-    return reflection.isInstance(item, ClassElement);
+export function isClassDeclaration(item: unknown): item is ClassDeclaration {
+    return reflection.isInstance(item, ClassDeclaration);
+}
+
+export interface ComplexDataType extends AstNode {
+    readonly $container: ClassDeclaration | ContextModule;
+    attributes: Array<Attribute>
+    name: string
+}
+
+export const ComplexDataType = 'ComplexDataType';
+
+export function isComplexDataType(item: unknown): item is ComplexDataType {
+    return reflection.isInstance(item, ComplexDataType);
 }
 
 export interface ContextModule extends AstNode {
     readonly $container: ContextModule | Model;
-    elements: Array<Element>
+    declarations: Array<Declaration>
     modules: Array<ContextModule>
     name: string
 }
@@ -96,20 +113,8 @@ export function isContextModule(item: unknown): item is ContextModule {
     return reflection.isInstance(item, ContextModule);
 }
 
-export interface DataType extends AstNode {
-    readonly $container: ClassElement | ContextModule;
-    attributes: Array<Attribute>
-    name: string
-}
-
-export const DataType = 'DataType';
-
-export function isDataType(item: unknown): item is DataType {
-    return reflection.isInstance(item, DataType);
-}
-
 export interface ElementOntologicalNature extends AstNode {
-    readonly $container: ClassElement;
+    readonly $container: ClassDeclaration;
     natures: Array<OntologicalNature>
 }
 
@@ -120,9 +125,9 @@ export function isElementOntologicalNature(item: unknown): item is ElementOntolo
 }
 
 export interface ElementRelation extends AstNode {
-    readonly $container: ClassElement | ContextModule;
+    readonly $container: ClassDeclaration | ContextModule;
     firstCardinality?: Cardinality
-    firstEnd?: Reference<ClassElement>
+    firstEnd?: Reference<ClassDeclaration>
     firstEndMetaAttributes: Array<RelationMetaAttribute>
     firstEndName?: string
     hasInverse?: 'inverseOf'
@@ -132,7 +137,7 @@ export interface ElementRelation extends AstNode {
     name?: QualifiedName
     relationType?: RelationStereotype
     secondCardinality?: Cardinality
-    secondEnd: Reference<ClassElement>
+    secondEnd: Reference<ClassDeclaration>
     secondEndMetaAttributes: Array<RelationMetaAttribute>
     secondEndName?: string
     specializeRelation?: Reference<ElementRelation>
@@ -144,31 +149,20 @@ export function isElementRelation(item: unknown): item is ElementRelation {
     return reflection.isInstance(item, ElementRelation);
 }
 
-export interface EndurantType extends AstNode {
-    readonly $container: ClassElement;
-    stereotype: BaseSortalStereotype | NonSortalStereotype | UltimateSortalStereotypes
-}
-
-export const EndurantType = 'EndurantType';
-
-export function isEndurantType(item: unknown): item is EndurantType {
-    return reflection.isInstance(item, EndurantType);
-}
-
-export interface EnumData extends AstNode {
-    readonly $container: ClassElement | ContextModule;
+export interface Enum extends AstNode {
+    readonly $container: ClassDeclaration | ContextModule;
     elements: Array<EnumElement>
     name: string
 }
 
-export const EnumData = 'EnumData';
+export const Enum = 'Enum';
 
-export function isEnumData(item: unknown): item is EnumData {
-    return reflection.isInstance(item, EnumData);
+export function isEnum(item: unknown): item is Enum {
+    return reflection.isInstance(item, Enum);
 }
 
 export interface EnumElement extends AstNode {
-    readonly $container: EnumData;
+    readonly $container: Enum;
     name: string
 }
 
@@ -179,13 +173,13 @@ export function isEnumElement(item: unknown): item is EnumElement {
 }
 
 export interface GeneralizationSet extends AstNode {
-    readonly $container: ClassElement | ContextModule;
-    categorizerItems: Array<Reference<Element>>
+    readonly $container: ClassDeclaration | ContextModule;
+    categorizerItems: Array<Reference<ClassDeclaration>>
     complete: boolean
     disjoint: boolean
-    generalItem: Reference<Element>
+    generalItem: Reference<ClassDeclaration>
     name: string
-    specificItems: Array<Reference<Element>>
+    specificItems: Array<Reference<ClassDeclaration>>
 }
 
 export const GeneralizationSet = 'GeneralizationSet';
@@ -216,6 +210,17 @@ export function isModel(item: unknown): item is Model {
     return reflection.isInstance(item, Model);
 }
 
+export interface OntologicalCategory extends AstNode {
+    readonly $container: ClassDeclaration;
+    ontologicalCategory: EndurantType | NonEndurantType | UnspecifiedType
+}
+
+export const OntologicalCategory = 'OntologicalCategory';
+
+export function isOntologicalCategory(item: unknown): item is OntologicalCategory {
+    return reflection.isInstance(item, OntologicalCategory);
+}
+
 export interface RelationMetaAttribute extends AstNode {
     readonly $container: ElementRelation;
     isConst: boolean
@@ -231,12 +236,12 @@ export function isRelationMetaAttribute(item: unknown): item is RelationMetaAttr
     return reflection.isInstance(item, RelationMetaAttribute);
 }
 
-export type TontoAstType = 'Attribute' | 'AuxiliaryDeclarations' | 'Cardinality' | 'ClassElement' | 'ContextModule' | 'DataType' | 'Element' | 'ElementOntologicalNature' | 'ElementRelation' | 'EndurantType' | 'EnumData' | 'EnumElement' | 'GeneralizationSet' | 'Import' | 'Model' | 'RelationMetaAttribute';
+export type TontoAstType = 'Attribute' | 'AuxiliaryDeclaration' | 'Cardinality' | 'ClassDeclaration' | 'ComplexDataType' | 'ContextModule' | 'Declaration' | 'ElementOntologicalNature' | 'ElementRelation' | 'Enum' | 'EnumElement' | 'GeneralizationSet' | 'Import' | 'Model' | 'OntologicalCategory' | 'RelationMetaAttribute';
 
 export class TontoAstReflection implements AstReflection {
 
     getAllTypes(): string[] {
-        return ['Attribute', 'AuxiliaryDeclarations', 'Cardinality', 'ClassElement', 'ContextModule', 'DataType', 'Element', 'ElementOntologicalNature', 'ElementRelation', 'EndurantType', 'EnumData', 'EnumElement', 'GeneralizationSet', 'Import', 'Model', 'RelationMetaAttribute'];
+        return ['Attribute', 'AuxiliaryDeclaration', 'Cardinality', 'ClassDeclaration', 'ComplexDataType', 'ContextModule', 'Declaration', 'ElementOntologicalNature', 'ElementRelation', 'Enum', 'EnumElement', 'GeneralizationSet', 'Import', 'Model', 'OntologicalCategory', 'RelationMetaAttribute'];
     }
 
     isInstance(node: unknown, type: string): boolean {
@@ -248,15 +253,15 @@ export class TontoAstReflection implements AstReflection {
             return true;
         }
         switch (subtype) {
-            case ClassElement:
-            case AuxiliaryDeclarations: {
-                return this.isSubtype(Element, supertype);
+            case ClassDeclaration:
+            case AuxiliaryDeclaration: {
+                return this.isSubtype(Declaration, supertype);
             }
-            case DataType:
+            case ComplexDataType:
             case ElementRelation:
-            case EnumData:
+            case Enum:
             case GeneralizationSet: {
-                return this.isSubtype(AuxiliaryDeclarations, supertype);
+                return this.isSubtype(AuxiliaryDeclaration, supertype);
             }
             default: {
                 return false;
@@ -268,34 +273,34 @@ export class TontoAstReflection implements AstReflection {
         const referenceId = `${refInfo.container.$type}:${refInfo.property}`;
         switch (referenceId) {
             case 'Attribute:attributeType': {
-                return DataType;
+                return ComplexDataType;
             }
-            case 'ClassElement:instanceOf': {
-                return ClassElement;
+            case 'ClassDeclaration:instanceOf': {
+                return ClassDeclaration;
             }
-            case 'ClassElement:specializationEndurants': {
-                return ClassElement;
+            case 'ClassDeclaration:specializationEndurants': {
+                return ClassDeclaration;
             }
             case 'ElementRelation:firstEnd': {
-                return ClassElement;
+                return ClassDeclaration;
             }
             case 'ElementRelation:inverseEnd': {
                 return ElementRelation;
             }
             case 'ElementRelation:secondEnd': {
-                return ClassElement;
+                return ClassDeclaration;
             }
             case 'ElementRelation:specializeRelation': {
                 return ElementRelation;
             }
             case 'GeneralizationSet:categorizerItems': {
-                return Element;
+                return ClassDeclaration;
             }
             case 'GeneralizationSet:generalItem': {
-                return Element;
+                return ClassDeclaration;
             }
             case 'GeneralizationSet:specificItems': {
-                return Element;
+                return ClassDeclaration;
             }
             case 'Import:referencedModel': {
                 return Model;
@@ -324,14 +329,21 @@ export class TontoAstReflection implements AstReflection {
                     ]
                 };
             }
-            case 'ClassElement': {
+            case 'ClassDeclaration': {
                 return {
-                    name: 'ClassElement',
+                    name: 'ClassDeclaration',
                     mandatory: [
                         { name: 'attributes', type: 'array' },
-                        { name: 'isClass', type: 'boolean' },
                         { name: 'references', type: 'array' },
                         { name: 'specializationEndurants', type: 'array' }
+                    ]
+                };
+            }
+            case 'ComplexDataType': {
+                return {
+                    name: 'ComplexDataType',
+                    mandatory: [
+                        { name: 'attributes', type: 'array' }
                     ]
                 };
             }
@@ -339,16 +351,8 @@ export class TontoAstReflection implements AstReflection {
                 return {
                     name: 'ContextModule',
                     mandatory: [
-                        { name: 'elements', type: 'array' },
+                        { name: 'declarations', type: 'array' },
                         { name: 'modules', type: 'array' }
-                    ]
-                };
-            }
-            case 'DataType': {
-                return {
-                    name: 'DataType',
-                    mandatory: [
-                        { name: 'attributes', type: 'array' }
                     ]
                 };
             }
@@ -371,9 +375,9 @@ export class TontoAstReflection implements AstReflection {
                     ]
                 };
             }
-            case 'EnumData': {
+            case 'Enum': {
                 return {
-                    name: 'EnumData',
+                    name: 'Enum',
                     mandatory: [
                         { name: 'elements', type: 'array' }
                     ]
