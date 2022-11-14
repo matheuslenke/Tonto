@@ -15,7 +15,7 @@ export function isAuxiliaryDeclaration(item: unknown): item is AuxiliaryDeclarat
     return reflection.isInstance(item, AuxiliaryDeclaration);
 }
 
-export type BasicDataType = 'Date' | 'boolean' | 'number' | 'string';
+export type BasicDataType = 'boolean' | 'date' | 'number' | 'string';
 
 export type Declaration = AuxiliaryDeclaration | ClassDeclaration;
 
@@ -35,7 +35,7 @@ export type OntologicalNature = 'collectives' | 'extrinsic-modes' | 'functional-
 
 export type QualifiedName = string;
 
-export type RelationStereotype = 'aggregation' | 'bringsAbout' | 'characterization' | 'comparative' | 'componentOf' | 'composition' | 'creation' | 'derivation' | 'externalDependence' | 'formal' | 'historicalDependence' | 'inherence' | 'instantiation' | 'manifestation' | 'material' | 'mediation' | 'memberOf' | 'participation' | 'participational' | 'relator' | 'subCollectionOf' | 'subQuantityOf' | 'termination' | 'triggers' | 'value';
+export type RelationStereotype = 'aggregation' | 'bringsAbout' | 'characterization' | 'comparative' | 'componentOf' | 'composition' | 'creation' | 'derivation' | 'externalDependence' | 'formal' | 'historicalDependence' | 'inherence' | 'instantiation' | 'manifestation' | 'material' | 'mediation' | 'memberOf' | 'participation' | 'participational' | 'subCollectionOf' | 'subQuantityOf' | 'termination' | 'triggers' | 'value';
 
 export type Sortal = 'historicalRole' | 'phase' | 'role' | 'subkind';
 
@@ -178,7 +178,7 @@ export interface GeneralizationSet extends AstNode {
     complete: boolean
     disjoint: boolean
     generalItem: Reference<ClassDeclaration>
-    name: string
+    name?: string
     specificItems: Array<Reference<ClassDeclaration>>
 }
 

@@ -98,53 +98,41 @@ ElementRelation:
 
 InternalRelation infers ElementRelation:
 	('@'relationType=RelationStereotype)?
-
-	// 1. First end name and Meta Attributes option one
-	(	('(' firstEndName=ID ')') &
-		('{' firstEndMetaAttributes+=RelationMetaAttribute 
-		(',' firstEndMetaAttributes+=RelationMetaAttribute )* '}')
-	)?
-
-    firstCardinality=Cardinality?
-	(isAssociation?='--' (name=QualifiedName ('specializes' specializeRelation=[ElementRelation:QualifiedName])? '--')? 
-	| 
-	isComposition?='<>--' (name=QualifiedName ('specializes' specializeRelation=[ElementRelation:QualifiedName])? '--')? )
-	secondCardinality=Cardinality? 
-
-	(	('{' secondEndMetaAttributes+=RelationMetaAttribute 
-		(',' secondEndMetaAttributes+=RelationMetaAttribute )* '}')
-		&
-		('(' secondEndName=ID ')')
-	)?
-
-	secondEnd=[ClassDeclaration:QualifiedName]
-    (hasInverse='inverseOf' inverseEnd=[ElementRelation:QualifiedName])?
+	RelationInfo
 ;
 
 ExternalRelation infers ElementRelation:
 	('@'relationType=RelationStereotype)?
 	'relation'
+    firstEnd=[ClassDeclaration:QualifiedName]
+	RelationInfo
+;
 
-	(	('(' firstEndName=ID ')')
-		&
+fragment RelationInfo:
+	(	
+		'('
+		(firstEndName=ID) &
 		('{' firstEndMetaAttributes+=RelationMetaAttribute 
 		(',' firstEndMetaAttributes+=RelationMetaAttribute )* '}')
-	)
+		')'
+	)?
 	
-    firstEnd=[ClassDeclaration:QualifiedName]
 	firstCardinality=Cardinality?
-	(isAssociation?='--' (name=QualifiedName ('specializes' specializeRelation=[ElementRelation:QualifiedName])? '--')? 
-	| 
-	isComposition?='<>--' (name=QualifiedName ('specializes' specializeRelation=[ElementRelation:QualifiedName])? '<>--')? )
-	    secondCardinality=Cardinality? 
+	(
+		(isAssociation?='--' | isComposition?='<>--') (name=QualifiedName '--')?
+	)? 
 
-	(	('(' secondEndName=ID ')')
-		&
-		('{' secondEndMetaAttributes+=RelationMetaAttribute 
-		(',' secondEndMetaAttributes+=RelationMetaAttribute )* '}')
-	)
-
+	secondCardinality=Cardinality? 
 	secondEnd=[ClassDeclaration:QualifiedName]
+	(	
+		'('
+			(secondEndName=ID)
+			&
+			('{' secondEndMetaAttributes+=RelationMetaAttribute 
+			(',' secondEndMetaAttributes+=RelationMetaAttribute )* '}')
+		')'
+	)?
+	('specializes' specializeRelation=[ElementRelation:QualifiedName])?
     (hasInverse='inverseOf' inverseEnd=[ElementRelation:QualifiedName])?
 ;
 
@@ -182,7 +170,6 @@ RelationStereotype returns string:
 	'triggers' |
 	'composition' |
 	'aggregation' |
-	'relator' |
 	'inherence' | 
 	'value' | 
 	'formal'
@@ -199,9 +186,16 @@ GeneralizationSet:
 	(disjoint?='disjoint')? (complete?='complete')?
 	'genset' name=ID '{' 
   // TODO: remove order
-		('general' generalItem=[ClassDeclaration:QualifiedName])
-		('categorizer' categorizerItems+=[ClassDeclaration:QualifiedName] (categorizerItems+=[ClassDeclaration:QualifiedName])*)?
-		'specifics' specificItems+=[ClassDeclaration:QualifiedName] (',' specificItems+=[ClassDeclaration:QualifiedName])*
+		(
+			('general' generalItem=[ClassDeclaration:QualifiedName]) &
+			('categorizer' categorizerItems+=[ClassDeclaration:QualifiedName] (categorizerItems+=[ClassDeclaration:QualifiedName])*) &
+			'specifics' specificItems+=[ClassDeclaration:QualifiedName] (',' specificItems+=[ClassDeclaration:QualifiedName])*
+		)
+		|
+		(
+			('general' generalItem=[ClassDeclaration:QualifiedName]) &
+			'specifics' specificItems+=[ClassDeclaration:QualifiedName] (',' specificItems+=[ClassDeclaration:QualifiedName])*
+		)
 	'}'
 ;
 
@@ -214,7 +208,7 @@ ComplexDataType:
 ;
 
 BasicDataType returns string:
-	'number' | 'string' | 'Date' | 'boolean'
+	'number' | 'string' | 'date' | 'boolean'
 ;
 
 // <--- Enums --->
