@@ -178,7 +178,7 @@ export interface GeneralizationSet extends AstNode {
     complete: boolean
     disjoint: boolean
     generalItem: Reference<ClassDeclaration>
-    name?: string
+    name: string
     specificItems: Array<Reference<ClassDeclaration>>
 }
 

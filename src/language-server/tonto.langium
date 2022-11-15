@@ -186,16 +186,11 @@ GeneralizationSet:
 	(disjoint?='disjoint')? (complete?='complete')?
 	'genset' name=ID '{' 
   // TODO: remove order
-		(
-			('general' generalItem=[ClassDeclaration:QualifiedName]) &
-			('categorizer' categorizerItems+=[ClassDeclaration:QualifiedName] (categorizerItems+=[ClassDeclaration:QualifiedName])*) &
-			'specifics' specificItems+=[ClassDeclaration:QualifiedName] (',' specificItems+=[ClassDeclaration:QualifiedName])*
-		)
-		|
-		(
-			('general' generalItem=[ClassDeclaration:QualifiedName]) &
-			'specifics' specificItems+=[ClassDeclaration:QualifiedName] (',' specificItems+=[ClassDeclaration:QualifiedName])*
-		)
+		
+		('general' generalItem=[ClassDeclaration:QualifiedName])
+		('categorizer' categorizerItems+=[ClassDeclaration:QualifiedName] (categorizerItems+=[ClassDeclaration:QualifiedName])*)?
+		'specifics' specificItems+=[ClassDeclaration:QualifiedName] (',' specificItems+=[ClassDeclaration:QualifiedName])*
+
 	'}'
 ;
 

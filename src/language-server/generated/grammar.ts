@@ -1739,188 +1739,73 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
       "$type": "ParserRule",
       "name": "GeneralizationSet",
       "definition": {
-        "$type": "Alternatives",
+        "$type": "Group",
         "elements": [
+          {
+            "$type": "Assignment",
+            "feature": "disjoint",
+            "operator": "?=",
+            "terminal": {
+              "$type": "Keyword",
+              "value": "disjoint"
+            },
+            "cardinality": "?"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "complete",
+            "operator": "?=",
+            "terminal": {
+              "$type": "Keyword",
+              "value": "complete"
+            },
+            "cardinality": "?"
+          },
+          {
+            "$type": "Keyword",
+            "value": "genset"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "name",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$refText": "ID"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Keyword",
+            "value": "{"
+          },
           {
             "$type": "Group",
             "elements": [
               {
-                "$type": "Assignment",
-                "feature": "disjoint",
-                "operator": "?=",
-                "terminal": {
-                  "$type": "Keyword",
-                  "value": "disjoint"
-                },
-                "cardinality": "?"
-              },
-              {
-                "$type": "Assignment",
-                "feature": "complete",
-                "operator": "?=",
-                "terminal": {
-                  "$type": "Keyword",
-                  "value": "complete"
-                },
-                "cardinality": "?"
-              },
-              {
                 "$type": "Keyword",
-                "value": "genset"
+                "value": "general"
               },
               {
                 "$type": "Assignment",
-                "feature": "name",
+                "feature": "generalItem",
                 "operator": "=",
                 "terminal": {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$refText": "ID"
+                  "$type": "CrossReference",
+                  "type": {
+                    "$refText": "ClassDeclaration"
                   },
-                  "arguments": []
+                  "terminal": {
+                    "$type": "RuleCall",
+                    "rule": {
+                      "$refText": "QualifiedName"
+                    },
+                    "arguments": []
+                  },
+                  "deprecatedSyntax": false
                 }
-              },
-              {
-                "$type": "Keyword",
-                "value": "{"
-              },
-              {
-                "$type": "UnorderedGroup",
-                "elements": [
-                  {
-                    "$type": "Group",
-                    "elements": [
-                      {
-                        "$type": "Keyword",
-                        "value": "general"
-                      },
-                      {
-                        "$type": "Assignment",
-                        "feature": "generalItem",
-                        "operator": "=",
-                        "terminal": {
-                          "$type": "CrossReference",
-                          "type": {
-                            "$refText": "ClassDeclaration"
-                          },
-                          "terminal": {
-                            "$type": "RuleCall",
-                            "rule": {
-                              "$refText": "QualifiedName"
-                            },
-                            "arguments": []
-                          },
-                          "deprecatedSyntax": false
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "$type": "Group",
-                    "elements": [
-                      {
-                        "$type": "Keyword",
-                        "value": "categorizer"
-                      },
-                      {
-                        "$type": "Assignment",
-                        "feature": "categorizerItems",
-                        "operator": "+=",
-                        "terminal": {
-                          "$type": "CrossReference",
-                          "type": {
-                            "$refText": "ClassDeclaration"
-                          },
-                          "terminal": {
-                            "$type": "RuleCall",
-                            "rule": {
-                              "$refText": "QualifiedName"
-                            },
-                            "arguments": []
-                          },
-                          "deprecatedSyntax": false
-                        }
-                      },
-                      {
-                        "$type": "Assignment",
-                        "feature": "categorizerItems",
-                        "operator": "+=",
-                        "terminal": {
-                          "$type": "CrossReference",
-                          "type": {
-                            "$refText": "ClassDeclaration"
-                          },
-                          "terminal": {
-                            "$type": "RuleCall",
-                            "rule": {
-                              "$refText": "QualifiedName"
-                            },
-                            "arguments": []
-                          },
-                          "deprecatedSyntax": false
-                        },
-                        "cardinality": "*"
-                      }
-                    ]
-                  },
-                  {
-                    "$type": "Group",
-                    "elements": [
-                      {
-                        "$type": "Keyword",
-                        "value": "specifics"
-                      },
-                      {
-                        "$type": "Assignment",
-                        "feature": "specificItems",
-                        "operator": "+=",
-                        "terminal": {
-                          "$type": "CrossReference",
-                          "type": {
-                            "$refText": "ClassDeclaration"
-                          },
-                          "terminal": {
-                            "$type": "RuleCall",
-                            "rule": {
-                              "$refText": "QualifiedName"
-                            },
-                            "arguments": []
-                          },
-                          "deprecatedSyntax": false
-                        }
-                      },
-                      {
-                        "$type": "Group",
-                        "elements": [
-                          {
-                            "$type": "Keyword",
-                            "value": ","
-                          },
-                          {
-                            "$type": "Assignment",
-                            "feature": "specificItems",
-                            "operator": "+=",
-                            "terminal": {
-                              "$type": "CrossReference",
-                              "type": {
-                                "$refText": "ClassDeclaration"
-                              },
-                              "terminal": {
-                                "$type": "RuleCall",
-                                "rule": {
-                                  "$refText": "QualifiedName"
-                                },
-                                "arguments": []
-                              },
-                              "deprecatedSyntax": false
-                            }
-                          }
-                        ],
-                        "cardinality": "*"
-                      }
-                    ]
-                  }
-                ]
               }
             ]
           },
@@ -1928,100 +1813,106 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
             "$type": "Group",
             "elements": [
               {
-                "$type": "UnorderedGroup",
-                "elements": [
-                  {
-                    "$type": "Group",
-                    "elements": [
-                      {
-                        "$type": "Keyword",
-                        "value": "general"
-                      },
-                      {
-                        "$type": "Assignment",
-                        "feature": "generalItem",
-                        "operator": "=",
-                        "terminal": {
-                          "$type": "CrossReference",
-                          "type": {
-                            "$refText": "ClassDeclaration"
-                          },
-                          "terminal": {
-                            "$type": "RuleCall",
-                            "rule": {
-                              "$refText": "QualifiedName"
-                            },
-                            "arguments": []
-                          },
-                          "deprecatedSyntax": false
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "$type": "Group",
-                    "elements": [
-                      {
-                        "$type": "Keyword",
-                        "value": "specifics"
-                      },
-                      {
-                        "$type": "Assignment",
-                        "feature": "specificItems",
-                        "operator": "+=",
-                        "terminal": {
-                          "$type": "CrossReference",
-                          "type": {
-                            "$refText": "ClassDeclaration"
-                          },
-                          "terminal": {
-                            "$type": "RuleCall",
-                            "rule": {
-                              "$refText": "QualifiedName"
-                            },
-                            "arguments": []
-                          },
-                          "deprecatedSyntax": false
-                        }
-                      },
-                      {
-                        "$type": "Group",
-                        "elements": [
-                          {
-                            "$type": "Keyword",
-                            "value": ","
-                          },
-                          {
-                            "$type": "Assignment",
-                            "feature": "specificItems",
-                            "operator": "+=",
-                            "terminal": {
-                              "$type": "CrossReference",
-                              "type": {
-                                "$refText": "ClassDeclaration"
-                              },
-                              "terminal": {
-                                "$type": "RuleCall",
-                                "rule": {
-                                  "$refText": "QualifiedName"
-                                },
-                                "arguments": []
-                              },
-                              "deprecatedSyntax": false
-                            }
-                          }
-                        ],
-                        "cardinality": "*"
-                      }
-                    ]
-                  }
-                ]
+                "$type": "Keyword",
+                "value": "categorizer"
               },
               {
-                "$type": "Keyword",
-                "value": "}"
+                "$type": "Assignment",
+                "feature": "categorizerItems",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "CrossReference",
+                  "type": {
+                    "$refText": "ClassDeclaration"
+                  },
+                  "terminal": {
+                    "$type": "RuleCall",
+                    "rule": {
+                      "$refText": "QualifiedName"
+                    },
+                    "arguments": []
+                  },
+                  "deprecatedSyntax": false
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "categorizerItems",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "CrossReference",
+                  "type": {
+                    "$refText": "ClassDeclaration"
+                  },
+                  "terminal": {
+                    "$type": "RuleCall",
+                    "rule": {
+                      "$refText": "QualifiedName"
+                    },
+                    "arguments": []
+                  },
+                  "deprecatedSyntax": false
+                },
+                "cardinality": "*"
               }
-            ]
+            ],
+            "cardinality": "?"
+          },
+          {
+            "$type": "Keyword",
+            "value": "specifics"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "specificItems",
+            "operator": "+=",
+            "terminal": {
+              "$type": "CrossReference",
+              "type": {
+                "$refText": "ClassDeclaration"
+              },
+              "terminal": {
+                "$type": "RuleCall",
+                "rule": {
+                  "$refText": "QualifiedName"
+                },
+                "arguments": []
+              },
+              "deprecatedSyntax": false
+            }
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": ","
+              },
+              {
+                "$type": "Assignment",
+                "feature": "specificItems",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "CrossReference",
+                  "type": {
+                    "$refText": "ClassDeclaration"
+                  },
+                  "terminal": {
+                    "$type": "RuleCall",
+                    "rule": {
+                      "$refText": "QualifiedName"
+                    },
+                    "arguments": []
+                  },
+                  "deprecatedSyntax": false
+                }
+              }
+            ],
+            "cardinality": "*"
+          },
+          {
+            "$type": "Keyword",
+            "value": "}"
           }
         ]
       },
