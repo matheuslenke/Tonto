@@ -204,16 +204,16 @@ export class ClassElementValidator {
   ): void {
     const specializations = classElement.specializationEndurants;
     const stereotype = classElement.classElementType?.ontologicalCategory;
-    // if (getStereotypeIsSortal(stereotype) === false) {
-    //   return;
-    // }
 
     specializations.forEach((specialization) => {
       let natures = specialization.ref?.ontologicalNatures?.natures;
       if (natures) {
         let hasCompatibleNatures = false;
         natures.forEach((nature) => {
-          const isCompatible = checkNatureCompatibleWithStereotype(nature, stereotype);
+          const isCompatible = checkNatureCompatibleWithStereotype(
+            nature,
+            stereotype
+          );
           if (isCompatible === true) {
             hasCompatibleNatures = true;
           }
@@ -239,7 +239,11 @@ export class ClassElementValidator {
   ): void {
     const ElementNatures = classElement.ontologicalNatures;
     if (ElementNatures) {
-      if (getStereotypeIsSortal(classElement.classElementType?.ontologicalCategory)) {
+      if (
+        getStereotypeIsSortal(
+          classElement.classElementType?.ontologicalCategory
+        )
+      ) {
         accept("error", "Only non-sortal types can specialize natures", {
           node: classElement,
           property: "ontologicalNatures",
