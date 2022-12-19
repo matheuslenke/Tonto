@@ -11,7 +11,7 @@
         "url": "https://github.com/matheuslenke/Tonto"
     },
     "engines": {
-        "vscode": "^1.63.0"
+        "vscode": "^1.53.0"
     },
     "categories": [
         "Programming Languages"
@@ -73,19 +73,20 @@
         "build": "node esbuild.js && tsc --noEmit",
         "watch": "node esbuild.js --watch",
         "test": "vitest",
+        "test-ui": "vitest --ui",
+        "coverage": "vitest run --coverage",
         "langium:generate": "langium generate",
         "langium:watch": "langium generate --watch"
     },
     "dependencies": {
         "ajv": "^8.11.0",
-        "chalk": "^4.1.2",
-        "chevrotain": "^9.1.0",
+        "chalk": "^5.2.0",
+        "chevrotain": "^10.4.2",
         "colors": "^1.4.0",
-        "commander": "^8.0.0",
+        "commander": "^9.4.1",
         "jsonfile": "^6.1.0",
-        "langium": "^0.5.0",
-        "node-fetch": "^2.6.1",
-        "node-fetch-native": "^0.1.4",
+        "langium": "^1.0.0",
+        "node-fetch-native": "^1.0.1",
         "ontouml-js": "../ontouml-js",
         "ontouml-schema": "0.2.4",
         "vscode-languageclient": "^8.0.2",
@@ -94,20 +95,27 @@
     },
     "devDependencies": {
         "@types/jest": "^29.2.3",
-        "@types/node": "^14.17.3",
+        "@types/node": "^18.11.17",
         "@types/node-fetch": "^2.6.1",
-        "@types/vscode": "^1.56.0",
-        "@typescript-eslint/eslint-plugin": "^5.33.1",
+        "@types/vscode": "^1.53.0",
+        "@typescript-eslint/eslint-plugin": "^5.47.0",
         "@typescript-eslint/parser": "^5.33.1",
-        "esbuild": "^0.14.43",
+        "@vitest/ui": "^0.23.4",
+        "@vitest/coverage-c8": "^0.23.2",
+        "esbuild": "^0.16.9",
         "eslint": "^8.22.0",
-        "langium-cli": "^0.5.0",
+        "langium-cli": "^1.0.0",
         "typescript": "^4.7.4",
-        "vite": "^3.2.3",
-        "vitest": "^0.25.2"
+        "vite": "^4.0.2",
+        "vitest": "^0.23.2"
+    },
+    "volta": {
+        "node": "16.18.1",
+        "npm": "8.19.3"
     },
     "resolutions": {
         "@typescript-eslint/parser": "^1.11.0",
         "@typescript-eslint/eslint-plugin": "^1.11.0"
-    }
+    },
+    "packageManager": "yarn@3.3.0"
 }

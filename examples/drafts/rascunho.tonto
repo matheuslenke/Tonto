@@ -18,7 +18,6 @@ module Marriage {
     // especificação equivalente, não aninhada
     relator Marriage specializes SocialRelator
     relation Marriage -- [2..*] Spouse
-
     kind Person
 
     // a associação anônima acima seria idêntica à essa abaixo (alternativa)
@@ -29,10 +28,11 @@ module Marriage {
     }
 
     // especificação equivalente, não aninhada, cardinalidades explícitas
-    // anotação de imutabilidade explícita (nem precisava, 
+    // anotação de imutabilidade explícita (nem precisava,
     // pois trata-se de mediation em que apenas um lado é relator)
     relator Marriage specializes SocialRelator
-    relation Marriage -- [2..*] {const} Spouse
+    relation Marriage -- [2..*] {const}
+    Spouse
 
 
     // associação nomeada, especificada de forma aninhada na classe
@@ -48,13 +48,14 @@ module Marriage {
     // associação nomeada, com association ends nomeados
     // especificada de forma aninhada na classe
     relator Marriage (instanceOf SocialRelatorType) specializes SocialRelator {
-        // (marriage) 1 -- involvesSpouse -- [2..*] (spouses {const}) Spouse
-        // <>-- 1..* (duties) MaritalDuty	<>-- [ 1..*] (rights) MaritalRight
-        (marriage) [1] -- involvesSpouse -- [2..*] (spouses) {const} Spouse
-        // (duties) [1..*] <>--  MaritalDuty <>-- [ 1..*] (rights) MaritalRight
+    // (marriage) 1 -- involvesSpouse -- [2..*] (spouses {const}) Spouse
+    // <>-- 1..* (duties) MaritalDuty	<>-- [ 1..*] (rights) MaritalRight
+    // (marriage) [1] -- involvesSpouse -- [2..*] (spouses {const})  Spouse
+    // (marriage) [1] -- involvesSpouse -- [2..*] (spouses) Spouse
+    // (duties) [1..*] <>--  MaritalDuty <>-- [ 1..*] (rights) MaritalRight
     }
 
-    // introduzindo tipos de alta ordem	
+    // introduzindo tipos de alta ordem
     type SocialRelatorType { }
 
 
@@ -63,9 +64,8 @@ module Marriage {
     //     // (marriage) 1 -- involvesSpouse -- 2..* (spouses {const}) Spouse
     //     // <>-- 1..* MaritalDuty	<>-- 1..* MaritalRight
     // }
-
     relator Marriage (instanceOf SocialRelatorType) specializes SocialRelator
-    relation (marriage) Marriage [1] -- involvesSpouse -- [2..*] (spouses) Spouse
+    // relation (marriage) Marriage [1] -- involvesSpouse -- [2..*] (spouses) Spouse
     // relation [1..*] Marriage <>-- MaritalDutyMarriage <>-- [1..*] MaritalRight
 
 
@@ -90,27 +90,25 @@ module Marriage {
     // extrinsic mode MaritalDuty {
     //     @inherence -- Spouse
     //     @externalDependence –- Spouse
-    //     @formal {const} –- isCorrelativeOf {symmetric} -- {const} MaritalRight 
+    //     @formal {const} –- isCorrelativeOf {symmetric} -- {const} MaritalRight
     // // the duty and its correlative are part of the same marriage
     // }
 
     // extrinsic mode MaritalRight {
     //     @inherence -- Spouse
     //     @externalDependence –- Spouse
-    //     @formal –- isCorrelativeOf -- MaritalDuty 
+    //     @formal –- isCorrelativeOf -- MaritalDuty
     // inverse of MaritalDuty.isCorrelativeOf
     // }
 
     // subkind MonogamicMarriage : SocialRelatorType specializes Marriage {
-  	// (marriage) 1 –- involvesSpouseInCouple -- 2 (spousesInCouple {const}) Spouse
+	// (marriage) 1 –- involvesSpouseInCouple -- 2 (spousesInCouple {const}) Spouse
     //     {
     //         involvesSpouseInCouple specializes involvesSpouse,
     //         spousesInCouple subsets spouses
     //     }
     // }
-
-    kind Heart 
-
+    kind Heart
     kind Person
     kind Brain
     kind Leg
@@ -122,7 +120,6 @@ module Marriage {
         @componentOf <>-- hasBrain <>-- {const} Brain
         @componentOf <>-- hasLeg <>-- [*] {const} Leg
     }
-
     datatype DateType
     {
         test: number
@@ -130,8 +127,6 @@ module Marriage {
         month: number
         year:number
     }
-
-
     collective Group
     {
         <>-- [2..*] {const, ordered} Person
@@ -143,7 +138,6 @@ module Marriage {
     //     @inherence -- PhysicalObject
     //     @value –- (colorInRGB) RGB
     // }
-
     datatype RGB
     {
         red : number

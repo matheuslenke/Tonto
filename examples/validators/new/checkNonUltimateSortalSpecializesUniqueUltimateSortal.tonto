@@ -1,0 +1,8 @@
+module CheckKindSpecialization {
+    kind Person
+    kind Organization
+    subkind Agent specializes Organization, Person
+    kind BiologicalAnimal
+    phase Teenager specializes Person, BiologicalAnimal
+    event TestEvent specializes Person, Organization
+}

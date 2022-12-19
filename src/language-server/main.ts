@@ -8,8 +8,8 @@ const connection = createConnection(ProposedFeatures.all);
 
 // Inject the shared services and language-specific services
 const { shared } = createTontoServices({
-  connection,
-  ...NodeFileSystem,
+    connection,
+    ...NodeFileSystem,
 });
 
 // Start the language server with the shared services

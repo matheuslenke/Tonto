@@ -1,48 +1,53 @@
 import { ValidationAcceptor } from "langium";
 import { ClassDeclaration } from "../generated/ast";
-import { EndurantTypes } from "../models/EndurantType";
+import { OntologicalCategoryEnum } from "../models/OntologicalCategory";
 
-const checkSortalSpecializesUniqueUltimateSortalRecursive = (
-  actualElement: ClassDeclaration,
-  verificationList: ClassDeclaration[],
-  totalUltimateSortalSpecialized: number,
-  accept: ValidationAcceptor
+const validateSortalSpecializesUniqueUltimateSortalRecursive = (
+    actualElement: ClassDeclaration,
+    verificationList: ClassDeclaration[],
+    totalUltimateSortalSpecialized: number,
+    accept: ValidationAcceptor
 ): void => {
-  actualElement.specializationEndurants.forEach((specializationItem) => {
-    const specItem = specializationItem.ref;
-    if (!specItem) {
-      return;
-    }
 
-    const category = specItem.classElementType?.ontologicalCategory;
-    if (
-      category === EndurantTypes.KIND ||
-      category === EndurantTypes.SUBKIND ||
-      category === EndurantTypes.QUALITY ||
-      category === EndurantTypes.QUANTITY ||
-      category === EndurantTypes.RELATOR ||
-      category === EndurantTypes.MODE ||
-      category === EndurantTypes.INTRINSIC_MODE ||
-      category === EndurantTypes.EXTRINSIC_MODE ||
-      category === EndurantTypes.COLLECTIVE
-    ) {
-      if (totalUltimateSortalSpecialized > 0) {
+    const totalUltimateSortalSpecializations = checkSortalSpecializesUniqueUltimateSortalRecursive(actualElement, verificationList, totalUltimateSortalSpecialized)
+    if (totalUltimateSortalSpecializations > 1) {
         accept(
-          "warning",
-          "Every sortal class must specialize a unique ultimate sortal (Kind, Collective, Quantity, Relator, Quality or mode)",
-          { node: actualElement }
+            "error",
+            "Every sortal class must specialize a unique ultimate sortal (Kind, Collective, Quantity, Relator, Quality or Mode)",
+            { node: actualElement }
         );
-      } else {
-        totalUltimateSortalSpecialized += 1;
-        checkSortalSpecializesUniqueUltimateSortalRecursive(
-          specItem,
-          verificationList,
-          totalUltimateSortalSpecialized,
-          accept
-        );
-      }
     }
-  });
 };
 
-export { checkSortalSpecializesUniqueUltimateSortalRecursive };
+const checkSortalSpecializesUniqueUltimateSortalRecursive = (
+    actualElement: ClassDeclaration,
+    verificationList: ClassDeclaration[],
+    totalUltimateSortalSpecialized: number,
+): number => {
+    actualElement.specializationEndurants.forEach((specializationItem) => {
+        const specItem = specializationItem.ref;
+        if (specItem) {
+            const specCategory = specItem.classElementType?.ontologicalCategory;
+            if (
+                specCategory === OntologicalCategoryEnum.KIND ||
+              specCategory === OntologicalCategoryEnum.COLLECTIVE ||
+              specCategory === OntologicalCategoryEnum.QUANTITY ||
+              specCategory === OntologicalCategoryEnum.QUALITY ||
+              specCategory === OntologicalCategoryEnum.RELATOR ||
+              specCategory === OntologicalCategoryEnum.MODE ||
+              specCategory === OntologicalCategoryEnum.EXTRINSIC_MODE ||
+              specCategory === OntologicalCategoryEnum.INTRINSIC_MODE
+            ) {
+                totalUltimateSortalSpecialized += 1;
+                checkSortalSpecializesUniqueUltimateSortalRecursive(
+                    specItem,
+                    verificationList,
+                    totalUltimateSortalSpecialized
+                );
+            }
+        }
+    });
+    return totalUltimateSortalSpecialized
+};
+
+export { checkSortalSpecializesUniqueUltimateSortalRecursive, validateSortalSpecializesUniqueUltimateSortalRecursive };

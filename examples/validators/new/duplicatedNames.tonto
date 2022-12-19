@@ -1,10 +1,8 @@
 module Teste {
     kind ElementOne
-    kind ElementTwo
-
+    kind ElementOne
     kind ElementThree
     kind ElementFour
-
     relation ElementOne -- relationName -- ElementTwo
     relation ElementThree -- relationName -- ElementFour
 }

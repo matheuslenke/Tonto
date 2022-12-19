@@ -1,163 +1,163 @@
-import { EndurantTypes } from "./EndurantType";
+import { OntologicalCategoryEnum } from "./OntologicalCategory";
 
 const NonSortalStereotypes = [
-  EndurantTypes.CATEGORY,
-  EndurantTypes.MIXIN,
-  EndurantTypes.PHASE_MIXIN,
-  EndurantTypes.ROLE_MIXIN,
-  EndurantTypes.HISTORICAL_ROLE_MIXIN
+    OntologicalCategoryEnum.CATEGORY,
+    OntologicalCategoryEnum.MIXIN,
+    OntologicalCategoryEnum.PHASE_MIXIN,
+    OntologicalCategoryEnum.ROLE_MIXIN,
+    OntologicalCategoryEnum.HISTORICAL_ROLE_MIXIN
 ];
 
 const UltimateSortalStereotypes = [
-  EndurantTypes.KIND,
-  EndurantTypes.COLLECTIVE,
-  EndurantTypes.QUANTITY,
-  EndurantTypes.RELATOR,
-  EndurantTypes.QUALITY,
-  EndurantTypes.MODE
+    OntologicalCategoryEnum.KIND,
+    OntologicalCategoryEnum.COLLECTIVE,
+    OntologicalCategoryEnum.QUANTITY,
+    OntologicalCategoryEnum.RELATOR,
+    OntologicalCategoryEnum.QUALITY,
+    OntologicalCategoryEnum.MODE
 ];
 
 // TODO: consider renaming "base" to "lower"
 const BaseSortalStereotypes = [
-  EndurantTypes.SUBKIND,
-  EndurantTypes.PHASE,
-  EndurantTypes.ROLE,
-  EndurantTypes.HISTORICAL_ROLE
+    OntologicalCategoryEnum.SUBKIND,
+    OntologicalCategoryEnum.PHASE,
+    OntologicalCategoryEnum.ROLE,
+    OntologicalCategoryEnum.HISTORICAL_ROLE
 ];
 
 const SortalStereotypes = [...UltimateSortalStereotypes, ...BaseSortalStereotypes];
 
 // TODO: review if we should consider as rigid/anti-rigid/semi-rigid only those stereotypes whose respective types specialize Rigid/Anti-Rigid/Semi-Rigid in UFO. This introduces breaks to the gUFO transformation
 const RigidStereotypes = [
-  EndurantTypes.KIND,
-  EndurantTypes.QUANTITY,
-  EndurantTypes.COLLECTIVE,
-  EndurantTypes.MODE,
-  EndurantTypes.QUALITY,
-  EndurantTypes.RELATOR,
-  EndurantTypes.SUBKIND,
-  EndurantTypes.CATEGORY,
-  EndurantTypes.EVENT,
-  EndurantTypes.SITUATION,
-  EndurantTypes.TYPE,
-  EndurantTypes.ABSTRACT,
-  EndurantTypes.DATATYPE,
-  EndurantTypes.ENUMERATION
+    OntologicalCategoryEnum.KIND,
+    OntologicalCategoryEnum.QUANTITY,
+    OntologicalCategoryEnum.COLLECTIVE,
+    OntologicalCategoryEnum.MODE,
+    OntologicalCategoryEnum.QUALITY,
+    OntologicalCategoryEnum.RELATOR,
+    OntologicalCategoryEnum.SUBKIND,
+    OntologicalCategoryEnum.CATEGORY,
+    OntologicalCategoryEnum.EVENT,
+    OntologicalCategoryEnum.SITUATION,
+    OntologicalCategoryEnum.TYPE,
+    OntologicalCategoryEnum.ABSTRACT,
+    OntologicalCategoryEnum.DATATYPE,
+    OntologicalCategoryEnum.ENUMERATION
 ];
 
 const AntiRigidStereotypes = [
-  EndurantTypes.ROLE,
-  EndurantTypes.ROLE_MIXIN,
-  EndurantTypes.HISTORICAL_ROLE,
-  EndurantTypes.HISTORICAL_ROLE_MIXIN,
-  EndurantTypes.PHASE,
-  EndurantTypes.PHASE_MIXIN
+    OntologicalCategoryEnum.ROLE,
+    OntologicalCategoryEnum.ROLE_MIXIN,
+    OntologicalCategoryEnum.HISTORICAL_ROLE,
+    OntologicalCategoryEnum.HISTORICAL_ROLE_MIXIN,
+    OntologicalCategoryEnum.PHASE,
+    OntologicalCategoryEnum.PHASE_MIXIN
 ];
 
-const SemiRigidStereotypes = [EndurantTypes.MIXIN];
+const SemiRigidStereotypes = [OntologicalCategoryEnum.MIXIN];
 
-const MomentOnlyStereotypes = [EndurantTypes.MODE, EndurantTypes.QUALITY, EndurantTypes.RELATOR];
+const MomentOnlyStereotypes = [OntologicalCategoryEnum.MODE, OntologicalCategoryEnum.QUALITY, OntologicalCategoryEnum.RELATOR];
 
-const SubstantialOnlyStereotypes = [EndurantTypes.KIND, EndurantTypes.QUANTITY, EndurantTypes.COLLECTIVE];
+const SubstantialOnlyStereotypes = [OntologicalCategoryEnum.KIND, OntologicalCategoryEnum.QUANTITY, OntologicalCategoryEnum.COLLECTIVE];
 
 const EndurantStereotypes = [...SortalStereotypes, ...NonSortalStereotypes];
 
-const AbstractStereotypes = [EndurantTypes.ABSTRACT, EndurantTypes.DATATYPE, EndurantTypes.ENUMERATION];
+const AbstractStereotypes = [OntologicalCategoryEnum.ABSTRACT, OntologicalCategoryEnum.DATATYPE, OntologicalCategoryEnum.ENUMERATION];
 
 
 
 
-function isNonSortalClassStereotype(stereotype: EndurantTypes): boolean {
-  return NonSortalStereotypes.includes(stereotype);
+function isNonSortalClassStereotype(stereotype: OntologicalCategoryEnum): boolean {
+    return NonSortalStereotypes.includes(stereotype);
 }
 
-function isSortalClassStereotype(stereotype: EndurantTypes): boolean {
-  return SortalStereotypes.includes(stereotype);
+function isSortalClassStereotype(stereotype: OntologicalCategoryEnum): boolean {
+    return SortalStereotypes.includes(stereotype);
 }
 
-function isUltimateSortalClassStereotype(stereotype: EndurantTypes): boolean {
-  return UltimateSortalStereotypes.includes(stereotype);
+function isUltimateSortalClassStereotype(stereotype: OntologicalCategoryEnum): boolean {
+    return UltimateSortalStereotypes.includes(stereotype);
 }
 
-function isBaseSortalClassStereotype(stereotype: EndurantTypes): boolean {
-  return BaseSortalStereotypes.includes(stereotype);
+function isBaseSortalClassStereotype(stereotype: OntologicalCategoryEnum): boolean {
+    return BaseSortalStereotypes.includes(stereotype);
 }
 
-function isRigidClassStereotype(stereotype: EndurantTypes): boolean {
-  return RigidStereotypes.includes(stereotype);
+function isRigidClassStereotype(stereotype: OntologicalCategoryEnum): boolean {
+    return RigidStereotypes.includes(stereotype);
 }
 
-function isAntiRigidClassStereotype(stereotype: EndurantTypes): boolean {
-  return AntiRigidStereotypes.includes(stereotype);
+function isAntiRigidClassStereotype(stereotype: OntologicalCategoryEnum): boolean {
+    return AntiRigidStereotypes.includes(stereotype);
 }
 
-function isSemiRigidClassStereotype(stereotype: EndurantTypes): boolean {
-  return SemiRigidStereotypes.includes(stereotype);
+function isSemiRigidClassStereotype(stereotype: OntologicalCategoryEnum): boolean {
+    return SemiRigidStereotypes.includes(stereotype);
 }
 
-function isAbstractClassStereotype(stereotype: EndurantTypes): boolean {
-  return AbstractStereotypes.includes(stereotype);
+function isAbstractClassStereotype(stereotype: OntologicalCategoryEnum): boolean {
+    return AbstractStereotypes.includes(stereotype);
 }
 
-function isEndurantClassStereotype(stereotype: EndurantTypes): boolean {
-  return EndurantStereotypes.includes(stereotype);
+function isEndurantClassStereotype(stereotype: OntologicalCategoryEnum): boolean {
+    return EndurantStereotypes.includes(stereotype);
 }
 
-function isSubstantialClassStereotype(stereotype: EndurantTypes): boolean {
-  return SubstantialOnlyStereotypes.includes(stereotype);
+function isSubstantialClassStereotype(stereotype: OntologicalCategoryEnum): boolean {
+    return SubstantialOnlyStereotypes.includes(stereotype);
 }
 
-function isMomentClassStereotype(stereotype: EndurantTypes): boolean {
-  return MomentOnlyStereotypes.includes(stereotype);
+function isMomentClassStereotype(stereotype: OntologicalCategoryEnum): boolean {
+    return MomentOnlyStereotypes.includes(stereotype);
 }
 
-function isEventClassStereotype(stereotype: EndurantTypes): boolean {
-  return stereotype === EndurantTypes.EVENT;
+function isEventClassStereotype(stereotype: OntologicalCategoryEnum): boolean {
+    return stereotype === OntologicalCategoryEnum.EVENT;
 }
 
-function isSituationClassStereotype(stereotype: EndurantTypes): boolean {
-  return stereotype === EndurantTypes.SITUATION;
+function isSituationClassStereotype(stereotype: OntologicalCategoryEnum): boolean {
+    return stereotype === OntologicalCategoryEnum.SITUATION;
 }
 
-function isTypeClassStereotype(stereotype: EndurantTypes): boolean {
-  return stereotype === EndurantTypes.TYPE;
+function isTypeClassStereotype(stereotype: OntologicalCategoryEnum): boolean {
+    return stereotype === OntologicalCategoryEnum.TYPE;
 }
 
 export const stereotypeUtils = {
-  // Class stereotypes arrays
-  EndurantTypes,
-  AbstractStereotypes,
-  EndurantStereotypes,
-  SubstantialOnlyStereotypes,
-  MomentOnlyStereotypes,
-  NonSortalStereotypes,
-  SortalStereotypes,
-  UltimateSortalStereotypes,
-  BaseSortalStereotypes,
-  RigidStereotypes,
-  AntiRigidStereotypes,
-  SemiRigidStereotypes,
-  // Relation stereotypes arrays
-  // RelationStereotypes,
-  // ExistentialDependencyRelationStereotypes,
-  // ExistentialDependentSourceRelationStereotypes,
-  // ExistentialDependentTargetRelationStereotypes,
-  // PartWholeRelationStereotypes,
-  // // Property stereotypes arrays
-  // PropertyStereotypes,
-  // ClassStereotype utility methods
-  isNonSortalClassStereotype,
-  isSortalClassStereotype,
-  isUltimateSortalClassStereotype,
-  isBaseSortalClassStereotype,
-  isRigidClassStereotype,
-  isAntiRigidClassStereotype,
-  isSemiRigidClassStereotype,
-  isAbstractClassStereotype,
-  isEndurantClassStereotype,
-  isSubstantialClassStereotype,
-  isMomentClassStereotype,
-  isEventClassStereotype,
-  isSituationClassStereotype,
-  isTypeClassStereotype
+    // Class stereotypes arrays
+    OntologicalCategoryEnum,
+    AbstractStereotypes,
+    EndurantStereotypes,
+    SubstantialOnlyStereotypes,
+    MomentOnlyStereotypes,
+    NonSortalStereotypes,
+    SortalStereotypes,
+    UltimateSortalStereotypes,
+    BaseSortalStereotypes,
+    RigidStereotypes,
+    AntiRigidStereotypes,
+    SemiRigidStereotypes,
+    // Relation stereotypes arrays
+    // RelationStereotypes,
+    // ExistentialDependencyRelationStereotypes,
+    // ExistentialDependentSourceRelationStereotypes,
+    // ExistentialDependentTargetRelationStereotypes,
+    // PartWholeRelationStereotypes,
+    // // Property stereotypes arrays
+    // PropertyStereotypes,
+    // ClassStereotype utility methods
+    isNonSortalClassStereotype,
+    isSortalClassStereotype,
+    isUltimateSortalClassStereotype,
+    isBaseSortalClassStereotype,
+    isRigidClassStereotype,
+    isAntiRigidClassStereotype,
+    isSemiRigidClassStereotype,
+    isAbstractClassStereotype,
+    isEndurantClassStereotype,
+    isSubstantialClassStereotype,
+    isMomentClassStereotype,
+    isEventClassStereotype,
+    isSituationClassStereotype,
+    isTypeClassStereotype
 };

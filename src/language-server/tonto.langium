@@ -6,7 +6,7 @@ interface Model {
 }
 
 entry RModel returns Model:
-	imports+=Import*
+  imports+=Import*
 	modules+=ContextModule*
 ;
 
@@ -15,36 +15,43 @@ entry RModel returns Model:
 * go inside this declaration
 */
 ContextModule:
-	'module' name=ID '{'
+  'module' name=ID '{'
 		declarations+=Declaration*
 		modules+=ContextModule*
 	'}'
 ;
 
 QualifiedName returns string:
-	ID ('.' ID)*
+  ID ('.' ID)*
 ;
 
 Import:
-	'import' referencedModel+=[Model:ID]
+  'import' referencedModel+=[Model:ID]
 ;
 
 // <--- Declarations --->
 
 Declaration:
-	ClassDeclaration | AuxiliaryDeclaration
+  ClassDeclaration | AuxiliaryDeclaration
 ;
 
 AuxiliaryDeclaration:
-	ComplexDataType | Enum | GeneralizationSet | ElementRelation
+  ComplexDataType | Enum | GeneralizationSet | ElementRelation
 ;
 
+// interface ClassDeclaration {
+//   classElementType: OntologicalCategory;
+//   name: QualifiedName;
+//   ontologicalNatures: ElementOntologicalNature;
+//   instanceOf: ;
+// }
+
 ClassDeclaration:
-	classElementType=OntologicalCategory name=QualifiedName 
+  classElementType=OntologicalCategory name=QualifiedName
 	ontologicalNatures=ElementOntologicalNature?
     ('(' 'instanceOf' instanceOf=[ClassDeclaration:QualifiedName] ')')?
 	('specializes' specializationEndurants+=[ClassDeclaration:QualifiedName]
-	(',' specializationEndurants+=[ClassDeclaration:QualifiedName])? 
+	(',' specializationEndurants+=[ClassDeclaration:QualifiedName])?
 	)? ('{'
 		(attributes+=Attribute |
 		references+=ElementRelation
@@ -53,82 +60,82 @@ ClassDeclaration:
 ;
 
 OntologicalCategory:
-	ontologicalCategory=(UnspecifiedType | NonEndurantType | EndurantType)
+  ontologicalCategory=(UnspecifiedType | NonEndurantType | EndurantType)
 ;
 
 UnspecifiedType returns string:
-	'class'
+  'class'
 ;
 
 NonEndurantType returns string:
-	'event' | 'situation'
+  'event' | 'situation'
 ;
 
 EndurantType returns string:
-	NonSortal | UltimateSortal | Sortal;
+  NonSortal | UltimateSortal | Sortal;
 
 
 NonSortal returns string:
-	'category' | 'mixin' | 'phaseMixin' | 'roleMixin' | 'historicalRoleMixin'
+  'category' | 'mixin' | 'phaseMixin' | 'roleMixin' | 'historicalRoleMixin'
 ;
 
 UltimateSortal returns string:
-	'kind' | 'collective' | 'quantity' | 'quality' | 'mode' | 'intrinsicMode' | 'extrinsicMode' | 'relator' | 'type'
-  // do we keep mode here? 
+  'kind' | 'collective' | 'quantity' | 'quality' | 'mode' | 'intrinsicMode' | 'extrinsicMode' | 'relator' | 'type'
+  // do we keep mode here?
 ;
 
 Sortal returns string:
-	'subkind' | 'phase' | 'role' | 'historicalRole'
+  'subkind' | 'phase' | 'role' | 'historicalRole'
 ;
 
 ElementOntologicalNature:
-	'of' natures+=OntologicalNature (',' natures+=OntologicalNature)*
+  'of' natures+=OntologicalNature (',' natures+=OntologicalNature)*
 ;
 
 OntologicalNature returns string:
-	'objects' | 'functional-complexes' |
+  'objects' | 'functional-complexes' |
 	'collectives'  | 'quantities' | 'qualities' | 'intrinsic-modes' | 'extrinsic-modes' |
-    'relators' | 'types' 
+    'relators' | 'types'
   // Note: 'objects' = 'functional-complexes' or 'collectives' or 'quantities'
 ;
 
 ElementRelation:
-	InternalRelation | ExternalRelation
+  InternalRelation | ExternalRelation
 ;
 
 InternalRelation infers ElementRelation:
-	('@'relationType=RelationStereotype)?
+  ('@'relationType=RelationStereotype)?
 	RelationInfo
 ;
 
 ExternalRelation infers ElementRelation:
-	('@'relationType=RelationStereotype)?
+  ('@'relationType=RelationStereotype)?
 	'relation'
     firstEnd=[ClassDeclaration:QualifiedName]
 	RelationInfo
 ;
 
 fragment RelationInfo:
-	(	
+  (
 		'('
 		(firstEndName=ID) &
-		('{' firstEndMetaAttributes+=RelationMetaAttribute 
+		('{' firstEndMetaAttributes+=RelationMetaAttribute
 		(',' firstEndMetaAttributes+=RelationMetaAttribute )* '}')
 		')'
 	)?
-	
+
 	firstCardinality=Cardinality?
 	(
 		(isAssociation?='--' | isComposition?='<>--') (name=QualifiedName '--')?
-	)? 
+	)?
 
-	secondCardinality=Cardinality? 
+	secondCardinality=Cardinality?
 	secondEnd=[ClassDeclaration:QualifiedName]
-	(	
+	(
 		'('
 			(secondEndName=ID)
 			&
-			('{' secondEndMetaAttributes+=RelationMetaAttribute 
+			('{' secondEndMetaAttributes+=RelationMetaAttribute
 			(',' secondEndMetaAttributes+=RelationMetaAttribute )* '}')
 		')'
 	)?
@@ -137,19 +144,19 @@ fragment RelationInfo:
 ;
 
 Attribute:
-	name=ID ':' (attributeType=[ComplexDataType] | attributeType=BasicDataType)
+  name=ID ':' (attributeTypeRef=[ComplexDataType] | attributeType=BasicDataType)
 	cardinality=Cardinality?
 	('{'((isOrdered?='ordered') & (isConst?='const') & (isDerived?='derived'))? '}')?
 ;
 
 RelationMetaAttribute:
-	isOrdered?='ordered' | isConst?='const' | isDerived?='derived' |
-	('subsets' subsetRelation=[ElementRelation:QualifiedName] ) | 
+  isOrdered?='ordered' | isConst?='const' | isDerived?='derived' |
+	('subsets' subsetRelation=[ElementRelation:QualifiedName] ) |
 	('redefines' redefinesRelation=[ElementRelation:QualifiedName] )
 ;
 
 RelationStereotype returns string:
-	'material' |
+  'material' |
 	'derivation' |
 	'comparative' |
 	'mediation' |
@@ -170,23 +177,23 @@ RelationStereotype returns string:
 	'triggers' |
 	'composition' |
 	'aggregation' |
-	'inherence' | 
-	'value' | 
+	'inherence' |
+	'value' |
 	'formal'
 ;
 
 Cardinality:
-	'[' lowerBound=(INT | '*') 
+  '[' lowerBound=(INT | '*')
 	('..' upperBound=(INT | '*'))? ']'
 ;
 
 // <--- Generalization Set --->
 
 GeneralizationSet:
-	(disjoint?='disjoint')? (complete?='complete')?
-	'genset' name=ID '{' 
+  (disjoint?='disjoint')? (complete?='complete')?
+	'genset' name=ID '{'
   // TODO: remove order
-		
+
 		('general' generalItem=[ClassDeclaration:QualifiedName])
 		('categorizer' categorizerItems+=[ClassDeclaration:QualifiedName] (categorizerItems+=[ClassDeclaration:QualifiedName])*)?
 		'specifics' specificItems+=[ClassDeclaration:QualifiedName] (',' specificItems+=[ClassDeclaration:QualifiedName])*
@@ -197,26 +204,26 @@ GeneralizationSet:
 // <--- DataTypes --->
 
 ComplexDataType:
-	'datatype' name=ID ('{'
+  'datatype' name=ID ('{'
 		(attributes+=Attribute)*
 	'}')?
 ;
 
 BasicDataType returns string:
-	'number' | 'string' | 'date' | 'boolean'
+  'number' | 'string' | 'date' | 'boolean'
 ;
 
 // <--- Enums --->
 
 Enum:
-	'enum' name=ID '{'
+  'enum' name=ID '{'
 		(elements+=EnumElement
-		(',' elements+=EnumElement)*)?
+		((',' | '\n') elements+=EnumElement)*)?
 	'}'
 ;
 
 EnumElement:
-	name=ID
+  name=ID
 ;
 
 

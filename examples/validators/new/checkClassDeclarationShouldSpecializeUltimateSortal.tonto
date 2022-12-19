@@ -1,0 +1,5 @@
+module CheckKindSpecialization {
+    kind Person
+    subkind Agent
+    subkind Agent2 specializes Person
+}

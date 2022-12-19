@@ -2,12 +2,12 @@ module rigidAntiRigid {
     roleMixin roleMixinOne
     kind kindOne specializes roleMixinOne
 
-    collective collectiveOne specializes roleMixinOne
+    // collective collectiveOne specializes roleMixinOne
 
-    phase phaseOne
-    role roleOne
+    // phase phaseOne
+    // role roleOne
 
-    kind kindTwo specializes phaseOne
+    // kind kindTwo specializes phaseOne
 
-    collective collectiveTwo specializes roleOne
+    // collective collectiveTwo specializes roleOne
 }

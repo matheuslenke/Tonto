@@ -6,4 +6,5 @@ module UFES {
     [0..*] <>-- involvedSpouses -- [0..*] Spouse
     [0..*] -- children -- [0..*] Person
   }
+  category Name
 }

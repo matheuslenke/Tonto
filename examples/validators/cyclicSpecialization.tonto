@@ -1,5 +1,0 @@
-module CyclicSpecialization {
-    event Person specializes Human
-
-    subkind Human specializes Person
-}

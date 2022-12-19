@@ -5,5 +5,5 @@ module NonSortal {
     roleMixin InsuredItem of objects, relators
     phaseMixin InactiveEntity of objects, relators
     mixin InsurableItem of objects, relators
-    kind Testando of objects
+    kind Testing of objects
 }
