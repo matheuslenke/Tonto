@@ -3,6 +3,6 @@ module Teste {
     kind ElementOne
     kind ElementThree
     kind ElementFour
-    relation ElementOne -- relationName -- ElementTwo
+    relation ElementOne -- relationName -- ElementThree
     relation ElementThree -- relationName -- ElementFour
 }

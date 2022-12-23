@@ -1,24 +1,29 @@
 {
-  "compilerOptions": {
-    "target": "es2019",
-    "module": "commonjs",
-    "lib": ["es2019", "es2020.bigint", "es2020.string", "es2020.symbol.wellknown"],
-    "sourceMap": true,
-    "outDir": "out",
-    "strict": true,
-    "noUnusedLocals": true,
-    "noImplicitReturns": true,
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-  },
-  "include": [
-     "src/**/*"
-  ],
-  "exclude": [
-     "out",
-     "node_modules"
-  ]
+    "compilerOptions": {
+        "target": "es2019",
+        "module": "commonjs",
+        "lib": [
+            "es2019",
+            "es2020.bigint",
+            "es2020.string",
+            "es2020.symbol.wellknown"
+        ],
+        "sourceMap": true,
+        "outDir": "out",
+        "strict": true,
+        "noUnusedLocals": true,
+        "noImplicitReturns": true,
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule": true,
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "out",
+        "node_modules"
+    ]
 }

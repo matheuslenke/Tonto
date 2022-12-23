@@ -16,6 +16,14 @@ export function isAuxiliaryDeclaration(item: unknown): item is AuxiliaryDeclarat
 
 export type BasicDataType = 'boolean' | 'date' | 'number' | 'string';
 
+export type ClassDeclarationOrRelation = ClassDeclaration | ElementRelation;
+
+export const ClassDeclarationOrRelation = 'ClassDeclarationOrRelation';
+
+export function isClassDeclarationOrRelation(item: unknown): item is ClassDeclarationOrRelation {
+    return reflection.isInstance(item, ClassDeclarationOrRelation);
+}
+
 export type Declaration = AuxiliaryDeclaration | ClassDeclaration;
 
 export const Declaration = 'Declaration';
@@ -30,7 +38,7 @@ export type NonEndurantType = 'event' | 'situation';
 
 export type NonSortal = 'category' | 'historicalRoleMixin' | 'mixin' | 'phaseMixin' | 'roleMixin';
 
-export type OntologicalNature = 'collectives' | 'extrinsic-modes' | 'functional-complexes' | 'intrinsic-modes' | 'objects' | 'qualities' | 'quantities' | 'relators' | 'types';
+export type OntologicalNature = 'abstracts' | 'collectives' | 'events' | 'extrinsic-modes' | 'functional-complexes' | 'intrinsic-modes' | 'objects' | 'qualities' | 'quantities' | 'relators' | 'situations' | 'types';
 
 export type QualifiedName = string;
 
@@ -181,15 +189,27 @@ export function isEnumElement(item: unknown): item is EnumElement {
     return reflection.isInstance(item, EnumElement);
 }
 
+export interface Generalization extends AstNode {
+    readonly $type: 'Generalization';
+    general: Reference<ClassDeclarationOrRelation>
+    specifics: Array<Reference<ClassDeclarationOrRelation>>
+}
+
+export const Generalization = 'Generalization';
+
+export function isGeneralization(item: unknown): item is Generalization {
+    return reflection.isInstance(item, Generalization);
+}
+
 export interface GeneralizationSet extends AstNode {
     readonly $container: ClassDeclaration | ContextModule;
     readonly $type: 'GeneralizationSet';
-    categorizerItems: Array<Reference<ClassDeclaration>>
+    categorizerItems: Array<Reference<ClassDeclarationOrRelation>>
     complete: boolean
     disjoint: boolean
-    generalItem: Reference<ClassDeclaration>
+    generalItem: Reference<ClassDeclarationOrRelation>
     name: string
-    specificItems: Array<Reference<ClassDeclaration>>
+    specificItems: Array<Reference<ClassDeclarationOrRelation>>
 }
 
 export const GeneralizationSet = 'GeneralizationSet';
@@ -255,6 +275,7 @@ export interface TontoAstType {
     AuxiliaryDeclaration: AuxiliaryDeclaration
     Cardinality: Cardinality
     ClassDeclaration: ClassDeclaration
+    ClassDeclarationOrRelation: ClassDeclarationOrRelation
     ComplexDataType: ComplexDataType
     ContextModule: ContextModule
     Declaration: Declaration
@@ -262,6 +283,7 @@ export interface TontoAstType {
     ElementRelation: ElementRelation
     Enum: Enum
     EnumElement: EnumElement
+    Generalization: Generalization
     GeneralizationSet: GeneralizationSet
     Import: Import
     Model: Model
@@ -272,20 +294,24 @@ export interface TontoAstType {
 export class TontoAstReflection extends AbstractAstReflection {
 
     getAllTypes(): string[] {
-        return ['Attribute', 'AuxiliaryDeclaration', 'Cardinality', 'ClassDeclaration', 'ComplexDataType', 'ContextModule', 'Declaration', 'ElementOntologicalNature', 'ElementRelation', 'Enum', 'EnumElement', 'GeneralizationSet', 'Import', 'Model', 'OntologicalCategory', 'RelationMetaAttribute'];
+        return ['Attribute', 'AuxiliaryDeclaration', 'Cardinality', 'ClassDeclaration', 'ClassDeclarationOrRelation', 'ComplexDataType', 'ContextModule', 'Declaration', 'ElementOntologicalNature', 'ElementRelation', 'Enum', 'EnumElement', 'Generalization', 'GeneralizationSet', 'Import', 'Model', 'OntologicalCategory', 'RelationMetaAttribute'];
     }
 
     protected override computeIsSubtype(subtype: string, supertype: string): boolean {
         switch (subtype) {
-            case ClassDeclaration:
-            case AuxiliaryDeclaration: {
-                return this.isSubtype(Declaration, supertype);
+            case ClassDeclaration: {
+                return this.isSubtype(Declaration, supertype) || this.isSubtype(ClassDeclarationOrRelation, supertype);
             }
             case ComplexDataType:
-            case ElementRelation:
             case Enum:
             case GeneralizationSet: {
                 return this.isSubtype(AuxiliaryDeclaration, supertype);
+            }
+            case ElementRelation: {
+                return this.isSubtype(AuxiliaryDeclaration, supertype) || this.isSubtype(ClassDeclarationOrRelation, supertype);
+            }
+            case AuxiliaryDeclaration: {
+                return this.isSubtype(Declaration, supertype);
             }
             default: {
                 return false;
@@ -302,10 +328,7 @@ export class TontoAstReflection extends AbstractAstReflection {
             case 'ClassDeclaration:instanceOf':
             case 'ClassDeclaration:specializationEndurants':
             case 'ElementRelation:firstEnd':
-            case 'ElementRelation:secondEnd':
-            case 'GeneralizationSet:categorizerItems':
-            case 'GeneralizationSet:generalItem':
-            case 'GeneralizationSet:specificItems': {
+            case 'ElementRelation:secondEnd': {
                 return ClassDeclaration;
             }
             case 'ElementRelation:inverseEnd':
@@ -313,6 +336,13 @@ export class TontoAstReflection extends AbstractAstReflection {
             case 'RelationMetaAttribute:redefinesRelation':
             case 'RelationMetaAttribute:subsetRelation': {
                 return ElementRelation;
+            }
+            case 'Generalization:general':
+            case 'Generalization:specifics':
+            case 'GeneralizationSet:categorizerItems':
+            case 'GeneralizationSet:generalItem':
+            case 'GeneralizationSet:specificItems': {
+                return ClassDeclarationOrRelation;
             }
             case 'Import:referencedModel': {
                 return Model;
@@ -386,6 +416,14 @@ export class TontoAstReflection extends AbstractAstReflection {
                     name: 'Enum',
                     mandatory: [
                         { name: 'elements', type: 'array' }
+                    ]
+                };
+            }
+            case 'Generalization': {
+                return {
+                    name: 'Generalization',
+                    mandatory: [
+                        { name: 'specifics', type: 'array' }
                     ]
                 };
             }

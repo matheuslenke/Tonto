@@ -17,18 +17,27 @@ export class TontoValidationRegistry extends ValidationRegistry {
                 validator.ClassElementValidator.checkSortalSpecializeUniqueUltimateSortal,
                 validator.ClassElementValidator.checkUltimateSortalSpecializeUltimateSortal,
                 validator.ClassElementValidator.checkClassDeclarationShouldSpecializeUltimateSortal,
-                // validator.ClassElementValidator.checkRigidSpecializesAntiRigid,
+                validator.ClassElementValidator.checkRigidSpecializesAntiRigid,
                 validator.ClassElementValidator.checkDuplicatedReferenceNames,
-                // validator.ClassElementValidator.checkCompatibleNatures,
+                validator.ClassElementValidator.checkCompatibleNatures,
                 validator.ClassElementValidator.checkCircularSpecialization,
-                // validator.ClassElementValidator.checkNaturesOnlyOnNonSortals,
-                // validator.ClassElementValidator.checkSpecializationOfCorrectNature,
-                validator.ClassElementValidator.checkClassWithoutStereotype
+                validator.ClassElementValidator.checkNaturesOnlyOnNonSortals,
+                validator.ClassElementValidator.checkSpecializationOfCorrectNature,
+                validator.ClassElementValidator.checkClassWithoutStereotype,
+                validator.ClassElementValidator.checkGeneralizationSortality,
+                validator.ClassElementValidator.checkGeneralizationDataType
             ],
             ContextModule: [
             // validator.ContextModuleValidator.checkContextModuleStartsWithCapital,
                 validator.ContextModuleValidator.checkDuplicatedClassName,
                 validator.ContextModuleValidator.checkDuplicatedRelationName
+            ],
+            GeneralizationSet: [
+                validator.GeneralizationValidator.checkCircularGeneralization,
+                validator.GeneralizationValidator.checkGeneralizationSetConsistency,
+                validator.GeneralizationValidator.checkGeneralizationSortality,
+                validator.GeneralizationValidator.checkRigidSpecializesAntiRigid,
+                validator.GeneralizationValidator.checkGeneralizationDataType
             ]
         };
         this.register(checks, validator);

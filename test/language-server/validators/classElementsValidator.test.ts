@@ -16,43 +16,18 @@ describe("ClassElement Validator tests", () => {
 
     let rules: ParserRule[] = [];
 
-    // it("should have duplicated class names error", async () => {
-    //     const validationResult = await validate(tontoStub);
+    it("should have duplicated class names error", async () => {
+        const validationResult = await validate(tontoStub);
 
-    //     const diagnostics = validationResult.diagnostics;
+        const diagnostics = validationResult.diagnostics;
 
-    //     expect(diagnostics).not.toBeNull();
+        expect(diagnostics).not.toBeNull();
 
-    //     if (diagnostics != undefined) {
-    //         const error = diagnostics[0];
-    //         expect(error.message).toBe("Duplicated class declaration");
-    //     }
-    // });
-
-    //     const tontoCompatibleNaturesStub = `
-    //     module OntologicalNaturesError {
-    //         category Furniture of objects
-    //         category SpecificFurniture of collectives specializes Furniture
-    //         category EventFurniture of collectives, objects
-    //         category ErrorFurniture of collectives, objects specializes EventFurniture
-    //         category ErrorFurniture2 of collectives, objects specializes EventFurniture
-    //     }
-    //   `;
-
-    //     it("should have Incompatible Natures error", async () => {
-    //         const validationResult = await validate(tontoCompatibleNaturesStub);
-
-    //         const diagnostics = validationResult.diagnostics;
-
-    //         expect(diagnostics).not.toBeNull();
-
-    //         if (diagnostics != undefined) {
-    //             const error = diagnostics[0];
-    //             expect(error.message).toBe(
-    //                 "This element cannot be restricted to Natures that its superclass is not restricted"
-    //             );
-    //         }
-    //     });
+        if (diagnostics != undefined) {
+            const error = diagnostics[0];
+            expect(error.message).toBe("Duplicated class declaration");
+        }
+    });
 
     describe("Every Sortal class should specialize a unique ultimate sortal", async () => {
         const tontoSortalSpecializesUniqueUltimateSortalStub = `
@@ -198,4 +173,26 @@ describe("ClassElement Validator tests", () => {
             }
         })
     })
+
+    //     const tontoCompatibleNaturesStub = `
+    //     module OntologicalNaturesError {
+    //         category Furniture of objects
+    //         category SpecificFurniture of collectives specializes Furniture
+    //     }
+    //   `;
+
+    //     it("should have Incompatible Natures error", async () => {
+    //         const validationResult = await validate(tontoCompatibleNaturesStub);
+
+    //         const diagnostics = validationResult.diagnostics;
+
+    //         expect(diagnostics).not.toBeNull();
+
+    //         if (diagnostics != undefined) {
+    //             const error = diagnostics[0];
+    //             expect(error.message).toBe(
+    //                 "Incompatible stereotype and Nature restriction combination. Class SpecificFurniture has its value for 'restrictedTo' incompatible with the stereotype"
+    //             );
+    //         }
+    //     });
 });

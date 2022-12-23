@@ -1,0 +1,11 @@
+module CheckGeneralizationSortality {
+    kind Person
+    category Agent
+
+    genset GeneralizationSet {
+        general Person
+        specifics Agent
+    }
+
+    category Agent2 specializes Person
+}

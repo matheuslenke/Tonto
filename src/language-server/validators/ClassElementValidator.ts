@@ -1,5 +1,7 @@
 import { ValidationAcceptor } from "langium";
-import { isSortalOntoCategory, OntologicalCategoryEnum } from "../models/OntologicalCategory";
+import { natureUtils } from "../models/Natures";
+import { getOntologicalCategory, isSortalOntoCategory, OntologicalCategoryEnum } from "../models/OntologicalCategory";
+import { allowedStereotypeRestrictedToMatches, hasNonSortalStereotype, hasSortalStereotype, isAntiRigidStereotype, isRigidStereotype, isSemiRigidStereotype } from "../models/StereotypeUtils";
 import { checkCircularSpecializationRecursive } from "../utils/CheckCircularSpecializationRecursive";
 import { checkNatureCompatibleWithStereotype } from "../utils/checkNatureCompatibleWithStereotype";
 import { checkSortalSpecializesUniqueUltimateSortalRecursive, validateSortalSpecializesUniqueUltimateSortalRecursive } from "../utils/CheckSortalSpecializesUniqueUltimateSortalRecursive";
@@ -140,15 +142,18 @@ export class ClassElementValidator {
         }
     }
 
+    /**
+     *  Verifica se a classe inicializa seu nome com Letra maiúscula
+     */
     checkClassElementStartsWithCapital(
-        classElement: ClassDeclaration,
+        classDeclaration: ClassDeclaration,
         accept: ValidationAcceptor
     ): void {
-        if (classElement.name) {
-            const firstChar = classElement.name.substring(0, 1);
+        if (classDeclaration.name) {
+            const firstChar = classDeclaration.name.substring(0, 1);
             if (firstChar.toUpperCase() !== firstChar) {
-                accept("warning", "Class name should start with a capital.", {
-                    node: classElement,
+                accept("hint", "Class name should start with a capital.", {
+                    node: classDeclaration,
                     property: "name",
                 });
             }
@@ -156,53 +161,43 @@ export class ClassElementValidator {
     }
 
     /**
-     * Checks if a Rigid stereotype specializes a anti-rigid stereotype
+     * Verifica se é uma generalização entre duas classes. Verifica se a general
+     * tem um estereótipo Anti rigido e a specific tem um estereótipo rígido
+     * ou Anti rígido
      */
     checkRigidSpecializesAntiRigid(
-        classElement: ClassDeclaration,
+        classDeclaration: ClassDeclaration,
         accept: ValidationAcceptor
     ): void {
-        if (!classElement || !classElement.classElementType) {
+        if (!classDeclaration || !classDeclaration.classElementType) {
             return;
         }
-        const endurantType = classElement.classElementType.ontologicalCategory;
-
-        if (endurantType === null || endurantType === undefined) {
-            return;
-        }
+        const ontologicalCategory = classDeclaration.classElementType.ontologicalCategory;
 
         // Check if it is a rigid stereotype
-        if (
-            endurantType === OntologicalCategoryEnum.KIND ||
-      endurantType === OntologicalCategoryEnum.SUBKIND ||
-      endurantType === OntologicalCategoryEnum.COLLECTIVE ||
-      endurantType === OntologicalCategoryEnum.CATEGORY
-        ) {
-            classElement.specializationEndurants.forEach((specializationItem) => {
-                const refElement = specializationItem.ref?.$cstNode
-                    ?.element as ClassDeclaration;
-                if (!refElement || !refElement.classElementType) {
+        if (isRigidStereotype(ontologicalCategory) || isSemiRigidStereotype(ontologicalCategory)) {
+            classDeclaration.specializationEndurants.forEach((specializationItem) => {
+                const specDeclaration = specializationItem.ref as ClassDeclaration;
+                if (!specDeclaration) {
                     return;
                 }
-                const refType = refElement.classElementType.ontologicalCategory;
+                const specOntologicalCategory = specDeclaration.classElementType.ontologicalCategory;
 
-                if (
-                    refType === OntologicalCategoryEnum.PHASE ||
-          refType === OntologicalCategoryEnum.ROLE ||
-          refType === OntologicalCategoryEnum.PHASE_MIXIN ||
-          refType === OntologicalCategoryEnum.ROLE_MIXIN
-                ) {
+                if (isAntiRigidStereotype(specOntologicalCategory)) {
                     // console.log("Error na referencia")
                     accept(
-                        "warning",
-                        `Prohibited specialization: rigid/semi-rigid specializing an anti-rigid. The rigid/semi-rigid class ${classElement.name} cannot specialize the anti-rigid class ${refElement.name}`,
-                        { node: classElement }
+                        "error",
+                        `Prohibited specialization: rigid/semi-rigid specializing an anti-rigid. The rigid/semi-rigid class ${classDeclaration.name} cannot specialize the anti-rigid class ${specDeclaration.name}`,
+                        { node: classDeclaration }
                     );
                 }
             });
         }
     }
 
+    /**
+     * Verifica se existem nomes de referência duplicados dentro da classe
+     */
     checkDuplicatedReferenceNames(
         classElement: ClassDeclaration,
         accept: ValidationAcceptor
@@ -229,15 +224,57 @@ export class ClassElementValidator {
      * para ver as restrições
      */
     checkCompatibleNatures(
-        classElement: ClassDeclaration,
+        classDeclaration: ClassDeclaration,
         accept: ValidationAcceptor
     ): void {
-        const elementNatures = classElement.ontologicalNatures;
+        if (!classDeclaration || !classDeclaration.classElementType) {
+            return;
+        }
+        const ontologicalCategory =  classDeclaration.classElementType.ontologicalCategory;
+
+        if (ontologicalCategory === OntologicalCategoryEnum.CLASS) {
+            return;
+        }
+
+        const elementNatures = classDeclaration.ontologicalNatures?.natures;
+
+        if (elementNatures) {
+            const ontologicalCategoryEnum = getOntologicalCategory(ontologicalCategory)
+            if (ontologicalCategoryEnum) {
+                const incompatibleNatures = elementNatures.filter(nature => {
+                    const realNature = natureUtils.getNatureFromAst(nature)
+                    if (realNature) {
+                        const stereotypeMatches = allowedStereotypeRestrictedToMatches[ontologicalCategoryEnum]
+                        const includesNature = allowedStereotypeRestrictedToMatches[ontologicalCategoryEnum].includes(realNature)
+                        console.debug(stereotypeMatches, includesNature)
+                        return stereotypeMatches && includesNature
+                    }
+                    return false
+                })
+                if (incompatibleNatures.length > 1) {
+                    accept('error', `Incompatible stereotype and Nature restriction combination. Class ${classDeclaration.name} has its value for 'restrictedTo' incompatible with the stereotype`, {
+                        node: classDeclaration,
+                        property: "name"
+                    })
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Verifica se a classe restringe Natures que sua classe pai também restringe
+     */
+    checkSpecializationNatureRestrictions(
+        classDeclaration: ClassDeclaration,
+        accept: ValidationAcceptor
+    ) {
+        const elementNatures = classDeclaration.ontologicalNatures
 
         if (elementNatures) {
             elementNatures.natures.forEach((nature) => {
                 let specializationDoesntExistsInParent = false;
-                classElement.specializationEndurants.forEach(
+                classDeclaration.specializationEndurants.forEach(
                     (specializationEndurant) => {
                         let specializationNatures =
               specializationEndurant.ref?.ontologicalNatures;
@@ -256,19 +293,23 @@ export class ClassElementValidator {
                     accept(
                         "error",
                         "This element cannot be restricted to Natures that its superclass is not restricted",
-                        { node: classElement, property: "ontologicalNatures" }
+                        { node: classDeclaration, property: "ontologicalNatures" }
                     );
                 }
             });
         }
     }
 
+    /**
+     * Verifica se a classe é do tipo que é permitido pelas Natures de sua classe
+     * pai
+     */
     checkSpecializationOfCorrectNature(
-        classElement: ClassDeclaration,
+        classDeclaration: ClassDeclaration,
         accept: ValidationAcceptor
     ): void {
-        const specializations = classElement.specializationEndurants;
-        const stereotype = classElement.classElementType?.ontologicalCategory;
+        const specializations = classDeclaration.specializationEndurants;
+        const ontologicalCategory = classDeclaration.classElementType?.ontologicalCategory;
 
         specializations.forEach((specialization) => {
             let natures = specialization.ref?.ontologicalNatures?.natures;
@@ -277,7 +318,7 @@ export class ClassElementValidator {
                 natures.forEach((nature) => {
                     const isCompatible = checkNatureCompatibleWithStereotype(
                         nature,
-                        stereotype
+                        ontologicalCategory
                     );
                     if (isCompatible === true) {
                         hasCompatibleNatures = true;
@@ -291,7 +332,7 @@ export class ClassElementValidator {
                     accept(
                         "error",
                         `This element cannot be of this type when its superclass has other nature restrictions. The allowed natures are: ${naturesList}`,
-                        { node: classElement }
+                        { node: classDeclaration }
                     );
                 }
             }
@@ -317,6 +358,21 @@ export class ClassElementValidator {
         }
     }
 
+    /**
+     * Verifica se a classe é da categoria TYPE, e caso seja, se sua meta-propriedade
+     * Powertype está definida
+     */
+    checkMissingIsPowertype(
+        classDeclaration: ClassDeclaration,
+        accept: ValidationAcceptor
+    ): void {
+        const ontologicalCategory = classDeclaration.classElementType.ontologicalCategory
+
+        if (ontologicalCategory === OntologicalCategoryEnum.TYPE) {
+            // Não tem definido a meta-propriedade Powertype
+        }
+    }
+
     /*
    * Checks if an Element has a ciclic specialization
    */
@@ -333,16 +389,64 @@ export class ClassElementValidator {
         });
     }
 
+    /**
+     * Verifica se a classe não possui um estereótipo definido
+     */
     checkClassWithoutStereotype(
         classDeclaration: ClassDeclaration,
         accept: ValidationAcceptor
     ): void {
         if (classDeclaration.classElementType.ontologicalCategory === OntologicalCategoryEnum.CLASS) {
             accept(
-                "warning",
+                "hint",
                 "Consider using an annotation or a more specific class",
                 { node: classDeclaration, property: "classElementType" }
             );
+        }
+    }
+
+    /**
+     * Verifica se é uma generalização entre duas classes. Verifica se o general
+     * possui um estereótipo Sortal e o specific possui um estereótipo não
+     * sortal, se tiver, a generalização é proibida.
+     */
+    checkGeneralizationSortality(classDeclaration: ClassDeclaration, accept: ValidationAcceptor) {
+        const generalItems = classDeclaration.specializationEndurants
+        const isNonSortal = hasNonSortalStereotype(classDeclaration.classElementType.ontologicalCategory)
+        if (isNonSortal) {
+            generalItems.forEach(general => {
+                const generalClass = general.ref as ClassDeclaration
+                if (hasSortalStereotype(generalClass.classElementType.ontologicalCategory)) {
+                    accept("error", `Prohibited generalization: non-sortal specializing a sortal. The non-sortal class ${classDeclaration.name} cannot specialize the sortal class ${generalClass.name}`,
+                        {
+                            node: classDeclaration,
+                            property: "specializationEndurants"
+                        })
+                }
+            })
+        }
+    }
+
+    /**
+     * Verifica se é uma generalização entre duas classes. Verifica se o general
+     * e o specific possuem estereótipo definido. Verifica se o general ou
+     * specific são datatype, e se o estereótipo de general e specific são
+     * diferentes
+     */
+    checkGeneralizationDataType(classDeclaration: ClassDeclaration,
+        accept: ValidationAcceptor) {
+        const ontologicalCategory = classDeclaration.classElementType.ontologicalCategory
+
+        if (ontologicalCategory === "datatype") {
+            const specializationItems = classDeclaration.specializationEndurants
+            specializationItems.forEach(item => {
+                if (item.ref?.classElementType.ontologicalCategory === "datatype") {
+                    accept("error", "Prohibited generalization: datatype specialization. A datatype can only be in generalization relation with other datatypes", {
+                        node: classDeclaration,
+                        property: "specializationEndurants"
+                    })
+                }
+            })
         }
     }
 }
