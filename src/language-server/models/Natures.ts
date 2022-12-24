@@ -35,7 +35,8 @@ const EndurantNatures = [
     OntologicalNature.intrinsic_mode,
     OntologicalNature.extrinsic_mode,
     OntologicalNature.quality,
-    OntologicalNature.relator
+    OntologicalNature.relator,
+    OntologicalNature.type
 ];
 
 const SubstantialNatures = [OntologicalNature.functional_complex, OntologicalNature.collective, OntologicalNature.quantity];
@@ -82,8 +83,13 @@ function getNatureFromAst(nature: ASTNature): OntologicalNature | undefined {
         return OntologicalNature.relator
     case 'types':
         return OntologicalNature.type
+    case "abstracts":
+        return OntologicalNature.abstract
+    case "events":
+        return OntologicalNature.event
+    case "situations":
+        return OntologicalNature.situation
     }
-    return undefined
 }
 
 export const natureUtils = {

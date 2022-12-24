@@ -6,7 +6,6 @@ import { checkCircularSpecializationRecursive } from "../utils/CheckCircularSpec
 import { checkNatureCompatibleWithStereotype } from "../utils/checkNatureCompatibleWithStereotype";
 import { checkSortalSpecializesUniqueUltimateSortalRecursive, validateSortalSpecializesUniqueUltimateSortalRecursive } from "../utils/CheckSortalSpecializesUniqueUltimateSortalRecursive";
 import { checkUltimateSortalSpecializesUltimateSortalRecursive } from "../utils/CheckUltimateSortalSpecializesUltimateSortalRecursive";
-import { getStereotypeIsSortal } from "../utils/getStereotypeIsSortal";
 import { ClassDeclaration } from "./../generated/ast";
 
 export class ClassElementValidator {
@@ -245,13 +244,12 @@ export class ClassElementValidator {
                     const realNature = natureUtils.getNatureFromAst(nature)
                     if (realNature) {
                         const stereotypeMatches = allowedStereotypeRestrictedToMatches[ontologicalCategoryEnum]
-                        const includesNature = allowedStereotypeRestrictedToMatches[ontologicalCategoryEnum].includes(realNature)
-                        console.debug(stereotypeMatches, includesNature)
+                        const includesNature = !allowedStereotypeRestrictedToMatches[ontologicalCategoryEnum].includes(realNature)
                         return stereotypeMatches && includesNature
                     }
                     return false
                 })
-                if (incompatibleNatures.length > 1) {
+                if (incompatibleNatures.length >= 1) {
                     accept('error', `Incompatible stereotype and Nature restriction combination. Class ${classDeclaration.name} has its value for 'restrictedTo' incompatible with the stereotype`, {
                         node: classDeclaration,
                         property: "name"
@@ -345,16 +343,16 @@ export class ClassElementValidator {
     ): void {
         const ElementNatures = classElement.ontologicalNatures;
         if (ElementNatures) {
-            if (
-                getStereotypeIsSortal(
-                    classElement.classElementType?.ontologicalCategory
-                )
-            ) {
-                accept("error", "Only non-sortal types can specialize natures", {
-                    node: classElement,
-                    property: "ontologicalNatures",
-                });
-            }
+            // if (
+            //     hasSortalStereotype(
+            //         classElement.classElementType?.ontologicalCategory
+            //     )
+            // ) {
+            //     accept("error", "Only non-sortal types can specialize natures", {
+            //         node: classElement,
+            //         property: "ontologicalNatures",
+            //     });
+            // }
         }
     }
 

@@ -1,6 +1,9 @@
+
+// prefix UFOS = https://link.com
 module CheckGeneralizationConsistency {
     kind Person
     phase Adult specializes Person
+    // UFOS.Person
 
     relation Person [1] -- hasAdultFriends -- [0..*] Adult
 
