@@ -3,19 +3,19 @@ import { ClassDeclaration } from "../generated/ast";
 import { OntologicalCategoryEnum } from "../models/OntologicalCategory";
 
 const checkUltimateSortalSpecializesUltimateSortalRecursive = (
-    actualElement: ClassDeclaration,
-    accept: ValidationAcceptor
+  actualElement: ClassDeclaration,
+  accept: ValidationAcceptor
 ): void => {
-    actualElement.specializationEndurants.forEach((specializationItem) => {
-        const specItem = specializationItem.ref;
-        if (!specItem) {
-            return;
-        }
+  actualElement.specializationEndurants.forEach((specializationItem) => {
+    const specItem = specializationItem.ref;
+    if (!specItem) {
+      return;
+    }
 
-        const refOntologicalCategory = specItem.classElementType?.ontologicalCategory;
+    const refOntologicalCategory = specItem.classElementType?.ontologicalCategory;
 
-        if (
-            refOntologicalCategory === OntologicalCategoryEnum.KIND ||
+    if (
+      refOntologicalCategory === OntologicalCategoryEnum.KIND ||
       refOntologicalCategory === OntologicalCategoryEnum.COLLECTIVE ||
       refOntologicalCategory === OntologicalCategoryEnum.QUANTITY ||
       refOntologicalCategory === OntologicalCategoryEnum.QUALITY ||
@@ -23,17 +23,17 @@ const checkUltimateSortalSpecializesUltimateSortalRecursive = (
       refOntologicalCategory === OntologicalCategoryEnum.MODE ||
       refOntologicalCategory === OntologicalCategoryEnum.INTRINSIC_MODE ||
       refOntologicalCategory === OntologicalCategoryEnum.EXTRINSIC_MODE
-        ) {
-            accept(
-                "error",
-                "Classes representing ultimate sortals cannot specialize other ultimate sortals",
-                { node: actualElement }
-            );
-            return;
-        } else {
-            checkUltimateSortalSpecializesUltimateSortalRecursive(specItem, accept);
-        }
-    });
+    ) {
+      accept(
+        "error",
+        "Classes representing ultimate sortals cannot specialize other ultimate sortals",
+        { node: actualElement }
+      );
+      return;
+    } else {
+      checkUltimateSortalSpecializesUltimateSortalRecursive(specItem, accept);
+    }
+  });
 };
 
 export { checkUltimateSortalSpecializesUltimateSortalRecursive };

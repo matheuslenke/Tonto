@@ -1,16 +1,16 @@
 import {
-    createDefaultModule,
-    createDefaultSharedModule,
-    DefaultSharedModuleContext,
-    inject,
-    LangiumServices,
-    LangiumSharedServices,
-    Module,
-    PartialLangiumServices
+  createDefaultModule,
+  createDefaultSharedModule,
+  DefaultSharedModuleContext,
+  inject,
+  LangiumServices,
+  LangiumSharedServices,
+  Module,
+  PartialLangiumServices
 } from "langium";
 import {
-    TontoGeneratedModule,
-    TontoGeneratedSharedModule
+  TontoGeneratedModule,
+  TontoGeneratedSharedModule
 } from "./generated/module";
 import { TontoActionProvider } from "./lsp/tonto-code-actions";
 import { TontoSemanticTokenProvider } from "./lsp/tonto-semantic-token-provider";
@@ -44,20 +44,20 @@ export const TontoModule: Module<
   TontoServices,
   PartialLangiumServices & TontoAddedServices
 > = {
-    references: {
-        ScopeComputation: services => new TontoScopeComputation(services),
-        NameProvider: () => new TontoNameProvider()
+  references: {
+    ScopeComputation: services => new TontoScopeComputation(services),
+    NameProvider: () => new TontoNameProvider()
     // ScopeProvider: (services) => new TontoScopeProvider(services),
-    },
-    validation: {
-        ValidationRegistry: services => new TontoValidationRegistry(services),
-        TontoValidator: () => new TontoValidator()
-    },
-    lsp: {
-        CodeActionProvider: () => new TontoActionProvider(),
-        Formatter: () => new TontoFormatter(),
-        SemanticTokenProvider: services => new TontoSemanticTokenProvider(services)
-    }
+  },
+  validation: {
+    ValidationRegistry: services => new TontoValidationRegistry(services),
+    TontoValidator: () => new TontoValidator()
+  },
+  lsp: {
+    CodeActionProvider: () => new TontoActionProvider(),
+    Formatter: () => new TontoFormatter(),
+    SemanticTokenProvider: services => new TontoSemanticTokenProvider(services)
+  }
 };
 
 /**
@@ -76,20 +76,20 @@ export const TontoModule: Module<
  * @returns An object wrapping the shared services and the language-specific services
  */
 export function createTontoServices(
-    context: DefaultSharedModuleContext
+  context: DefaultSharedModuleContext
 ): {
   shared: LangiumSharedServices;
   Tonto: TontoServices;
 } {
-    const shared = inject(
-        createDefaultSharedModule(context),
-        TontoGeneratedSharedModule
-    );
-    const Tonto = inject(
-        createDefaultModule({ shared }),
-        TontoGeneratedModule,
-        TontoModule
-    );
-    shared.ServiceRegistry.register(Tonto);
-    return { shared, Tonto };
+  const shared = inject(
+    createDefaultSharedModule(context),
+    TontoGeneratedSharedModule
+  );
+  const Tonto = inject(
+    createDefaultModule({ shared }),
+    TontoGeneratedModule,
+    TontoModule
+  );
+  shared.ServiceRegistry.register(Tonto);
+  return { shared, Tonto };
 }

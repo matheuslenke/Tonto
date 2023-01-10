@@ -5,31 +5,31 @@ import { parseHelper, validationHelper } from "../src/test/tonto-test";
 
 describe('A', () => {
 
-    const tontoStub = `
+  const tontoStub = `
     module UFOS {
       kind Person
       kind School
     }
   `;
-    const services = createTontoServices(EmptyFileSystem);
-    const parser = parseHelper<Grammar>(services.Tonto);
-    const validate = validationHelper(services.Tonto);
+  const services = createTontoServices(EmptyFileSystem);
+  const parser = parseHelper<Grammar>(services.Tonto);
+  const validate = validationHelper(services.Tonto);
 
-    let rules: ParserRule[] = [];
+  let rules: ParserRule[] = [];
 
-    test('should have a kind', async () => {
-        // const validationResult = await validate(tontoStub);
+  test('should have a kind', async () => {
+    // const validationResult = await validate(tontoStub);
 
-        // const astNode = validationResult.document.parseResult.value
-        // expect(astNode.$type).toBe("Model")
+    // const astNode = validationResult.document.parseResult.value
+    // expect(astNode.$type).toBe("Model")
 
-        // const model = astNode as Model
+    // const model = astNode as Model
 
-        // const modules = model.modules
-        // const UFOSModule = modules[0];
+    // const modules = model.modules
+    // const UFOSModule = modules[0];
 
-        // expect(UFOSModule.name).toBe("UFOS")
-    });
+    // expect(UFOSModule.name).toBe("UFOS")
+  });
 
 });
 

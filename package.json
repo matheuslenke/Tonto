@@ -70,6 +70,7 @@
         "publish": "vsce publish --baseContentUrl https://github.com/matheuslenke/Tonto --yarn",
         "clean": "rimraf out",
         "lint": "eslint src --ext ts",
+        "lint:fix": "eslint src --ext ts --fix",
         "build": "node esbuild.js && tsc --noEmit",
         "watch": "node esbuild.js --watch",
         "test": "vitest",

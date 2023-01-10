@@ -9,112 +9,112 @@ import { relationGenerator } from "./relation.generator";
 import { generateSpecializations } from "./specialization.generator";
 
 export function contextModuleGenerator(
-    contextModule: ContextModule,
-    packageItem: Package
+  contextModule: ContextModule,
+  packageItem: Package
 ): void {
-    let classes: Class[] = [];
-    let dataTypes: Class[] = createBaseDatatypes(packageItem);
-    let relations: Relation[] = [];
-    // Creating base datatypes
+  let classes: Class[] = [];
+  let dataTypes: Class[] = createBaseDatatypes(packageItem);
+  let relations: Relation[] = [];
+  // Creating base datatypes
 
-    contextModule.declarations.forEach((declaration) => {
-        switch (declaration.$type) {
-        case "ClassDeclaration":
-            const classElement = declaration as ClassDeclaration;
-            const newClass = classElementGenerator(classElement, packageItem);
-            attributeGenerator(classElement, newClass, dataTypes);
-            classes.push(newClass);
-            break;
+  contextModule.declarations.forEach((declaration) => {
+    switch (declaration.$type) {
+    case "ClassDeclaration":
+      const classElement = declaration as ClassDeclaration;
+      const newClass = classElementGenerator(classElement, packageItem);
+      attributeGenerator(classElement, newClass, dataTypes);
+      classes.push(newClass);
+      break;
 
-        case "ComplexDataType":
-            const dataType = declaration as ComplexDataType;
-            const newDataType = customDataTypeGenerator(
-                dataType,
-                packageItem,
-                dataTypes
-            );
-            attributeGenerator(dataType, newDataType, dataTypes);
-            break;
+    case "ComplexDataType":
+      const dataType = declaration as ComplexDataType;
+      const newDataType = customDataTypeGenerator(
+        dataType,
+        packageItem,
+        dataTypes
+      );
+      attributeGenerator(dataType, newDataType, dataTypes);
+      break;
 
-        case "Enum":
-            const enumData = declaration as Enum;
-            enumGenerator(enumData, packageItem);
-            break;
-        }
-    });
+    case "Enum":
+      const enumData = declaration as Enum;
+      enumGenerator(enumData, packageItem);
+      break;
+    }
+  });
 
-    generateGenSets(contextModule, classes, packageItem);
-    generateInternalRelations(contextModule, classes, relations, packageItem);
-    generateExternalRelations(contextModule, classes, relations, packageItem);
-    generateSpecializations(contextModule, classes, relations, packageItem);
-    generateInstantiations(contextModule, classes, relations, packageItem);
+  generateGenSets(contextModule, classes, packageItem);
+  generateInternalRelations(contextModule, classes, relations, packageItem);
+  generateExternalRelations(contextModule, classes, relations, packageItem);
+  generateSpecializations(contextModule, classes, relations, packageItem);
+  generateInstantiations(contextModule, classes, relations, packageItem);
 }
 
 function createBaseDatatypes(model: Package): Class[] {
-    const data = model.createDatatype("Date");
-    const string = model.createDatatype("string");
-    const number = model.createDatatype("number");
-    const boolean = model.createDatatype("boolean");
+  const data = model.createDatatype("Date");
+  const string = model.createDatatype("string");
+  const number = model.createDatatype("number");
+  const boolean = model.createDatatype("boolean");
 
-    return [data, string, number, boolean];
+  return [data, string, number, boolean];
 }
 
 function generateGenSets(
-    contextModule: ContextModule,
-    classes: Class[],
-    packageItem: Package
+  contextModule: ContextModule,
+  classes: Class[],
+  packageItem: Package
 ) {
-    contextModule.declarations.forEach((declaration) => {
-        if (declaration.$type === "GeneralizationSet") {
-            const gensetData = declaration as GeneralizationSet;
-            generalizationSetGenerator(gensetData, classes, packageItem);
-        }
-    });
+  contextModule.declarations.forEach((declaration) => {
+    if (declaration.$type === "GeneralizationSet") {
+      const gensetData = declaration as GeneralizationSet;
+      generalizationSetGenerator(gensetData, classes, packageItem);
+    }
+  });
 }
 
 function generateExternalRelations(
-    contextModule: ContextModule,
-    classes: Class[],
-    relations: Relation[],
-    packageItem: Package
+  contextModule: ContextModule,
+  classes: Class[],
+  relations: Relation[],
+  packageItem: Package
 ): void {
-    contextModule.declarations.forEach((declaration) => {
-        switch (declaration.$type) {
-        case "ElementRelation":
-            const elementRelation = declaration as ElementRelation;
-            const createdRelation = relationGenerator(
-                elementRelation,
-                packageItem,
-                classes
-            );
-            if (createdRelation) {
-                relations.push(createdRelation);
-            }
-        }
-    });
+  contextModule.declarations.forEach((declaration) => {
+    switch (declaration.$type) {
+    case "ElementRelation":
+      const elementRelation = declaration as ElementRelation;
+      const createdRelation = relationGenerator(
+        elementRelation,
+        packageItem,
+        classes
+      );
+      if (createdRelation) {
+        relations.push(createdRelation);
+      }
+    }
+  });
 }
 
 function generateInternalRelations(
-    contextModule: ContextModule,
-    classes: Class[],
-    relations: Relation[],
-    packageItem: Package
+  contextModule: ContextModule,
+  classes: Class[],
+  relations: Relation[],
+  packageItem: Package
 ): void {
-    contextModule.declarations.forEach((declaration) => {
-        if (declaration.$type === "ClassDeclaration") {
-            const classDeclaration = declaration as ClassDeclaration;
+  contextModule.declarations.forEach((declaration) => {
+    if (declaration.$type === "ClassDeclaration") {
+      const classDeclaration = declaration as ClassDeclaration;
 
-            classDeclaration.references.forEach((reference) => {
-                const createdRelation = relationGenerator(
-                    reference,
-                    packageItem,
-                    classes,
-                    classDeclaration
-                );
-                if (createdRelation) {
-                    relations.push(createdRelation);
-                }
-            });
+      classDeclaration.references.forEach((reference) => {
+        const createdRelation = relationGenerator(
+          reference,
+          packageItem,
+          classes,
+          classDeclaration
+        );
+        if (createdRelation) {
+          relations.push(createdRelation);
         }
-    });
+      });
+    }
+  });
 }

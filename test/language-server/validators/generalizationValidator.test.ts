@@ -3,12 +3,12 @@ import { createTontoServices } from "../../../src/language-server/tonto-module";
 import { parseHelper, validationHelper } from "../../../src/test/tonto-test";
 
 describe("Generalization Validator tests", () => {
-    const services = createTontoServices(EmptyFileSystem);
-    const parse = parseHelper<Grammar>(services.Tonto);
-    const validate = validationHelper(services.Tonto);
+  const services = createTontoServices(EmptyFileSystem);
+  const parse = parseHelper<Grammar>(services.Tonto);
+  const validate = validationHelper(services.Tonto);
 
-    describe("Check for generalizationSet consistency", () => {
-        const generalizationConsistencyStub = `
+  describe("Check for generalizationSet consistency", () => {
+    const generalizationConsistencyStub = `
         module CheckGeneralizationConsistency {
             kind Person
             phase Adult specializes Person
@@ -22,21 +22,21 @@ describe("Generalization Validator tests", () => {
         }
     `;
 
-        it("should have Prohibited generalization Error involving classes and relations", async () => {
-            // const validationResult = await validate(generalizationConsistencyStub);
+    it("should have Prohibited generalization Error involving classes and relations", async () => {
+      // const validationResult = await validate(generalizationConsistencyStub);
 
-            // const diagnostics = validationResult.diagnostics;
+      // const diagnostics = validationResult.diagnostics;
 
-            // expect(diagnostics).not.toBeNull();
-            // expect(diagnostics.length).toBe(2);
+      // expect(diagnostics).not.toBeNull();
+      // expect(diagnostics.length).toBe(2);
 
-            // if (diagnostics != undefined) {
-            //     diagnostics.forEach(error => {
-            //         expect(error.message).toBe(
-            //             "Prohibited generalization: Generalizations must exclusively involve classes or relations, never a combination."
-            //         );
-            //     });
-            // }
-        });
-    })
+      // if (diagnostics != undefined) {
+      //     diagnostics.forEach(error => {
+      //         expect(error.message).toBe(
+      //             "Prohibited generalization: Generalizations must exclusively involve classes or relations, never a combination."
+      //         );
+      //     });
+      // }
+    });
+  })
 })
