@@ -1,8 +1,38 @@
-module CheckKindSpecialization {
+module CheckNonUltimateSortalSpecializesUniqueUltimateSortal {
+
+    // Test case with more than one specialization
     kind Person
-    kind Organization
+    mode Organization
     subkind Agent specializes Organization, Person
-    kind BiologicalAnimal
-    phase Teenager specializes Person, BiologicalAnimal
-    event TestEvent specializes Person, Organization
+    phase AgentPhase specializes Organization, Person
+    role AgentRole specializes Organization, Person
+    historicalRole AgentHistoricalRole specializes Organization, Person
+
+    collective BiologicalAnimals
+    quantity BiologicalQuantity
+    subkind BioSubkind specializes BiologicalQuantity, BiologicalAnimals
+    phase BioPhase specializes BiologicalQuantity, BiologicalAnimals
+    role BioRole specializes BiologicalAnimals, BiologicalQuantity
+    historicalRole BioHistoricalRole specializes BiologicalQuantity, BiologicalAnimals
+
+    relator Relator
+    quality Quality
+    subkind RelatorSubkind specializes Relator, Quality
+    phase RelatorPhase specializes Relator, Quality
+    role RelatorRole specializes Relator, Quality
+    historicalRole RelatorHistoricalRole specializes Relator, Quality
+
+    // Tests with no specialization
+
+    // test case 1
+    subkind TestSubkind
+    phase TestPhase
+    role TestRole
+    historicalRole TestHistoricalRole
+
+    // test case 2 (no error because it is restricted to type)
+    subkind TestSubkindType of types
+    phase TestPhaseType of types
+    role TestRoleType of types
+    historicalRole TestHistoricalRoleType of types
 }

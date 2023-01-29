@@ -1,14 +1,104 @@
-module UltimateSortalValidator {
-    kind Person
-    kind PersonTest specializes Person
-    relator PersonTest2 specializes Person
-    collective PersonTest3 specializes Person
-    quantity PersonTest4 specializes Person
-    quality PersonTest5 specializes Person
-    mode PersonTest6 specializes Person
-    intrinsicMode PersonTest7 specializes Person
-    extrinsicMode PersonTest8 specializes Person
+// test case 1
+module KindUltimateSortalValidator {
+    kind KindUltimateSortal
 
-    // Todos os ultimate sortals
-    // 'kind' | 'relator' | 'collective' | 'quantity' | 'quality' | 'mode' | 'intrinsicMode' | 'extrinsicMode'
+    kind PersonError specializes KindUltimateSortal
+    collective CollectiveError specializes KindUltimateSortal
+    quantity QuantityError specializes KindUltimateSortal
+    relator RelatorError specializes KindUltimateSortal
+    quality QualityError specializes KindUltimateSortal
+    mode ModeError specializes KindUltimateSortal
+    intrinsicMode  IntrinsicModeError specializes KindUltimateSortal
+    extrinsicMode ExtrinsicModeError specializes KindUltimateSortal
+}
+// test case 2
+module CollectiveUltimateSortalValidator {
+    collective CollectiveUltimateSortal
+
+    kind PersonError specializes CollectiveUltimateSortal
+    collective CollectiveError specializes CollectiveUltimateSortal
+    quantity QuantityError specializes CollectiveUltimateSortal
+    relator RelatorError specializes CollectiveUltimateSortal
+    quality QualityError specializes CollectiveUltimateSortal
+    mode ModeError specializes CollectiveUltimateSortal
+    intrinsicMode  IntrinsicModeError specializes CollectiveUltimateSortal
+    extrinsicMode ExtrinsicModeError specializes CollectiveUltimateSortal
+}
+// test case 3
+module QuantityUltimateSortalValidator {
+    quantity QuantityUltimateSortal
+
+    kind PersonError specializes QuantityUltimateSortal
+    collective CollectiveError specializes QuantityUltimateSortal
+    quantity QuantityError specializes QuantityUltimateSortal
+    relator RelatorError specializes QuantityUltimateSortal
+    quality QualityError specializes QuantityUltimateSortal
+    mode ModeError specializes QuantityUltimateSortal
+    intrinsicMode  IntrinsicModeError specializes QuantityUltimateSortal
+    extrinsicMode ExtrinsicModeError specializes QuantityUltimateSortal
+}
+// test case 4
+module RelatorUltimateSortalValidator {
+    relator RelatorUltimateSortal
+
+    kind PersonError specializes RelatorUltimateSortal
+    collective CollectiveError specializes RelatorUltimateSortal
+    quantity QuantityError specializes RelatorUltimateSortal
+    relator RelatorError specializes RelatorUltimateSortal
+    quality QualityError specializes RelatorUltimateSortal
+    mode ModeError specializes RelatorUltimateSortal
+    intrinsicMode  IntrinsicModeError specializes RelatorUltimateSortal
+    extrinsicMode ExtrinsicModeError specializes RelatorUltimateSortal
+}
+// test case 5
+module QualityUltimateSortalValidator {
+    quality QualityUltimateSortal
+
+    kind PersonError specializes QualityUltimateSortal
+    collective CollectiveError specializes QualityUltimateSortal
+    quantity QuantityError specializes QualityUltimateSortal
+    relator RelatorError specializes QualityUltimateSortal
+    quality QualityError specializes QualityUltimateSortal
+    mode ModeError specializes QualityUltimateSortal
+    intrinsicMode  IntrinsicModeError specializes QualityUltimateSortal
+    extrinsicMode ExtrinsicModeError specializes QualityUltimateSortal
+}
+// test case 6
+module ModeUltimateSortalValidator {
+    mode ModeUltimateSortal
+
+    kind PersonError specializes ModeUltimateSortal
+    collective CollectiveError specializes ModeUltimateSortal
+    quantity QuantityError specializes ModeUltimateSortal
+    relator RelatorError specializes ModeUltimateSortal
+    quality QualityError specializes ModeUltimateSortal
+    mode ModeError specializes ModeUltimateSortal
+    intrinsicMode  IntrinsicModeError specializes ModeUltimateSortal
+    extrinsicMode ExtrinsicModeError specializes ModeUltimateSortal
+}
+// test case 7
+module IntrinsicModeUltimateSortalValidator {
+    intrinsicMode IntrinsicModeUltimateSortal
+
+    kind PersonError specializes IntrinsicModeUltimateSortal
+    collective CollectiveError specializes IntrinsicModeUltimateSortal
+    quantity QuantityError specializes IntrinsicModeUltimateSortal
+    relator RelatorError specializes IntrinsicModeUltimateSortal
+    quality QualityError specializes IntrinsicModeUltimateSortal
+    mode ModeError specializes IntrinsicModeUltimateSortal
+    intrinsicMode  IntrinsicModeError specializes IntrinsicModeUltimateSortal
+    extrinsicMode ExtrinsicModeError specializes IntrinsicModeUltimateSortal
+}
+// test case 8
+module ExtrinsicModeUltimateSortalValidator {
+    extrinsicMode ExtrinsicModeUltimateSortal
+
+    kind PersonError specializes ExtrinsicModeUltimateSortal
+    collective CollectiveError specializes ExtrinsicModeUltimateSortal
+    quantity QuantityError specializes ExtrinsicModeUltimateSortal
+    relator RelatorError specializes ExtrinsicModeUltimateSortal
+    quality QualityError specializes ExtrinsicModeUltimateSortal
+    mode ModeError specializes ExtrinsicModeUltimateSortal
+    intrinsicMode  IntrinsicModeError specializes ExtrinsicModeUltimateSortal
+    extrinsicMode ExtrinsicModeError specializes ExtrinsicModeUltimateSortal
 }
