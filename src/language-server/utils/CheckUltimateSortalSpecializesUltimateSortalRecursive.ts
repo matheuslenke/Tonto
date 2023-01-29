@@ -1,3 +1,4 @@
+import { ErrorMessages } from "./../models/ErrorMessages";
 import { ValidationAcceptor } from "langium";
 import { ClassDeclaration } from "../generated/ast";
 import { OntologicalCategoryEnum } from "../models/OntologicalCategory";
@@ -12,7 +13,8 @@ const checkUltimateSortalSpecializesUltimateSortalRecursive = (
       return;
     }
 
-    const refOntologicalCategory = specItem.classElementType?.ontologicalCategory;
+    const refOntologicalCategory =
+      specItem.classElementType?.ontologicalCategory;
 
     if (
       refOntologicalCategory === OntologicalCategoryEnum.KIND ||
@@ -24,11 +26,9 @@ const checkUltimateSortalSpecializesUltimateSortalRecursive = (
       refOntologicalCategory === OntologicalCategoryEnum.INTRINSIC_MODE ||
       refOntologicalCategory === OntologicalCategoryEnum.EXTRINSIC_MODE
     ) {
-      accept(
-        "error",
-        "Classes representing ultimate sortals cannot specialize other ultimate sortals",
-        { node: actualElement }
-      );
+      accept("error", ErrorMessages.ultimateSortalSpecializesUltimateSortal, {
+        node: actualElement,
+      });
       return;
     } else {
       checkUltimateSortalSpecializesUltimateSortalRecursive(specItem, accept);
