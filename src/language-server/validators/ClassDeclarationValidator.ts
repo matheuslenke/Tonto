@@ -9,6 +9,8 @@ import {
 } from "../models/OntologicalCategory";
 import {
   allowedStereotypeRestrictedToMatches,
+  hasNonSortalStereotype,
+  hasSortalStereotype,
   isAntiRigidStereotype,
   isRigidStereotype,
   isSemiRigidStereotype,
@@ -207,7 +209,7 @@ export class ClassDeclarationValidator {
   }
 
   /**
-   * Verifica se existem nomes de referência duplicados dentro da classe
+   * Verify if there are duplicated declaration names
    */
   checkDuplicatedReferenceNames(
     classElement: ClassDeclaration,
@@ -230,9 +232,8 @@ export class ClassDeclarationValidator {
   }
 
   /**
-   * Verifica se a classe não está restrita à alguma Nature incompatível com o
-   * estereótipo da classe. Checar o array allowedStereotypeRestrictedToMatches
-   * para ver as restrições
+   * Verify if the class is not restricted with an incompatible Nature with this
+   * class stereotype.
    */
   checkCompatibleNatures(
     classDeclaration: ClassDeclaration,
@@ -282,7 +283,8 @@ export class ClassDeclarationValidator {
   }
 
   /**
-   * Verifica se a classe restringe Natures que sua classe pai também restringe
+   * Verify if the class restricts to Natures that is general class also
+   * restricts
    */
   checkSpecializationNatureRestrictions(
     classDeclaration: ClassDeclaration,
@@ -320,8 +322,7 @@ export class ClassDeclarationValidator {
   }
 
   /**
-   * Verifica se a classe é do tipo que é permitido pelas Natures de sua classe
-   * pai
+   * Verify if the class is specializing a Nature permitted by its general class
    */
   checkSpecializationOfCorrectNature(
     classDeclaration: ClassDeclaration,
@@ -382,17 +383,10 @@ export class ClassDeclarationValidator {
    * Verifica se a classe é da categoria TYPE, e caso seja, se sua meta-propriedade
    * Powertype está definida
    */
-  checkMissingIsPowertype(
-    classDeclaration: ClassDeclaration,
-    accept: ValidationAcceptor
-  ): void {
-    const ontologicalCategory =
-      classDeclaration.classElementType.ontologicalCategory;
-
-    if (ontologicalCategory === OntologicalCategoryEnum.TYPE) {
-      // Não tem definido a meta-propriedade Powertype
-    }
-  }
+  // TODO: Not implemented
+  checkMissingIsPowertype(): // classDeclaration: ClassDeclaration,
+  // accept: ValidationAcceptor
+  void {}
 
   /*
    * Checks if an Element has a ciclic specialization
@@ -411,36 +405,34 @@ export class ClassDeclarationValidator {
   }
 
   /**
-   * Verifica se é uma generalização entre duas classes. Verifica se o general
-   * possui um estereótipo Sortal e o specific possui um estereótipo não
-   * sortal, se tiver, a generalização é proibida.
+   * Verify if the general class is a Sortal stereotype and the specific class
+   * has a non-Sortal stereotype. This generalization is forbidden
    */
   checkGeneralizationSortality(
     classDeclaration: ClassDeclaration,
     accept: ValidationAcceptor
   ) {
-    // const generalItems = classDeclaration.specializationEndurants;
-    // console.debug(classDeclaration.classElementType);
-    // const isNonSortal = hasNonSortalStereotype(
-    //   classDeclaration.classElementType.ontologicalCategory
-    // );
-    // if (isNonSortal) {
-    //   generalItems.forEach((general) => {
-    //     const generalClass = general.ref as ClassDeclaration;
-    //     if (
-    //       hasSortalStereotype(generalClass.classElementType.ontologicalCategory)
-    //     ) {
-    //       accept(
-    //         "error",
-    //         `Prohibited generalization: non-sortal specializing a sortal. The non-sortal class ${classDeclaration.name} cannot specialize the sortal class ${generalClass.name}`,
-    //         {
-    //           node: classDeclaration,
-    //           property: "specializationEndurants",
-    //         }
-    //       );
-    //     }
-    //   });
-    // }
+    const generalItems = classDeclaration.specializationEndurants;
+    const isNonSortal = hasNonSortalStereotype(
+      classDeclaration.classElementType.ontologicalCategory
+    );
+    if (isNonSortal) {
+      generalItems.forEach((general) => {
+        const generalClass = general.ref as ClassDeclaration;
+        if (
+          hasSortalStereotype(generalClass.classElementType.ontologicalCategory)
+        ) {
+          accept(
+            "error",
+            `Prohibited generalization: non-sortal specializing a sortal. The non-sortal class ${classDeclaration.name} cannot specialize the sortal class ${generalClass.name}`,
+            {
+              node: classDeclaration,
+              property: "specializationEndurants",
+            }
+          );
+        }
+      });
+    }
   }
 
   /**

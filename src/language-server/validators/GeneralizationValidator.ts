@@ -1,6 +1,8 @@
 import { ValidationAcceptor } from "langium";
 import { ClassDeclaration, GeneralizationSet } from "../generated/ast";
 import {
+  hasNonSortalStereotype,
+  hasSortalStereotype,
   isAntiRigidStereotype,
   isRigidStereotype,
   isSemiRigidStereotype,
@@ -76,9 +78,9 @@ export class GeneralizationValidator {
   }
 
   /**
-   * Verifica se é uma generalização entre duas classes. Verifica se o general
-   * possui um estereótipo Sortal e o specific possui um estereótipo não
-   * sortal, se tiver, a generalização é proibida.
+   * Verify if it is a generalization between two classes. Verify if
+   * the general has a sortal stereotype and the specific has a non
+   * sortal stereotype. If it has, the generalization is forbidden
    */
   checkGeneralizationSortality(
     genSet: GeneralizationSet,
@@ -97,28 +99,35 @@ export class GeneralizationValidator {
     });
 
     if (generalItem.$type === "ClassDeclaration") {
-      // if (hasSortalStereotype(generalItem.classElementType.ontologicalCategory)) {
-      //   specificsItems.forEach(specific => {
-      //     const specificClass = specific.ref as ClassDeclaration
-      //     if (hasNonSortalStereotype(specificClass.classElementType.ontologicalCategory)) {
-      //       accept("error", `Prohibited generalization: non-sortal specializing a sortal. The non-sortal class ${specificClass.name} cannot specialize the sortal class ${generalItem.name}`, {
-      //         node: genSet,
-      //         property: "generalItem"
-      //       })
-      //       accept("error", `Prohibited generalization: non-sortal specializing a sortal. The non-sortal class ${specificClass.name} cannot specialize the sortal class ${generalItem.name}`, {
-      //         node: genSet,
-      //         property: "specificItems"
-      //       })
-      //     }
-      //   })
-      // }
+      if (
+        hasSortalStereotype(generalItem.classElementType.ontologicalCategory)
+      ) {
+        specificsItems.forEach((specific, index) => {
+          const specificClass = specific.ref as ClassDeclaration;
+          if (
+            hasNonSortalStereotype(
+              specificClass.classElementType.ontologicalCategory
+            )
+          ) {
+            accept(
+              "error",
+              `Prohibited generalization: non-sortal specializing a sortal. The non-sortal class ${specificClass.name} cannot specialize the sortal class ${generalItem.name}`,
+              {
+                node: genSet,
+                property: "specificItems",
+                index: index,
+              }
+            );
+          }
+        });
+      }
     }
   }
 
   /**
-   * Verifica se é uma generalização entre duas classes. Verifica se a general
-   * tem um estereótipo Anti rigido e a specific tem um estereótipo rígido
-   * ou Anti rígido
+   * Verify if it is a generalization between two classes. Verify if the general
+   * has an Anti Rigid stereotype and the specific has a Rigid or Anti Rigid
+   * stereotype.
    */
   checkRigidSpecializesAntiRigid(
     genSet: GeneralizationSet,
@@ -173,9 +182,9 @@ export class GeneralizationValidator {
   }
 
   /**
-   * Verifica se é uma generalização entre duas classes. Verifica se a general
-   * tem um estereótipo Anti rigido e a specific tem um estereótipo rígido
-   * ou Anti rígido
+   * Verify if it is a generalization between two classes. Verify if the general
+   * class has an Anti Rigid stereotype and the specific has an Rigid or Anti
+   * Rigid stereotype
    */
   checkGeneralizationDataType(
     genSet: GeneralizationSet,
