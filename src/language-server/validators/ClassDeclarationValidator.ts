@@ -1,11 +1,11 @@
-import { ErrorMessages } from "./../models/ErrorMessages";
 import { ValidationAcceptor } from "langium";
+import { ClassDeclaration } from "../generated/ast";
 import { natureUtils } from "../models/Natures";
 import {
   getOntologicalCategory,
   isSortalOntoCategory,
   isUltimateSortalOntoCategory,
-  OntologicalCategoryEnum,
+  OntologicalCategoryEnum
 } from "../models/OntologicalCategory";
 import {
   allowedStereotypeRestrictedToMatches,
@@ -13,13 +13,13 @@ import {
   hasSortalStereotype,
   isAntiRigidStereotype,
   isRigidStereotype,
-  isSemiRigidStereotype,
+  isSemiRigidStereotype
 } from "../models/StereotypeUtils";
 import { checkCircularSpecializationRecursive } from "../utils/CheckCircularSpecializationRecursive";
 import { checkNatureCompatibleWithStereotype } from "../utils/checkNatureCompatibleWithStereotype";
 import { checkSortalSpecializesUniqueUltimateSortalRecursive } from "../utils/CheckSortalSpecializesUniqueUltimateSortalRecursive";
 import { checkUltimateSortalSpecializesUltimateSortalRecursive } from "../utils/CheckUltimateSortalSpecializesUltimateSortalRecursive";
-import { ClassDeclaration } from "../generated/ast";
+import { ErrorMessages } from "./../models/ErrorMessages";
 
 export class ClassDeclarationValidator {
   /**
@@ -197,7 +197,6 @@ export class ClassDeclarationValidator {
           specDeclaration.classElementType.ontologicalCategory;
 
         if (isAntiRigidStereotype(specOntologicalCategory)) {
-          // console.log("Error na referencia")
           accept(
             "error",
             `Prohibited specialization: rigid/semi-rigid specializing an anti-rigid. The rigid/semi-rigid class ${classDeclaration.name} cannot specialize the anti-rigid class ${specDeclaration.name}`,

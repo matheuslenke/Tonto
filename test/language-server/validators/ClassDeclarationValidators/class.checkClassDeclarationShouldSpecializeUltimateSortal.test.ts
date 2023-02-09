@@ -3,7 +3,7 @@ import { ErrorMessages } from "../../../../src/language-server/models/ErrorMessa
 import { createTontoServices } from "../../../../src/language-server/tonto-module";
 import { validationHelper } from "../../../../src/test/tonto-test";
 
-describe("checkSortalSpecializeUniqueUltimateSortal", async () => {
+describe("checkClassDeclarationShouldSpecializeUltimateSortal", async () => {
   const services = createTontoServices(EmptyFileSystem);
   const validate = validationHelper(services.Tonto);
 

@@ -10,3 +10,5 @@ coverage
 
 **/generated/*.tonto
 **/generated/*.json
+
+.yarn
