@@ -104,6 +104,7 @@ export interface ComplexDataType extends AstNode {
     readonly $type: 'ComplexDataType';
     attributes: Array<Attribute>
     name: string
+    ontologicalNature?: ElementOntologicalNature
 }
 
 export const ComplexDataType = 'ComplexDataType';
@@ -127,7 +128,7 @@ export function isContextModule(item: unknown): item is ContextModule {
 }
 
 export interface ElementOntologicalNature extends AstNode {
-    readonly $container: ClassDeclaration;
+    readonly $container: ClassDeclaration | ComplexDataType;
     readonly $type: 'ElementOntologicalNature';
     natures: Array<OntologicalNature>
 }

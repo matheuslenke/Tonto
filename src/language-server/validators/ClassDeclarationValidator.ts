@@ -19,6 +19,7 @@ import { checkCircularSpecializationRecursive } from "../utils/CheckCircularSpec
 import { checkNatureCompatibleWithStereotype } from "../utils/checkNatureCompatibleWithStereotype";
 import { checkSortalSpecializesUniqueUltimateSortalRecursive } from "../utils/CheckSortalSpecializesUniqueUltimateSortalRecursive";
 import { checkUltimateSortalSpecializesUltimateSortalRecursive } from "../utils/CheckUltimateSortalSpecializesUltimateSortalRecursive";
+import { formPhrase } from "../utils/formPhrase";
 import { ErrorMessages } from "./../models/ErrorMessages";
 
 export class ClassDeclarationValidator {
@@ -268,12 +269,14 @@ export class ClassDeclarationValidator {
           return false;
         });
         if (incompatibleNatures.length >= 1) {
+          const naturesString = formPhrase(incompatibleNatures)
+
           accept(
             "error",
-            `Incompatible stereotype and Nature restriction combination. Class ${classDeclaration.name} has its value for 'restrictedTo' incompatible with the stereotype`,
+            `Incompatible stereotype and Nature restriction combination. Class ${classDeclaration.name} has its value for 'restrictedTo' incompatible with the following natures: ${naturesString}`,
             {
               node: classDeclaration,
-              property: "name",
+              property: "ontologicalNatures",
             }
           );
         }
