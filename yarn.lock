@@ -2845,9 +2845,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ontouml-js@file:../ontouml-js::locator=tonto%40workspace%3A.":
+"ontouml-js@https://github.com/matheuslenke/ontouml-js#feature/include-types-in-build":
   version: 0.5.0
-  resolution: "ontouml-js@file:../ontouml-js#../ontouml-js::hash=3ccabb&locator=tonto%40workspace%3A."
+  resolution: "ontouml-js@https://github.com/matheuslenke/ontouml-js.git#commit=3ac6d342974dc0092c33f86df68f06721c29f76d"
   dependencies:
     "@babel/runtime": ^7.12.13
     "@types/n3": ^1.4.4
@@ -2860,7 +2860,7 @@ __metadata:
     tslib: ~1.10.0
     uniqid: ^5.3.0
     validate.io-uri: ^1.0.0
-  checksum: bdb33563b520241901c7a071214b470b8cd381ef6fe75367880951dfb3c1d0f8220e34f6fa5315089c240ca4ddc28d7005a5f27200386aa0cfa0e67e56610562
+  checksum: db545a4c41e314370ad5ab8624392969047462e81eab63b7c14dd3ea742804ad364b8a273db6cf5f6d41e55ce82f29dc63da93173eba2bfc2a21a5debbfc7ef0
   languageName: node
   linkType: hard
 
@@ -3543,7 +3543,7 @@ __metadata:
     langium: ^1.0.0
     langium-cli: ^1.0.0
     node-fetch-native: ^1.0.1
-    ontouml-js: ../ontouml-js
+    ontouml-js: "https://github.com/matheuslenke/ontouml-js#feature/include-types-in-build"
     ontouml-schema: 0.2.4
     prettier: ^2.8.2
     typescript: ^4.7.4
@@ -3633,11 +3633,11 @@ __metadata:
 
 "typescript@patch:typescript@^4.7.4#~builtin<compat/typescript>":
   version: 4.9.4
-  resolution: "typescript@patch:typescript@npm%3A4.9.4#~builtin<compat/typescript>::version=4.9.4&hash=d73830"
+  resolution: "typescript@patch:typescript@npm%3A4.9.4#~builtin<compat/typescript>::version=4.9.4&hash=23ec76"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 37f6e2c3c5e2aa5934b85b0fddbf32eeac8b1bacf3a5b51d01946936d03f5377fe86255d4e5a4ae628fd0cd553386355ad362c57f13b4635064400f3e8e05b9d
+  checksum: 3e2ab0772908676d9b9cb83398c70003a3b08e1c6b3b122409df9f4b520f2fdaefa20c3d7d57dce283fed760ac94b3ce94d4a7fa875127b67852904425a1f0dc
   languageName: node
   linkType: hard
 

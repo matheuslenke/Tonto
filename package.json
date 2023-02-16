@@ -88,7 +88,7 @@
         "jsonfile": "^6.1.0",
         "langium": "^1.0.0",
         "node-fetch-native": "^1.0.1",
-        "ontouml-js": "../ontouml-js",
+        "ontouml-js": "https://github.com/matheuslenke/ontouml-js#feature/include-types-in-build",
         "ontouml-schema": "0.2.4",
         "vscode-languageclient": "^8.0.2",
         "vscode-languageserver": "^8.0.2",
@@ -119,5 +119,5 @@
         "@typescript-eslint/parser": "^1.11.0",
         "@typescript-eslint/eslint-plugin": "^1.11.0"
     },
-    "packageManager": "yarn@3.3.0"
+    "packageManager": "yarn@3.4.1"
 }
