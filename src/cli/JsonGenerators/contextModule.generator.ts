@@ -12,21 +12,22 @@ export function contextModuleGenerator(
   contextModule: ContextModule,
   packageItem: Package
 ): void {
-  let classes: Class[] = [];
-  let dataTypes: Class[] = createBaseDatatypes(packageItem);
-  let relations: Relation[] = [];
+  const classes: Class[] = [];
+  const dataTypes: Class[] = createBaseDatatypes(packageItem);
+  const relations: Relation[] = [];
   // Creating base datatypes
 
   contextModule.declarations.forEach((declaration) => {
     switch (declaration.$type) {
-    case "ClassDeclaration":
+    case "ClassDeclaration": {
       const classElement = declaration as ClassDeclaration;
       const newClass = classElementGenerator(classElement, packageItem);
       attributeGenerator(classElement, newClass, dataTypes);
       classes.push(newClass);
       break;
+    }
 
-    case "ComplexDataType":
+    case "ComplexDataType": {
       const dataType = declaration as ComplexDataType;
       const newDataType = customDataTypeGenerator(
         dataType,
@@ -35,11 +36,13 @@ export function contextModuleGenerator(
       );
       attributeGenerator(dataType, newDataType, dataTypes);
       break;
+    }
 
-    case "Enum":
+    case "Enum": {
       const enumData = declaration as Enum;
       enumGenerator(enumData, packageItem);
       break;
+    }
     }
   });
 
@@ -80,7 +83,7 @@ function generateExternalRelations(
 ): void {
   contextModule.declarations.forEach((declaration) => {
     switch (declaration.$type) {
-    case "ElementRelation":
+    case "ElementRelation": {
       const elementRelation = declaration as ElementRelation;
       const createdRelation = relationGenerator(
         elementRelation,
@@ -90,6 +93,7 @@ function generateExternalRelations(
       if (createdRelation) {
         relations.push(createdRelation);
       }
+    }
     }
   });
 }

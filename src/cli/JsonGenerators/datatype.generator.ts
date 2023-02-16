@@ -14,7 +14,7 @@ export function customDataTypeGenerator(
 
     if (element.attributeType) {
       switch (element.attributeType) {
-      case "date":
+      case "date": {
         const dateType = dataTypes.find(
           item => item.name.getText() === "Date"
         );
@@ -25,7 +25,8 @@ export function customDataTypeGenerator(
           );
         }
         break;
-      case "number":
+      }
+      case "number": {
         const numberType = dataTypes.find(
           item => item.name.getText() === "number"
         );
@@ -36,8 +37,9 @@ export function customDataTypeGenerator(
           );
         }
         break;
+      }
 
-      case "boolean":
+      case "boolean": {
         const booleanType = dataTypes.find(
           item => item.name.getText() === "boolean"
         );
@@ -48,8 +50,9 @@ export function customDataTypeGenerator(
           );
         }
         break;
+      }
 
-      case "string":
+      case "string": {
         const stringType = dataTypes.find(
           item => item.name.getText() === "string"
         );
@@ -60,6 +63,7 @@ export function customDataTypeGenerator(
           );
         }
         break;
+      }
       }
     } else if (element.attributeTypeRef !== undefined) {
       const customType = dataTypes.find(

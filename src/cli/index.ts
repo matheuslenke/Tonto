@@ -23,7 +23,7 @@ export default function(): void {
 
   program
     .command("import")
-    .argument("<file>", `source file (possible file extensions: json)`)
+    .argument("<file>", "source file (possible file extensions: json)")
     .option("-d, --destination <dir>", "destination directory of generating")
     .description("generates a tonto file from a JSON file")
     .action(importAction);

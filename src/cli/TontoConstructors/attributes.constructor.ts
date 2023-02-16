@@ -21,11 +21,11 @@ export function constructAttributes(
       );
 
       if (attribute.isReadOnly || attribute.isOrdered || attribute.isDerived) {
-        fileNode.append(` { `);
+        fileNode.append(" { ");
         attribute.isReadOnly && fileNode.append("const ");
         attribute.isOrdered && fileNode.append("ordered ");
         attribute.isDerived && fileNode.append("derived");
-        fileNode.append(` } `);
+        fileNode.append(" } ");
       }
 
       fileNode.append(NL);

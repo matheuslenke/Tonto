@@ -92,7 +92,7 @@ This is the instructions on setting up your project locally. To get a local copy
 This is all the tools you need installed to run the project and the versions that are preferred
 * nodejs - v16.9.1 or higher
 * npm - 7.21.1 or higher
-* Yarn - 1.22.18 (not mandatory, but really recommended)
+* Yarn - 1.22.18 (not mandatory, but recommended)
 
 
 ### ⚙️ Initializing

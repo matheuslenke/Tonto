@@ -24,9 +24,9 @@ import { TontoValidator } from "./validators/TontoValidator";
  * Declaration of custom services - add your own service classes here.
  */
 export type TontoAddedServices = {
-  validation: {
-    TontoValidator: TontoValidator;
-  };
+    validation: {
+        TontoValidator: TontoValidator;
+    };
 };
 
 /**
@@ -41,8 +41,8 @@ export type TontoServices = LangiumServices & TontoAddedServices;
  * selected services, while the custom services must be fully specified.
  */
 export const TontoModule: Module<
-  TontoServices,
-  PartialLangiumServices & TontoAddedServices
+TontoServices,
+PartialLangiumServices & TontoAddedServices
 > = {
   references: {
     ScopeComputation: services => new TontoScopeComputation(services),
@@ -78,9 +78,9 @@ export const TontoModule: Module<
 export function createTontoServices(
   context: DefaultSharedModuleContext
 ): {
-  shared: LangiumSharedServices;
-  Tonto: TontoServices;
-} {
+        shared: LangiumSharedServices;
+        Tonto: TontoServices;
+    } {
   const shared = inject(
     createDefaultSharedModule(context),
     TontoGeneratedSharedModule

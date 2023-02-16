@@ -3,10 +3,10 @@ import { Model } from "../../language-server/generated/ast";
 import { createTontoServices } from "../../language-server/tonto-module";
 import { extractAstNode } from "../cli-util";
 import { generateJSONFile } from "../jsonGenerator";
-import { NodeFileSystem } from 'langium/node';
+import { NodeFileSystem } from "langium/node";
 
 export type GenerateOptions = {
-  destination?: string;
+    destination?: string;
 };
 
 export const generateAction = async (

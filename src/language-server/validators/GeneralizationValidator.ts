@@ -121,7 +121,7 @@ export class GeneralizationValidator {
                   index: index,
                 }
               );
-           }
+            }
           }
         });
       }
@@ -218,7 +218,7 @@ export class GeneralizationValidator {
         if (refOntologicalCategory !== "datatype") {
           accept(
             "error",
-            `Prohibited generalization: datatype specialization. A datatype can only be in generalization relation with other datatypes`,
+            "Prohibited generalization: datatype specialization. A datatype can only be in generalization relation with other datatypes",
             {
               node: genSet,
               property: "generalItem",
@@ -226,7 +226,7 @@ export class GeneralizationValidator {
           );
           accept(
             "error",
-            `Prohibited generalization: datatype specialization. A datatype can only be in generalization relation with other datatypes`,
+            "Prohibited generalization: datatype specialization. A datatype can only be in generalization relation with other datatypes",
             {
               node: genSet,
               property: "specificItems",

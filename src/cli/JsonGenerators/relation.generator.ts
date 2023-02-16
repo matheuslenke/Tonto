@@ -20,7 +20,7 @@ export function relationGenerator(
   const sourceClass = sourceClassIncoming ?? relationItem.firstEnd?.ref;
   const destinationClass = relationItem.secondEnd.ref;
 
-  let relationStereotype = getStereotype(relationItem.relationType);
+  const relationStereotype = getStereotype(relationItem.relationType);
 
   if (sourceClass && destinationClass) {
     const sourceClassAlreadyCreated = classes.find(

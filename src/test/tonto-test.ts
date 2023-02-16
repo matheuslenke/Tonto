@@ -19,9 +19,11 @@ export function parseHelper<T extends AstNode = AstNode>(
     const uri = URI.parse(
       `file:///${randomNumber}${metaData.fileExtensions[0]}`
     );
-    const document = services.shared.workspace.LangiumDocumentFactory.fromString<
-      T
-    >(input, uri);
+    const document =
+      services.shared.workspace.LangiumDocumentFactory.fromString<T>(
+        input,
+        uri
+      );
     services.shared.workspace.LangiumDocuments.addDocument(document);
     await documentBuilder.build([document]);
     return document;

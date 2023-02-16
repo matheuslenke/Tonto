@@ -52,7 +52,7 @@ export class ContextModuleValidator {
     contextModule: ContextModule,
     accept: ValidationAcceptor
   ): void {
-    let names: string[] = [];
+    const names: string[] = [];
 
     contextModule.declarations.forEach((declaration) => {
       if (declaration.$type === "ElementRelation") {

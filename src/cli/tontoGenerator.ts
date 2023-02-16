@@ -21,11 +21,11 @@ export function generateTontoFile(
 }
 
 interface GeneratorContext {
-  ontoumlElements: OntoumlElement[];
-  name: string;
-  fileName: string;
-  destination: string;
-  fileNode: CompositeGeneratorNode;
+    ontoumlElements: OntoumlElement[];
+    name: string;
+    fileName: string;
+    destination: string;
+    fileNode: CompositeGeneratorNode;
 }
 
 function generate(ctx: GeneratorContext): string {
@@ -42,8 +42,8 @@ function generate(ctx: GeneratorContext): string {
 }
 
 interface FilePathData {
-  destination: string;
-  name: string;
+    destination: string;
+    name: string;
 }
 
 export function customExtractDestinationAndName(

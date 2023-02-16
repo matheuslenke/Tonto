@@ -39,7 +39,7 @@ function startLanguageClient(context: vscode.ExtensionContext): LanguageClient {
   // The debug options for the server
   // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging.
   // By setting `process.env.DEBUG_BREAK` to a truthy value, the language server will wait until a debugger is attached.
-  const debugOptions = { execArgv: ['--nolazy', `--inspect${process.env.DEBUG_BREAK ? '-brk' : ''}=${process.env.DEBUG_SOCKET || '6009'}`] };
+  const debugOptions = { execArgv: ["--nolazy", `--inspect${process.env.DEBUG_BREAK ? "-brk" : ""}=${process.env.DEBUG_SOCKET || "6009"}`] };
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
   const serverOptions: ServerOptions = {
@@ -195,20 +195,20 @@ function createValidationCommands(context: vscode.ExtensionContext) {
 }
 
 function updateJsonStatusBarItem(): void {
-  generateJsonStatusBarItem.text = `$(bracket-dot) Generate JSON from Model`;
+  generateJsonStatusBarItem.text = "$(bracket-dot) Generate JSON from Model";
   generateJsonStatusBarItem.show();
 }
 
 function updateTontoStatusBarItem(): void {
-  generateTontoStatusBarItem.text = `$(keybindings-sort) Generate Tonto`;
+  generateTontoStatusBarItem.text = "$(keybindings-sort) Generate Tonto";
   generateTontoStatusBarItem.show();
 }
 function updateValidationStatusBarItem(): void {
-  validationStatusBarItem.text = `$(check-all) Validate Model`;
+  validationStatusBarItem.text = "$(check-all) Validate Model";
   validationStatusBarItem.show();
 }
 
-async function generateJson(uri: vscode.Uri, event?: string) {
+async function generateJson(uri: vscode.Uri) {
   if (uri.scheme == "file") {
     vscode.workspace.openTextDocument(uri).then(async (document) => {
       if (document.languageId === "tonto") {
@@ -216,17 +216,17 @@ async function generateJson(uri: vscode.Uri, event?: string) {
         generateAction(document.fileName, {
           destination: destination,
         });
-        vscode.window.showInformationMessage(`JSON File generated`);
+        vscode.window.showInformationMessage("JSON File generated");
       } else {
         vscode.window.showInformationMessage(
-          `Failed! File needs to have the .tonto extension`
+          "Failed! File needs to have the .tonto extension"
         );
       }
     });
   }
 }
 
-async function generateTonto(uri: vscode.Uri, event?: string) {
+async function generateTonto(uri: vscode.Uri) {
   if (uri.scheme == "file") {
     vscode.workspace.openTextDocument(uri).then(async (document) => {
       if (document.languageId === "json") {
@@ -240,17 +240,17 @@ async function generateTonto(uri: vscode.Uri, event?: string) {
           vscode.window.showInformationMessage(`Error! ${result.message}`);
         }
       } else {
-        vscode.window.showInformationMessage(`Failed! File is not a JSON`);
+        vscode.window.showInformationMessage("Failed! File is not a JSON");
       }
     });
   }
 }
 
-async function validateModel(uri: vscode.Uri, event?: string) {
+async function validateModel(uri: vscode.Uri) {
   if (uri.scheme == "file") {
     vscode.workspace.openTextDocument(uri).then(async (document) => {
       if (document.languageId === "json") {
-        vscode.window.showInformationMessage(`Model Validated!`);
+        vscode.window.showInformationMessage("Model Validated!");
       } else if (document.languageId === "tonto") {
         const result = await validateAction(document.fileName);
         if (result) {
@@ -273,12 +273,12 @@ async function validateModel(uri: vscode.Uri, event?: string) {
           }
         } else {
           vscode.window.showInformationMessage(
-            `Failed! Validation request returned nothing`
+            "Failed! Validation request returned nothing"
           );
         }
       } else {
         vscode.window.showInformationMessage(
-          `Failed! File don't have .json or .tonto extension`
+          "Failed! File don't have .json or .tonto extension"
         );
       }
     });

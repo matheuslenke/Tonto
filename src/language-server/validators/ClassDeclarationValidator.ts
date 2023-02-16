@@ -217,7 +217,7 @@ export class ClassDeclarationValidator {
   ): void {
     const references = classElement.references;
 
-    let names: string[] = [];
+    const names: string[] = [];
 
     references.forEach((reference) => {
       const nameExists = names.find((name) => name === reference.name);
@@ -269,7 +269,7 @@ export class ClassDeclarationValidator {
           return false;
         });
         if (incompatibleNatures.length >= 1) {
-          const naturesString = formPhrase(incompatibleNatures)
+          const naturesString = formPhrase(incompatibleNatures);
 
           accept(
             "error",
@@ -299,7 +299,7 @@ export class ClassDeclarationValidator {
         let specializationDoesntExistsInParent = false;
         classDeclaration.specializationEndurants.forEach(
           (specializationEndurant) => {
-            let specializationNatures =
+            const specializationNatures =
               specializationEndurant.ref?.ontologicalNatures;
             const natureExists = specializationNatures?.natures.find(
               (specializationNature) => {
@@ -335,7 +335,7 @@ export class ClassDeclarationValidator {
       classDeclaration.classElementType?.ontologicalCategory;
 
     specializations.forEach((specialization) => {
-      let natures = specialization.ref?.ontologicalNatures?.natures;
+      const natures = specialization.ref?.ontologicalNatures?.natures;
       if (natures) {
         let hasCompatibleNatures = false;
         natures.forEach((nature) => {
@@ -364,7 +364,7 @@ export class ClassDeclarationValidator {
 
   checkNaturesOnlyOnNonSortals(
     classElement: ClassDeclaration,
-    accept: ValidationAcceptor
+    _: ValidationAcceptor
   ): void {
     const ElementNatures = classElement.ontologicalNatures;
     if (ElementNatures) {
@@ -386,9 +386,9 @@ export class ClassDeclarationValidator {
    * Powertype está definida
    */
   // TODO: Not implemented
-  checkMissingIsPowertype(): // classDeclaration: ClassDeclaration,
-  // accept: ValidationAcceptor
-  void {}
+  // checkMissingIsPowertype(): // classDeclaration: ClassDeclaration,
+  //   // accept: ValidationAcceptor
+  //   void { }
 
   /*
    * Checks if an Element has a ciclic specialization

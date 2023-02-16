@@ -14,55 +14,73 @@ export function classElementGenerator(
   classElement: ClassDeclaration,
   packageItem: Package
 ): Class {
-  if (!!classElement.classElementType) {
+  if (classElement.classElementType) {
     const stereotype = classElement.classElementType.ontologicalCategory;
     let natures: OntologicalNature[] = [];
     if (classElement.ontologicalNatures) {
       natures = getOntoUMLNatures(classElement.ontologicalNatures.natures);
     } else {
-      natures = getDefaultOntoUMLNature(classElement)
+      natures = getDefaultOntoUMLNature(classElement);
     }
     switch (stereotype) {
-    case "category":
+    case "category": {
       return packageItem.createCategory(classElement.name, natures);
-    case "mixin":
+    }
+    case "mixin": {
       return packageItem.createMixin(classElement.name, natures);
-    case "phaseMixin":
+    }
+    case "phaseMixin": {
       return packageItem.createPhaseMixin(classElement.name, natures);
-    case "roleMixin":
+    }
+    case "roleMixin": {
       return packageItem.createRoleMixin(classElement.name, natures);
-    case "historicalRoleMixin":
+    }
+    case "historicalRoleMixin": {
       return packageItem.createRoleMixin(classElement.name, natures);
-    case "event":
+    }
+    case "event": {
       return packageItem.createEvent(classElement.name);
-    case "kind":
+    }
+    case "kind": {
       return packageItem.createKind(classElement.name);
-    case "collective":
+    }
+    case "collective": {
       return packageItem.createCollective(classElement.name);
-    case "quantity":
+    }
+    case "quantity": {
       return packageItem.createQuantity(classElement.name);
-    case "quality":
+    }
+    case "quality": {
       return packageItem.createQuality(classElement.name);
-    case "mode":
+    }
+    case "mode": {
       return packageItem.createClass(
         classElement.name,
         ClassStereotype.MODE,
         [OntologicalNature.extrinsic_mode, OntologicalNature.intrinsic_mode]
       );
-    case "intrinsicMode":
+    }
+    case "intrinsicMode": {
       return packageItem.createIntrinsicMode(classElement.name);
-    case "extrinsicMode":
+    }
+    case "extrinsicMode": {
       return packageItem.createExtrinsicMode(classElement.name);
-    case "subkind":
+    }
+    case "subkind": {
       return packageItem.createSubkind(classElement.name);
-    case "phase":
+    }
+    case "phase": {
       return packageItem.createPhase(classElement.name);
-    case "role":
+    }
+    case "role": {
       return packageItem.createRole(classElement.name);
-    case "historicalRole":
+    }
+    case "historicalRole": {
       return packageItem.createHistoricalRole(classElement.name);
-    case "relator":
+    }
+    case "relator": {
       return packageItem.createRelator(classElement.name);
+    }
     }
   }
   return packageItem.createClass(classElement.name);
@@ -78,7 +96,7 @@ export function attributeGenerator(
 
     if (attribute.attributeType) {
       switch (attribute.attributeType) {
-      case "date":
+      case "date": {
         const dateType = dataTypes.find(
           (item) => item.name.getText() === "Date"
         );
@@ -89,7 +107,8 @@ export function attributeGenerator(
           );
         }
         break;
-      case "number":
+      }
+      case "number": {
         const numberType = dataTypes.find(
           (item) => item.name.getText() === "number"
         );
@@ -101,8 +120,9 @@ export function attributeGenerator(
           createdAttribute.cardinality.setOneToOne();
         }
         break;
+      }
 
-      case "boolean":
+      case "boolean": {
         const booleanType = dataTypes.find(
           (item) => item.name.getText() === "boolean"
         );
@@ -113,8 +133,9 @@ export function attributeGenerator(
           );
         }
         break;
+      }
 
-      case "string":
+      case "string": {
         const stringType = dataTypes.find(
           (item) => item.name.getText() === "string"
         );
@@ -125,6 +146,7 @@ export function attributeGenerator(
           );
         }
         break;
+      }
       }
     } else if (attribute.attributeTypeRef !== undefined) {
       const customType = dataTypes.find(
@@ -186,10 +208,10 @@ export function generalizationGenerator(
   model.createGeneralization(sourceClass, targetClass);
 }
 
-export function createInstantiation(  model: Package,
+export function createInstantiation(model: Package,
   sourceClass: Class,
   targetClass: Class) {
-  model.createInstantiationRelation(sourceClass, targetClass)
+  model.createInstantiationRelation(sourceClass, targetClass);
 }
 
 function getOntoUMLNatures(natures: Nature[]): OntologicalNature[] {
@@ -229,8 +251,8 @@ function getDefaultOntoUMLNature(element: ClassDeclaration): OntologicalNature[]
     element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.EVENT ||
     element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.SITUATION
   ) {
-    return [OntologicalNature.functional_complex]
+    return [OntologicalNature.functional_complex];
   } else {
-    return []
+    return [];
   }
 }

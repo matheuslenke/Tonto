@@ -10,7 +10,7 @@ export class ModelValidator {
     accept: ValidationAcceptor
   ): void {
     const modules = model.modules;
-    let names: string[] = [];
+    const names: string[] = [];
 
     modules.forEach((module) => {
       if (module.$type === "ContextModule") {

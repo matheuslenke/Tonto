@@ -10,55 +10,55 @@ function checkNatureCompatibleWithStereotype(
   stereotype: UltimateSortal | NonSortal | Sortal | undefined | string
 ): boolean {
   switch (nature) {
-    case "relators":
-      if (stereotype === "relator") {
-        return true;
-      }
-      return false;
-
-    case "collectives":
-      if (stereotype === "collective") {
-        return true;
-      }
-      return false;
-
-    case "extrinsic-modes":
-      if (stereotype === "extrinsicMode") {
-        return true;
-      }
-      return false;
-    case "functional-complexes":
+  case "relators":
+    if (stereotype === "relator") {
       return true;
+    }
+    return false;
 
-    case "intrinsic-modes":
-      if (stereotype === "intrinsicMode") {
-        return true;
-      }
-      return false;
-
-    case "objects":
+  case "collectives":
+    if (stereotype === "collective") {
       return true;
+    }
+    return false;
 
-    case "qualities":
-      if (stereotype === "quality") {
-        return true;
-      }
-      return false;
+  case "extrinsic-modes":
+    if (stereotype === "extrinsicMode") {
+      return true;
+    }
+    return false;
+  case "functional-complexes":
+    return true;
 
-    case "quantities":
-      if (stereotype === "quantity") {
-        return true;
-      }
-      return false;
+  case "intrinsic-modes":
+    if (stereotype === "intrinsicMode") {
+      return true;
+    }
+    return false;
 
-    case "types":
-      if (stereotype === "type") {
-        return true;
-      }
-      return false;
+  case "objects":
+    return true;
 
-    default:
-      return false;
+  case "qualities":
+    if (stereotype === "quality") {
+      return true;
+    }
+    return false;
+
+  case "quantities":
+    if (stereotype === "quantity") {
+      return true;
+    }
+    return false;
+
+  case "types":
+    if (stereotype === "type") {
+      return true;
+    }
+    return false;
+
+  default:
+    return false;
   }
 }
 

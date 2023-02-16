@@ -13,8 +13,8 @@ export class ComplexDataTypeValidator {
     complexDataType: ComplexDataType,
     accept: ValidationAcceptor
   ): void {
-    const elementNatures = complexDataType.ontologicalNature?.natures
-    const ontologicalCategory = OntologicalCategoryEnum.DATATYPE
+    const elementNatures = complexDataType.ontologicalNature?.natures;
+    const ontologicalCategory = OntologicalCategoryEnum.DATATYPE;
 
     if (elementNatures) {
 

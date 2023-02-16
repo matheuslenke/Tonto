@@ -10,7 +10,7 @@ export function generalizationSetGenerator(
     (item) => item.name.getText() === enumData.generalItem?.ref?.name
   );
 
-  let specifics: Class[] = enumData.specificItems
+  const specifics: Class[] = enumData.specificItems
     .map((specificElement) => {
       const specificItem = classes.find(
         (item) => item.name.getText() === specificElement.ref?.name

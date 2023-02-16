@@ -58,8 +58,8 @@ export async function extractAstNode<T extends AstNode>(
 }
 
 interface FilePathData {
-  destination: string;
-  name: string;
+    destination: string;
+    name: string;
 }
 
 export function extractDestinationAndName(

@@ -42,18 +42,18 @@ export function constructInternalRelations(
     const relationName = replaceWhitespace(relation.getName());
 
     if (sourceProperty.aggregationKind === AggregationKind.COMPOSITE) {
-      fileNode.append(`<>-- `);
+      fileNode.append("<>-- ");
       if (relationName) {
         fileNode.append(`${relationName}`);
         constructRelationSpecializations(generalizations, fileNode);
-        fileNode.append(` <>-- `);
+        fileNode.append(" <>-- ");
       }
     } else {
-      fileNode.append(`-- `);
+      fileNode.append("-- ");
       if (relationName) {
         fileNode.append(`${relationName}`);
         constructRelationSpecializations(generalizations, fileNode);
-        fileNode.append(` -- `);
+        fileNode.append(" -- ");
       }
     }
     // Second Cardinality

@@ -38,7 +38,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
     cancelToken?: CancellationToken
   ): Promise<AstNodeDescription[]> {
     const localDescriptions: AstNodeDescription[] = [];
-    let elements: (ContextModule | Declaration)[] = [];
+    let elements: Array<ContextModule | Declaration> = [];
     if (container.$type === "Model") {
       const model = container as Model;
       elements = [...elements, ...model.modules];
@@ -97,9 +97,9 @@ export class TontoScopeComputation extends DefaultScopeComputation {
     );
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     return this.descriptions.createDescription(
-      description.node!,
-      name,
-      document
+            description.node!,
+            name,
+            document
     );
   }
 
@@ -118,8 +118,8 @@ export class TontoScopeComputation extends DefaultScopeComputation {
         if (name) {
           if (isContextModule(modelNode.$container)) {
             name = (this.nameProvider as TontoNameProvider).getQualifiedName(
-              modelNode.$container as ContextModule,
-              name
+                            modelNode.$container as ContextModule,
+                            name
             );
           }
           descr.push(this.descriptions.createDescription(modelNode, name, document));

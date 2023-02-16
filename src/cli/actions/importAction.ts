@@ -3,16 +3,16 @@ import { OntoumlElement, serializationUtils } from "ontouml-js";
 import { generateTontoFile } from "../tontoGenerator";
 
 interface JsonElement {
-  model?: any;
-  diagrams?: any;
-  type: string;
-  id: string;
-  name: string;
-  description?: string;
+    model?: any;
+    diagrams?: any;
+    type: string;
+    id: string;
+    name: string;
+    description?: string;
 }
 
 export type ImportOptions = {
-  destination?: string;
+    destination?: string;
 };
 
 export const importAction = async (
@@ -33,9 +33,9 @@ export const importCommand = async (
   opts: ImportOptions
 ): Promise<ImportReturn> => {
   try {
-    let data = await readFile(fileName, { encoding: "utf8" });
-    let obj: JsonElement[] = JSON.parse(data);
-    let ontoumlElements: OntoumlElement[] = [];
+    const data = await readFile(fileName, { encoding: "utf8" });
+    const obj: JsonElement[] = JSON.parse(data);
+    const ontoumlElements: OntoumlElement[] = [];
 
     if (Array.isArray(obj)) {
       obj.forEach((item) => {
@@ -80,7 +80,7 @@ export const importCommand = async (
 };
 
 export type ImportReturn = {
-  success: boolean;
-  message: string;
-  filePath?: string;
+    success: boolean;
+    message: string;
+    filePath?: string;
 };

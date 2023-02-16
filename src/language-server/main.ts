@@ -1,5 +1,5 @@
 import { startLanguageServer } from "langium";
-import { NodeFileSystem } from 'langium/node';
+import { NodeFileSystem } from "langium/node";
 import { createConnection, ProposedFeatures } from "vscode-languageserver/node";
 import { createTontoServices } from "./tonto-module";
 

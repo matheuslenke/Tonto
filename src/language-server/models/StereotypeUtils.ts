@@ -40,92 +40,92 @@ const allowedStereotypeRestrictedToMatches: AllowedStereotypes = {
 };
 
 function hasSortalStereotype(stereotype: string): boolean {
-  const classStereotype = getClassStereotype(stereotype)
+  const classStereotype = getClassStereotype(stereotype);
   if (classStereotype) {
-    return stereotypeUtils.isSortalClassStereotype(classStereotype)
+    return stereotypeUtils.isSortalClassStereotype(classStereotype);
   }
-  return false
+  return false;
 }
 
 function hasNonSortalStereotype(stereotype: string): boolean {
-  const classStereotype = getClassStereotype(stereotype)
+  const classStereotype = getClassStereotype(stereotype);
   if (classStereotype) {
-    return stereotypeUtils.isNonSortalClassStereotype(classStereotype)
+    return stereotypeUtils.isNonSortalClassStereotype(classStereotype);
   }
-  return false
+  return false;
 }
 
 function isRigidStereotype(stereotype: string): boolean {
-  const classStereotype = getClassStereotype(stereotype)
+  const classStereotype = getClassStereotype(stereotype);
   if (classStereotype) {
-    return stereotypeUtils.isRigidClassStereotype(classStereotype)
+    return stereotypeUtils.isRigidClassStereotype(classStereotype);
   }
-  return false
+  return false;
 }
 
 function isSemiRigidStereotype(stereotype: string): boolean {
-  const classStereotype = getClassStereotype(stereotype)
+  const classStereotype = getClassStereotype(stereotype);
   if (classStereotype) {
-    return stereotypeUtils.isSemiRigidClassStereotype(classStereotype)
+    return stereotypeUtils.isSemiRigidClassStereotype(classStereotype);
   }
-  return false
+  return false;
 }
 
 function isAntiRigidStereotype(stereotype: string): boolean {
-  const classStereotype = getClassStereotype(stereotype)
+  const classStereotype = getClassStereotype(stereotype);
   if (classStereotype) {
-    return stereotypeUtils.isAntiRigidClassStereotype(classStereotype)
+    return stereotypeUtils.isAntiRigidClassStereotype(classStereotype);
   }
-  return false
+  return false;
 }
 
 function getClassStereotype(stereotype: string): ClassStereotype | undefined
 {
   switch (stereotype) {
   case "type":
-    return ClassStereotype.TYPE
+    return ClassStereotype.TYPE;
   case "historicalRole":
-    return ClassStereotype.HISTORICAL_ROLE
+    return ClassStereotype.HISTORICAL_ROLE;
   case "historicalRoleMixin":
-    return ClassStereotype.HISTORICAL_ROLE_MIXIN
+    return ClassStereotype.HISTORICAL_ROLE_MIXIN;
   case "event":
-    return ClassStereotype.EVENT
+    return ClassStereotype.EVENT;
   case "situation":
-    return ClassStereotype.SITUATION
+    return ClassStereotype.SITUATION;
   case "category":
-    return ClassStereotype.CATEGORY
+    return ClassStereotype.CATEGORY;
   case "mixin":
-    return ClassStereotype.MIXIN
+    return ClassStereotype.MIXIN;
   case "roleMixin":
-    return ClassStereotype.ROLE_MIXIN
+    return ClassStereotype.ROLE_MIXIN;
   case "phaseMixin":
-    return ClassStereotype.PHASE_MIXIN
+    return ClassStereotype.PHASE_MIXIN;
   case "kind":
-    return ClassStereotype.KIND
+    return ClassStereotype.KIND;
   case "collective":
-    return ClassStereotype.COLLECTIVE
+    return ClassStereotype.COLLECTIVE;
   case "quantity":
-    return ClassStereotype.QUANTITY
+    return ClassStereotype.QUANTITY;
   case "relator":
-    return ClassStereotype.RELATOR
+    return ClassStereotype.RELATOR;
   case "quality":
-    return ClassStereotype.QUALITY
+    return ClassStereotype.QUALITY;
   case "mode":
-    return ClassStereotype.MODE
+    return ClassStereotype.MODE;
   case "subkind":
-    return ClassStereotype.SUBKIND
+    return ClassStereotype.SUBKIND;
   case "role":
-    return ClassStereotype.ROLE
+    return ClassStereotype.ROLE;
   case "phase":
-    return ClassStereotype.PHASE
+    return ClassStereotype.PHASE;
   case "enumeration":
-    return ClassStereotype.ENUMERATION
+    return ClassStereotype.ENUMERATION;
   case "datatype":
-    return ClassStereotype.DATATYPE
+    return ClassStereotype.DATATYPE;
   case "abstract":
-    return ClassStereotype.ABSTRACT
+    return ClassStereotype.ABSTRACT;
   }
-  return undefined
+  return undefined;
 }
 
 export {
