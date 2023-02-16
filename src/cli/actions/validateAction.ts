@@ -1,12 +1,12 @@
+import { NodeFileSystem } from 'langium/node';
 import { Model } from "../../language-server/generated/ast";
 import { createTontoServices } from "../../language-server/tonto-module";
 import { extractAstNode } from "../cli-util";
 import {
   ErrorResultResponse,
   ResultResponse,
-  validateTontoFile,
+  validateTontoFile
 } from "../ontoumljsValidator";
-import { NodeFileSystem } from 'langium/node';
 
 export const validateAction = async (
   fileName: string

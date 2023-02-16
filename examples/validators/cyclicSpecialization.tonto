@@ -1,5 +1,5 @@
 module CyclicSpecialization {
-    event Person specializes Human
-
-    subkind Human specializes Person
+    kind Person
+    event Death specializes Person, Human
+    subkind Human specializes Person, Death
 }

@@ -1,0 +1,18 @@
+module CheckKindSpecialization {
+    kind Pai
+    kind Filho specializes Pai
+    collective CollectivePai
+    collective CollectiveFilho specializes CollectivePai
+    quantity QuantityPai
+    quantity QuantityFilho specializes QuantityPai
+    relator relatorPai
+    relator relatorFilho specializes relatorPai
+    quality qualityPai
+    quality qualityFilho specializes qualityPai
+    mode modePai
+    mode modeFilho specializes modePai
+    extrinsicMode extrinsicModePai
+    extrinsicMode extrinsicModeFilho specializes extrinsicModePai
+    intrinsicMode intrinsicModePai
+    intrinsicMode intrinsicModeFilho specializes intrinsicModePai
+}

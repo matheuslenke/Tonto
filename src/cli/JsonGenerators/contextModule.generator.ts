@@ -19,27 +19,27 @@ export function contextModuleGenerator(
 
   contextModule.declarations.forEach((declaration) => {
     switch (declaration.$type) {
-      case "ClassDeclaration":
-        const classElement = declaration as ClassDeclaration;
-        const newClass = classElementGenerator(classElement, packageItem);
-        attributeGenerator(classElement, newClass, dataTypes);
-        classes.push(newClass);
-        break;
+    case "ClassDeclaration":
+      const classElement = declaration as ClassDeclaration;
+      const newClass = classElementGenerator(classElement, packageItem);
+      attributeGenerator(classElement, newClass, dataTypes);
+      classes.push(newClass);
+      break;
 
-      case "DataType":
-        const dataType = declaration as ComplexDataType;
-        const newDataType = customDataTypeGenerator(
-          dataType,
-          packageItem,
-          dataTypes
-        );
-        attributeGenerator(dataType, newDataType, dataTypes);
-        break;
+    case "ComplexDataType":
+      const dataType = declaration as ComplexDataType;
+      const newDataType = customDataTypeGenerator(
+        dataType,
+        packageItem,
+        dataTypes
+      );
+      attributeGenerator(dataType, newDataType, dataTypes);
+      break;
 
-      case "EnumData":
-        const enumData = declaration as Enum;
-        enumGenerator(enumData, packageItem);
-        break;
+    case "Enum":
+      const enumData = declaration as Enum;
+      enumGenerator(enumData, packageItem);
+      break;
     }
   });
 
@@ -80,16 +80,16 @@ function generateExternalRelations(
 ): void {
   contextModule.declarations.forEach((declaration) => {
     switch (declaration.$type) {
-      case "ElementRelation":
-        const elementRelation = declaration as ElementRelation;
-        const createdRelation = relationGenerator(
-          elementRelation,
-          packageItem,
-          classes
-        );
-        if (createdRelation) {
-          relations.push(createdRelation);
-        }
+    case "ElementRelation":
+      const elementRelation = declaration as ElementRelation;
+      const createdRelation = relationGenerator(
+        elementRelation,
+        packageItem,
+        classes
+      );
+      if (createdRelation) {
+        relations.push(createdRelation);
+      }
     }
   });
 }

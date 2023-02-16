@@ -6,8 +6,8 @@
 
 import { DefaultNameProvider } from "langium";
 import {
-    ClassDeclaration, ContextModule, ElementRelation,
-    isClassDeclaration, isContextModule
+  ClassDeclaration, ContextModule, ElementRelation,
+  isClassDeclaration, isContextModule
 } from "./generated/ast";
 
 export function toQualifiedName(

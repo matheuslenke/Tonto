@@ -1,19 +1,14 @@
 import {
   NonSortal,
-  OntologicalNature, Sortal, UltimateSortal
+  OntologicalNature,
+  Sortal,
+  UltimateSortal,
 } from "../generated/ast";
 
 function checkNatureCompatibleWithStereotype(
   nature: OntologicalNature,
-  stereotype:
-    | UltimateSortal
-    | NonSortal
-    | Sortal
-    | undefined
-    | string
+  stereotype: UltimateSortal | NonSortal | Sortal | undefined | string
 ): boolean {
-  console.debug(nature, stereotype)
-
   switch (nature) {
     case "relators":
       if (stereotype === "relator") {
@@ -51,10 +46,10 @@ function checkNatureCompatibleWithStereotype(
       return false;
 
     case "quantities":
-        if (stereotype === "quantity") {
-          return true;
-        }
-        return false;
+      if (stereotype === "quantity") {
+        return true;
+      }
+      return false;
 
     case "types":
       if (stereotype === "type") {

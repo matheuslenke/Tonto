@@ -1,3 +1,5 @@
+namespace http://nemo.inf.ufes.br/jpalmeida/ufos/ClassElements
+
 module CarRental {
     category CategoryItem
     mixin MixinItem
@@ -17,7 +19,7 @@ module CarRental {
     role RoleItem
     historicalRole HistoricalRoleItem
     relator RelatorItem
-   
+
 }
 // EndurantType:
 //     stereotype=(NonSortalStereotype | UltimateSortalStereotypes | BaseSortalStereotype)

@@ -77,8 +77,8 @@ function createEnumeration(element: Class, fileNode: CompositeGeneratorNode) {
 function createDatatype(element: Class, fileNode: CompositeGeneratorNode) {
   fileNode.append(`datatype ${replaceWhitespace(element.getName())} {`, NL);
 
-  const literals = element.getAllAttributes();
-  console.log(literals);
+  // const literals = element.getAllAttributes();
+
   // fileNode.indent((ident) => {
   //   literals.forEach((literal, index) => {
   //     if (index < literals.length - 1) {

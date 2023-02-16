@@ -1,0 +1,10 @@
+module CheckGeneralizationDataType {
+    // # Caso de erro 1
+    // datatype Animal
+    // phaseMixin AdultAnimal
+
+    // genset GeneralizationOne {
+    //     general AdultAnimal
+    //     specifics Animal
+    // }
+}

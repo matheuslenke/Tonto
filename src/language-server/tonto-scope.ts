@@ -106,7 +106,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
   /**
  * Exports only types (`DataType or `Entity`) with their qualified names.
  */
-    async createDescriptions(
+  async createDescriptions(
     document: LangiumDocument,
     cancelToken = CancellationToken.None
   ): Promise<AstNodeDescription[]> {

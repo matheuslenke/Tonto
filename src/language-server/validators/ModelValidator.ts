@@ -1,5 +1,5 @@
 import { ValidationAcceptor } from "langium";
-import { Model, ContextModule } from "../generated/ast";
+import { ContextModule, Model } from "../generated/ast";
 
 export class ModelValidator {
   /*
@@ -10,7 +10,6 @@ export class ModelValidator {
     accept: ValidationAcceptor
   ): void {
     const modules = model.modules;
-
     let names: string[] = [];
 
     modules.forEach((module) => {

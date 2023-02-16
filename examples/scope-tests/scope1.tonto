@@ -1,5 +1,5 @@
 module Test {
     kind Person
 
-    kind Boy (instanceOf Person) specializes rigidAntiRigid.collectiveOne
+    // kind Boy (instanceOf Person) specializes rigidAntiRigid.collectiveOne
 }

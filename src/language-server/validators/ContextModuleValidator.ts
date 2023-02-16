@@ -1,5 +1,11 @@
 import { ValidationAcceptor } from "langium";
-import { ClassDeclaration, ContextModule, ElementRelation } from "../generated/ast";
+import {
+  ClassDeclaration,
+  ContextModule,
+  ElementRelation,
+  GeneralizationSet,
+} from "../generated/ast";
+import { checkCircularSpecializationRecursiveWithGenset } from "../utils/CheckCircularSpecializationRecursive";
 
 export class ContextModuleValidator {
   checkContextModuleStartsWithCapital(
@@ -80,6 +86,41 @@ export class ContextModuleValidator {
           }
         });
       }
+    });
+  }
+
+  /**
+   * Checks if a ClassDeclaration has a ciclic specialization considering also
+   * considering generalizationSets
+   */
+  checkCircularSpecialization(
+    contextModule: ContextModule,
+    accept: ValidationAcceptor
+  ): void {
+    const genSets = contextModule.declarations.filter((declaration) => {
+      return declaration.$type === "GeneralizationSet";
+    }) as GeneralizationSet[];
+
+    const declaredClasses: ClassDeclaration[] =
+      contextModule.declarations.filter((declaration) => {
+        return declaration.$type === "ClassDeclaration";
+      }) as ClassDeclaration[];
+
+    declaredClasses.forEach((declaredClass) => {
+      checkCircularSpecializationRecursiveWithGenset(
+        declaredClass,
+        [],
+        genSets,
+        accept
+      );
+    });
+    genSets.forEach((genSet) => {
+      checkCircularSpecializationRecursiveWithGenset(
+        genSet,
+        [],
+        genSets,
+        accept
+      );
     });
   }
 }

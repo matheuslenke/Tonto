@@ -1,9 +1,9 @@
-import { CompositeGeneratorNode, processGeneratorNode } from "langium";
+import fs from "fs";
+import { CompositeGeneratorNode } from "langium";
+import { MultilingualText, Project } from "ontouml-js";
+import path from "path";
 import { Model } from "../language-server/generated/ast";
 import { extractDestinationAndName } from "./cli-util";
-import fs from "fs";
-import path from "path";
-import { Project, MultilingualText } from "ontouml-js";
 import { contextModuleGenerator } from "./JsonGenerators/contextModule.generator";
 
 export function generateJSONFile(
@@ -43,7 +43,7 @@ function generate(ctx: GeneratorContext): string {
     fs.mkdirSync(ctx.destination, { recursive: true });
   }
   const generatedFilePath = path.join(ctx.destination, ctx.fileName);
-  fs.writeFileSync(generatedFilePath, processGeneratorNode(ctx.fileNode));
+  // fs.writeFileSync(generatedFilePath, isGeneratorNode(ctx.fileNode));
   return generatedFilePath;
 }
 

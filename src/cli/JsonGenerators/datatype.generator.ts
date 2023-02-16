@@ -9,13 +9,14 @@ export function customDataTypeGenerator(
 ): Class {
   const dataTypeClass = model.createDatatype(dataType.name);
 
-  dataType.attributes.forEach((element) => {
+  dataType.attributes.forEach(element => {
     let createdAttribute: Property | undefined;
 
-    switch (element.attributeType) {
-      case "Date":
+    if (element.attributeType) {
+      switch (element.attributeType) {
+      case "date":
         const dateType = dataTypes.find(
-          (item) => item.name.getText() === "Date"
+          item => item.name.getText() === "Date"
         );
         if (dateType) {
           createdAttribute = dataTypeClass.createAttribute(
@@ -26,7 +27,7 @@ export function customDataTypeGenerator(
         break;
       case "number":
         const numberType = dataTypes.find(
-          (item) => item.name.getText() === "number"
+          item => item.name.getText() === "number"
         );
         if (numberType) {
           createdAttribute = dataTypeClass.createAttribute(
@@ -38,7 +39,7 @@ export function customDataTypeGenerator(
 
       case "boolean":
         const booleanType = dataTypes.find(
-          (item) => item.name.getText() === "boolean"
+          item => item.name.getText() === "boolean"
         );
         if (booleanType) {
           createdAttribute = dataTypeClass.createAttribute(
@@ -50,7 +51,7 @@ export function customDataTypeGenerator(
 
       case "string":
         const stringType = dataTypes.find(
-          (item) => item.name.getText() === "string"
+          item => item.name.getText() === "string"
         );
         if (stringType) {
           createdAttribute = dataTypeClass.createAttribute(
@@ -59,17 +60,18 @@ export function customDataTypeGenerator(
           );
         }
         break;
-
-      default:
-        const customType = dataTypes.find(
-          (item) => item.name.getText() === element.attributeType.toString()
+      }
+    } else if (element.attributeTypeRef !== undefined) {
+      const customType = dataTypes.find(
+        item =>
+          item.name.getText() === element.attributeType?.toString()
+      );
+      if (customType) {
+        createdAttribute = dataTypeClass.createAttribute(
+          customType,
+          element.name
         );
-        if (customType) {
-          createdAttribute = dataTypeClass.createAttribute(
-            customType,
-            element.name
-          );
-        }
+      }
     }
 
     if (createdAttribute) {

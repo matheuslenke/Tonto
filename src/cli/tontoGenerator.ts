@@ -1,7 +1,7 @@
-import { CompositeGeneratorNode, processGeneratorNode } from "langium";
 import fs from "fs";
-import path from "path";
+import { CompositeGeneratorNode } from "langium";
 import { OntoumlElement } from "ontouml-js";
+import path from "path";
 import { createTontoModule } from "./TontoConstructors/contextModule.constructor";
 
 export function generateTontoFile(
@@ -37,7 +37,7 @@ function generate(ctx: GeneratorContext): string {
     fs.mkdirSync(ctx.destination, { recursive: true });
   }
   const generatedFilePath = path.join(ctx.destination, ctx.fileName);
-  fs.writeFileSync(generatedFilePath, processGeneratorNode(ctx.fileNode));
+  // fs.writeFileSync(generatedFilePath, isGeneratorNode(ctx.fileNode));
   return generatedFilePath;
 }
 

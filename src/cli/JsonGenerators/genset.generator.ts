@@ -1,5 +1,5 @@
-import { GeneralizationSet as GenSetData } from "../../language-server/generated/ast";
 import { Class, GeneralizationSet, Package } from "ontouml-js";
+import { GeneralizationSet as GenSetData } from "../../language-server/generated/ast";
 
 export function generalizationSetGenerator(
   enumData: GenSetData,
@@ -7,7 +7,7 @@ export function generalizationSetGenerator(
   model: Package
 ): GeneralizationSet | undefined {
   const generalItem = classes.find(
-    (item) => item.name.getText() === enumData.generalItem.ref?.name
+    (item) => item.name.getText() === enumData.generalItem?.ref?.name
   );
 
   let specifics: Class[] = enumData.specificItems
