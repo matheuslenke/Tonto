@@ -1,39 +1,37 @@
 module Sales {
-    // category Agent
+    category Agent
 
-    // rolemixin EconomicAgent specializes Agent
+    roleMixin EconomicAgent specializes Agent
 
-    // rolemixin Receiver specializes EconomicAgent
-    // rolemixin Provider specializes EconomicAgent
+    roleMixin Receiver specializes EconomicAgent
+    roleMixin Provider specializes EconomicAgent
 
-    // relator BilateralEconomicContract {
-    //     involves [1..*] : [1] Receiver
-    //     involves_2 [1..*] : [1] Provider
-    // }
+    relator BilateralEconomicContract {
+        [1..*] -- involves -- [1] Receiver
+        [1..*] -- involves_2 -- [1] Provider
+    }
 
-    // @type class EconomicEvent2
+    mode MoneyTransferConditionalCommitment {
+        @composition [1..*] -- [1] BilateralEconomicContract
+        [1] -- reciprocity -- [1] GoodTransferConditionalCommitment
+        [1..*] -- inheresIn -- [1] Receiver
+    }
 
-    // mode MoneyTransferConditionalCommitment {
-    //     @composition ref [1..*] : [1] BilateralEconomicContract
-    //     reciprocity [1] : [1] GoodTransferConditionalCommitment
-    //     inheresIn [1..*] : [1] Receiver
-    // }
+    mode GoodTransferConditionalCommitment {
+        @composition [1..*] -- [1] BilateralEconomicContract
+        [1..*] -- inheresIn -- [1] Provider
+    }
 
-    // mode GoodTransferConditionalCommitment {
-    //     @composition ref [1..*] : [1] BilateralEconomicContract
-    //     inheresIn [1..*] : [1] Provider
-    // }
+    event EconomicEvent
+    event EconomicExchange
 
-    // event EconomicEvent 
-    // event EconomicExchange
+    kind SellEvent specializes EconomicEvent {
+        @composition [1] -- [1] EconomicExchange 
+        [0..1] -- fulfills -- [1] GoodTransferConditionalCommitment
+    }
 
-    // kind SellEvent specializes EconomicEvent {
-    //     @composition [1] : [1] EconomicExchange 
-    //     fulfills [0..1] : [1] GoodTransferConditionalCommitment
-    // }
-
-    // subkind CashEvent specializes EconomicEvent {
-    //     @composition [1] : [1] EconomicExchange
-    //     fulfills [0..1] : [1] MoneyTransferConditionalCommitment
-    // }
+    subkind CashEvent specializes EconomicEvent {
+        @composition [1] -- [1] EconomicExchange
+        [0..1] -- fulfills -- [1] MoneyTransferConditionalCommitment
+    }
 }

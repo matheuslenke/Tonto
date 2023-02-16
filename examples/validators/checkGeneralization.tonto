@@ -1,0 +1,67 @@
+module Generalization {
+
+  // Test case 1
+  category Item1 specializes Item2
+  category Item2 specializes Item1
+  
+  // Test case 2
+  category Item3 specializes Item4
+  category Item4
+  genset Genset1 {
+    general Item3
+    specifics Item4
+  }
+
+  // Test case 3
+  category  Item5
+  category Item6
+  genset Genset2 {
+    general Item5
+    specifics Item6
+  }
+  genset Genset3 {
+    general Item6
+    specifics Item5
+  }
+
+  // Test case 4
+  category Test1 specializes Test3
+  category Test2 specializes Test1
+  category Test3 specializes Test2
+
+  // Test case 5
+  category Test4
+  category Test5
+  category Test6
+  genset Genset2 {
+    general Test4
+    specifics Test5
+  }
+  genset Genset3 {
+    general Test5
+    specifics Test6
+  }
+  genset Genset4 {
+    general Test6
+    specifics Test4
+  }
+
+  // Test case 6
+  category Single1 specializes Multiple1
+  category Single2
+  category Multiple1 specializes Single1, Single2
+
+  // Test case 7
+  category Single3
+  category Single4
+  category Multiple2
+
+  genset Genset2 {
+    general Multiple2
+    specifics Single3, Single4
+  }
+  genset Genset3 {
+    general Single3
+    specifics Multiple2
+  }
+}

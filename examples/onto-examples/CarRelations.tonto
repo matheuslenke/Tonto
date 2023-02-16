@@ -1,0 +1,11 @@
+module CarRelations {
+    kind Organization
+
+    kind Car
+    subkind CarAgency specializes Organization
+
+    relator CarOwnership {
+        @mediation [1] -- [1] Car
+        @mediation [0..*] -- boughtFrom -- [1] CarAgency
+    }
+}

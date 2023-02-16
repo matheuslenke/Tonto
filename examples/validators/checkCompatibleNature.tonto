@@ -1,0 +1,33 @@
+module CheckCompatibleNature {
+  // test case 1: Category
+    category Category of abstracts
+    category CategoryTest of situations
+    category CategoryTest2 of events
+
+  // test case 2: datatype
+  datatype Datatype of events
+
+  event Event of collectives
+  situation Situation of objects
+  mixin Mixin of situations
+  roleMixin RoleMixin of situations
+  phaseMixin PhaseMixin of situations
+  historicalRoleMixin HistoricalRoleMixin of situations
+  kind Number of abstracts
+  collective Collective of events
+  quantity Quantity of functional-complexes
+  relator Relator of intrinsic-modes
+  mode Mode of intrinsic-modes, extrinsic-modes, collectives
+  intrinsicMode IntrinsicMode of events
+  extrinsicMode ExtrinsicMode of events
+  quality Quality of events
+  subkind Subkind of events
+  role Role of events
+  phase Phase of events
+  historicalRole HistoricalRole of events
+  type Type of events
+
+
+
+    kind Test of objects
+}

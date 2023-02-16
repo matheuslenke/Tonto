@@ -1,0 +1,27 @@
+
+// prefix UFOS = https://link.com
+module CheckGeneralizationConsistency {
+    kind Person
+    phase Adult specializes Person
+    // UFOS.Person
+
+    relation Person [1] -- hasAdultFriends -- [0..*] Adult
+
+    kind Test
+    genset GeneralizationSet {
+        general Person
+        specifics Test
+    }
+
+    genset Circular {
+        general Person
+        specifics hasAdultFriends
+    }
+
+    genset RelationGenset {
+        general hasAdultFriends
+        specifics Person
+    }
+
+    kind Duplicated specializes Duplicated
+}

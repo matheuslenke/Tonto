@@ -1,0 +1,34 @@
+module MarriageModule {
+    kind Person
+    category SocialRelator of relators
+    relator SocialRelatorType specializes SocialRelator
+    kind MarriageDuty
+    kind MarriageRight specializes Marriage
+    role Spouse specializes Person {
+        -- isBoundBy -- Marriage inverseOf involvesSpouse
+    }
+    relator Marriage (instanceOf SocialRelatorType) specializes SocialRelator
+    relation Marriage -- involvesSpouse -- [2..*] Spouse
+    relation Marriage <>-- [1..*] MarriageDuty
+    relation Marriage -- [2..*] Spouse
+    relation Marriage <>-- [1..*] MarriageDuty
+    relation Marriage <>-- [1..*] MarriageRight
+    // relation Person (pai {const}) [1] -- temFilhos -- [*] Person (filho)
+}
+
+module MarriageModuleCopy {
+    kind Person
+    relator SocialRelator
+    relator SocialRelatorType specializes SocialRelator
+    role Spouse specializes Person {
+        [1..*] -- isBoundBy --[2] Marriage inverseOf involvesSpouse
+    }
+    kind MarriageDuty
+    kind MarriageRight
+    relator Marriage specializes SocialRelatorType
+    relation Marriage -- involvesSpouse -- [2..*] Spouse
+    relation Marriage <>-- [1..*] MarriageDuty
+    relation Marriage -- [2..*] Spouse
+    relation Marriage <>-- [1..*] MarriageDuty
+    relation Marriage <>-- [1..*] MarriageRight
+}

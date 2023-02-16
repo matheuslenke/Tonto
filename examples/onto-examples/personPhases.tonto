@@ -1,0 +1,16 @@
+module PersonPhases {
+
+    kind Person {
+        name: string
+        birthDate: Date
+        isAlive: boolean
+        [1] -- isChildOf -- [1..*] (mother) Person
+    }
+
+    phase LivingPerson (instanceOf Person) specializes Person
+    phase DeceasedPerson specializes Person
+
+    phase Child specializes LivingPerson
+    phase Teenager specializes LivingPerson
+    phase Adult specializes LivingPerson
+}

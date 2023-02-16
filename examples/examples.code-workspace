@@ -4,9 +4,6 @@
 			"path": "drafts"
 		},
 		{
-			"path": "basic-examples"
-		},
-		{
 			"path": "validators"
 		},
 		{
@@ -14,6 +11,15 @@
 		},
 		{
 			"path": "scope-tests"
+		},
+		{
+			"path": "basicExamples"
+		},
+		{
+			"path": "generateTests"
+		},
+		{
+			"path": "ontouml-models"
 		}
 	],
 	"settings": {}

@@ -1,0 +1,10 @@
+module Generalization {
+  category Person specializes test
+
+  category test
+
+  genset GenSet {
+    general test
+    specifics Person
+  }
+}

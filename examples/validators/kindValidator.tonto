@@ -1,5 +1,0 @@
-module KindValidator {
-    kind Person
-
-    kind PersonTest specializes Person
-}

@@ -1,0 +1,17 @@
+module CheckRigidSpecializesAntiRigid {
+  // Rigid: Kind, quantity, collective, mode, quality, relator, subkind, category, event
+  // situation type abstract datatype enumeration
+
+  // Anti Rigid: Role, roleMixin, historical_role, historical_role_mixin, phase, phase_mixin
+
+  // test case 1
+  historicalRole Role
+  kind kind_test specializes Role
+  quantity quantity_test specializes Role
+  collective colletive_test specializes Role
+  mode mode_test specializes Role
+  quality quality_test specializes Role
+  relator relator_test specializes Role
+  subkind subkind_test specializes Role
+  category category_test specializes Role
+}

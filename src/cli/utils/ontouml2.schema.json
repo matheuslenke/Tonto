@@ -1,0 +1,605 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ontouml.org/ontouml-schema/2.0/0.1.202001091222",
+  "title": "Root Package",
+  "description": "A package that contains an ontology in OntoUML 2. Mandatory fields are those defined for Package.",
+  "type": "object",
+  "allOf": [
+    {
+      "$ref": "#/definitions/Package"
+    }
+  ],
+  "definitions": {
+    "Package": {
+      "description": "An object representing a packge element. Mandatory fields: constant \"type\": \"Package\", \"id\", \"name\", \"elements\", \"propertyAssignments\". Additional fields NOT allowed.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "Package"
+        },
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "name": {
+          "$ref": "#/definitions/name"
+        },
+        "description": {
+          "$ref": "#/definitions/description"
+        },
+        "contents": {
+          "$ref": "#/definitions/contents"
+        },
+        "propertyAssignments": {
+          "$ref": "#/definitions/propertyAssignments"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id",
+        "name",
+        "description",
+        "contents",
+        "propertyAssignments"
+      ]
+    },
+    "Class": {
+      "description": "An object representing a class element. Mandatory fields: constant \"type\": \"Class\", \"id\", \"name\", \"stereotypes\", \"properties\", \"propertyAssignments\", \"isAbstract\", \"isDerived\", \"isExtensional\", \"isPowertype\", \"order\", \"natures\". Additional fields NOT allowed.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "Class"
+        },
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "name": {
+          "$ref": "#/definitions/name"
+        },
+        "description": {
+          "$ref": "#/definitions/description"
+        },
+        "stereotypes": {
+          "$ref": "#/definitions/stereotypes"
+        },
+        "properties": {
+          "$ref": "#/definitions/properties"
+        },
+        "propertyAssignments": {
+          "$ref": "#/definitions/propertyAssignments"
+        },
+        "literals": {
+          "description": "An array containing the values defined for an enumeration. Should only be used if the class is stereotyped as <<enumeration>>, otherwise, the value of this field should be null.",
+          "oneOf": [
+            {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/definitions/Literal"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "isAbstract": {
+          "$ref": "#/definitions/isAbstract"
+        },
+        "isDerived": {
+          "$ref": "#/definitions/isDerived"
+        },
+        "isExtensional": {
+          "description": "A boolean field that captures if a class decorated as «collective» is extensionally defined (i.e., it's parts cannot change).",
+          "$ref": "#/definitions/nullableBoolean"
+        },
+        "isPowertype": {
+          "description": "A boolean field that captures if a class decorated as «type» represents a powertype.",
+          "$ref": "#/definitions/nullableBoolean"
+        },
+        "order": {
+          "description": "A string field that captures the type-order of a class decorated as «type». This field supports the representation of second-order types or greater, thus its minimum value is \"2\". This field must be set to \"*\" for orderless types.",
+          "$ref": "#/definitions/nullableString"
+        },
+        "allowed": {
+          "description": "A nullable array of unique enumerated strings that represents the allowed (possible) ontological natures of the class's instances.",
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "array",
+              "uniqueItems": true,
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id",
+        "name",
+        "description",
+        "stereotypes",
+        "properties",
+        "propertyAssignments",
+        "literals",
+        "isAbstract",
+        "isDerived",
+        "isExtensional",
+        "isPowertype",
+        "order",
+        "allowed"
+      ]
+    },
+    "Literal": {
+      "description": "An object representing a value defined for an enumeration.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "Literal"
+        },
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "name": {
+          "$ref": "#/definitions/name"
+        },
+        "description": {
+          "$ref": "#/definitions/description"
+        },
+        "propertyAssignments": {
+          "$ref": "#/definitions/propertyAssignments"
+        }
+      },
+      "additionalProperties": false,
+      "required": ["type", "id", "name", "description", "propertyAssignments"]
+    },
+    "Relation": {
+      "description": "An object representing an relation element. Mandatory fields: constant \"type\": \"Class\", \"id\", \"name\", \"stereotypes\", \"properties\", \"propertyAssignments\". The \"properties\" array must have at least two items and is not nullable. The order of these items represents their position on a equivalent predicate, e.g., in the ternary relation \"buys-product-from(buyer,product,seller)\", the order of items representing these entities must follow the order \"buyer\" (in properties[0]), \"product\" (in properties[1]), and \"seller\" (in properties[2]). Relation elements are also used to represent derivation relations, in which case they must contain the stereotype \"derivation\" and have only 2 properties, the first being a Relation element and the second a Class element. Additional fields NOT allowed. Ordered properties.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "Relation"
+        },
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "name": {
+          "$ref": "#/definitions/name"
+        },
+        "description": {
+          "$ref": "#/definitions/description"
+        },
+        "stereotypes": {
+          "$ref": "#/definitions/stereotypes"
+        },
+        "properties": {
+          "$ref": "#/definitions/properties"
+        },
+        "propertyAssignments": {
+          "$ref": "#/definitions/propertyAssignments"
+        },
+        "isAbstract": {
+          "$ref": "#/definitions/isAbstract"
+        },
+        "isDerived": {
+          "$ref": "#/definitions/isDerived"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id",
+        "name",
+        "description",
+        "stereotypes",
+        "properties",
+        "propertyAssignments",
+        "isAbstract",
+        "isDerived"
+      ]
+    },
+    "Generalization": {
+      "description": "An object representing a generalization element. Mandatory fields: constant \"type\": \"Generalization\", \"id\", \"name\", \"general\", \"specific\", \"propertyAssignments\". Additional fields NOT allowed.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "Generalization"
+        },
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "name": {
+          "$ref": "#/definitions/name"
+        },
+        "description": {
+          "$ref": "#/definitions/description"
+        },
+        "general": {
+          "$ref": "#/definitions/reference"
+        },
+        "specific": {
+          "$ref": "#/definitions/reference"
+        },
+        "propertyAssignments": {
+          "$ref": "#/definitions/propertyAssignments"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id",
+        "name",
+        "description",
+        "general",
+        "specific",
+        "propertyAssignments"
+      ]
+    },
+    "GeneralizationSet": {
+      "description": "An object representing a generalization set element. Mandatory fields: constant \"type\": \"GeneralizationSet\", \"id\", \"name\", \"isDisjoint\", \"isComplete\", \"categorizer\", \"generalizations\", \"propertyAssignments\". Additional fields NOT allowed.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "GeneralizationSet"
+        },
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "name": {
+          "$ref": "#/definitions/name"
+        },
+        "description": {
+          "$ref": "#/definitions/description"
+        },
+        "isDisjoint": {
+          "$ref": "#/definitions/nullableBoolean"
+        },
+        "isComplete": {
+          "$ref": "#/definitions/nullableBoolean"
+        },
+        "categorizer": {
+          "$ref": "#/definitions/reference"
+        },
+        "generalizations": {
+          "oneOf": [
+            {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/definitions/reference"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "propertyAssignments": {
+          "$ref": "#/definitions/propertyAssignments"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id",
+        "name",
+        "description",
+        "isDisjoint",
+        "isComplete",
+        "categorizer",
+        "generalizations",
+        "propertyAssignments"
+      ]
+    },
+    "Property": {
+      "description": "An object representing a property element. This represents properties exhibited by instances of classes, relations and derivation relations, where in the first case properties are analougous to attrbutes while in the second and third cases properties are analogous to association ends. Mandatory fields: constant \"type\": \"Property\", \"id\", \"name\" \"cardinality\", \"stereotypes\", \"propertyAssignments\", \"subsettedProperties\", \"redefinedProperties\", \"aggregationKind\", \"isDerived\", \"isOrdered\", \"isReadOnly\". Additional fields NOT allowed.",
+      "type": "object",
+      "properties": {
+        "type": {
+          "const": "Property"
+        },
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "name": {
+          "$ref": "#/definitions/name"
+        },
+        "description": {
+          "$ref": "#/definitions/description"
+        },
+        "cardinality": {
+          "$ref": "#/definitions/nullableString"
+        },
+        "stereotypes": {
+          "$ref": "#/definitions/stereotypes"
+        },
+        "propertyAssignments": {
+          "$ref": "#/definitions/propertyAssignments"
+        },
+        "propertyType": {
+          "$ref": "#/definitions/reference"
+        },
+        "subsettedProperties": {
+          "oneOf": [
+            {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/definitions/reference"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "redefinedProperties": {
+          "oneOf": [
+            {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/definitions/reference"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "aggregationKind": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": ["NONE", "SHARED", "COMPOSITE"]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "isDerived": {
+          "$ref": "#/definitions/nullableBoolean"
+        },
+        "isOrdered": {
+          "$ref": "#/definitions/nullableBoolean"
+        },
+        "isReadOnly": {
+          "$ref": "#/definitions/nullableBoolean"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id",
+        "name",
+        "description",
+        "cardinality",
+        "stereotypes",
+        "propertyAssignments",
+        "propertyType",
+        "subsettedProperties",
+        "redefinedProperties",
+        "aggregationKind",
+        "isDerived",
+        "isOrdered",
+        "isReadOnly"
+      ]
+    },
+    "contents": {
+      "description": "A non-empty nullable array of objects representing model elements. Possible object types in this array are: \"Package\", \"Class\", \"Relation\", \"Generalization\", \"GeneralizationSet\".",
+      "oneOf": [
+        {
+          "type": "array",
+          "uniqueItems": true,
+          "minItems": 1,
+          "items": {
+            "oneOf": [
+              {
+                "$ref": "#/definitions/Package"
+              },
+              {
+                "$ref": "#/definitions/Class"
+              },
+              {
+                "$ref": "#/definitions/Relation"
+              },
+              {
+                "$ref": "#/definitions/Generalization"
+              },
+              {
+                "$ref": "#/definitions/GeneralizationSet"
+              }
+            ]
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "id": {
+      "description": "A non-empty and non-nullable string that uniquely identifies an object of a given type. Thus, two objects of the same type (e.g. two classes, two relations, two properties) may not have the same id, even if they have different containers.",
+      "type": "string",
+      "minLength": 1
+    },
+    "name": {
+      "description": "A nullable field, either a non-empty string or a multilingual object, representing the object's name. It is allowed for two objects of the ontology to have identical names, even if they are of the same type, although it is not advisable.",
+      "$ref": "#/definitions/multilingualString"
+    },
+    "description": {
+      "description": "A nullable field, either a non-empty string or a multilingual object, representing the description of the object in free textual format.",
+      "$ref": "#/definitions/multilingualString"
+    },
+    "isAbstract": {
+      "description": "A boolean meta-property that identifies whether or not the class or relation can have direct instances. If set to true, the class or relation is deemed abstract and it cannot have direct instances, i.e., for it must be specialized before being instantiated. If set to false, the class is deemed concrete and it can have direct instances.",
+      "$ref": "#/definitions/nullableBoolean"
+    },
+    "isDerived": {
+      "description": "A boolean meta-property that identifies whether or not the extension of the class (or relation) can be \"computed\" by means of a derivation rule. If set to true, they can, if set to false, they cannot. For instance, the Child can be modelled as a derived class, if it is considered that a child is a person whose age is less or equal to 10.",
+      "$ref": "#/definitions/nullableBoolean"
+    },
+    "multilingualString": {
+      "description": "A nullable field that may contain either a text string or a non-empty object where each key must indicate a language code conforming to the BCP 47 recommendations.",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/nullableString"
+        },
+        {
+          "type": "object",
+          "minimum": 1,
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ]
+    },
+    "nullableBoolean": {
+      "description": "A auxiliary definition for nullable boolean fields.",
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "nullableString": {
+      "description": "A auxiliary definition for nullable string fields.",
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "properties": {
+      "description": "A non-empty array of Property elements representing properties exhibited by instances of the container model element. Nullable. If the container object of his field is a class, the properties in this array are the attributes of the class. Alternatively, if the container is a relation, the properties in this array are the association ends of the relation.",
+      "oneOf": [
+        {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/Property"
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "propertyAssignments": {
+      "description": "An object that contains assignments to properties instantiated by the container object. Each field in this object corresponds to an assigment, whose possible values are restricted to null, boolean, number, string, reference, or an array containing any of the former. Assignments are analogous to UML's notion of tagged values. Nullable.",
+      "oneOf": [
+        {
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "null"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "$ref": "#/definitions/reference"
+          },
+          {
+            "type": "array",
+            "uniqueItems": true,
+            "minItems": 1,
+            "items": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "$ref": "#/definitions/reference"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "reference": {
+      "description": "An object representing a singular reference to a model element. Mandatory fields: \"type\", \"id\".",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "Package",
+                "Class",
+                "Relation",
+                "Generalization",
+                "GeneralizationSet",
+                "Property",
+                "Enumeration",
+                "Literal"
+              ]
+            },
+            "id": {
+              "$ref": "#/definitions/id"
+            }
+          },
+          "required": ["type", "id"],
+          "additionalProperties": false
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "stereotypes": {
+      "description": "A non-empty nullable array of non-empty strings containing the stereotypes applied to its container object. If no stereotype is applied to the object, the value of this field should be null.",
+      "oneOf": [
+        {
+          "type": "array",
+          "uniqueItems": true,
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  }
+}

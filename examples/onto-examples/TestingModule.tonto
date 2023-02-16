@@ -1,0 +1,40 @@
+module TestingA {
+
+    // uso de high-order types
+    // regras ainda não haviam sido incorporadas
+    type BiologicalRank
+    subkind HighBiologicalRank specializes BiologicalRank
+    subkind LowBiologicalRank specializes BiologicalRank
+    kind Species (instanceOf HighBiologicalRank)
+
+    // palavra reservada of apenas em não-sortais
+    category BiologicalEntity of objects, qualities, relators
+    category BiologicalEntity_ specializes BiologicalEntity // default of objects
+    category Animal specializes BiologicalEntity // default of objects
+    roleMixin InsuredItem of objects, relators
+    phaseMixin InactiveEntity of objects, relators
+    mixin InsurableItem of objects, relators
+    // kind testando of objects
+    historicalRoleMixin test
+
+    // of não é usado em sortais, pois natureza ontológica já
+    // é explicitada por type, kind, relator, mode, quality, collective
+    // ou herdada por subkind, role, phase
+    mode Weight specializes BiologicalEntity
+    quality Size
+    kind Organization {
+   {const} (organization) [*] -- hasMember specializes enrolledIn -- [*] (member) {const} Person
+}
+    kind School
+    relation Person [0..*] -- memberIn -- Organization inverseOf hasMember
+    kind Person (instanceOf Species) specializes Animal {
+    (student) /*{const_}*/ -- enrolledIn /* specializes memberIn */ -- [0..*] {const, subsets hasMember} (schools) School 
+}
+
+    // ref Person (employer) [*] -- employedIn -- School
+    // ref School -- hasEmployees -- Person inverseOf employedIn
+//     subkind School specializes Organization
+// {
+//     -- hasStudents -- Person inverseOf enrolledIn 
+// }
+}
