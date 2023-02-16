@@ -450,7 +450,7 @@ export class ClassDeclarationValidator {
     const ontologicalCategory =
       classDeclaration.classElementType.ontologicalCategory;
 
-    if (ontologicalCategory === "datatype") {
+    if (ontologicalCategory === OntologicalCategoryEnum.DATATYPE) {
       const specializationItems = classDeclaration.specializationEndurants;
       specializationItems.forEach((item) => {
         if (item.ref?.classElementType.ontologicalCategory === "datatype") {

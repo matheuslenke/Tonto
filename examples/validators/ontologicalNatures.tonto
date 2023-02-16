@@ -1,7 +1,0 @@
-module OntologicalNaturesError {
-    category Furniture of objects
-    category SpecificFurniture of collectives specializes Furniture
-    category EventFurniture of collectives, objects
-    category ErrorFurniture of collectives, objects specializes EventFurniture
-    category ErrorFurniture2 of collectives, objects specializes EventFurniture
-}

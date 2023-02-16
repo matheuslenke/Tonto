@@ -1,9 +1,0 @@
-module NonSortal {
-    category BiologicalEntity of objects, qualities, relators
-    category BiologicalEntity_ specializes BiologicalEntity // default of objects
-    category Animal specializes BiologicalEntity // default of objects
-    roleMixin InsuredItem of objects, relators
-    phaseMixin InactiveEntity of objects, relators
-    mixin InsurableItem of objects, relators
-    kind Testing of objects
-}

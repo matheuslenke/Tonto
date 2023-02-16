@@ -1,11 +1,12 @@
 import { ValidationAcceptor } from "langium";
 import { ClassDeclaration, GeneralizationSet } from "../generated/ast";
+import { ErrorMessages } from "../models/ErrorMessages";
 import {
   hasNonSortalStereotype,
   hasSortalStereotype,
   isAntiRigidStereotype,
   isRigidStereotype,
-  isSemiRigidStereotype,
+  isSemiRigidStereotype
 } from "../models/StereotypeUtils";
 
 export class GeneralizationValidator {
@@ -28,7 +29,7 @@ export class GeneralizationValidator {
         if (specific.ref?.$type === "ElementRelation") {
           accept(
             "error",
-            "Prohibited generalization: Generalizations must exclusively involve classes or relations, never a combination.",
+            ErrorMessages.genSetSpecialization,
             {
               node: genSet,
             }
@@ -40,7 +41,7 @@ export class GeneralizationValidator {
         if (specific.ref?.$type === "ClassDeclaration") {
           accept(
             "error",
-            "Prohibited generalization: Generalizations must exclusively involve classes or relations, never a combination.",
+            ErrorMessages.genSetSpecialization,
             {
               node: genSet,
             }
@@ -68,7 +69,8 @@ export class GeneralizationValidator {
       if (specific.ref?.name === generalItem.name) {
         accept(
           "error",
-          "Prohibited generalization: circular generalization. Generalizations must be defined between two distinct classes/relations",
+          ErrorMessages.genSetCircularGeneralization
+          ,
           {
             node: genSet,
           }
@@ -103,21 +105,23 @@ export class GeneralizationValidator {
         hasSortalStereotype(generalItem.classElementType.ontologicalCategory)
       ) {
         specificsItems.forEach((specific, index) => {
-          const specificClass = specific.ref as ClassDeclaration;
-          if (
-            hasNonSortalStereotype(
-              specificClass.classElementType.ontologicalCategory
-            )
-          ) {
-            accept(
-              "error",
-              `Prohibited generalization: non-sortal specializing a sortal. The non-sortal class ${specificClass.name} cannot specialize the sortal class ${generalItem.name}`,
-              {
-                node: genSet,
-                property: "specificItems",
-                index: index,
-              }
-            );
+          if (specific.ref?.$type === "ClassDeclaration") {
+            const specificClass = specific.ref as ClassDeclaration;
+            if (
+              hasNonSortalStereotype(
+                specificClass.classElementType.ontologicalCategory
+              )
+            ) {
+              accept(
+                "error",
+                `Prohibited generalization: non-sortal specializing a sortal. The non-sortal class ${specificClass.name} cannot specialize the sortal class ${generalItem.name}`,
+                {
+                  node: genSet,
+                  property: "specificItems",
+                  index: index,
+                }
+              );
+           }
           }
         });
       }
@@ -183,8 +187,7 @@ export class GeneralizationValidator {
 
   /**
    * Verify if it is a generalization between two classes. Verify if the general
-   * class has an Anti Rigid stereotype and the specific has an Rigid or Anti
-   * Rigid stereotype
+   * class has a DataType stereotype and the specific too
    */
   checkGeneralizationDataType(
     genSet: GeneralizationSet,
@@ -203,7 +206,6 @@ export class GeneralizationValidator {
     const ontologicalCategory =
       generalItem.classElementType.ontologicalCategory;
 
-    // Check if it is a anti-rigid stereotype
     if (ontologicalCategory === "datatype") {
       specificItems.forEach((specializationItem) => {
         const refElement = specializationItem.ref as ClassDeclaration;

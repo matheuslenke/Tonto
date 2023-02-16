@@ -1,9 +1,0 @@
-module SortalValidator {
-  kind Rock
-  kind Wood
-  subkind WoodRock specializes Rock, Wood
-
-  category Person
-  category Organization
-  subkind Agent specializes Organization, Person
-}

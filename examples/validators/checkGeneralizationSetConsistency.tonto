@@ -1,0 +1,11 @@
+module CheckGeneralizationConsistency {
+  kind Person
+  role Doctor specializes Person
+
+  relation  Doctor -- treats -- Person
+
+  genset GeneralizationSet {
+    general Person
+    specifics treats
+  }
+}
