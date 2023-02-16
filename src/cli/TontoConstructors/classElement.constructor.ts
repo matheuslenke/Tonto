@@ -44,9 +44,9 @@ export function constructClassElement(
     if (relations.length > 0) {
       fileNode.append("{", NL);
       if (attributes.length > 0) {
-        fileNode.indent((ident) => {
-          // constructAttributes(packageItem, element, attributes, ident);
-        });
+        // fileNode.indent((ident) => {
+        //   // constructAttributes(packageItem, element, attributes, ident);
+        // });
       }
       fileNode.indent((ident) => {
         constructInternalRelations(element, relations, ident);

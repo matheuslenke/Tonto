@@ -11,7 +11,7 @@
         "url": "https://github.com/matheuslenke/Tonto"
     },
     "engines": {
-        "vscode": "^1.53.0"
+        "vscode": "^1.63.0"
     },
     "categories": [
         "Programming Languages"
@@ -66,7 +66,7 @@
     "main": "./out/extension.js",
     "scripts": {
         "vscode:prepublish": "npm run clean && tsc --noEmit && npm run lint && node esbuild.js --minify",
-        "package": "vsce package --pre-release --baseContentUrl https://github.com/matheuslenke/Tonto --no-yarn",
+        "package": "vsce package --pre-release --baseContentUrl https://github.com/matheuslenke/Tonto",
         "publish": "vsce publish --baseContentUrl https://github.com/matheuslenke/Tonto",
         "clean": "rimraf out",
         "lint": "eslint src --ext ts",
@@ -86,29 +86,30 @@
         "colors": "^1.4.0",
         "commander": "^9.4.1",
         "jsonfile": "^6.1.0",
-        "langium": "~1.1.0",
+        "langium": "~1.0.0",
         "node-fetch-native": "^1.0.1",
         "ontouml-js": "https://github.com/matheuslenke/ontouml-js#feature/include-types-in-build",
         "ontouml-schema": "0.2.4",
         "rimraf": "^4.1.2",
-        "vscode-languageclient": "^8.0.2",
-        "vscode-languageserver": "^8.0.2",
+        "vscode-languageclient": "~8.0.2",
+        "vscode-languageserver": "~8.0.2",
+        "vscode-languageserver-types": "^3.17.3",
         "vscode-uri": "^3.0.2"
     },
     "devDependencies": {
         "@types/jest": "^29.2.3",
         "@types/node": "^18.11.17",
         "@types/node-fetch": "^2.6.1",
-        "@types/vscode": "^1.53.0",
+        "@types/vscode": "^1.63.0",
         "@typescript-eslint/eslint-plugin": "^5.51.0",
         "@typescript-eslint/parser": "^5.51.0",
         "@vitest/coverage-c8": "^0.23.2",
         "@vitest/ui": "^0.23.4",
         "esbuild": "^0.16.9",
         "eslint": "^8.32.0",
-        "langium-cli": "^1.1.0",
+        "langium-cli": "^1.0.0",
         "prettier": "^2.8.2",
-        "typescript": "~4.9.5",
+        "typescript": "~4.7.4",
         "vite": "^4.0.2",
         "vitest": "^0.23.2"
     },
