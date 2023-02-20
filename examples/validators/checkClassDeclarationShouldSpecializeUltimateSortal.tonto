@@ -2,4 +2,9 @@ module CheckKindSpecialization {
     kind Person
     subkind Agent
     subkind Agent2 specializes Person
+
+    kind X
+    phase Y specializes X
+    phase Z specializes Y 
+    role  W specializes Y
 }

@@ -1,0 +1,4 @@
+module ValidadorNovo {
+  kind Person
+  subkind Person2 specializes Person // Isso deveria dar erro de X
+}

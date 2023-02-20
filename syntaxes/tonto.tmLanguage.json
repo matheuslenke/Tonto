@@ -10,17 +10,27 @@
     },
     {
       "name": "keyword.control.tonto",
-      "match": "\\b(abstracts|aggregation|boolean|bringsAbout|categorizer|category|characterization|class|collective|collectives|comparative|complete|componentOf|composition|const|creation|datatype|date|derivation|derived|disjoint|enum|event|events|externalDependence|extrinsic-modes|extrinsicMode|formal|functional-complexes|general|genset|historicalDependence|historicalRole|historicalRoleMixin|import|inherence|instanceOf|instantiation|intrinsic-modes|intrinsicMode|inverseOf|kind|manifestation|material|mediation|memberOf|mixin|mode|module|number|objects|of|ordered|participation|participational|phase|phaseMixin|qualities|quality|quantities|quantity|redefines|relation|relator|relators|role|roleMixin|situation|situations|specializes|specifics|string|subCollectionOf|subkind|subQuantityOf|subsets|termination|triggers|type|types|value)\\b|\\B(\\\\n)\\b"
+      "match": "\\b(abstracts|aggregation|boolean|bringsAbout|categorizer|category|characterization|class|collective|collectives|comparative|complete|componentOf|composition|const|creation|datatype|date|derivation|derived|disjoint|enum|event|events|externalDependence|extrinsic-modes|extrinsicMode|formal|functional-complexes|general|genset|historicalDependence|historicalRole|historicalRoleMixin|import|inherence|instanceOf|instantiation|intrinsic-modes|intrinsicMode|inverseOf|kind|manifestation|material|mediation|memberOf|mixin|mode|module|number|objects|of|ordered|participation|participational|phase|phaseMixin|qualities|quality|quantities|quantity|redefines|relation|relator|relators|role|roleMixin|situation|situations|specializes|specifics|string|subCollectionOf|subQuantityOf|subkind|subsets|termination|triggers|type|types|value)\\b"
     },
     {
       "name": "string.quoted.double.tonto",
       "begin": "\"",
-      "end": "\""
+      "end": "\"",
+      "patterns": [
+        {
+          "include": "#string-character-escape"
+        }
+      ]
     },
     {
       "name": "string.quoted.single.tonto",
       "begin": "'",
-      "end": "'"
+      "end": "'",
+      "patterns": [
+        {
+          "include": "#string-character-escape"
+        }
+      ]
     }
   ],
   "repository": {
@@ -52,6 +62,10 @@
           "name": "comment.line.tonto"
         }
       ]
+    },
+    "string-character-escape": {
+      "name": "constant.character.escape.tonto",
+      "match": "\\\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4}|u\\{[0-9A-Fa-f]+\\}|[0-2][0-7]{0,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.|$)"
     }
   }
 }

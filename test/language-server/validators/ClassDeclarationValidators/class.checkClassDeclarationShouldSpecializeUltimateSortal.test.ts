@@ -86,4 +86,64 @@ describe("checkClassDeclarationShouldSpecializeUltimateSortal", async () => {
     expect(diagnostics).not.toBeNull();
     expect(diagnostics.length).toBe(0);
   });
+
+  it("should have no error becase it specializes indirectly a sortal", async () => {
+    const stub = `
+    module a
+    {
+      kind X
+      phase Y specializes X
+      phase Z specializes Y 
+      role  W specializes Y
+    }
+    `;
+    const validationResult = await validate(stub);
+
+    const diagnostics = validationResult.diagnostics;
+
+    expect(diagnostics).not.toBeNull();
+    expect(diagnostics.length).toBe(0);
+  });
+
+  it("should have error because Z specializes 2 ultimateSortal", async () => {
+    const stub = `
+    module a
+    {
+      kind X
+      kind X2
+      phase Y specializes X
+      phase Z specializes Y, X2
+    }
+    `;
+    const validationResult = await validate(stub);
+
+    const diagnostics = validationResult.diagnostics;
+
+    expect(diagnostics).not.toBeNull();
+    expect(diagnostics.length).toBe(1);
+
+    const messages = diagnostics.map(diagnostic => diagnostic.message)
+    expect(messages).toContain(ErrorMessages.sortalSpecializesUniqueUltimateSortal)
+  });
+
+  it("should have error because Z specializes 2 ultimateSortal indirectly", async () => {
+    const stub = `
+    module c {
+      kind X
+      kind X2
+      phase Y specializes X
+      phase Z specializes X2
+      role W specializes Y, Z
+    }
+    `;
+    const validationResult = await validate(stub);
+
+    const diagnostics = validationResult.diagnostics;
+
+    expect(diagnostics).not.toBeNull();
+    expect(diagnostics.length).toBe(1);
+
+    const messages = diagnostics.map(diagnostic => diagnostic.message)
+    expect(messages).toContain(ErrorMessages.sortalSpecializesUniqueUltimateSortal)
+  });
 });
