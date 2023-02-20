@@ -444,8 +444,8 @@ export class ClassDeclarationValidator {
    * diferentes
    */
   checkGeneralizationDataType(
-    classDeclaration: ClassDeclaration,
-    accept: ValidationAcceptor
+    _classDeclaration: ClassDeclaration,
+    _accept: ValidationAcceptor
   ) {
     // TODO: Fix this to be a validator on datatype
     // const ontologicalCategory =

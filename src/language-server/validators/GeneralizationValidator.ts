@@ -190,8 +190,8 @@ export class GeneralizationValidator {
    * class has a DataType stereotype and the specific too
    */
   checkGeneralizationDataType(
-    genSet: GeneralizationSet,
-    accept: ValidationAcceptor
+    _genSet: GeneralizationSet,
+    _accept: ValidationAcceptor
   ): void {
     // const generalItem = genSet.generalItem.ref;
     // const specificItems = genSet.specificItems;
