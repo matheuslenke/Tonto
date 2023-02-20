@@ -190,50 +190,51 @@ export class GeneralizationValidator {
    * class has a DataType stereotype and the specific too
    */
   checkGeneralizationDataType(
-    genSet: GeneralizationSet,
-    accept: ValidationAcceptor
+    _genSet: GeneralizationSet,
+    _accept: ValidationAcceptor
   ): void {
-    const generalItem = genSet.generalItem.ref;
-    const specificItems = genSet.specificItems;
+    // const generalItem = genSet.generalItem.ref;
+    // const specificItems = genSet.specificItems;
 
-    if (generalItem === undefined) {
-      return;
-    }
-    if (generalItem.$type === "ElementRelation") {
-      return;
-    }
+    // if (generalItem === undefined) {
+    //   return;
+    // }
+    // if (generalItem.$type === "ElementRelation") {
+    //   return;
+    // }
 
-    const ontologicalCategory =
-      generalItem.classElementType.ontologicalCategory;
+    // const ontologicalCategory =
+    //   generalItem.classElementType.ontologicalCategory;
+    // TODO: Fix datatype
 
-    if (ontologicalCategory === "datatype") {
-      specificItems.forEach((specializationItem) => {
-        const refElement = specializationItem.ref as ClassDeclaration;
-        if (!refElement || !refElement.classElementType) {
-          return;
-        }
-        const refOntologicalCategory =
-          refElement.classElementType.ontologicalCategory;
+    // if (ontologicalCategory === "datatype") {
+    //   specificItems.forEach((specializationItem) => {
+    //     const refElement = specializationItem.ref as ClassDeclaration;
+    //     if (!refElement || !refElement.classElementType) {
+    //       return;
+    //     }
+    //     const refOntologicalCategory =
+    //       refElement.classElementType.ontologicalCategory;
 
-        if (refOntologicalCategory !== "datatype") {
-          accept(
-            "error",
-            "Prohibited generalization: datatype specialization. A datatype can only be in generalization relation with other datatypes",
-            {
-              node: genSet,
-              property: "generalItem",
-            }
-          );
-          accept(
-            "error",
-            "Prohibited generalization: datatype specialization. A datatype can only be in generalization relation with other datatypes",
-            {
-              node: genSet,
-              property: "specificItems",
-            }
-          );
-        }
-      });
-    }
+    //     if (refOntologicalCategory !== "datatype") {
+    //       accept(
+    //         "error",
+    //         "Prohibited generalization: datatype specialization. A datatype can only be in generalization relation with other datatypes",
+    //         {
+    //           node: genSet,
+    //           property: "generalItem",
+    //         }
+    //       );
+    //       accept(
+    //         "error",
+    //         "Prohibited generalization: datatype specialization. A datatype can only be in generalization relation with other datatypes",
+    //         {
+    //           node: genSet,
+    //           property: "specificItems",
+    //         }
+    //       );
+    //     }
+    //   });
+    // }
   }
 }

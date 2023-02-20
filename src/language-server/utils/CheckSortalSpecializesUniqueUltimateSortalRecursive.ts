@@ -25,6 +25,9 @@ const checkSortalSpecializesUniqueUltimateSortalRecursive = (
   actualElement: ClassDeclaration,
   totalUltimateSortalSpecialized: number
 ): number => {
+  if (totalUltimateSortalSpecialized >= 2) {
+    return totalUltimateSortalSpecialized;
+  }
   actualElement.specializationEndurants.forEach((specializationItem) => {
     const specItem = specializationItem.ref;
     if (specItem) {
@@ -32,7 +35,7 @@ const checkSortalSpecializesUniqueUltimateSortalRecursive = (
       if (isUltimateSortalOntoCategory(specCategory)) {
         totalUltimateSortalSpecialized += 1;
       }
-      checkSortalSpecializesUniqueUltimateSortalRecursive(
+      totalUltimateSortalSpecialized = checkSortalSpecializesUniqueUltimateSortalRecursive(
         specItem,
         totalUltimateSortalSpecialized
       );

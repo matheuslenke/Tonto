@@ -219,26 +219,18 @@ interface GeneralizationSet {
 GeneralizationSetImpl returns GeneralizationSet:
   (disjoint?='disjoint')? (complete?='complete')?
 	'genset' name=ID '{'
-        GeneralizationSetGeneral
-        GeneralizationSetCategorizer?
-        GeneralizationSetSpecifics
+	// TODO: Change to unordered group when Langium supports it
+			// Case 1
+			(
+				'general' generalItem=[ClassDeclarationOrRelation:QualifiedName]
+				('categorizer' categorizerItems+=[ClassDeclarationOrRelation:QualifiedName])?
+				'specifics' specificItems+=[ClassDeclarationOrRelation:QualifiedName]
+				(',' specificItems+=[ClassDeclarationOrRelation:QualifiedName])*
+			)
 	'}'
 ;
 
 type ClassDeclarationOrRelation = ClassDeclaration | ElementRelation;
-
-fragment GeneralizationSetGeneral:
-  'general' generalItem=[ClassDeclarationOrRelation:QualifiedName]
-;
-
-fragment GeneralizationSetCategorizer:
-  'categorizer' categorizerItems+=[ClassDeclarationOrRelation:QualifiedName]
-;
-
-fragment GeneralizationSetSpecifics:
-  'specifics' specificItems+=[ClassDeclarationOrRelation:QualifiedName]
-        (',' specificItems+=[ClassDeclarationOrRelation:QualifiedName])*
-;
 
 // <--- DataTypes --->
 
@@ -257,7 +249,7 @@ BasicDataType returns string:
 Enum:
   'enum' name=ID '{'
 		(elements+=EnumElement
-		((',' | '\n') elements+=EnumElement)*)?
+		((',') elements+=EnumElement)*)?
 	'}'
 ;
 

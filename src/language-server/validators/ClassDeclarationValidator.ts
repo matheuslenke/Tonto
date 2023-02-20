@@ -145,7 +145,7 @@ export class ClassDeclarationValidator {
       if (totalUltimateSortalSpecializations > 1) {
         accept("error", ErrorMessages.sortalSpecializesUniqueUltimateSortal, {
           node: classDeclaration,
-          property: "specializationEndurants",
+          property: "name",
         });
       }
     }
@@ -444,26 +444,27 @@ export class ClassDeclarationValidator {
    * diferentes
    */
   checkGeneralizationDataType(
-    classDeclaration: ClassDeclaration,
-    accept: ValidationAcceptor
+    _classDeclaration: ClassDeclaration,
+    _accept: ValidationAcceptor
   ) {
-    const ontologicalCategory =
-      classDeclaration.classElementType.ontologicalCategory;
+    // TODO: Fix this to be a validator on datatype
+    // const ontologicalCategory =
+    //   classDeclaration.classElementType.ontologicalCategory;
 
-    if (ontologicalCategory === OntologicalCategoryEnum.DATATYPE) {
-      const specializationItems = classDeclaration.specializationEndurants;
-      specializationItems.forEach((item) => {
-        if (item.ref?.classElementType.ontologicalCategory === "datatype") {
-          accept(
-            "error",
-            "Prohibited generalization: datatype specialization. A datatype can only be in generalization relation with other datatypes",
-            {
-              node: classDeclaration,
-              property: "specializationEndurants",
-            }
-          );
-        }
-      });
-    }
+    // if (ontologicalCategory === OntologicalCategoryEnum.DATATYPE) {
+    //   const specializationItems = classDeclaration.specializationEndurants;
+    //   specializationItems.forEach((item) => {
+    //     if (item.ref?.classElementType.ontologicalCategory === "datatype") {
+    //       accept(
+    //         "error",
+    //         "Prohibited generalization: datatype specialization. A datatype can only be in generalization relation with other datatypes",
+    //         {
+    //           node: classDeclaration,
+    //           property: "specializationEndurants",
+    //         }
+    //       );
+    //     }
+    //   });
+    // }
   }
 }

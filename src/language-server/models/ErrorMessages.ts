@@ -1,5 +1,5 @@
 export enum ErrorMessages {
-    cyclicSpecialization = "There is a ciclic specialization. Please review all Elements specializations and generalizationSets from your model",
+    cyclicSpecialization = "There is a cyclic specialization. Please review all Elements specializations from your model (including those in generalization sets)",
     ultimateSortalSpecializesUltimateSortal = "Classes representing ultimate sortals cannot specialize other ultimate sortals",
     sortalSpecializesUniqueUltimateSortal = "Every sortal class must specialize a unique Ultimate Sortal (kind, collective, quantity, relator, quality, mode, intrinsicMode or extrinsicMode)",
     sortalSpecializeNoUltimateSortal = "This class does not specialize a Ultimate Sortal. Every sortal class must specialize a unique Ultimate Sortal (kind, collective, quantity, relator, quality, mode, intrinsicMode or extrinsicMode)",

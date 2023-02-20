@@ -3,3 +3,26 @@ module CheckKindSpecialization {
     subkind Agent
     subkind Agent2 specializes Person
 }
+
+module a {
+    kind X
+    phase Y specializes X
+    phase Z specializes Y 
+    role  W specializes Y
+}
+
+module b {
+    kind X
+    kind X2
+    phase Y specializes X
+    phase Z specializes Y, X2
+    role W specializes Y
+}
+
+module c {
+    kind X
+    kind X2
+    phase Y specializes X
+    phase Z specializes X2
+    role W specializes Y, Z
+}
