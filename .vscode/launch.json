@@ -31,5 +31,12 @@
                 "${workspaceFolder}/node_modules/langium"
             ],
         }
+    ],
+    "compounds": [
+        {
+            "name": "Run extension and Debug",
+            "configurations": ["Run Extension", "Attach to Language Server"],
+            "stopAll": true
+        }
     ]
 }

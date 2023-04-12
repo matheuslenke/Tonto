@@ -5,7 +5,8 @@
     },
     "extends": [
         "eslint:recommended",
-        "plugin:@typescript-eslint/recommended"
+        "plugin:@typescript-eslint/recommended",
+        "prettier"
     ],
     "overrides": [
     ],
@@ -21,10 +22,11 @@
         "**/{node_modules,lib,bin}"
     ],
     "rules": {
-        "indent": [
-            "error",
-            2
-        ],
+        "max-len": ["error", {"ignoreStrings": true, "code": 120, "tabWidth": 2}],
+        // "indent": [
+        //     "error",
+        //     2
+        // ],
         "linebreak-style": [
             "error",
             "unix"

@@ -4,10 +4,20 @@
  * terms of the MIT License, which is available in the project root.
  ******************************************************************************/
 
-import { DefaultNameProvider } from "langium";
+import { AstNode, DefaultNameProvider } from "langium";
 import {
-  ClassDeclaration, ContextModule, ElementRelation,
-  isClassDeclaration, isContextModule
+  ClassDeclaration,
+  ContextModule,
+  ElementRelation,
+  Model,
+  isAttribute,
+  isClassDeclaration,
+  isComplexDataType,
+  isContextModule,
+  isElementRelation,
+  isEnum,
+  isEnumElement,
+  isGeneralizationSet,
 } from "./generated/ast";
 
 export function toQualifiedName(
@@ -23,7 +33,7 @@ export function toQualifiedName(
   );
 }
 
-export class TontoNameProvider extends DefaultNameProvider {
+export class TontoQualifiedNameProvider extends DefaultNameProvider {
   /**
    * @param qualifier if the qualifier is a `string`, simple string concatenation is done: `qualifier.name`.
    *      if the qualifier is a `Package` fully qualified name is created: `package1.package2.name`.
@@ -31,20 +41,43 @@ export class TontoNameProvider extends DefaultNameProvider {
    * @returns qualified name separated by `.`
    */
   getQualifiedName(
-    qualifier: ContextModule | ClassDeclaration | ElementRelation | string,
+    qualifier:
+      | Model
+      | ContextModule
+      | ClassDeclaration
+      | ElementRelation
+      | string,
     name: string
   ): string {
     let prefix = qualifier;
-    if (isContextModule(prefix) || isClassDeclaration(prefix)) {
-      if (prefix.name) {
-        prefix = isContextModule(prefix.$container)
-          ? this.getQualifiedName(prefix.$container, prefix.name!)
-          : prefix.name!;
-      } else {
-        return "unamed" + Math.random().toString();
+    while (isContextModule(prefix) || isClassDeclaration(prefix)) {
+      if (name) {
+        name = `${prefix.name}.${name}`;
+        prefix = prefix.$container;
       }
     }
     return (prefix ? prefix + "." : "") + name;
   }
-}
 
+  getName(node: AstNode): string | undefined {
+    if (isElementRelation(node)) {
+      const parent = node.$container;
+      if (isClassDeclaration(parent)) {
+        return `${parent.name}.${node.name}`;
+      }
+      return node.name;
+    }
+    if (
+      isClassDeclaration(node) ||
+      isContextModule(node) ||
+      isAttribute(node) ||
+      isGeneralizationSet(node) ||
+      isComplexDataType(node) ||
+      isEnum(node) ||
+      isEnumElement(node)
+    ) {
+      return node.name;
+    }
+    return undefined;
+  }
+}

@@ -2,23 +2,27 @@ grammar Tonto
 
 interface Model {
 	imports: Import[];
-	modules: ContextModule[];
+	module: ContextModule;
 }
 
 entry RModel returns Model:
   imports+=Import*
-	modules+=ContextModule*
+	module=ContextModule
 ;
 
-/*
-* ContextModule is the main declaration of a module, that wraps a context of elements. All declarations should
-* go inside this declaration
-*/
+/**
+ * Package declaration
+ */
+
+/**
+ * ContextModule is the main declaration of a module, that wraps a context of elements. All declarations should
+ * go inside this declaration
+ */
 ContextModule:
-  'module' name=ID '{'
-		declarations+=Declaration*
-		modules+=ContextModule*
-	'}'
+  'module' (name=QualifiedName | stringName=STRING 'as' name=QualifiedName)
+
+	declarations+=Declaration*
+	modules+=ContextModule*
 ;
 
 QualifiedName returns string:
@@ -26,7 +30,7 @@ QualifiedName returns string:
 ;
 
 Import:
-  'import' referencedModel+=[Model:ID]
+  'import' referencedModel=[ContextModule:QualifiedName]
 ;
 
 // <--- Declarations --->
@@ -36,7 +40,7 @@ Declaration:
 ;
 
 AuxiliaryDeclaration:
-  ComplexDataType | Enum | GeneralizationSetImpl | ElementRelation
+  ComplexDataType | Enum | GeneralizationSetImpl | ExternalRelation
 ;
 
 interface Generalization {
@@ -51,9 +55,8 @@ ClassDeclaration:
      ('specializes' specializationEndurants+=[ClassDeclaration:QualifiedName]
 	(',' specializationEndurants+=[ClassDeclaration:QualifiedName])?
 	)? ('{'
-		(attributes+=Attribute |
-		references+=ElementRelation
-		)*
+			(attributes+=Attribute |
+			references+=InternalRelation)*
     '}')?
 ;
 
@@ -102,63 +105,73 @@ ElementRelation:
 ;
 
 InternalRelation infers ElementRelation:
+	
   ('@'relationType=RelationStereotype)?
-	    (
+	(
 		'('
-		(firstEndName=ID) &
-		('{' firstEndMetaAttributes+=RelationMetaAttribute
-		(',' firstEndMetaAttributes+=RelationMetaAttribute )* '}')
+			('{' metaAttributes+=RelationMetaAttribute 
+			(',' metaAttributes+=RelationMetaAttribute )* '}')?
+			(firstEndName=ID)?
 		')'
 	)?
-
-	firstCardinality=Cardinality?
-	(
-		(isAssociation?='--' | isComposition?='<>--') (name=QualifiedName '--')?
-	)?
+	cardinality=Cardinality?
+	(isAssociation?='--' | isComposition?='<>--') (name=QualifiedName '--')?
 
 	secondCardinality=Cardinality?
-	secondEnd=[ClassDeclaration:QualifiedName]
 	(
 		'('
-			(secondEndName=ID)
-			&
 			('{' secondEndMetaAttributes+=RelationMetaAttribute
-			(',' secondEndMetaAttributes+=RelationMetaAttribute )* '}')
+			(',' secondEndMetaAttributes+=RelationMetaAttribute )* '}')?
+			(secondEndName=ID)?
 		')'
 	)?
+	secondEnd=[ClassDeclaration:QualifiedName]
 	('specializes' specializeRelation=[ElementRelation:QualifiedName])?
-    (hasInverse='inverseOf' inverseEnd=[ElementRelation:QualifiedName])?
+  (hasInverse='inverseOf' inverseEnd=[ElementRelation:QualifiedName])?
 ;
+
+// InternalFirstEnd:
+
+// ;
+
+// SecondEnd:
+// 	cardinality=Cardinality?
+// 	declarationReference=[ClassDeclaration:QualifiedName]
+// 	(
+// 		'('
+// 			(secondEndName=ID)?
+// 			('{' secondEndMetaAttributes+=RelationMetaAttribute
+// 			(',' secondEndMetaAttributes+=RelationMetaAttribute )* '}')?
+// 		')'
+// 	)?
+// ;
 
 ExternalRelation infers ElementRelation:
   ('@'relationType=RelationStereotype)?
 	'relation'
     firstEnd=[ClassDeclaration:QualifiedName]
-	    (
+	(
 		'('
-		(firstEndName=ID) &
 		('{' firstEndMetaAttributes+=RelationMetaAttribute
-		(',' firstEndMetaAttributes+=RelationMetaAttribute )* '}')
+		(',' firstEndMetaAttributes+=RelationMetaAttribute )* '}')?
+		(firstEndName=ID)?
 		')'
 	)?
 
 	firstCardinality=Cardinality?
-	(
-		(isAssociation?='--' | isComposition?='<>--') (name=QualifiedName '--')?
-	)?
+	(isAssociation?='--' | isComposition?='<>--') (name=QualifiedName '--')?
 
 	secondCardinality=Cardinality?
-	secondEnd=[ClassDeclaration:QualifiedName]
 	(
 		'('
-			(secondEndName=ID)
-			&
 			('{' secondEndMetaAttributes+=RelationMetaAttribute
-			(',' secondEndMetaAttributes+=RelationMetaAttribute )* '}')
+			(',' secondEndMetaAttributes+=RelationMetaAttribute )* '}')?
+			(secondEndName=ID)?
 		')'
 	)?
+	secondEnd=[ClassDeclaration:QualifiedName]
 	('specializes' specializeRelation=[ElementRelation:QualifiedName])?
-    (hasInverse='inverseOf' inverseEnd=[ElementRelation:QualifiedName])?
+	(hasInverse='inverseOf' inverseEnd=[ElementRelation:QualifiedName])?
 ;
 
 Attribute:

@@ -3,7 +3,6 @@ import fetch from "node-fetch-native";
 import { MultilingualText, Project } from "ontouml-js";
 import { Model } from "../language-server/generated/ast";
 import { extractName } from "./cli-util";
-import { contextModuleGenerator } from "./JsonGenerators/contextModule.generator";
 
 export interface ResultResponse {
   code?: string;
@@ -81,14 +80,15 @@ export function parseProject(ctx: GeneratorContext): Project {
   const project = new Project({
     name: new MultilingualText(`${ctx.name}`),
   }); // creates an OntoUML projects
-  const rootModel = project.createModel({
-    name: new MultilingualText("root"),
-  });
+  // TODO: Refactor parsing project
+  // const rootModel = project.createModel({
+  //   name: new MultilingualText("root"),
+  // });
 
-  ctx.model.modules.forEach((contextModule, _) => {
-    const createdPackage = rootModel.createPackage(contextModule.name);
-    // Generate a contextModule
-    contextModuleGenerator(contextModule, createdPackage);
-  });
+  // ctx.model.modules.forEach((contextModule, _) => {
+  //   const createdPackage = rootModel.createPackage(contextModule.name);
+  //   // Generate a contextModule
+  //   contextModuleGenerator(contextModule, createdPackage);
+  // });
   return project;
 }

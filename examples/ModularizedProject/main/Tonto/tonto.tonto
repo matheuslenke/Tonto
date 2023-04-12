@@ -1,0 +1,5 @@
+module "https://github.com/matheuslenke/tonto" as GithubTonto
+
+kind UrlKind {
+  
+}

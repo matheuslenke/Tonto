@@ -6,27 +6,31 @@ import {
   LangiumServices,
   LangiumSharedServices,
   Module,
-  PartialLangiumServices
+  PartialLangiumServices,
 } from "langium";
 import {
   TontoGeneratedModule,
-  TontoGeneratedSharedModule
+  TontoGeneratedSharedModule,
 } from "./generated/module";
 import { TontoActionProvider } from "./lsp/tonto-code-actions";
 import { TontoSemanticTokenProvider } from "./lsp/tonto-semantic-token-provider";
 import { TontoFormatter } from "./tonto-formatter";
-import { TontoNameProvider } from "./tonto-naming";
+import { TontoQualifiedNameProvider } from "./tonto-naming";
 import { TontoScopeComputation } from "./tonto-scope";
 import { TontoValidationRegistry } from "./tonto-validator";
 import { TontoValidator } from "./validators/TontoValidator";
+import { TontoCompletionProvider } from "./lsp/tonto-completion-provider";
 
 /**
  * Declaration of custom services - add your own service classes here.
  */
 export type TontoAddedServices = {
-    validation: {
-        TontoValidator: TontoValidator;
-    };
+  references: {
+    QualifiedNameProvider: TontoQualifiedNameProvider;
+  };
+  validation: {
+    TontoValidator: TontoValidator;
+  };
 };
 
 /**
@@ -41,23 +45,25 @@ export type TontoServices = LangiumServices & TontoAddedServices;
  * selected services, while the custom services must be fully specified.
  */
 export const TontoModule: Module<
-TontoServices,
-PartialLangiumServices & TontoAddedServices
+  TontoServices,
+  PartialLangiumServices & TontoAddedServices
 > = {
   references: {
-    ScopeComputation: services => new TontoScopeComputation(services),
-    NameProvider: () => new TontoNameProvider()
-    // ScopeProvider: (services) => new TontoScopeProvider(services),
+    ScopeComputation: (services) => new TontoScopeComputation(services),
+    QualifiedNameProvider: () => new TontoQualifiedNameProvider(),
+    NameProvider: () => new TontoQualifiedNameProvider(),
   },
   validation: {
-    ValidationRegistry: services => new TontoValidationRegistry(services),
-    TontoValidator: () => new TontoValidator()
+    ValidationRegistry: (services) => new TontoValidationRegistry(services),
+    TontoValidator: () => new TontoValidator(),
   },
   lsp: {
     CodeActionProvider: () => new TontoActionProvider(),
     Formatter: () => new TontoFormatter(),
-    SemanticTokenProvider: services => new TontoSemanticTokenProvider(services)
-  }
+    SemanticTokenProvider: (services) =>
+      new TontoSemanticTokenProvider(services),
+    CompletionProvider: (services) => new TontoCompletionProvider(services),
+  },
 };
 
 /**
@@ -75,12 +81,10 @@ PartialLangiumServices & TontoAddedServices
  * @param context Optional module context with the LSP connection
  * @returns An object wrapping the shared services and the language-specific services
  */
-export function createTontoServices(
-  context: DefaultSharedModuleContext
-): {
-        shared: LangiumSharedServices;
-        Tonto: TontoServices;
-    } {
+export function createTontoServices(context: DefaultSharedModuleContext): {
+  shared: LangiumSharedServices;
+  Tonto: TontoServices;
+} {
   const shared = inject(
     createDefaultSharedModule(context),
     TontoGeneratedSharedModule

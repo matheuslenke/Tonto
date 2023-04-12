@@ -55,10 +55,10 @@ export function parseProject(ctx: GeneratorContext): Project {
     name: new MultilingualText("root"),
   });
 
-  ctx.model.modules.forEach((contextModule, _) => {
-    const createdPackage = rootModel.createPackage(contextModule.name);
-    // Generate a contextModule
-    contextModuleGenerator(contextModule, createdPackage);
-  });
+  const contextModule = ctx.model.module;
+
+  const createdPackage = rootModel.createPackage(contextModule.name);
+  // Generate a contextModule
+  contextModuleGenerator(contextModule, createdPackage);
   return project;
 }

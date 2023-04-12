@@ -118,7 +118,8 @@ export interface ContextModule extends AstNode {
     readonly $type: 'ContextModule';
     declarations: Array<Declaration>
     modules: Array<ContextModule>
-    name: string
+    name: QualifiedName
+    stringName?: string
 }
 
 export const ContextModule = 'ContextModule';
@@ -142,6 +143,7 @@ export function isElementOntologicalNature(item: unknown): item is ElementOntolo
 export interface ElementRelation extends AstNode {
     readonly $container: ClassDeclaration | ContextModule;
     readonly $type: 'ElementRelation';
+    cardinality?: Cardinality
     firstCardinality?: Cardinality
     firstEnd?: Reference<ClassDeclaration>
     firstEndMetaAttributes: Array<RelationMetaAttribute>
@@ -150,6 +152,7 @@ export interface ElementRelation extends AstNode {
     inverseEnd?: Reference<ElementRelation>
     isAssociation: boolean
     isComposition: boolean
+    metaAttributes: Array<RelationMetaAttribute>
     name?: QualifiedName
     relationType?: RelationStereotype
     secondCardinality?: Cardinality
@@ -222,7 +225,7 @@ export function isGeneralizationSet(item: unknown): item is GeneralizationSet {
 export interface Import extends AstNode {
     readonly $container: Model;
     readonly $type: 'Import';
-    referencedModel: Array<Reference<Model>>
+    referencedModel: Reference<ContextModule>
 }
 
 export const Import = 'Import';
@@ -234,7 +237,7 @@ export function isImport(item: unknown): item is Import {
 export interface Model extends AstNode {
     readonly $type: 'Model';
     imports: Array<Import>
-    modules: Array<ContextModule>
+    module: ContextModule
 }
 
 export const Model = 'Model';
@@ -346,7 +349,7 @@ export class TontoAstReflection extends AbstractAstReflection {
                 return ClassDeclarationOrRelation;
             }
             case 'Import:referencedModel': {
-                return Model;
+                return ContextModule;
             }
             default: {
                 throw new Error(`${referenceId} is not a valid reference id.`);
@@ -408,6 +411,7 @@ export class TontoAstReflection extends AbstractAstReflection {
                         { name: 'firstEndMetaAttributes', type: 'array' },
                         { name: 'isAssociation', type: 'boolean' },
                         { name: 'isComposition', type: 'boolean' },
+                        { name: 'metaAttributes', type: 'array' },
                         { name: 'secondEndMetaAttributes', type: 'array' }
                     ]
                 };
@@ -439,20 +443,11 @@ export class TontoAstReflection extends AbstractAstReflection {
                     ]
                 };
             }
-            case 'Import': {
-                return {
-                    name: 'Import',
-                    mandatory: [
-                        { name: 'referencedModel', type: 'array' }
-                    ]
-                };
-            }
             case 'Model': {
                 return {
                     name: 'Model',
                     mandatory: [
-                        { name: 'imports', type: 'array' },
-                        { name: 'modules', type: 'array' }
+                        { name: 'imports', type: 'array' }
                     ]
                 };
             }
