@@ -10,6 +10,7 @@ import {
 import { validateAction } from "./cli/actions/validateAction";
 import { importCommand } from "./cli/actions/importAction";
 import { generateAction } from "./cli/actions/generateAction";
+import { TontoLibraryFileSystemProvider } from "./language-server/extension/TontoLibraryFileSystemProvider";
 
 let client: LanguageClient;
 let generateJsonStatusBarItem: vscode.StatusBarItem;
@@ -21,7 +22,9 @@ export function activate(context: vscode.ExtensionContext): void {
   createJSONGenerationCommands(context);
   createTontoGenerationCommands(context);
   createValidationCommands(context);
+  TontoLibraryFileSystemProvider.register(context);
   client = startLanguageClient(context);
+  // Activating library file system provider
 }
 
 // This function is called when the extension is deactivated.
@@ -39,7 +42,14 @@ function startLanguageClient(context: vscode.ExtensionContext): LanguageClient {
   // The debug options for the server
   // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging.
   // By setting `process.env.DEBUG_BREAK` to a truthy value, the language server will wait until a debugger is attached.
-  const debugOptions = { execArgv: ["--nolazy", `--inspect${process.env.DEBUG_BREAK ? "-brk" : ""}=${process.env.DEBUG_SOCKET || "6009"}`] };
+  const debugOptions = {
+    execArgv: [
+      "--nolazy",
+      `--inspect${process.env.DEBUG_BREAK ? "-brk" : ""}=${
+        process.env.DEBUG_SOCKET || "6009"
+      }`,
+    ],
+  };
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
   const serverOptions: ServerOptions = {
@@ -51,9 +61,9 @@ function startLanguageClient(context: vscode.ExtensionContext): LanguageClient {
     },
   };
 
-  const fileSystemWatcher = vscode.workspace.createFileSystemWatcher(
-    "**/*.tonto"
-  );
+  const fileSystemWatcher =
+    vscode.workspace.createFileSystemWatcher("**/*.tonto");
+
   context.subscriptions.push(fileSystemWatcher);
 
   // Options to control the language client
@@ -64,7 +74,6 @@ function startLanguageClient(context: vscode.ExtensionContext): LanguageClient {
       fileEvents: fileSystemWatcher,
     },
   };
-
   // Create the language client and start the client.
   const client = new LanguageClient(
     "tonto",
@@ -75,6 +84,7 @@ function startLanguageClient(context: vscode.ExtensionContext): LanguageClient {
 
   // Start the client. This will also launch the
   client.start();
+
   return client;
 }
 
@@ -255,7 +265,7 @@ async function validateModel(uri: vscode.Uri) {
         const result = await validateAction(document.fileName);
         if (result) {
           if (isErrorResultResponse(result)) {
-            const error = (result as unknown) as ErrorResultResponse;
+            const error = result as unknown as ErrorResultResponse;
             let message = `Error ${error.status} (${error.id}):${error.message}: \n`;
             error.info.forEach((info) => {
               message += ` keyword ${info.keyword}: ${info.message}; `;

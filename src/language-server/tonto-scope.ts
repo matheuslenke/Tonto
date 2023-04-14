@@ -7,6 +7,7 @@ import {
   LangiumDocument,
   MultiMap,
   PrecomputedScopes,
+  streamAllContents,
 } from "langium";
 import { CancellationToken } from "vscode-jsonrpc";
 import {
@@ -27,39 +28,51 @@ export class TontoScopeComputation extends DefaultScopeComputation {
     this.qualifiedNameProvider = services.references.QualifiedNameProvider;
   }
 
-  // override async computeExports(
-  //   document: LangiumDocument,
-  //   cancelToken = CancellationToken.None
-  // ): Promise<AstNodeDescription[]> {
-  //   const exportedDescriptions: AstNodeDescription[] = [];
+  override async computeExports(
+    document: LangiumDocument,
+    cancelToken = CancellationToken.None
+  ): Promise<AstNodeDescription[]> {
+    const exportedDescriptions: AstNodeDescription[] = [];
+    for (const childNode of streamAllContents(document.parseResult.value)) {
+      await interruptAndCheck(cancelToken);
 
-  //   for (const childNode of streamAllContents(document.parseResult.value)) {
-  //     await interruptAndCheck(cancelToken);
+      if (
+        isClassDeclaration(childNode) ||
+        isElementRelation(childNode) ||
+        isComplexDataType(childNode) ||
+        isContextModule(childNode)
+      ) {
+        if (
+          isContextModule(childNode.$container) &&
+          childNode.$container.isPublic
+        ) {
+          exportedDescriptions.push(
+            this.descriptions.createDescription(
+              childNode,
+              childNode.name,
+              document
+            )
+          );
+        } else {
+          if (childNode.name !== undefined) {
+            const fullyQualifiedName = this.getQualifiedName(
+              childNode,
+              childNode.name
+            );
 
-  //     if (
-  //       isClassDeclaration(childNode) ||
-  //       isElementRelation(childNode) ||
-  //       isComplexDataType(childNode) ||
-  //       isContextModule(childNode)
-  //     ) {
-  //       if (childNode.name !== undefined) {
-  //         const fullyQualifiedName = this.getQualifiedName(
-  //           childNode,
-  //           childNode.name
-  //         );
-
-  //         exportedDescriptions.push(
-  //           this.descriptions.createDescription(
-  //             childNode,
-  //             fullyQualifiedName,
-  //             document
-  //           )
-  //         );
-  //       }
-  //     }
-  //   }
-  //   return exportedDescriptions;
-  // }
+            exportedDescriptions.push(
+              this.descriptions.createDescription(
+                childNode,
+                fullyQualifiedName,
+                document
+              )
+            );
+          }
+        }
+      }
+    }
+    return exportedDescriptions;
+  }
 
   // private getContextModuleFromContainer(element: AstNode): ContextModule {
   //   let contextModule: AstNode;
@@ -76,21 +89,21 @@ export class TontoScopeComputation extends DefaultScopeComputation {
   // /**
   //  * Build a qualified name for a model node
   //  */
-  // private getQualifiedName(node: AstNode, name: string): string {
-  //   let parent: AstNode | undefined = node.$container;
+  private getQualifiedName(node: AstNode, name: string): string {
+    let parent: AstNode | undefined = node.$container;
 
-  //   while (isContextModule(parent)) {
-  //     // Iteratively prepend the name of the parent contextModule
-  //     // This allows us to work with nested contextModules
-  //     // if (parent.stringName) {
-  //     //   name = `"${parent.name}".${name}`;
-  //     // } else if (parent.name) {
-  //     // }
-  //     name = `${parent.name}.${name}`;
-  //     parent = parent.$container;
-  //   }
-  //   return name;
-  // }
+    while (isContextModule(parent)) {
+      // Iteratively prepend the name of the parent contextModule
+      // This allows us to work with nested contextModules
+      // if (parent.stringName) {
+      //   name = `"${parent.name}".${name}`;
+      // } else if (parent.name) {
+      // }
+      name = `${parent.name}.${name}`;
+      parent = parent.$container;
+    }
+    return name;
+  }
 
   async computeLocalScopes(
     document: LangiumDocument<AstNode>,
@@ -132,6 +145,9 @@ export class TontoScopeComputation extends DefaultScopeComputation {
     cancelToken: CancellationToken
   ): Promise<AstNodeDescription[]> {
     const localDescriptions: AstNodeDescription[] = [];
+    if (!container) {
+      return Promise.reject("Container is undefined");
+    }
     for (const element of container.declarations) {
       await interruptAndCheck(cancelToken);
       if (

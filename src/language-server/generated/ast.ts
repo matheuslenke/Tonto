@@ -14,8 +14,6 @@ export function isAuxiliaryDeclaration(item: unknown): item is AuxiliaryDeclarat
     return reflection.isInstance(item, AuxiliaryDeclaration);
 }
 
-export type BasicDataType = 'boolean' | 'date' | 'number' | 'string';
-
 export type ClassDeclarationOrRelation = ClassDeclaration | ElementRelation;
 
 export const ClassDeclarationOrRelation = 'ClassDeclarationOrRelation';
@@ -53,8 +51,7 @@ export type UnspecifiedType = 'class';
 export interface Attribute extends AstNode {
     readonly $container: ClassDeclaration | ComplexDataType;
     readonly $type: 'Attribute';
-    attributeType?: BasicDataType
-    attributeTypeRef?: Reference<ComplexDataType>
+    attributeTypeRef: Reference<ComplexDataType>
     cardinality?: Cardinality
     isConst: boolean
     isDerived: boolean
@@ -114,10 +111,10 @@ export function isComplexDataType(item: unknown): item is ComplexDataType {
 }
 
 export interface ContextModule extends AstNode {
-    readonly $container: ContextModule | Model;
+    readonly $container: Model;
     readonly $type: 'ContextModule';
     declarations: Array<Declaration>
-    modules: Array<ContextModule>
+    isPublic: boolean
     name: QualifiedName
     stringName?: string
 }
@@ -392,7 +389,7 @@ export class TontoAstReflection extends AbstractAstReflection {
                     name: 'ContextModule',
                     mandatory: [
                         { name: 'declarations', type: 'array' },
-                        { name: 'modules', type: 'array' }
+                        { name: 'isPublic', type: 'boolean' }
                     ]
                 };
             }

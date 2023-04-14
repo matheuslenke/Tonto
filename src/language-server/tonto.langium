@@ -19,10 +19,9 @@ entry RModel returns Model:
  * go inside this declaration
  */
 ContextModule:
-  'module' (name=QualifiedName | stringName=STRING 'as' name=QualifiedName)
+  (isPublic?='public')? 'module' (name=QualifiedName | stringName=STRING 'as' name=QualifiedName)
 
 	declarations+=Declaration*
-	modules+=ContextModule*
 ;
 
 QualifiedName returns string:
@@ -175,7 +174,7 @@ ExternalRelation infers ElementRelation:
 ;
 
 Attribute:
-  name=ID ':' (attributeTypeRef=[ComplexDataType] | attributeType=BasicDataType)
+  name=ID ':' attributeTypeRef=[ComplexDataType:QualifiedName]
 	cardinality=Cardinality?
 	('{'((isOrdered?='ordered') & (isConst?='const') & (isDerived?='derived'))? '}')?
 ;
@@ -251,10 +250,6 @@ ComplexDataType:
   'datatype' name=ID ontologicalNature=ElementOntologicalNature? ('{'
 		(attributes+=Attribute)*
 	'}')?
-;
-
-BasicDataType returns string:
-  'number' | 'string' | 'date' | 'boolean'
 ;
 
 // <--- Enums --->

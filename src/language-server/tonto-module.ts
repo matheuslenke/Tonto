@@ -1,6 +1,7 @@
 import {
   createDefaultModule,
   createDefaultSharedModule,
+  DeepPartial,
   DefaultSharedModuleContext,
   inject,
   LangiumServices,
@@ -20,6 +21,8 @@ import { TontoScopeComputation } from "./tonto-scope";
 import { TontoValidationRegistry } from "./tonto-validator";
 import { TontoValidator } from "./validators/TontoValidator";
 import { TontoCompletionProvider } from "./lsp/tonto-completion-provider";
+import { TontoWorkspaceManager } from "./workspace/tonto-workspace-manager";
+import { TontoScopeProvider } from "./tonto-scope-provider";
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -52,6 +55,7 @@ export const TontoModule: Module<
     ScopeComputation: (services) => new TontoScopeComputation(services),
     QualifiedNameProvider: () => new TontoQualifiedNameProvider(),
     NameProvider: () => new TontoQualifiedNameProvider(),
+    ScopeProvider: (services) => new TontoScopeProvider(services),
   },
   validation: {
     ValidationRegistry: (services) => new TontoValidationRegistry(services),
@@ -63,6 +67,17 @@ export const TontoModule: Module<
     SemanticTokenProvider: (services) =>
       new TontoSemanticTokenProvider(services),
     CompletionProvider: (services) => new TontoCompletionProvider(services),
+  },
+};
+
+export type TontoSharedServices = LangiumSharedServices;
+
+export const TontoSharedModule: Module<
+  TontoSharedServices,
+  DeepPartial<LangiumSharedServices>
+> = {
+  workspace: {
+    WorkspaceManager: (services) => new TontoWorkspaceManager(services),
   },
 };
 
@@ -87,13 +102,14 @@ export function createTontoServices(context: DefaultSharedModuleContext): {
 } {
   const shared = inject(
     createDefaultSharedModule(context),
-    TontoGeneratedSharedModule
+    TontoGeneratedSharedModule,
+    TontoSharedModule
   );
-  const Tonto = inject(
+  const services = inject(
     createDefaultModule({ shared }),
     TontoGeneratedModule,
     TontoModule
   );
-  shared.ServiceRegistry.register(Tonto);
-  return { shared, Tonto };
+  shared.ServiceRegistry.register(services);
+  return { shared, Tonto: services };
 }

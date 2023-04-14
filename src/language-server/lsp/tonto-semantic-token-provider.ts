@@ -1,11 +1,11 @@
 import {
   AbstractSemanticTokenProvider,
   AstNode,
-  SemanticTokenAcceptor
+  SemanticTokenAcceptor,
 } from "langium";
 import {
   SemanticTokenModifiers,
-  SemanticTokenTypes
+  SemanticTokenTypes,
 } from "vscode-languageserver";
 import {
   Enum,
@@ -16,15 +16,16 @@ import {
   isEnum,
   isEnumElement,
   isOntologicalCategory,
-  OntologicalCategory
+  OntologicalCategory,
 } from "../generated/ast";
 import {
   Attribute,
   ClassDeclaration,
   ContextModule,
-  ElementRelation, EnumElement,
+  ElementRelation,
+  EnumElement,
   isRelationMetaAttribute,
-  RelationMetaAttribute
+  RelationMetaAttribute,
 } from "./../generated/ast";
 
 /*
@@ -108,7 +109,7 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
   private attributeTokens(node: Attribute, acceptor: SemanticTokenAcceptor) {
     acceptor({
       node,
-      property: "attributeType",
+      property: "attributeTypeRef",
       type: SemanticTokenTypes.type,
     });
     acceptor({
