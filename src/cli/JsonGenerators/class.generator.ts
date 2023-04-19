@@ -1,12 +1,17 @@
 import {
   CardinalityValues,
   Class,
-  ClassStereotype, OntologicalNature, Package,
-  Property
+  ClassStereotype,
+  OntologicalNature,
+  Package,
+  Property,
 } from "ontouml-js";
 import {
   Attribute,
-  Cardinality, ClassDeclaration, ComplexDataType, OntologicalNature as Nature
+  Cardinality,
+  ClassDeclaration,
+  ComplexDataType,
+  OntologicalNature as Nature,
 } from "../../language-server/generated/ast";
 import { OntologicalCategoryEnum } from "../../language-server/models/OntologicalCategory";
 
@@ -23,64 +28,64 @@ export function classElementGenerator(
       natures = getDefaultOntoUMLNature(classElement);
     }
     switch (stereotype) {
-    case "category": {
-      return packageItem.createCategory(classElement.name, natures);
-    }
-    case "mixin": {
-      return packageItem.createMixin(classElement.name, natures);
-    }
-    case "phaseMixin": {
-      return packageItem.createPhaseMixin(classElement.name, natures);
-    }
-    case "roleMixin": {
-      return packageItem.createRoleMixin(classElement.name, natures);
-    }
-    case "historicalRoleMixin": {
-      return packageItem.createRoleMixin(classElement.name, natures);
-    }
-    case "event": {
-      return packageItem.createEvent(classElement.name);
-    }
-    case "kind": {
-      return packageItem.createKind(classElement.name);
-    }
-    case "collective": {
-      return packageItem.createCollective(classElement.name);
-    }
-    case "quantity": {
-      return packageItem.createQuantity(classElement.name);
-    }
-    case "quality": {
-      return packageItem.createQuality(classElement.name);
-    }
-    case "mode": {
-      return packageItem.createClass(
-        classElement.name,
-        ClassStereotype.MODE,
-        [OntologicalNature.extrinsic_mode, OntologicalNature.intrinsic_mode]
-      );
-    }
-    case "intrinsicMode": {
-      return packageItem.createIntrinsicMode(classElement.name);
-    }
-    case "extrinsicMode": {
-      return packageItem.createExtrinsicMode(classElement.name);
-    }
-    case "subkind": {
-      return packageItem.createSubkind(classElement.name);
-    }
-    case "phase": {
-      return packageItem.createPhase(classElement.name);
-    }
-    case "role": {
-      return packageItem.createRole(classElement.name);
-    }
-    case "historicalRole": {
-      return packageItem.createHistoricalRole(classElement.name);
-    }
-    case "relator": {
-      return packageItem.createRelator(classElement.name);
-    }
+      case "category": {
+        return packageItem.createCategory(classElement.name, natures);
+      }
+      case "mixin": {
+        return packageItem.createMixin(classElement.name, natures);
+      }
+      case "phaseMixin": {
+        return packageItem.createPhaseMixin(classElement.name, natures);
+      }
+      case "roleMixin": {
+        return packageItem.createRoleMixin(classElement.name, natures);
+      }
+      case "historicalRoleMixin": {
+        return packageItem.createRoleMixin(classElement.name, natures);
+      }
+      case "event": {
+        return packageItem.createEvent(classElement.name);
+      }
+      case "kind": {
+        return packageItem.createKind(classElement.name);
+      }
+      case "collective": {
+        return packageItem.createCollective(classElement.name);
+      }
+      case "quantity": {
+        return packageItem.createQuantity(classElement.name);
+      }
+      case "quality": {
+        return packageItem.createQuality(classElement.name);
+      }
+      case "mode": {
+        return packageItem.createClass(
+          classElement.name,
+          ClassStereotype.MODE,
+          [OntologicalNature.extrinsic_mode, OntologicalNature.intrinsic_mode]
+        );
+      }
+      case "intrinsicMode": {
+        return packageItem.createIntrinsicMode(classElement.name);
+      }
+      case "extrinsicMode": {
+        return packageItem.createExtrinsicMode(classElement.name);
+      }
+      case "subkind": {
+        return packageItem.createSubkind(classElement.name);
+      }
+      case "phase": {
+        return packageItem.createPhase(classElement.name);
+      }
+      case "role": {
+        return packageItem.createRole(classElement.name);
+      }
+      case "historicalRole": {
+        return packageItem.createHistoricalRole(classElement.name);
+      }
+      case "relator": {
+        return packageItem.createRelator(classElement.name);
+      }
     }
   }
   return packageItem.createClass(classElement.name);
@@ -94,60 +99,58 @@ export function attributeGenerator(
   classElement.attributes.forEach((attribute: Attribute) => {
     let createdAttribute: Property | undefined;
 
-    if (attribute.attributeType) {
-      switch (attribute.attributeType) {
-      case "date": {
-        const dateType = dataTypes.find(
-          (item) => item.name.getText() === "Date"
-        );
-        if (dateType) {
-          createdAttribute = createdClass.createAttribute(
-            dateType,
-            attribute.name
-          );
-        }
-        break;
-      }
-      case "number": {
-        const numberType = dataTypes.find(
-          (item) => item.name.getText() === "number"
-        );
-        if (numberType) {
-          createdAttribute = createdClass.createAttribute(
-            numberType,
-            attribute.name
-          );
-          createdAttribute.cardinality.setOneToOne();
-        }
-        break;
-      }
-
-      case "boolean": {
-        const booleanType = dataTypes.find(
-          (item) => item.name.getText() === "boolean"
-        );
-        if (booleanType) {
-          createdAttribute = createdClass.createAttribute(
-            booleanType,
-            attribute.name
-          );
-        }
-        break;
-      }
-
-      case "string": {
-        const stringType = dataTypes.find(
-          (item) => item.name.getText() === "string"
-        );
-        if (stringType) {
-          createdAttribute = createdClass.createAttribute(
-            stringType,
-            attribute.name
-          );
-        }
-        break;
-      }
-      }
+    if (attribute.attributeTypeRef) {
+      // switch (attribute.attributeTypeRef) {
+      // case "date": {
+      //   const dateType = dataTypes.find(
+      //     (item) => item.name.getText() === "Date"
+      //   );
+      //   if (dateType) {
+      //     createdAttribute = createdClass.createAttribute(
+      //       dateType,
+      //       attribute.name
+      //     );
+      //   }
+      //   break;
+      // }
+      // case "number": {
+      //   const numberType = dataTypes.find(
+      //     (item) => item.name.getText() === "number"
+      //   );
+      //   if (numberType) {
+      //     createdAttribute = createdClass.createAttribute(
+      //       numberType,
+      //       attribute.name
+      //     );
+      //     createdAttribute.cardinality.setOneToOne();
+      //   }
+      //   break;
+      // }
+      // case "boolean": {
+      //   const booleanType = dataTypes.find(
+      //     (item) => item.name.getText() === "boolean"
+      //   );
+      //   if (booleanType) {
+      //     createdAttribute = createdClass.createAttribute(
+      //       booleanType,
+      //       attribute.name
+      //     );
+      //   }
+      //   break;
+      // }
+      // case "string": {
+      //   const stringType = dataTypes.find(
+      //     (item) => item.name.getText() === "string"
+      //   );
+      //   if (stringType) {
+      //     createdAttribute = createdClass.createAttribute(
+      //       stringType,
+      //       attribute.name
+      //     );
+      //   }
+      //   break;
+      // }
+      // }
     } else if (attribute.attributeTypeRef !== undefined) {
       const customType = dataTypes.find(
         (item) => item.name.getText() === attribute.attributeTypeRef?.toString()
@@ -208,48 +211,63 @@ export function generalizationGenerator(
   model.createGeneralization(sourceClass, targetClass);
 }
 
-export function createInstantiation(model: Package,
+export function createInstantiation(
+  model: Package,
   sourceClass: Class,
-  targetClass: Class) {
+  targetClass: Class
+) {
   model.createInstantiationRelation(sourceClass, targetClass);
 }
 
 function getOntoUMLNatures(natures: Nature[]): OntologicalNature[] {
   return natures.flatMap((nature) => {
     switch (nature) {
-    case "collectives":
-      return OntologicalNature.collective;
-    case "extrinsic-modes":
-      return OntologicalNature.extrinsic_mode;
-    case "functional-complexes":
-      return OntologicalNature.functional_complex;
-    case "intrinsic-modes":
-      return OntologicalNature.intrinsic_mode;
-    case "qualities":
-      return OntologicalNature.quality;
-    case "quantities":
-      return OntologicalNature.quantity;
-    case "relators":
-      return OntologicalNature.relator;
-    case "types":
-      return OntologicalNature.type;
-    case "objects":
-      return [OntologicalNature.functional_complex, OntologicalNature.collective, OntologicalNature.quantity];
-    default:
-      return OntologicalNature.functional_complex;
+      case "collectives":
+        return OntologicalNature.collective;
+      case "extrinsic-modes":
+        return OntologicalNature.extrinsic_mode;
+      case "functional-complexes":
+        return OntologicalNature.functional_complex;
+      case "intrinsic-modes":
+        return OntologicalNature.intrinsic_mode;
+      case "qualities":
+        return OntologicalNature.quality;
+      case "quantities":
+        return OntologicalNature.quantity;
+      case "relators":
+        return OntologicalNature.relator;
+      case "types":
+        return OntologicalNature.type;
+      case "objects":
+        return [
+          OntologicalNature.functional_complex,
+          OntologicalNature.collective,
+          OntologicalNature.quantity,
+        ];
+      default:
+        return OntologicalNature.functional_complex;
     }
   });
 }
 
-function getDefaultOntoUMLNature(element: ClassDeclaration): OntologicalNature[] {
+function getDefaultOntoUMLNature(
+  element: ClassDeclaration
+): OntologicalNature[] {
   if (
-    element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.CATEGORY ||
-    element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.MIXIN ||
-    element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.PHASE_MIXIN ||
-    element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.ROLE_MIXIN ||
-    element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.HISTORICAL_ROLE_MIXIN ||
-    element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.EVENT ||
-    element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.SITUATION
+    element.classElementType?.ontologicalCategory ===
+      OntologicalCategoryEnum.CATEGORY ||
+    element.classElementType?.ontologicalCategory ===
+      OntologicalCategoryEnum.MIXIN ||
+    element.classElementType?.ontologicalCategory ===
+      OntologicalCategoryEnum.PHASE_MIXIN ||
+    element.classElementType?.ontologicalCategory ===
+      OntologicalCategoryEnum.ROLE_MIXIN ||
+    element.classElementType?.ontologicalCategory ===
+      OntologicalCategoryEnum.HISTORICAL_ROLE_MIXIN ||
+    element.classElementType?.ontologicalCategory ===
+      OntologicalCategoryEnum.EVENT ||
+    element.classElementType?.ontologicalCategory ===
+      OntologicalCategoryEnum.SITUATION
   ) {
     return [OntologicalNature.functional_complex];
   } else {

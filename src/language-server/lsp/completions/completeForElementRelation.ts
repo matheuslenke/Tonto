@@ -1,6 +1,5 @@
 import { CompletionItemKind } from "vscode-languageserver";
 import { InsertTextFormat } from "vscode-languageserver-types";
-import { completeFullElementRelationSnippets } from "./completeFullElementRelationSnippets";
 import { CompletionAcceptor } from "langium";
 import { Keyword } from "langium/lib/grammar/generated/ast";
 import { completeForCardinality } from "./completeForCardinality";
@@ -10,9 +9,6 @@ function completeForElementRelation(
   acceptor: CompletionAcceptor
 ) {
   switch (keyword.value) {
-    case "@":
-      completeFullElementRelationSnippets(acceptor);
-      break;
     case "--":
       acceptor({
         label: "-- $relationName --",

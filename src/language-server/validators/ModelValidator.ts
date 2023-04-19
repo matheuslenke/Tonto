@@ -6,12 +6,11 @@ export class ModelValidator {
    * Checks if for the same file it has a duplicated module name
    */
   checkDuplicatedContextModuleNames(
-    model: Model,
-    accept: ValidationAcceptor
+    _model: Model,
+    _accept: ValidationAcceptor
   ): void {
     // const modules = model.modules;
     // const names: string[] = [];
-
     // modules.forEach((module) => {
     //   if (module.$type === "ContextModule") {
     //     const item = (module as unknown) as ContextModule;

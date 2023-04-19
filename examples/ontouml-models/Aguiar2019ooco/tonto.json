@@ -1,0 +1,14 @@
+{
+  "name": "Aguiar2019ooco",
+  "displayName": "Aguiar 2019 Object Oriented Example",
+  "publisher": "Aguiar",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "SWO": "1.0.0",
+    "SPO": {
+      "url": "https://github.com/SWO",
+      "version": "1.0.0"
+    }
+  }
+}

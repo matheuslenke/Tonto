@@ -1,0 +1,6 @@
+module SWO
+
+kind Code
+kind Program
+kind SoftwareSystem
+subkind SourceCode specializes Code

@@ -53,7 +53,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
               document
             )
           );
-        } else {
+        } else if (isContextModule(childNode) && !childNode.isPublic) {
           if (childNode.name !== undefined) {
             const fullyQualifiedName = this.getQualifiedName(
               childNode,

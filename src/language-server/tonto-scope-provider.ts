@@ -13,13 +13,6 @@ export class TontoScopeProvider extends DefaultScopeProvider {
     referenceType: string,
     _context: ReferenceInfo
   ): Scope {
-    // console.log(referenceType);
-    const dataTypes = new StreamScope(
-      this.indexManager.allElements("ComplexDataType")
-    );
-    dataTypes.getAllElements().forEach((element) => {
-      // console.log(element.name);
-    });
     return new StreamScope(this.indexManager.allElements(referenceType));
   }
 }

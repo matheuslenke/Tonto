@@ -5,7 +5,7 @@ import {
   getOntologicalCategory,
   isSortalOntoCategory,
   isUltimateSortalOntoCategory,
-  OntologicalCategoryEnum
+  OntologicalCategoryEnum,
 } from "../models/OntologicalCategory";
 import {
   allowedStereotypeRestrictedToMatches,
@@ -13,7 +13,7 @@ import {
   hasSortalStereotype,
   isAntiRigidStereotype,
   isRigidStereotype,
-  isSemiRigidStereotype
+  isSemiRigidStereotype,
 } from "../models/StereotypeUtils";
 import { checkCircularSpecializationRecursive } from "../utils/CheckCircularSpecializationRecursive";
 import { checkNatureCompatibleWithStereotype } from "../utils/checkNatureCompatibleWithStereotype";
@@ -21,6 +21,7 @@ import { checkSortalSpecializesUniqueUltimateSortalRecursive } from "../utils/Ch
 import { checkUltimateSortalSpecializesUltimateSortalRecursive } from "../utils/CheckUltimateSortalSpecializesUltimateSortalRecursive";
 import { formPhrase } from "../utils/formPhrase";
 import { ErrorMessages } from "./../models/ErrorMessages";
+import { toQualifiedName } from "../tonto-naming";
 
 export class ClassDeclarationValidator {
   /**
@@ -200,7 +201,9 @@ export class ClassDeclarationValidator {
         if (isAntiRigidStereotype(specOntologicalCategory)) {
           accept(
             "error",
-            `Prohibited specialization: rigid/semi-rigid specializing an anti-rigid. The rigid/semi-rigid class ${classDeclaration.name} cannot specialize the anti-rigid class ${specDeclaration.name}`,
+            `Prohibited specialization: rigid/semi-rigid specializing an anti-rigid.
+             The rigid/semi-rigid class ${classDeclaration.name} cannot specialize the 
+             anti-rigid class ${specDeclaration.name}`,
             { node: classDeclaration }
           );
         }
@@ -212,21 +215,23 @@ export class ClassDeclarationValidator {
    * Verify if there are duplicated declaration names
    */
   checkDuplicatedReferenceNames(
-    classElement: ClassDeclaration,
+    classDeclaration: ClassDeclaration,
     accept: ValidationAcceptor
   ): void {
-    const references = classElement.references;
+    const references = classDeclaration.references;
 
     const names: string[] = [];
 
     references.forEach((reference) => {
-      const nameExists = names.find((name) => name === reference.name);
+      if (!reference.name) {
+        return;
+      }
+      const qualifiedName = toQualifiedName(classDeclaration, reference.name);
+      const nameExists = names.find((name) => name === qualifiedName);
       if (nameExists) {
         accept("error", "Duplicated reference name", { node: reference });
       } else {
-        if (reference.name) {
-          names.push(reference.name);
-        }
+        names.push(qualifiedName);
       }
     });
   }
@@ -273,7 +278,9 @@ export class ClassDeclarationValidator {
 
           accept(
             "error",
-            `Incompatible stereotype and Nature restriction combination. Class ${classDeclaration.name} has its value for 'restrictedTo' incompatible with the following natures: ${naturesString}`,
+            `Incompatible stereotype and Nature restriction combination. 
+            Class ${classDeclaration.name} has its value for 'restrictedTo' 
+            incompatible with the following natures: ${naturesString}`,
             {
               node: classDeclaration,
               property: "ontologicalNatures",
@@ -354,7 +361,8 @@ export class ClassDeclarationValidator {
           naturesList = naturesList.slice(0, naturesList.length - 2);
           accept(
             "error",
-            `This element cannot be of this type when its superclass has other nature restrictions. The allowed natures are: ${naturesList}`,
+            `This element cannot be of this type when its superclass has
+             other nature restrictions. The allowed natures are: ${naturesList}`,
             { node: classDeclaration }
           );
         }
@@ -426,7 +434,8 @@ export class ClassDeclarationValidator {
         ) {
           accept(
             "error",
-            `Prohibited generalization: non-sortal specializing a sortal. The non-sortal class ${classDeclaration.name} cannot specialize the sortal class ${generalClass.name}`,
+            `Prohibited generalization: non-sortal specializing a sortal. 
+            The non-sortal class ${classDeclaration.name} cannot specialize the sortal class ${generalClass.name}`,
             {
               node: classDeclaration,
               property: "specializationEndurants",
@@ -450,14 +459,14 @@ export class ClassDeclarationValidator {
     // TODO: Fix this to be a validator on datatype
     // const ontologicalCategory =
     //   classDeclaration.classElementType.ontologicalCategory;
-
     // if (ontologicalCategory === OntologicalCategoryEnum.DATATYPE) {
     //   const specializationItems = classDeclaration.specializationEndurants;
     //   specializationItems.forEach((item) => {
     //     if (item.ref?.classElementType.ontologicalCategory === "datatype") {
     //       accept(
     //         "error",
-    //         "Prohibited generalization: datatype specialization. A datatype can only be in generalization relation with other datatypes",
+    //         "Prohibited generalization: datatype specialization.
+    //  A datatype can only be in generalization relation with other datatypes",
     //         {
     //           node: classDeclaration,
     //           property: "specializationEndurants",

@@ -1,4 +1,5 @@
 import {
+  AstNode,
   CompletionAcceptor,
   CompletionContext,
   DefaultCompletionProvider,
@@ -6,12 +7,17 @@ import {
   NextFeature,
 } from "langium";
 import * as ast from "langium/lib/grammar/generated/ast";
-import { isClassDeclaration } from "../generated/ast";
 import { completeForCardinality } from "./completions/completeForCardinality";
 import { completeForElementRelation } from "./completions/completeForElementRelation";
 import { completeForEnumSnippets } from "./completions/completeForEnumSnippets";
 import { completeForAttributeSnippets } from "./completions/completeForAttribute";
 import { completeForDataType } from "./completions/completeForDatatype";
+import {
+  completeFullElementRelationSnippets,
+  completeFullExternalElementRelationSnippets,
+} from "./completions/completeFullElementRelationSnippets";
+import { completeForGenSetSnippets } from "./completions/completeForGenSet";
+import { isParserRule } from "langium/lib/grammar/generated/ast";
 
 export class TontoCompletionProvider extends DefaultCompletionProvider {
   protected async completionForRule(
@@ -19,15 +25,6 @@ export class TontoCompletionProvider extends DefaultCompletionProvider {
     rule: ast.AbstractRule,
     acceptor: CompletionAcceptor
   ): Promise<void> {
-    // console.log(context.node?.$type);
-    // console.log(rule.name);
-    // if (ast.isParserRule(rule)) {
-    //   console.log("parserRule");
-    //   console.log(rule.name);
-    // }
-    // if (ast.isTerminalRule(rule)) {
-    //   console.log(rule.name);
-    // }
     return super.completionForRule(context, rule, acceptor);
   }
 
@@ -36,40 +33,48 @@ export class TontoCompletionProvider extends DefaultCompletionProvider {
     next: NextFeature<ast.AbstractElement>,
     acceptor: CompletionAcceptor
   ): MaybePromise<void> {
-    // This is to get snippets inside the scope of a classDeclaration
+    // Completion for Cardinality in any context
     if (
-      isClassDeclaration(context.node) ||
-      isClassDeclaration(context.node?.$container)
+      ast.isKeyword(next.feature) &&
+      next.type === "Cardinality" &&
+      next.feature.value === "["
     ) {
+      completeForCardinality(acceptor);
+    }
+
+    if (ast.isKeyword(next.feature)) {
       switch (next.type) {
+        case "Enum":
+          completeForEnumSnippets(next, acceptor);
+          break;
+
+        case "ComplexDataType":
+          completeForDataType(next, acceptor);
+          break;
+
         case "Attribute":
           completeForAttributeSnippets(next, acceptor);
           break;
+
         case "ElementRelation":
-          if (ast.isKeyword(next.feature)) {
-            completeForElementRelation(next.feature, acceptor);
+          completeForElementRelation(next.feature, acceptor);
+          if (ast.isKeyword(next.feature) && next.feature.value === "@") {
+            if (this.isInternalRelation(next.feature.$container)) {
+              completeFullElementRelationSnippets(acceptor);
+            } else if (this.isExternalRelation(next.feature.$container)) {
+              completeFullExternalElementRelationSnippets(acceptor);
+            }
           }
           break;
-        case "Cardinality":
-          if (ast.isKeyword(next.feature) && next.feature.value === "[") {
-            completeForCardinality(acceptor);
+
+        case "GeneralizationSet":
+          if (ast.isKeyword(next.feature) && next.feature.value === "genset") {
+            completeForGenSetSnippets(next, acceptor);
           }
           break;
       }
     }
-    switch (next.type) {
-      case "Enum":
-        completeForEnumSnippets(next, acceptor);
-        break;
 
-      case "ComplexDataType":
-        completeForDataType(next, acceptor);
-        break;
-
-      case "Attribute":
-        completeForAttributeSnippets(next, acceptor);
-        break;
-    }
     return super.completionFor(context, next, acceptor);
   }
 
@@ -90,5 +95,33 @@ export class TontoCompletionProvider extends DefaultCompletionProvider {
     acceptor: CompletionAcceptor
   ): MaybePromise<void> {
     return super.completionForCrossReference(context, crossRef, acceptor);
+  }
+
+  private isInternalRelation(container: AstNode): boolean {
+    if (!container) {
+      return false;
+    }
+
+    if (isParserRule(container) && container.name === "InternalRelation") {
+      return true;
+    }
+    if (container.$container) {
+      return this.isInternalRelation(container.$container);
+    }
+    return false;
+  }
+
+  private isExternalRelation(container: AstNode): boolean {
+    if (!container) {
+      return false;
+    }
+    console.debug(isParserRule(container));
+    if (isParserRule(container) && container.name === "ExternalRelation") {
+      return true;
+    }
+    if (container.$container) {
+      return this.isExternalRelation(container.$container);
+    }
+    return false;
   }
 }

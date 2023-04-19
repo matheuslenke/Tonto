@@ -10,7 +10,6 @@ export class TontoLibraryFileSystemProvider
   constructor(context: vscode.ExtensionContext) {
     this.context = context;
     this.basicDataTypes = basicDataTypes;
-    console.debug(this.basicDataTypes);
   }
 
   static register(context: vscode.ExtensionContext) {
@@ -36,10 +35,9 @@ export class TontoLibraryFileSystemProvider
     };
   }
 
-  readFile(uri: vscode.Uri): Uint8Array {
+  readFile(_: vscode.Uri): Uint8Array {
     // We could return different libraries based on the URI
     // We have only one, so we always return the same
-    console.debug(uri);
     return new Uint8Array(Buffer.from(this.basicDataTypes));
   }
 

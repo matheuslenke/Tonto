@@ -17,16 +17,15 @@ export class ComplexDataTypeValidator {
     const ontologicalCategory = OntologicalCategoryEnum.DATATYPE;
 
     if (elementNatures) {
-
       const incompatibleNatures = elementNatures.filter((nature) => {
         const realNature = natureUtils.getNatureFromAst(nature);
         if (realNature) {
           const stereotypeMatches =
-              allowedStereotypeRestrictedToMatches[ontologicalCategory];
+            allowedStereotypeRestrictedToMatches[ontologicalCategory];
           const includesNature =
-              !allowedStereotypeRestrictedToMatches[
-                ontologicalCategory
-              ].includes(realNature);
+            !allowedStereotypeRestrictedToMatches[ontologicalCategory].includes(
+              realNature
+            );
           return stereotypeMatches && includesNature;
         }
         return false;
@@ -34,13 +33,13 @@ export class ComplexDataTypeValidator {
       if (incompatibleNatures.length >= 1) {
         accept(
           "error",
-          `Incompatible stereotype and Nature restriction combination. Class ${complexDataType.name} has its value for 'restrictedTo' incompatible with the stereotype`,
+          `Incompatible stereotype and Nature restriction combination. 
+          Class ${complexDataType.name} has its value for 'restrictedTo' incompatible with the stereotype`,
           {
             node: complexDataType,
             property: "name",
           }
         );
-
       }
     }
   }

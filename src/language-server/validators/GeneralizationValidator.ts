@@ -6,7 +6,7 @@ import {
   hasSortalStereotype,
   isAntiRigidStereotype,
   isRigidStereotype,
-  isSemiRigidStereotype
+  isSemiRigidStereotype,
 } from "../models/StereotypeUtils";
 
 export class GeneralizationValidator {
@@ -27,25 +27,17 @@ export class GeneralizationValidator {
     if (generalItem.$type === "ClassDeclaration") {
       specificsItems.forEach((specific) => {
         if (specific.ref?.$type === "ElementRelation") {
-          accept(
-            "error",
-            ErrorMessages.genSetSpecialization,
-            {
-              node: genSet,
-            }
-          );
+          accept("error", ErrorMessages.genSetSpecialization, {
+            node: genSet,
+          });
         }
       });
     } else {
       specificsItems.forEach((specific) => {
         if (specific.ref?.$type === "ClassDeclaration") {
-          accept(
-            "error",
-            ErrorMessages.genSetSpecialization,
-            {
-              node: genSet,
-            }
-          );
+          accept("error", ErrorMessages.genSetSpecialization, {
+            node: genSet,
+          });
         }
       });
     }
@@ -67,14 +59,9 @@ export class GeneralizationValidator {
 
     specificsItems.forEach((specific) => {
       if (specific.ref?.name === generalItem.name) {
-        accept(
-          "error",
-          ErrorMessages.genSetCircularGeneralization
-          ,
-          {
-            node: genSet,
-          }
-        );
+        accept("error", ErrorMessages.genSetCircularGeneralization, {
+          node: genSet,
+        });
       }
     });
   }
@@ -114,7 +101,9 @@ export class GeneralizationValidator {
             ) {
               accept(
                 "error",
-                `Prohibited generalization: non-sortal specializing a sortal. The non-sortal class ${specificClass.name} cannot specialize the sortal class ${generalItem.name}`,
+                `Prohibited generalization: non-sortal specializing
+                 a sortal. The non-sortal class ${specificClass.name} 
+                 cannot specialize the sortal class ${generalItem.name}`,
                 {
                   node: genSet,
                   property: "specificItems",
@@ -166,7 +155,9 @@ export class GeneralizationValidator {
         ) {
           accept(
             "error",
-            `Prohibited specialization: rigid/semi-rigid specializing an anti-rigid. The rigid/semi-rigid class ${refElement.name} cannot specialize the anti-rigid class ${generalItem.name}`,
+            `Prohibited specialization: rigid/semi-rigid
+            specializing an anti-rigid. 
+            The rigid/semi-rigid class ${refElement.name} cannot specialize the anti-rigid class ${generalItem.name}`,
             {
               node: genSet,
               property: "generalItem",
@@ -174,7 +165,9 @@ export class GeneralizationValidator {
           );
           accept(
             "error",
-            `Prohibited specialization: rigid/semi-rigid specializing an anti-rigid. The rigid/semi-rigid class ${refElement.name} cannot specialize the anti-rigid class ${generalItem.name}`,
+            `Prohibited specialization: rigid/semi-rigid specializing an 
+            anti-rigid. 
+            The rigid/semi-rigid class ${refElement.name} cannot specialize the anti-rigid class ${generalItem.name}`,
             {
               node: genSet,
               property: "specificItems",
@@ -195,18 +188,15 @@ export class GeneralizationValidator {
   ): void {
     // const generalItem = genSet.generalItem.ref;
     // const specificItems = genSet.specificItems;
-
     // if (generalItem === undefined) {
     //   return;
     // }
     // if (generalItem.$type === "ElementRelation") {
     //   return;
     // }
-
     // const ontologicalCategory =
     //   generalItem.classElementType.ontologicalCategory;
     // TODO: Fix datatype
-
     // if (ontologicalCategory === "datatype") {
     //   specificItems.forEach((specializationItem) => {
     //     const refElement = specializationItem.ref as ClassDeclaration;
@@ -215,11 +205,11 @@ export class GeneralizationValidator {
     //     }
     //     const refOntologicalCategory =
     //       refElement.classElementType.ontologicalCategory;
-
     //     if (refOntologicalCategory !== "datatype") {
     //       accept(
     //         "error",
-    //         "Prohibited generalization: datatype specialization. A datatype can only be in generalization relation with other datatypes",
+    //         "Prohibited generalization: datatype specialization.
+    //  A datatype can only be in generalization relation with other datatypes",
     //         {
     //           node: genSet,
     //           property: "generalItem",
@@ -227,7 +217,8 @@ export class GeneralizationValidator {
     //       );
     //       accept(
     //         "error",
-    //         "Prohibited generalization: datatype specialization. A datatype can only be in generalization relation with other datatypes",
+    //         "Prohibited generalization: datatype specialization.
+    // A datatype can only be in generalization relation with other datatypes",
     //         {
     //           node: genSet,
     //           property: "specificItems",

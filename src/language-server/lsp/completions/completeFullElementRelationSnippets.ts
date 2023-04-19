@@ -67,4 +67,74 @@ function completeFullElementRelationSnippets(acceptor: CompletionAcceptor) {
   });
 }
 
-export { completeFullElementRelationSnippets };
+function completeFullExternalElementRelationSnippets(
+  acceptor: CompletionAcceptor
+) {
+  acceptor({
+    label: "basic-external-association",
+    kind: CompletionItemKind.Snippet,
+    detail: "Basic external association",
+    sortText: "102",
+    insertText:
+      "relation ${1:Reference} [${2:*}] -- ${3:relationName} -- [${4:*}] ${5:DeclarationName}",
+    insertTextFormat: InsertTextFormat.Snippet,
+  });
+  acceptor({
+    label: "external-association",
+    kind: CompletionItemKind.Snippet,
+    detail: "external association",
+    sortText: "101",
+    insertText: [
+      "@${1:relationStereotype}",
+      "relation ${2:Reference} (${3:firstEndName}) [${4:*}] -- ${5:relationName} -- [${6:*}] (${7:secondEndName}) ${8:DeclarationName}",
+    ].join("\n"),
+    insertTextFormat: InsertTextFormat.Snippet,
+  });
+  acceptor({
+    label: "full-external-association",
+    kind: CompletionItemKind.Snippet,
+    detail: "Full external association",
+    sortText: "103",
+    insertText: [
+      "@${1:stereotype}",
+      "relation ${2:Reference} ({ ${3:metaAttributes} } ${4:firstEndName}) [${5:1}] -- ${6:relationName} -- [${7:1}] ({${8:metaAttributes}} ${9:secondEndName}) ${10:Reference}",
+    ].join("\n"),
+    insertTextFormat: InsertTextFormat.Snippet,
+  });
+  acceptor({
+    label: "basic-external-aggregation",
+    kind: CompletionItemKind.Snippet,
+    detail: "Basic external aggregation",
+    sortText: "102",
+    insertText:
+      "relation ${1:Reference} [${2:*}] <>-- ${3:relationName} -- [${4:*}] ${5:DeclarationName}",
+    insertTextFormat: InsertTextFormat.Snippet,
+  });
+  acceptor({
+    label: "external-aggregation",
+    kind: CompletionItemKind.Snippet,
+    detail: "external aggregation",
+    sortText: "101",
+    insertText: [
+      "@${1:relationStereotype}",
+      "relation ${2:Reference} (${3:firstEndName}) [${4:*}] <>-- ${5:relationName} -- [${6:*}] (${7:secondEndName}) ${8:DeclarationName}",
+    ].join("\n"),
+    insertTextFormat: InsertTextFormat.Snippet,
+  });
+  acceptor({
+    label: "full-internal-aggregation",
+    kind: CompletionItemKind.Snippet,
+    detail: "Full internal aggregation",
+    sortText: "103",
+    insertText: [
+      "@${1:stereotype}",
+      "relation ${2:Reference} ({ ${3:metaAttributes} } ${4:firstEndName}) [${5:1}] <>-- ${6:relationName} -- [${7:1}] ({${8:metaAttributes}} ${9:secondEndName}) ${10:Reference}",
+    ].join("\n"),
+    insertTextFormat: InsertTextFormat.Snippet,
+  });
+}
+
+export {
+  completeFullElementRelationSnippets,
+  completeFullExternalElementRelationSnippets,
+};

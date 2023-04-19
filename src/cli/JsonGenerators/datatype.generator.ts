@@ -9,66 +9,63 @@ export function customDataTypeGenerator(
 ): Class {
   const dataTypeClass = model.createDatatype(dataType.name);
 
-  dataType.attributes.forEach(element => {
+  dataType.attributes.forEach((element) => {
     let createdAttribute: Property | undefined;
 
-    if (element.attributeType) {
-      switch (element.attributeType) {
-      case "date": {
-        const dateType = dataTypes.find(
-          item => item.name.getText() === "Date"
-        );
-        if (dateType) {
-          createdAttribute = dataTypeClass.createAttribute(
-            dateType,
-            element.name
-          );
-        }
-        break;
-      }
-      case "number": {
-        const numberType = dataTypes.find(
-          item => item.name.getText() === "number"
-        );
-        if (numberType) {
-          createdAttribute = dataTypeClass.createAttribute(
-            numberType,
-            element.name
-          );
-        }
-        break;
-      }
-
-      case "boolean": {
-        const booleanType = dataTypes.find(
-          item => item.name.getText() === "boolean"
-        );
-        if (booleanType) {
-          createdAttribute = dataTypeClass.createAttribute(
-            booleanType,
-            element.name
-          );
-        }
-        break;
-      }
-
-      case "string": {
-        const stringType = dataTypes.find(
-          item => item.name.getText() === "string"
-        );
-        if (stringType) {
-          createdAttribute = dataTypeClass.createAttribute(
-            stringType,
-            element.name
-          );
-        }
-        break;
-      }
-      }
+    if (element.attributeTypeRef) {
+      // switch (element.attributeTypeRef) {
+      // case "date": {
+      //   const dateType = dataTypes.find(
+      //     item => item.name.getText() === "Date"
+      //   );
+      //   if (dateType) {
+      //     createdAttribute = dataTypeClass.createAttribute(
+      //       dateType,
+      //       element.name
+      //     );
+      //   }
+      //   break;
+      // }
+      // case "number": {
+      //   const numberType = dataTypes.find(
+      //     item => item.name.getText() === "number"
+      //   );
+      //   if (numberType) {
+      //     createdAttribute = dataTypeClass.createAttribute(
+      //       numberType,
+      //       element.name
+      //     );
+      //   }
+      //   break;
+      // }
+      // case "boolean": {
+      //   const booleanType = dataTypes.find(
+      //     item => item.name.getText() === "boolean"
+      //   );
+      //   if (booleanType) {
+      //     createdAttribute = dataTypeClass.createAttribute(
+      //       booleanType,
+      //       element.name
+      //     );
+      //   }
+      //   break;
+      // }
+      // case "string": {
+      //   const stringType = dataTypes.find(
+      //     item => item.name.getText() === "string"
+      //   );
+      //   if (stringType) {
+      //     createdAttribute = dataTypeClass.createAttribute(
+      //       stringType,
+      //       element.name
+      //     );
+      //   }
+      //   break;
+      // }
+      // }
     } else if (element.attributeTypeRef !== undefined) {
       const customType = dataTypes.find(
-        item =>
-          item.name.getText() === element.attributeType?.toString()
+        (item) => item.name.getText() === element.attributeTypeRef?.toString()
       );
       if (customType) {
         createdAttribute = dataTypeClass.createAttribute(

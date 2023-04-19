@@ -21,11 +21,11 @@ import {
 } from "./generated/ast";
 
 export function toQualifiedName(
-  pack: ContextModule,
+  pack: ContextModule | ClassDeclaration,
   childName: string
 ): string {
   return (
-    (isContextModule(pack.$container)
+    (isContextModule(pack.$container) || isClassDeclaration(pack.$container)
       ? toQualifiedName(pack.$container, pack.name)
       : pack.name) +
     "." +
