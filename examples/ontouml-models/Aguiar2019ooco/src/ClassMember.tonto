@@ -1,5 +1,8 @@
-import Core
+import 
 import Class
+// Obrigatório alias
+// import "https://google.com" // as Google
+// import Java.Class as JCL
 
 module ClassMember
 
@@ -11,6 +14,7 @@ subkind ConstructorMethod specializes Method
 subkind DestructorMethod specializes Method
 subkind NonOverridableMethod specializes Method
 subkind OverridableMethod specializes Method {
+  name: string
   @componentOf
   [0..*] <>-- [1] ExtendableClass
 }

@@ -21,8 +21,6 @@ subkind ObjectOrientedSourceCode specializes SourceCode {
     
 }
 
-
-
 quality Name
 
 category NamedElement {

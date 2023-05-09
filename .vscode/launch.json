@@ -6,6 +6,16 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "CLI: GenerateModular",
+            "program": "${workspaceFolder}/src/cli/index.ts",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node",
+            "args": ["generateModular", "${workspaceFolder}/examples/ontouml-models/Aguiar2019ooco"]
+        },
+        {
             "name": "Run Extension",
             "type": "extensionHost",
             "request": "launch",

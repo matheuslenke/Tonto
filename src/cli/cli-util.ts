@@ -1,31 +1,83 @@
 import colors from "colors";
 import path from "path";
 import fs from "fs";
-import { AstNode, LangiumDocument, LangiumServices } from "langium";
+import {
+  AstNode,
+  LangiumDocument,
+  LangiumDocuments,
+  LangiumServices,
+} from "langium";
 import { URI } from "vscode-uri";
+
+export async function extractAllDocuments(
+  fileNames: string[],
+  services: LangiumServices
+): Promise<LangiumDocuments> {
+  const documents: Array<LangiumDocument<AstNode>> = [];
+
+  for (const fileName of fileNames) {
+    const document =
+      services.shared.workspace.LangiumDocuments.getOrCreateDocument(
+        URI.file(path.resolve(fileName))
+      );
+    documents.push(document);
+  }
+
+  await services.shared.workspace.DocumentBuilder.build(documents, {
+    validationChecks: "all",
+  });
+
+  let hasValidationError = false;
+  for (const document of documents) {
+    const validationErrors = (document.diagnostics ?? []).filter(
+      (e) => e.severity === 1
+    );
+    if (validationErrors.length > 0) {
+      console.error(colors.red("There are validation errors:"));
+      for (const validationError of validationErrors) {
+        console.error(
+          colors.red(
+            `line ${validationError.range.start.line + 1}: ${
+              validationError.message
+            } [${document.textDocument.getText(validationError.range)}]`
+          )
+        );
+      }
+      hasValidationError = true;
+    }
+  }
+  if (hasValidationError) {
+    process.exit(1);
+  }
+  return services.shared.workspace.LangiumDocuments;
+}
 
 export async function extractDocument(
   fileName: string,
   services: LangiumServices
 ): Promise<LangiumDocument> {
-  const extensions = services.LanguageMetaData.fileExtensions;
-  if (!extensions.includes(path.extname(fileName))) {
-    console.error(
-      colors.yellow(
-        `Please choose a file with one of these extensions: ${extensions}.`
-      )
-    );
-    process.exit(1);
-  }
+  // const extensions = services.LanguageMetaData.fileExtensions;
+  // if (!extensions.includes(path.extname(fileName))) {
+  //   console.error(
+  //     colors.yellow(
+  //       `Please choose a file with one of these extensions: ${extensions}.`
+  //     )
+  //   );
+  //   process.exit(1);
+  // }
 
   if (!fs.existsSync(fileName)) {
     console.error(colors.red(`File ${fileName} does not exist.`));
     process.exit(1);
   }
+  services.shared.workspace.LangiumDocuments.all.forEach((doc) => {
+    console.log(doc.state, doc.uri);
+  });
 
-  const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(
-    URI.file(path.resolve(fileName))
-  );
+  const document =
+    services.shared.workspace.LangiumDocuments.getOrCreateDocument(
+      URI.file(path.resolve(fileName))
+    );
   await services.shared.workspace.DocumentBuilder.build([document], {
     validationChecks: "all",
   });
@@ -50,6 +102,17 @@ export async function extractDocument(
   return document;
 }
 
+export async function extractAllAstNodes<T extends AstNode>(
+  fileNames: string[],
+  services: LangiumServices
+): Promise<T[]> {
+  const docs = await extractAllDocuments(fileNames, services);
+  const nodes: T[] = docs.all
+    .flatMap((doc) => doc.parseResult?.value as T)
+    .toArray();
+  return nodes;
+}
+
 export async function extractAstNode<T extends AstNode>(
   fileName: string,
   services: LangiumServices
@@ -58,8 +121,8 @@ export async function extractAstNode<T extends AstNode>(
 }
 
 interface FilePathData {
-    destination: string;
-    name: string;
+  destination: string;
+  name: string;
 }
 
 export function extractDestinationAndName(
