@@ -11,7 +11,9 @@ import { Model } from "../../language-server/generated/ast";
 import { extractAllAstNodes, extractAstNode } from "../cli-util";
 import { TontoManifest } from "../model/TontoManifest";
 import { glob } from "glob";
-
+import { basicDataTypes } from "../../language-server/workspace/builtins/basicDataTypes";
+import { BuiltInLib } from "../model/BuiltInLib";
+import { WorkspaceFolder } from "vscode-languageserver";
 export type GenerateOptions = {
   destination?: string;
 };
@@ -35,23 +37,38 @@ export const generateModularAction = async (
   const manifest: TontoManifest = JSON.parse(tontoManifestContent);
 
   const project = new Project({
-    name: new MultilingualText(manifest.name),
+    name: new MultilingualText(manifest.projectName),
   });
   const rootPackage = project.createModel({
-    name: new MultilingualText(manifest.name),
+    name: new MultilingualText(manifest.projectName),
   });
 
   const allFiles = await glob(dir + "/**/*.tonto");
+  const workspaceFolders = allFiles.map(file => {
+    return {
+      name: file,
+      uri: file
+    } as WorkspaceFolder;
+  });
   // Load workspace with all built in libraries
-  // services.shared.workspace.WorkspaceManager.initializeWorkspace();
+  const buildInFolder: WorkspaceFolder = {
+    name: "tontoDatatypes",
+    uri: "builtin://basicDatatypes.tonto",
+  };
+  // services.shared.workspace.WorkspaceManager.initializeWorkspace([...workspaceFolders, buildInFolder]);
+  // // Load all builtIn files
+  const dataTypesLib: BuiltInLib = {
+    uri: "builtin://basicDatatypes.tonto",
+    content: basicDataTypes
+  };
 
-  const models: Model[] = await extractAllAstNodes(allFiles, services);
+  const models: Model[] = await extractAllAstNodes(allFiles, services, [dataTypesLib]);
 
-  for (const model of models) {
-    console.log(model.module.name);
-  }
+  // for (const model of models) {
+  //   console.log(model.module.name);
+  // }
 
-  await walkSync(dir, services, rootPackage);
+  // await walkSync(dir, services, rootPackage);
   console.log(chalk.green("JSON File generated successfully: "));
 };
 
@@ -62,7 +79,6 @@ async function createModel(
 ): Promise<void> {
   const extName = path.extname(filePath);
   if (extName === ".tonto") {
-    console.debug("Leu o modelo: ", filePath);
     const model = await extractAstNode<Model>(filePath, services);
     rootPackage.createPackage(model.module.name);
   }

@@ -1,4 +1,4 @@
-module SPO
+package SPO
 
 category Artifact
 kind Language

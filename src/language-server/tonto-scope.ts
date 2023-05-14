@@ -44,7 +44,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
       ) {
         if (
           isContextModule(childNode.$container) &&
-          childNode.$container.isPublic
+          childNode.$container.isGlobal
         ) {
           exportedDescriptions.push(
             this.descriptions.createDescription(
@@ -53,7 +53,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
               document
             )
           );
-        } else if (isContextModule(childNode) && !childNode.isPublic) {
+        } else if (isContextModule(childNode) && !childNode.isGlobal) {
           if (childNode.name !== undefined) {
             const fullyQualifiedName = this.getQualifiedName(
               childNode,
@@ -95,10 +95,6 @@ export class TontoScopeComputation extends DefaultScopeComputation {
     while (isContextModule(parent)) {
       // Iteratively prepend the name of the parent contextModule
       // This allows us to work with nested contextModules
-      // if (parent.stringName) {
-      //   name = `"${parent.name}".${name}`;
-      // } else if (parent.name) {
-      // }
       name = `${parent.name}.${name}`;
       parent = parent.$container;
     }

@@ -1,7 +1,7 @@
 import SPO
 import SWO
 
-module Core
+package Core
 
 relation Language [1..*] -- representedIn -- [0..*] Artifact
 relation ProgrammingLanguage [1..*] -- representedIn2 -- [0..*] SoftwareItem

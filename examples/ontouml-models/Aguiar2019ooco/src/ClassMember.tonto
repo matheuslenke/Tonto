@@ -1,10 +1,10 @@
-import 
-import Class
 // Obrigatório alias
 // import "https://google.com" // as Google
-// import Java.Class as JCL
+import Java.Class
+import Core
+import Classs
 
-module ClassMember
+package ClassMember
 
 subkind AbstractMethod specializes Method
 subkind ConcreteMethod specializes Method
@@ -15,8 +15,8 @@ subkind DestructorMethod specializes Method
 subkind NonOverridableMethod specializes Method
 subkind OverridableMethod specializes Method {
   name: string
-  @componentOf
-  [0..*] <>-- [1] ExtendableClass
+@componentOf
+[0..*] <>-- [1] ExtendableClass
 }
 subkind AccessorMethod specializes Method
 subkind ClassMethod specializes Method

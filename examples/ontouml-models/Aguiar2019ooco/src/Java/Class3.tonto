@@ -1,4 +1,4 @@
 // module "https://google.com" as Google
-module Java.Class
+package Java.Class
 
 kind Method

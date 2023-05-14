@@ -1,4 +1,4 @@
-module SWO
+package SWO
 
 kind Code
 kind Program

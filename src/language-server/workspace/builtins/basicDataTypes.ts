@@ -1,5 +1,5 @@
 export const basicDataTypes = `
-public module BasicDataTypes
+global package BasicDataTypes
 
 datatype number
 

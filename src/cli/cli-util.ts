@@ -8,10 +8,12 @@ import {
   LangiumServices,
 } from "langium";
 import { URI } from "vscode-uri";
+import { BuiltInLib } from "./model/BuiltInLib";
 
 export async function extractAllDocuments(
   fileNames: string[],
-  services: LangiumServices
+  services: LangiumServices,
+  builtInLibs: BuiltInLib[]
 ): Promise<LangiumDocuments> {
   const documents: Array<LangiumDocument<AstNode>> = [];
 
@@ -22,10 +24,29 @@ export async function extractAllDocuments(
       );
     documents.push(document);
   }
+  for (const lib of builtInLibs) {
+    const document = services.shared.workspace.LangiumDocumentFactory
+      .fromString(lib.content, URI.parse(lib.uri));
+    // console.log(document);
+    documents.push(document);
+  }
+
+  for (const doc of documents) {
+    console.log(colors.bgWhite(doc.state.toString()), doc.uri.path);
+  }
 
   await services.shared.workspace.DocumentBuilder.build(documents, {
     validationChecks: "all",
   });
+
+  for (const doc of documents) {
+    console.log(colors.bgGreen(doc.state.toString()), doc.uri.path);
+    if (doc.precomputedScopes) {
+      for (const scope of doc.precomputedScopes) {
+        console.log(colors.magenta(scope[1].name));
+      }
+    }
+  }
 
   let hasValidationError = false;
   for (const document of documents) {
@@ -37,8 +58,7 @@ export async function extractAllDocuments(
       for (const validationError of validationErrors) {
         console.error(
           colors.red(
-            `line ${validationError.range.start.line + 1}: ${
-              validationError.message
+            `line ${validationError.range.start.line + 1}: ${validationError.message
             } [${document.textDocument.getText(validationError.range)}]`
           )
         );
@@ -60,7 +80,7 @@ export async function extractDocument(
   // if (!extensions.includes(path.extname(fileName))) {
   //   console.error(
   //     colors.yellow(
-  //       `Please choose a file with one of these extensions: ${extensions}.`
+  //       `Please choose a file with one of these extensions: ${ extensions }.`
   //     )
   //   );
   //   process.exit(1);
@@ -90,8 +110,7 @@ export async function extractDocument(
     for (const validationError of validationErrors) {
       console.error(
         colors.red(
-          `line ${validationError.range.start.line + 1}: ${
-            validationError.message
+          `line ${validationError.range.start.line + 1}: ${validationError.message
           } [${document.textDocument.getText(validationError.range)}]`
         )
       );
@@ -104,9 +123,10 @@ export async function extractDocument(
 
 export async function extractAllAstNodes<T extends AstNode>(
   fileNames: string[],
-  services: LangiumServices
+  services: LangiumServices,
+  builtInLibs: BuiltInLib[]
 ): Promise<T[]> {
-  const docs = await extractAllDocuments(fileNames, services);
+  const docs = await extractAllDocuments(fileNames, services, builtInLibs);
   const nodes: T[] = docs.all
     .flatMap((doc) => doc.parseResult?.value as T)
     .toArray();

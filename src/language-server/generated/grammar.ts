@@ -3,12 +3,10 @@
  * DO NOT EDIT MANUALLY!
  ******************************************************************************/
 
-import { loadGrammarFromJson, Grammar } from "langium";
+import { loadGrammarFromJson, Grammar } from 'langium';
 
 let loadedTontoGrammar: Grammar | undefined;
-export const TontoGrammar = (): Grammar =>
-  loadedTontoGrammar ??
-  (loadedTontoGrammar = loadGrammarFromJson(`{
+export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGrammar = loadGrammarFromJson(`{
   "$type": "Grammar",
   "isDeclared": true,
   "name": "Tonto",
@@ -218,17 +216,17 @@ export const TontoGrammar = (): Grammar =>
         "elements": [
           {
             "$type": "Assignment",
-            "feature": "isPublic",
+            "feature": "isGlobal",
             "operator": "?=",
             "terminal": {
               "$type": "Keyword",
-              "value": "public"
+              "value": "global"
             },
             "cardinality": "?"
           },
           {
             "$type": "Keyword",
-            "value": "module"
+            "value": "package"
           },
           {
             "$type": "Alternatives",
@@ -246,37 +244,16 @@ export const TontoGrammar = (): Grammar =>
                 }
               },
               {
-                "$type": "Group",
-                "elements": [
-                  {
-                    "$type": "Assignment",
-                    "feature": "stringName",
-                    "operator": "=",
-                    "terminal": {
-                      "$type": "RuleCall",
-                      "rule": {
-                        "$ref": "#/rules@30"
-                      },
-                      "arguments": []
-                    }
+                "$type": "Assignment",
+                "feature": "name",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@30"
                   },
-                  {
-                    "$type": "Keyword",
-                    "value": "as"
-                  },
-                  {
-                    "$type": "Assignment",
-                    "feature": "name",
-                    "operator": "=",
-                    "terminal": {
-                      "$type": "RuleCall",
-                      "rule": {
-                        "$ref": "#/rules@2"
-                      },
-                      "arguments": []
-                    }
-                  }
-                ]
+                  "arguments": []
+                }
               }
             ]
           },
@@ -370,6 +347,28 @@ export const TontoGrammar = (): Grammar =>
               },
               "deprecatedSyntax": false
             }
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "as"
+              },
+              {
+                "$type": "Assignment",
+                "feature": "packageAlias",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@28"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
+            "cardinality": "?"
           }
         ]
       },
@@ -1291,7 +1290,7 @@ export const TontoGrammar = (): Grammar =>
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@2"
+                  "$ref": "#/rules@28"
                 },
                 "arguments": []
               },
@@ -1658,7 +1657,7 @@ export const TontoGrammar = (): Grammar =>
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@2"
+                  "$ref": "#/rules@28"
                 },
                 "arguments": []
               },
