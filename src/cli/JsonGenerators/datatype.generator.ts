@@ -25,7 +25,7 @@ export function customDataTypeAttributesGenerator(
         const customType = dataTypes.find(
           (item) => item.getName() === element.attributeTypeRef.ref?.name
         );
-        dataTypes.forEach(item => console.log(item.getName()));
+
         if (customType) {
           createdAttribute = dataTypeClass.createAttribute(
             customType,

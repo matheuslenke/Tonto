@@ -53,9 +53,6 @@
         ],
         "snippets": []
     },
-    "activationEvents": [
-        "onLanguage:tonto"
-    ],
     "files": [
         "bin",
         "out",

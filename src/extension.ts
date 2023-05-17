@@ -1,4 +1,3 @@
-import { ErrorResultResponse, ResultResponse } from "./cli/ontoumljsValidator";
 import * as vscode from "vscode";
 import * as path from "path";
 import {
@@ -7,21 +6,17 @@ import {
   ServerOptions,
   TransportKind,
 } from "vscode-languageclient/node";
-import { validateAction } from "./cli/actions/validateAction";
-import { generateAction } from "./cli/actions/generateAction";
 import { TontoLibraryFileSystemProvider } from "./language-server/extension/TontoLibraryFileSystemProvider";
 import { importModularCommand } from "./cli/actions/importModularAction";
 
 let client: LanguageClient;
-let generateJsonStatusBarItem: vscode.StatusBarItem;
 let generateTontoStatusBarItem: vscode.StatusBarItem;
-let validationStatusBarItem: vscode.StatusBarItem;
 
 // This function is called when the extension is activated.
 export function activate(context: vscode.ExtensionContext): void {
-  createJSONGenerationCommands(context);
+  // createJSONGenerationCommands(context);
   createTontoGenerationCommands(context);
-  createValidationCommands(context);
+  // createValidationCommands(context);
   TontoLibraryFileSystemProvider.register(context);
   client = startLanguageClient(context);
   // Activating library file system provider
@@ -126,114 +121,120 @@ function createTontoGenerationCommands(context: vscode.ExtensionContext) {
   updateTontoStatusBarItem();
 }
 
-function createJSONGenerationCommands(context: vscode.ExtensionContext) {
-  const myCommandId = "extension.generateJSON";
-  context.subscriptions.push(
-    vscode.commands.registerCommand(myCommandId, async (uri: vscode.Uri) => {
-      const editor = vscode.window.activeTextEditor;
-      if (!uri) {
-        const documentUri = editor?.document.uri;
-        if (documentUri) {
-          uri = documentUri;
-        }
-      }
+// function createJSONGenerationCommands(context: vscode.ExtensionContext) {
+//   const myCommandId = "extension.generateJSON";
+//   context.subscriptions.push(
+//     vscode.commands.registerCommand(myCommandId, async (uri: vscode.Uri) => {
+//       const editor = vscode.window.activeTextEditor;
+//       if (!uri) {
+//         const documentUri = editor?.document.uri;
+//         if (documentUri) {
+//           uri = documentUri;
+//         }
+//       }
 
-      if (uri) {
-        await generateJson(uri);
-      }
-    })
-  );
+//       if (uri) {
+//         await generateJson(uri);
+//       }
+//     })
+//   );
 
-  // create a new status bar item that we can now manage
-  generateJsonStatusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Right,
-    100
-  );
-  generateJsonStatusBarItem.command = myCommandId;
-  context.subscriptions.push(generateJsonStatusBarItem);
+//   // create a new status bar item that we can now manage
+//   generateJsonStatusBarItem = vscode.window.createStatusBarItem(
+//     vscode.StatusBarAlignment.Right,
+//     100
+//   );
+//   generateJsonStatusBarItem.command = myCommandId;
+//   context.subscriptions.push(generateJsonStatusBarItem);
 
-  // register some listener that make sure the status bar
-  // item always up-to-date
-  context.subscriptions.push(
-    vscode.window.onDidChangeActiveTextEditor(updateJsonStatusBarItem)
-  );
-  context.subscriptions.push(
-    vscode.window.onDidChangeTextEditorSelection(updateJsonStatusBarItem)
-  );
+//   // register some listener that make sure the status bar
+//   // item always up-to-date
+//   context.subscriptions.push(
+//     vscode.window.onDidChangeActiveTextEditor(updateJsonStatusBarItem)
+//   );
+//   context.subscriptions.push(
+//     vscode.window.onDidChangeTextEditorSelection(updateJsonStatusBarItem)
+//   );
 
-  // update status bar item once at start
-  updateJsonStatusBarItem();
-}
-function createValidationCommands(context: vscode.ExtensionContext) {
-  const myCommandId = "extension.validateModel";
-  context.subscriptions.push(
-    vscode.commands.registerCommand(myCommandId, async (uri: vscode.Uri) => {
-      const editor = vscode.window.activeTextEditor;
-      if (!uri) {
-        const documentUri = editor?.document.uri;
-        if (documentUri) {
-          uri = documentUri;
-        }
-      }
+//   // update status bar item once at start
+//   updateJsonStatusBarItem();
+// }
+// function createValidationCommands(context: vscode.ExtensionContext) {
+//   const myCommandId = "extension.validateModel";
+//   context.subscriptions.push(
+//     vscode.commands.registerCommand(myCommandId, async (uri: vscode.Uri) => {
+//       const editor = vscode.window.activeTextEditor;
+//       if (!uri) {
+//         const documentUri = editor?.document.uri;
+//         if (documentUri) {
+//           uri = documentUri;
+//         }
+//       }
 
-      if (uri) {
-        await validateModel(uri);
-      }
-    })
-  );
+//       if (uri) {
+//         await validateModel(uri);
+//       }
+//     })
+//   );
 
-  // create a new status bar item that we can now manage
-  validationStatusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Right,
-    48
-  );
-  validationStatusBarItem.command = myCommandId;
-  context.subscriptions.push(validationStatusBarItem);
+//   // create a new status bar item that we can now manage
+//   validationStatusBarItem = vscode.window.createStatusBarItem(
+//     vscode.StatusBarAlignment.Right,
+//     48
+//   );
+//   validationStatusBarItem.command = myCommandId;
+//   context.subscriptions.push(validationStatusBarItem);
 
-  // register some listener that make sure the status bar
-  // item always up-to-date
-  context.subscriptions.push(
-    vscode.window.onDidChangeActiveTextEditor(updateValidationStatusBarItem)
-  );
-  context.subscriptions.push(
-    vscode.window.onDidChangeTextEditorSelection(updateValidationStatusBarItem)
-  );
+//   // register some listener that make sure the status bar
+//   // item always up-to-date
+//   context.subscriptions.push(
+//     vscode.window.onDidChangeActiveTextEditor(updateValidationStatusBarItem)
+//   );
+//   context.subscriptions.push(
+//     vscode.window.onDidChangeTextEditorSelection(updateValidationStatusBarItem)
+//   );
 
-  // update status bar item once at start
-  updateValidationStatusBarItem();
-}
+//   // update status bar item once at start
+//   updateValidationStatusBarItem();
+// }
 
-function updateJsonStatusBarItem(): void {
-  generateJsonStatusBarItem.text = "$(bracket-dot) Generate JSON from Model";
-  generateJsonStatusBarItem.show();
-}
+// function updateJsonStatusBarItem(): void {
+//   generateJsonStatusBarItem.text = "$(bracket-dot) Generate JSON from Model";
+//   generateJsonStatusBarItem.show();
+// }
 
 function updateTontoStatusBarItem(): void {
   generateTontoStatusBarItem.text = "$(keybindings-sort) Generate Tonto";
   generateTontoStatusBarItem.show();
 }
-function updateValidationStatusBarItem(): void {
-  validationStatusBarItem.text = "$(check-all) Validate Model";
-  validationStatusBarItem.show();
-}
+// function updateValidationStatusBarItem(): void {
+//   validationStatusBarItem.text = "$(check-all) Validate Model";
+//   validationStatusBarItem.show();
+// }
 
-async function generateJson(uri: vscode.Uri) {
-  if (uri.scheme == "file") {
-    vscode.workspace.openTextDocument(uri).then(async (document) => {
-      if (document.languageId === "tonto") {
-        const destination = path.join(path.dirname(uri.fsPath), "generated");
-        generateAction(document.fileName, {
-          destination: destination,
-        });
-        vscode.window.showInformationMessage("JSON File generated");
-      } else {
-        vscode.window.showInformationMessage(
-          "Failed! File needs to have the .tonto extension"
-        );
-      }
-    });
-  }
-}
+// async function generateJson(uri: vscode.Uri) {
+//   // vscode.workspace.findFiles("tonto.json").then(async (files) => { 
+//   //   const file = files.at(0);
+//   //   if (!file) {
+//   //     return
+//   //   }
+//   // });
+//   if (uri.scheme == "file") {
+//     vscode.workspace.openTextDocument(uri).then(async (document) => {
+//       if (document.languageId === "tonto") {
+//         const destination = path.join(path.dirname(uri.fsPath), "generated");
+//         generateAction(document.fileName, {
+//           destination: destination,
+//         });
+//         vscode.window.showInformationMessage("JSON File generated");
+//       } else {
+//         vscode.window.showInformationMessage(
+//           "Failed! File needs to have the .tonto extension"
+//         );
+//       }
+//     });
+//   }
+// }
 
 async function generateTonto(uri: vscode.Uri) {
   if (uri.scheme == "file") {
@@ -255,47 +256,47 @@ async function generateTonto(uri: vscode.Uri) {
   }
 }
 
-async function validateModel(uri: vscode.Uri) {
-  if (uri.scheme == "file") {
-    vscode.workspace.openTextDocument(uri).then(async (document) => {
-      if (document.languageId === "json") {
-        vscode.window.showInformationMessage("Model Validated!");
-      } else if (document.languageId === "tonto") {
-        const result = await validateAction(document.fileName);
-        if (result) {
-          if (isErrorResultResponse(result)) {
-            const error = result as unknown as ErrorResultResponse;
-            let message = `Error ${error.status} (${error.id}):${error.message}: \n`;
-            error.info.forEach((info) => {
-              message += ` keyword ${info.keyword}: ${info.message}; `;
-            });
-            vscode.window.showInformationMessage(message);
-          } else {
-            const response = result as ResultResponse[];
-            const resultMessages = response.reduce(
-              (oldValue, item) => oldValue + `${item.title}, `,
-              ""
-            );
-            vscode.window.showInformationMessage(
-              `Model Validated! ${resultMessages}`
-            );
-          }
-        } else {
-          vscode.window.showInformationMessage(
-            "Failed! Validation request returned nothing"
-          );
-        }
-      } else {
-        vscode.window.showInformationMessage(
-          "Failed! File don't have .json or .tonto extension"
-        );
-      }
-    });
-  }
-}
+// async function validateModel(uri: vscode.Uri) {
+//   if (uri.scheme == "file") {
+//     vscode.workspace.openTextDocument(uri).then(async (document) => {
+//       if (document.languageId === "json") {
+//         vscode.window.showInformationMessage("Model Validated!");
+//       } else if (document.languageId === "tonto") {
+//         const result = await validateAction(document.fileName);
+//         if (result) {
+//           if (isErrorResultResponse(result)) {
+//             const error = result as unknown as ErrorResultResponse;
+//             let message = `Error ${error.status} (${error.id}):${error.message}: \n`;
+//             error.info.forEach((info) => {
+//               message += ` keyword ${info.keyword}: ${info.message}; `;
+//             });
+//             vscode.window.showInformationMessage(message);
+//           } else {
+//             const response = result as ResultResponse[];
+//             const resultMessages = response.reduce(
+//               (oldValue, item) => oldValue + `${item.title}, `,
+//               ""
+//             );
+//             vscode.window.showInformationMessage(
+//               `Model Validated! ${resultMessages}`
+//             );
+//           }
+//         } else {
+//           vscode.window.showInformationMessage(
+//             "Failed! Validation request returned nothing"
+//           );
+//         }
+//       } else {
+//         vscode.window.showInformationMessage(
+//           "Failed! File don't have .json or .tonto extension"
+//         );
+//       }
+//     });
+//   }
+// }
 
-function isErrorResultResponse(
-  response: void | ErrorResultResponse | ResultResponse[]
-): response is ErrorResultResponse {
-  return (response as ErrorResultResponse).info !== undefined;
-}
+// function isErrorResultResponse(
+//   response: void | ErrorResultResponse | ResultResponse[]
+// ): response is ErrorResultResponse {
+//   return (response as ErrorResultResponse).info !== undefined;
+// }
