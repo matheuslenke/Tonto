@@ -9,7 +9,7 @@
             "es2020.symbol.wellknown"
         ],
         "sourceMap": true,
-        "outDir": "out",
+        "outDir": "lib",
         "strict": true,
         "noUnusedLocals": true,
         "noImplicitReturns": true,
@@ -18,12 +18,17 @@
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true,
+        "declaration": true,
+        "types": [
+            "node"
+        ]
     },
     "include": [
         "src/**/*"
     ],
     "exclude": [
         "out",
+        "lib",
         "node_modules"
     ]
 }

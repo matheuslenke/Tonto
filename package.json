@@ -3,7 +3,7 @@
     "displayName": "tonto",
     "publisher": "Lenke",
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.2.0",
+    "version": "0.1.5",
     "license": "MIT",
     "icon": "docs/images/TontoIcon.png",
     "repository": {
@@ -53,15 +53,21 @@
         ],
         "snippets": []
     },
+    "activationEvents": [
+        "onLanguage:tonto"
+    ],
     "files": [
         "bin",
         "out",
-        "src"
+        "src",
+        "node.js",
+        "node.d.ts"
     ],
     "bin": {
         "tonto-cli": "./bin/cli"
     },
     "main": "./out/extension.js",
+    "types": "./lib/index.d.ts",
     "scripts": {
         "vscode:prepublish": "npm run clean && tsc --noEmit && npm run lint && node esbuild.js --minify",
         "package": "vsce package --pre-release",
@@ -69,13 +75,14 @@
         "clean": "rimraf out",
         "lint": "eslint src --ext ts",
         "lint:fix": "eslint src --ext ts --fix",
-        "build": "node esbuild.js && tsc --noEmit",
+        "build": "node esbuild.js && tsc",
         "watch": "node esbuild.js --watch",
         "test": "vitest",
         "test-ui": "vitest --ui",
         "coverage": "vitest run --coverage",
         "langium:generate": "langium generate",
-        "langium:watch": "langium generate --watch"
+        "langium:watch": "langium generate --watch",
+        "publish:npm": "npm publish --access public"
     },
     "dependencies": {
         "ajv": "^8.11.0",
