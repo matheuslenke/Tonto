@@ -7,13 +7,29 @@
     "configurations": [
         {
             "name": "CLI: GenerateModular",
-            "program": "${workspaceFolder}/src/cli/index.ts",
+            "program": "${workspaceFolder}/bin/cli",
             "request": "launch",
             "skipFiles": [
                 "<node_internals>/**"
             ],
             "type": "node",
-            "args": ["generateModular", "${workspaceFolder}/examples/ontouml-models/Aguiar2019ooco"]
+            "args": [
+                "generateModular",
+                "${workspaceFolder}/examples/ontouml-models/Aguiar2019ooco"
+            ]
+        },
+        {
+            "name": "CLI: Import Modular",
+            "program": "${workspaceFolder}/bin/cli",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node",
+            "args": [
+                "importModular",
+                "${workspaceFolder}/examples/constructorExample/ontology.json"
+            ]
         },
         {
             "name": "Run Extension",
@@ -40,13 +56,37 @@
                 "${workspaceFolder}/out/**/*.js",
                 "${workspaceFolder}/node_modules/langium"
             ],
+        },
+        {
+            "name": "Attach to CLI",
+            "type": "node",
+            "port": 6009,
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceFolder}/out/cli/*.js",
+                "${workspaceFolder}/node_modules/langium"
+            ],
         }
     ],
     "compounds": [
         {
             "name": "Run extension and Debug",
-            "configurations": ["Run Extension", "Attach to Language Server"],
+            "configurations": [
+                "Run Extension",
+                "Attach to Language Server"
+            ],
             "stopAll": true
+        },
+        {
+            "name": "Run CLI and Debug",
+            "configurations": [
+                "CLI: GenerateModular",
+                "Attach to Language Server"
+            ],
         }
     ]
 }

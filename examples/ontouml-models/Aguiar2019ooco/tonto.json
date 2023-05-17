@@ -10,5 +10,6 @@
       "url": "https://github.com/SWO",
       "version": "1.0.0"
     }
-  }
+  },
+  "outFolder": "out"
 }

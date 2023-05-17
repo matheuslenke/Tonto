@@ -3,7 +3,7 @@ import SWO
 
 package Core
 
-relation Language [1..*] -- representedIn -- [0..*] Artifact
+relation Language [1..*] -- representedIn -- [0..*] Artifact specializes ObjectOrientedProgrammingLanguage.representedBy
 relation ProgrammingLanguage [1..*] -- representedIn2 -- [0..*] SoftwareItem
 
 genset SoftwareGenset {

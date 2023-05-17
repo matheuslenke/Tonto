@@ -31,22 +31,9 @@ export async function extractAllDocuments(
     documents.push(document);
   }
 
-  for (const doc of documents) {
-    console.log(colors.bgWhite(doc.state.toString()), doc.uri.path);
-  }
-
   await services.shared.workspace.DocumentBuilder.build(documents, {
     validationChecks: "all",
   });
-
-  for (const doc of documents) {
-    console.log(colors.bgGreen(doc.state.toString()), doc.uri.path);
-    if (doc.precomputedScopes) {
-      for (const scope of doc.precomputedScopes) {
-        console.log(colors.magenta(scope[1].name));
-      }
-    }
-  }
 
   let hasValidationError = false;
   for (const document of documents) {

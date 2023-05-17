@@ -2,7 +2,7 @@
 // import "https://google.com" // as Google
 import Java.Class
 import Core
-import Classs
+import Class
 
 package ClassMember
 

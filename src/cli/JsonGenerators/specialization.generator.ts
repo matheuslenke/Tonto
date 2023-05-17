@@ -4,6 +4,7 @@ import {
 } from "../../language-server/generated/ast";
 import { generalizationGenerator } from "./class.generator";
 import { relationGeneralizationGenerator } from "./relation.generator";
+import chalk from "chalk";
 
 export function generateSpecializations(
   contextModule: ContextModule,
@@ -31,8 +32,18 @@ export function generateSpecializations(
                 relations,
                 packageItem
               );
+            } else {
+              console.log(chalk.yellow(
+                `Warning: Could not create specialization between class ${classElement.name} and 
+                ${endurant.ref?.name} not found in context module ${contextModule.name})`
+              ));
             }
           });
+        } else {
+          console.log(chalk.yellow(
+            `Warning: Could not create specializations for Class ${classElement.name} \
+            because it was not found in context module ${contextModule.name})`
+          ));
         }
       }
       // Generate external ElementRelation specializations
@@ -56,6 +67,11 @@ export function generateSpecializations(
               targetRelation
             );
           }
+        } else {
+          console.log(chalk.yellow(
+            `Warning: Could not create specializations for Relation ${elementRelation.name ?? "(No name)"} \
+            because it was not found in context module ${contextModule.name})`
+          ));
         }
       }
     }

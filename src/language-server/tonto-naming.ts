@@ -41,26 +41,12 @@ export class TontoQualifiedNameProvider extends DefaultNameProvider {
    * @returns qualified name separated by `.`
    */
   getQualifiedName(
-    qualifier:
-      | Model
-      | ContextModule
-      | ClassDeclaration
-      | ElementRelation
-      | string,
-    name: string
-  ): string {
-    let prefix = qualifier;
-    while (isContextModule(prefix) || isClassDeclaration(prefix)) {
-      if (name) {
-        name = `${prefix.name}.${name}`;
-        prefix = prefix.$container;
-      }
-    }
-    return (prefix ? prefix + "." : "") + name;
-  }
-
-  getName(node: AstNode): string | undefined {
+    node: AstNode
+  ): string | undefined {
     if (isElementRelation(node)) {
+      if (!node.name) {
+        return undefined;
+      }
       const parent = node.$container;
       if (isClassDeclaration(parent)) {
         return `${parent.name}.${node.name}`;

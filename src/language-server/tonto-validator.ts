@@ -21,7 +21,6 @@ export class TontoValidationRegistry extends ValidationRegistry {
         validator.ClassDeclarationValidator.checkRigidSpecializesAntiRigid,
         validator.ClassDeclarationValidator.checkDuplicatedReferenceNames,
         validator.ClassDeclarationValidator.checkCompatibleNatures,
-        // validator.ClassDeclarationValidator.checkCircularSpecialization,
         validator.ClassDeclarationValidator.checkNaturesOnlyOnNonSortals,
         validator.ClassDeclarationValidator.checkSpecializationOfCorrectNature,
         validator.ClassDeclarationValidator.checkClassWithoutStereotype,
@@ -29,7 +28,6 @@ export class TontoValidationRegistry extends ValidationRegistry {
         validator.ClassDeclarationValidator.checkGeneralizationDataType,
       ],
       ContextModule: [
-        // validator.ContextModuleValidator.checkContextModuleStartsWithCapital,
         validator.ContextModuleValidator.checkDuplicatedClassName,
         validator.ContextModuleValidator.checkDuplicatedRelationName,
         validator.ContextModuleValidator.checkCircularSpecialization,

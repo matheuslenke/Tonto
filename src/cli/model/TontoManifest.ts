@@ -12,4 +12,9 @@ export interface TontoManifest {
       version: string;
     };
   };
+  outFolder: string;
+}
+
+export function toJson(manifest: TontoManifest): string {
+  return JSON.stringify(manifest, null, 3);
 }

@@ -1,29 +1,39 @@
 import { Class, Package, Relation } from "ontouml-js";
 import { ClassDeclaration, ComplexDataType, ContextModule, ElementRelation, Enum, GeneralizationSet } from "../../language-server/generated/ast";
-import { attributeGenerator, classElementGenerator } from "./class.generator";
-import { customDataTypeGenerator } from "./datatype.generator";
-import { enumGenerator } from "./enum.generator";
-import { generalizationSetGenerator } from "./genset.generator";
-import { generateInstantiations } from "./instantiation.generator";
-import { relationGenerator } from "./relation.generator";
-import { generateSpecializations } from "./specialization.generator";
+import { attributeGenerator, classElementGenerator } from "../JsonGenerators/class.generator";
+import { customDataTypeGenerator } from "../JsonGenerators/datatype.generator";
+import { enumGenerator } from "../JsonGenerators/enum.generator";
+import { generalizationSetGenerator } from "../JsonGenerators/genset.generator";
+import { generateInstantiations } from "../JsonGenerators/instantiation.generator";
+import { relationGenerator } from "../JsonGenerators/relation.generator";
+import { generateSpecializations } from "../JsonGenerators/specialization.generator";
 
-export function contextModuleGenerator(
+export interface GeneratedContextModuleData {
+  classes: Class[];
+  dataTypes: Class[];
+  enums: Class[];
+  relations: Relation[];
+}
+
+export function contextModuleGenerateClasses(
   contextModule: ContextModule,
   packageItem: Package
-): void {
-  const classes: Class[] = [];
-  const dataTypes: Class[] = [];
-  const relations: Relation[] = [];
-  // Creating base datatypes
+): GeneratedContextModuleData {
+
+  const returnData: GeneratedContextModuleData = {
+    classes: [],
+    dataTypes: [],
+    enums: [],
+    relations: []
+  };
 
   contextModule.declarations.forEach((declaration) => {
     switch (declaration.$type) {
       case "ClassDeclaration": {
         const classElement = declaration as ClassDeclaration;
         const newClass = classElementGenerator(classElement, packageItem);
-        attributeGenerator(classElement, newClass, dataTypes);
-        classes.push(newClass);
+        attributeGenerator(classElement, newClass, returnData.dataTypes);
+        returnData.classes.push(newClass);
         break;
       }
 
@@ -32,9 +42,9 @@ export function contextModuleGenerator(
         const newDataType = customDataTypeGenerator(
           dataType,
           packageItem,
-          dataTypes
+          returnData.dataTypes
         );
-        attributeGenerator(dataType, newDataType, dataTypes);
+        attributeGenerator(dataType, newDataType, returnData.dataTypes);
         break;
       }
 
@@ -45,8 +55,31 @@ export function contextModuleGenerator(
       }
     }
   });
+  return returnData;
+}
+
+export function contextModuleModularGenerator(
+  contextModule: ContextModule,
+  modelData: GeneratedContextModuleData,
+  packageItem: Package,
+  importedData: GeneratedContextModuleData[]
+): void {
+  const classes: Class[] = [...modelData.classes];
+  const dataTypes: Class[] = [...modelData.dataTypes];
+  const relations: Relation[] = [];
+
+  // Adding classes from imports
+  importedData.forEach((data) => {
+    classes.push(...data.classes);
+  });
+
+  // Adding dataTypes from imports
+  dataTypes.push(...importedData.flatMap((data) => data.dataTypes));
 
   generateGenSets(contextModule, classes, packageItem);
+
+  // Generate all relations first, without looking for specializations
+
   generateInternalRelations(contextModule, classes, relations, packageItem);
   generateExternalRelations(contextModule, classes, relations, packageItem);
   generateSpecializations(contextModule, classes, relations, packageItem);
@@ -70,7 +103,7 @@ function generateExternalRelations(
   contextModule: ContextModule,
   classes: Class[],
   relations: Relation[],
-  packageItem: Package
+  packageItem: Package,
 ): void {
   contextModule.declarations.forEach((declaration) => {
     switch (declaration.$type) {

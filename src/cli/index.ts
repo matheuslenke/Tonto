@@ -3,6 +3,7 @@ import { TontoLanguageMetaData } from "../language-server/generated/module";
 import { generateAction } from "./actions/generateAction";
 import { importAction } from "./actions/importAction";
 import { generateModularAction } from "./actions/generateModularAction";
+import { importModularAction } from "./actions/importModularAction";
 
 export default function (): void {
   const program = new Command();
@@ -38,5 +39,10 @@ export default function (): void {
     .description("generates a tonto file from a JSON file")
     .action(importAction);
 
+  program
+    .command("importModular")
+    .argument("<file>", "source file (possible file extensions: json)")
+    .description("generates a tonto file from a JSON file")
+    .action(importModularAction);
   program.parse(process.argv);
 }

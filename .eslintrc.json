@@ -8,8 +8,7 @@
         "plugin:@typescript-eslint/recommended",
         "prettier"
     ],
-    "overrides": [
-    ],
+    "overrides": [],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaVersion": "latest",
@@ -22,7 +21,14 @@
         "**/{node_modules,lib,bin}"
     ],
     "rules": {
-        "max-len": ["error", {"ignoreStrings": true, "code": 120, "tabWidth": 2}],
+        "max-len": [
+            "error",
+            {
+                "ignoreStrings": true,
+                "code": 120,
+                "tabWidth": 2
+            }
+        ],
         // "indent": [
         //     "error",
         //     2
@@ -39,26 +45,33 @@
             "error",
             "always"
         ],
+        "no-global-assign": "off",
         // List of [@typescript-eslint rules](https://github.com/typescript-eslint/typescript-eslint/tree/master/packages/eslint-plugin#supported-rules)
         "@typescript-eslint/adjacent-overload-signatures": "error", // grouping same method names
-        "@typescript-eslint/array-type": ["error", {                // string[] instead of Array<string>
-            "default": "array-simple"
-        }],
-        "@typescript-eslint/ban-types": "error",                    // bans types like String in favor of string
-        "@typescript-eslint/no-inferrable-types": "off",            // don't blame decls like "index: number = 0", esp. in api signatures!
-        "@typescript-eslint/indent": "off",                       // consistent indentation
-        "@typescript-eslint/no-explicit-any": "off",              // don't use :any type
-        "@typescript-eslint/no-misused-new": "error",               // no constructors for interfaces or new for classes
-        "@typescript-eslint/no-namespace": "off",                   // disallow the use of custom TypeScript modules and namespaces 
-        "@typescript-eslint/no-non-null-assertion": "off",          // allow ! operator
-        "@typescript-eslint/no-parameter-properties": "error",      // no property definitions in class constructors
-        "@typescript-eslint/no-unused-vars": ["warn", {            // disallow Unused Variables
-            "argsIgnorePattern": "^_"
-        }],
-        "@typescript-eslint/no-var-requires": "error",              // use import instead of require
-        "@typescript-eslint/prefer-for-of": "error",                // prefer for-of loop over arrays
-        "@typescript-eslint/prefer-namespace-keyword": "error",     // prefer namespace over module in TypeScript
-        "@typescript-eslint/triple-slash-reference": "error",       // ban /// <reference />, prefer imports
-        "@typescript-eslint/type-annotation-spacing": "error"       // consistent space around colon ':'
+        "@typescript-eslint/array-type": [
+            "error",
+            { // string[] instead of Array<string>
+                "default": "array-simple"
+            }
+        ],
+        "@typescript-eslint/ban-types": "error", // bans types like String in favor of string
+        "@typescript-eslint/no-inferrable-types": "off", // don't blame decls like "index: number = 0", esp. in api signatures!
+        "@typescript-eslint/indent": "off", // consistent indentation
+        "@typescript-eslint/no-explicit-any": "off", // don't use :any type
+        "@typescript-eslint/no-misused-new": "error", // no constructors for interfaces or new for classes
+        "@typescript-eslint/no-namespace": "off", // disallow the use of custom TypeScript modules and namespaces 
+        "@typescript-eslint/no-non-null-assertion": "off", // allow ! operator
+        "@typescript-eslint/no-parameter-properties": "error", // no property definitions in class constructors
+        "@typescript-eslint/no-unused-vars": [
+            "warn",
+            { // disallow Unused Variables
+                "argsIgnorePattern": "^_"
+            }
+        ],
+        "@typescript-eslint/no-var-requires": 0, // use import instead of require
+        "@typescript-eslint/prefer-for-of": "error", // prefer for-of loop over arrays
+        "@typescript-eslint/prefer-namespace-keyword": "error", // prefer namespace over module in TypeScript
+        "@typescript-eslint/triple-slash-reference": "error", // ban /// <reference />, prefer imports
+        "@typescript-eslint/type-annotation-spacing": "error" // consistent space around colon ':'
     }
 }

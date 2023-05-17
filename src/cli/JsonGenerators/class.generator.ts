@@ -98,60 +98,7 @@ export function attributeGenerator(
 ): void {
   classElement.attributes.forEach((attribute: Attribute) => {
     let createdAttribute: Property | undefined;
-
-    if (attribute.attributeTypeRef) {
-      // switch (attribute.attributeTypeRef) {
-      // case "date": {
-      //   const dateType = dataTypes.find(
-      //     (item) => item.name.getText() === "Date"
-      //   );
-      //   if (dateType) {
-      //     createdAttribute = createdClass.createAttribute(
-      //       dateType,
-      //       attribute.name
-      //     );
-      //   }
-      //   break;
-      // }
-      // case "number": {
-      //   const numberType = dataTypes.find(
-      //     (item) => item.name.getText() === "number"
-      //   );
-      //   if (numberType) {
-      //     createdAttribute = createdClass.createAttribute(
-      //       numberType,
-      //       attribute.name
-      //     );
-      //     createdAttribute.cardinality.setOneToOne();
-      //   }
-      //   break;
-      // }
-      // case "boolean": {
-      //   const booleanType = dataTypes.find(
-      //     (item) => item.name.getText() === "boolean"
-      //   );
-      //   if (booleanType) {
-      //     createdAttribute = createdClass.createAttribute(
-      //       booleanType,
-      //       attribute.name
-      //     );
-      //   }
-      //   break;
-      // }
-      // case "string": {
-      //   const stringType = dataTypes.find(
-      //     (item) => item.name.getText() === "string"
-      //   );
-      //   if (stringType) {
-      //     createdAttribute = createdClass.createAttribute(
-      //       stringType,
-      //       attribute.name
-      //     );
-      //   }
-      //   break;
-      // }
-      // }
-    } else if (attribute.attributeTypeRef !== undefined) {
+    if (attribute.attributeTypeRef !== undefined) {
       const customType = dataTypes.find(
         (item) => item.name.getText() === attribute.attributeTypeRef?.toString()
       );
@@ -255,19 +202,19 @@ function getDefaultOntoUMLNature(
 ): OntologicalNature[] {
   if (
     element.classElementType?.ontologicalCategory ===
-      OntologicalCategoryEnum.CATEGORY ||
+    OntologicalCategoryEnum.CATEGORY ||
     element.classElementType?.ontologicalCategory ===
-      OntologicalCategoryEnum.MIXIN ||
+    OntologicalCategoryEnum.MIXIN ||
     element.classElementType?.ontologicalCategory ===
-      OntologicalCategoryEnum.PHASE_MIXIN ||
+    OntologicalCategoryEnum.PHASE_MIXIN ||
     element.classElementType?.ontologicalCategory ===
-      OntologicalCategoryEnum.ROLE_MIXIN ||
+    OntologicalCategoryEnum.ROLE_MIXIN ||
     element.classElementType?.ontologicalCategory ===
-      OntologicalCategoryEnum.HISTORICAL_ROLE_MIXIN ||
+    OntologicalCategoryEnum.HISTORICAL_ROLE_MIXIN ||
     element.classElementType?.ontologicalCategory ===
-      OntologicalCategoryEnum.EVENT ||
+    OntologicalCategoryEnum.EVENT ||
     element.classElementType?.ontologicalCategory ===
-      OntologicalCategoryEnum.SITUATION
+    OntologicalCategoryEnum.SITUATION
   ) {
     return [OntologicalNature.functional_complex];
   } else {

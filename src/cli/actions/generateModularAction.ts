@@ -13,7 +13,7 @@ import { TontoManifest } from "../model/TontoManifest";
 import { glob } from "glob";
 import { basicDataTypes } from "../../language-server/workspace/builtins/basicDataTypes";
 import { BuiltInLib } from "../model/BuiltInLib";
-import { WorkspaceFolder } from "vscode-languageserver";
+import { generateJSONFileModular } from "../JsonModularGenerators/jsonModular.generator";
 export type GenerateOptions = {
   destination?: string;
 };
@@ -24,17 +24,29 @@ export const generateModularAction = async (
 ): Promise<void> => {
   const services = createTontoServices({ ...NodeFileSystem }).Tonto;
 
+  let manifest: TontoManifest | undefined = undefined;
+  let folderAbsolutePath: string | undefined = undefined;
   // Find tonto.json file
-  const tontoManifest = fs.readdirSync(dir).includes("tonto.json");
+  try {
+    folderAbsolutePath = path.resolve(dir);
+    const tontoManifest = fs.readdirSync(dir).includes("tonto.json");
+    if (tontoManifest === undefined) {
+      console.log(chalk.red("tonto.json not found!"));
+      return Promise.reject();
+    }
+    const filePath = path.join(dir, "tonto.json");
 
-  if (tontoManifest === undefined) {
-    console.log(chalk.red("tonto.json not found!"));
+    const tontoManifestContent = fs.readFileSync(filePath, "utf-8");
+
+    manifest = JSON.parse(tontoManifestContent);
+    if (manifest === undefined) {
+      throw new Error();
+    }
+  } catch {
+    console.log(chalk.red("Failed to read tonto.json file."));
     return Promise.reject();
   }
-  const filePath = path.join(dir, "tonto.json");
-  const tontoManifestContent = fs.readFileSync(filePath, "utf-8");
-
-  const manifest: TontoManifest = JSON.parse(tontoManifestContent);
+  console.log(chalk.bold("tonto.json file parsed successfully."));
 
   const project = new Project({
     name: new MultilingualText(manifest.projectName),
@@ -44,18 +56,6 @@ export const generateModularAction = async (
   });
 
   const allFiles = await glob(dir + "/**/*.tonto");
-  const workspaceFolders = allFiles.map(file => {
-    return {
-      name: file,
-      uri: file
-    } as WorkspaceFolder;
-  });
-  // Load workspace with all built in libraries
-  const buildInFolder: WorkspaceFolder = {
-    name: "tontoDatatypes",
-    uri: "builtin://basicDatatypes.tonto",
-  };
-  // services.shared.workspace.WorkspaceManager.initializeWorkspace([...workspaceFolders, buildInFolder]);
   // // Load all builtIn files
   const dataTypesLib: BuiltInLib = {
     uri: "builtin://basicDatatypes.tonto",
@@ -64,9 +64,9 @@ export const generateModularAction = async (
 
   const models: Model[] = await extractAllAstNodes(allFiles, services, [dataTypesLib]);
 
-  // for (const model of models) {
-  //   console.log(model.module.name);
-  // }
+  generateJSONFileModular(models, project, rootPackage, manifest, folderAbsolutePath);
+
+  project.toJSON();
 
   // await walkSync(dir, services, rootPackage);
   console.log(chalk.green("JSON File generated successfully: "));
