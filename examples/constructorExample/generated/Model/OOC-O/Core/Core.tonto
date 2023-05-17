@@ -1,0 +1,33 @@
+import SWO
+import SPO
+
+package Core
+
+subkind ObjectOriented_Programming_Language  specializes Programming_Language
+subkind ObjectOriented_Source_Code  specializes Source_Code{
+}
+kind Module {
+}
+quality Name {
+}
+category Named_Element 
+quality Element_Visibility {
+}
+kind Class  specializes Named_Element, Type{
+}
+category Member {
+}
+kind Variable  specializes Named_Element
+quality Mutability {
+}
+subkind Primitive_Type  specializes Type
+subkind Physical_Module  specializes Module
+category Type 
+quality Return_Type {
+}
+subkind Logical_Module  specializes Module
+kind Method_Member_Function  specializes Member, Named_Element
+subkind Attribute_Member_Variable  specializes Member, Variable
+quality Value_Type {
+}
+

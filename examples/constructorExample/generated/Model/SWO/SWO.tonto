@@ -1,0 +1,12 @@
+import SPO
+
+package SWO
+
+kind Software_System  specializes Software_Item{
+}
+kind Program  specializes Software_Item{
+}
+kind Code  specializes Software_Item
+subkind Source_Code  specializes Code{
+}
+
