@@ -1,0 +1,30 @@
+package Model
+
+category OrganizationalUnit 
+kind rgo_Colegiado  specializes OrganizationalUnit{
+     [1..1] -- representedBy --  [1..*]  PublicOrganization
+     [*..*] --  [1..1]  rgo
+}
+category PublicOrganization  specializes OrganizationalUnit, Organization
+subkind PublicAdmnistrativeUnit  specializes OrganizationalUnit, UnityOfOrganization{
+     [*..*] -- subordinatedTo --  [0..1]  PublicAdmnistrativeUnit
+     [1..*] -- composedBy --  [1..1]  PublicOrganization
+}
+category Organization 
+kind UnityOfOrganization {
+     [1..1] -- composedBy --  [1..*]  Organization
+}
+kind Company  specializes Organization
+category PublicEntity  specializes PublicOrganization{
+     [*..*] -- relatedTo --  [1..1]  rgo
+}
+kind rgo  specializes PublicOrganization{
+     [*..*] -- subordinatedTo --  [0..1]  rgo
+}
+kind NonEmpresarialPublicEntity  specializes PublicEntity
+phase StateCompany  specializes PublicEntity, Company
+subkind Autarchy  specializes NonEmpresarialPublicEntity
+subkind Foundation  specializes NonEmpresarialPublicEntity
+phase PublicCompany  specializes StateCompany
+phase MixedEconomyCompany  specializes StateCompany
+

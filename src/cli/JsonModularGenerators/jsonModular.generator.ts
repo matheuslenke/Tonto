@@ -72,6 +72,9 @@ function generate(ctx: GeneratorContext): string {
    */
   ctx.models.forEach(model => {
     const importedNames = model.imports.flatMap(e => e.referencedModel.ref?.name).filter(e => e !== undefined);
+    const globalDataTypes = generatedModelDatas
+      .filter(data => data.model.module.isGlobal)
+      .map(data => data.generatedData);
     const importedDataTypes = generatedModelDatas
       .filter(data => importedNames.includes(data.model.module.name))
       .map(data => data.generatedData);
@@ -80,7 +83,10 @@ function generate(ctx: GeneratorContext): string {
     const modelData = generatedModelDatas.find(data => data.model.module.name === model.module.name)?.generatedData;
 
     if (createdPackage && modelData) {
-      contextModuleModularGenerator(model.module, modelData, createdPackage, importedDataTypes);
+      contextModuleModularGenerator(model.module,
+        modelData,
+        createdPackage,
+        [...importedDataTypes, ...globalDataTypes]);
     }
   });
 

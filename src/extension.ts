@@ -11,6 +11,7 @@ import { validateAction } from "./cli/actions/validateAction";
 import { importCommand } from "./cli/actions/importAction";
 import { generateAction } from "./cli/actions/generateAction";
 import { TontoLibraryFileSystemProvider } from "./language-server/extension/TontoLibraryFileSystemProvider";
+import { importModularCommand } from "./cli/actions/importModularAction";
 
 let client: LanguageClient;
 let generateJsonStatusBarItem: vscode.StatusBarItem;
@@ -45,8 +46,7 @@ function startLanguageClient(context: vscode.ExtensionContext): LanguageClient {
   const debugOptions = {
     execArgv: [
       "--nolazy",
-      `--inspect${process.env.DEBUG_BREAK ? "-brk" : ""}=${
-        process.env.DEBUG_SOCKET || "6009"
+      `--inspect${process.env.DEBUG_BREAK ? "-brk" : ""}=${process.env.DEBUG_SOCKET || "6009"
       }`,
     ],
   };
@@ -240,8 +240,8 @@ async function generateTonto(uri: vscode.Uri) {
   if (uri.scheme == "file") {
     vscode.workspace.openTextDocument(uri).then(async (document) => {
       if (document.languageId === "json") {
-        const destination = path.dirname(uri.fsPath);
-        const result = await importCommand(document.fileName, {
+        const destination = path.join(path.dirname(uri.fsPath), "generated");
+        const result = await importModularCommand(document.fileName, {
           destination: destination,
         });
         if (result.success) {

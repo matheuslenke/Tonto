@@ -1,5 +1,5 @@
 export const basicDataTypes = `
-global package BasicDataTypes
+global package Tonto.BasicDataTypes
 
 datatype number
 

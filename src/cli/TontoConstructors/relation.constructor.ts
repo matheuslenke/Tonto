@@ -4,6 +4,7 @@ import {
   Cardinality,
   Class,
   Generalization,
+  OntoumlType,
   Property,
   Relation,
 } from "ontouml-js";
@@ -40,14 +41,12 @@ export function constructInternalRelations(
       fileNode.append("<>-- ");
       if (relationName) {
         fileNode.append(`${relationName}`);
-        constructRelationSpecializations(generalizations, fileNode);
         fileNode.append(" <>-- ");
       }
     } else {
       fileNode.append("-- ");
       if (relationName) {
         fileNode.append(`${relationName}`);
-        constructRelationSpecializations(generalizations, fileNode);
         fileNode.append(" -- ");
       }
     }
@@ -71,6 +70,8 @@ export function constructInternalRelations(
     }
 
     fileNode.append(" ", formatForId(targetClassName));
+
+    constructRelationSpecializations(generalizations, fileNode);
     fileNode.append(NL);
   });
 }
@@ -121,9 +122,20 @@ function constructRelationSpecializations(
   if (generalizations.length > 0) {
     fileNode.append(" specializes ");
     generalizations.forEach((generalization, index) => {
-      fileNode.append(
-        `${formatForId(generalization.getSpecificRelation().getName())}`
-      );
+      const relationName = formatForId(generalization.getSpecificRelation().getName());
+      const properties = generalization.specific.properties;
+      const property = properties.at(0);
+      if (property) {
+        const className = formatForId(property.propertyType.getName());
+        fileNode.append(
+          `${className}.${relationName}`
+        );
+      } else {
+        fileNode.append(
+          `${relationName}`
+        );
+      }
+
       if (index < generalizations.length - 1) {
         fileNode.append(",");
       }

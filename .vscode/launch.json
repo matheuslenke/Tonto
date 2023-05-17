@@ -28,7 +28,7 @@
             "type": "node",
             "args": [
                 "importModular",
-                "${workspaceFolder}/examples/constructorExample/ontology.json"
+                "${workspaceFolder}/examples/ontouml-models/University.json"
             ]
         },
         {

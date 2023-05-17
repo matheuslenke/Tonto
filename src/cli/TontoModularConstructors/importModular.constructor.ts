@@ -12,7 +12,13 @@ export function createTontoImports(
   // Getting containers from specializations
   const generalizationContainers: Package[] = getContainersFromSpecializations(actualPackage);
 
-  const uniqueContainers = new Set([...relationContainers, ...generalizationContainers]);
+  // Getting containers from relation specializations
+  const relationSpecializationContainers: Package[] = getContainersFromRelationSpecializations(actualPackage);
+
+  const uniqueContainers = new Set([...relationContainers,
+  ...generalizationContainers,
+  ...relationSpecializationContainers
+  ]);
   const externalPackages: OntoumlElement[] = [];
 
   uniqueContainers.forEach(container => {
@@ -35,9 +41,7 @@ function getContainersFromRelations(actualPackage: Package): Package[] {
     .map((item: OntoumlElement) => item as Relation)
     .flatMap((item: Relation) => item.properties as Property[])
     .filter((item: Property) => item !== undefined)
-    .flatMap((property: Property) => {
-      return property.propertyType;
-    })
+    .flatMap((property: Property) => property.propertyType)
     .map((item: OntoumlElement) => item.container as Package);
   return relationContainers;
 }
@@ -48,12 +52,19 @@ function getContainersFromSpecializations(actualPackage: Package): Package[] {
     .map((item: OntoumlElement) => item as Class)
     .flatMap(item => item.getGeneralizationsWhereSpecific())
     .flatMap((item: Generalization) => [item.general, item.specific])
-    .map(item => {
-      // if (actualPackage.getName() === "Class")
-      // console.log(`${item.getName()} : ${actualPackage.getName()}`);
-      return item;
-    })
     .flatMap(item => item.container as Package)
     .filter((item: Package) => item !== undefined);
   return generalizationContainers;
+}
+
+function getContainersFromRelationSpecializations(actualPackage: Package): Package[] {
+  const generalizationContainers = actualPackage.getContents()
+    .filter((item: OntoumlElement) => item.type === OntoumlType.GENERALIZATION_TYPE)
+    .map(item => item as Generalization)
+    .filter((item: Generalization) => item.general.type === OntoumlType.RELATION_TYPE
+      && item.specific.type === OntoumlType.RELATION_TYPE)
+    .flatMap((item: Generalization) => [item.general, item.specific])
+    .flatMap(item => item.container as Package)
+    .filter((item: Package) => item !== undefined);
+  return [];
 }

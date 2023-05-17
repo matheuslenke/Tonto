@@ -12,6 +12,7 @@ genset SoftwareGenset {
 }
 
 subkind ObjectOrientedProgrammingLanguage specializes ProgrammingLanguage {
+  createdDate: MyDate
   [1..*] -- representedBy -- [0..*] ObjectOrientedSourceCode
     inverseOf ObjectOrientedSourceCode.representedIn3
 }

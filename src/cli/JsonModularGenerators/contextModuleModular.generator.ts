@@ -1,7 +1,7 @@
 import { Class, Package, Relation } from "ontouml-js";
 import { ClassDeclaration, ComplexDataType, ContextModule, ElementRelation, Enum, GeneralizationSet } from "../../language-server/generated/ast";
 import { attributeGenerator, classElementGenerator } from "../JsonGenerators/class.generator";
-import { customDataTypeGenerator } from "../JsonGenerators/datatype.generator";
+import { customDataTypeAttributesGenerator, customDataTypeGenerator } from "../JsonGenerators/datatype.generator";
 import { enumGenerator } from "../JsonGenerators/enum.generator";
 import { generalizationSetGenerator } from "../JsonGenerators/genset.generator";
 import { generateInstantiations } from "../JsonGenerators/instantiation.generator";
@@ -41,10 +41,9 @@ export function contextModuleGenerateClasses(
         const dataType = declaration as ComplexDataType;
         const newDataType = customDataTypeGenerator(
           dataType,
-          packageItem,
-          returnData.dataTypes
+          packageItem
         );
-        attributeGenerator(dataType, newDataType, returnData.dataTypes);
+        returnData.dataTypes.push(newDataType);
         break;
       }
 
@@ -77,6 +76,8 @@ export function contextModuleModularGenerator(
   dataTypes.push(...importedData.flatMap((data) => data.dataTypes));
 
   generateGenSets(contextModule, classes, packageItem);
+
+  generateComplexDataTypesAttributes(contextModule, dataTypes);
 
   // Generate all relations first, without looking for specializations
 
@@ -143,6 +144,20 @@ function generateInternalRelations(
           relations.push(createdRelation);
         }
       });
+    }
+  });
+}
+
+
+function generateComplexDataTypesAttributes(
+  contextModule: ContextModule,
+  dataTypes: Class[]
+): void {
+  contextModule.declarations.forEach((declaration) => {
+    if (declaration.$type === "ComplexDataType") {
+      const dataType = declaration as ComplexDataType;
+      customDataTypeAttributesGenerator(dataType,
+        dataTypes);
     }
   });
 }

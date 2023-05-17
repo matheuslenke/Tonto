@@ -17,17 +17,18 @@ export async function extractAllDocuments(
 ): Promise<LangiumDocuments> {
   const documents: Array<LangiumDocument<AstNode>> = [];
 
+  for (const lib of builtInLibs) {
+    const document = services.shared.workspace.LangiumDocumentFactory
+      .fromString(lib.content, URI.parse(lib.uri));
+    services.shared.workspace.LangiumDocuments.addDocument(document);
+    documents.push(document);
+  }
+
   for (const fileName of fileNames) {
     const document =
       services.shared.workspace.LangiumDocuments.getOrCreateDocument(
         URI.file(path.resolve(fileName))
       );
-    documents.push(document);
-  }
-  for (const lib of builtInLibs) {
-    const document = services.shared.workspace.LangiumDocumentFactory
-      .fromString(lib.content, URI.parse(lib.uri));
-    // console.log(document);
     documents.push(document);
   }
 
@@ -77,9 +78,6 @@ export async function extractDocument(
     console.error(colors.red(`File ${fileName} does not exist.`));
     process.exit(1);
   }
-  services.shared.workspace.LangiumDocuments.all.forEach((doc) => {
-    console.log(doc.state, doc.uri);
-  });
 
   const document =
     services.shared.workspace.LangiumDocuments.getOrCreateDocument(

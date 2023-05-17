@@ -4,3 +4,9 @@ kind Code
 kind Program
 kind SoftwareSystem
 subkind SourceCode specializes Code
+
+datatype MyDate {
+  year: number
+  month: number
+  day: number
+}

@@ -58,9 +58,6 @@ function generateModule(
   ontoumlElement: OntoumlElement,
   fileNode: CompositeGeneratorNode
 ) {
-
-
-
   /**
    * If it is a Project, we just enter the "Model" Package
    */
@@ -101,7 +98,7 @@ function generateModule(
 
 function createTontoManifest(ctx: GeneratorContext) {
   const manifest: TontoManifest = {
-    projectName: ctx.project.getNameOrId(),
+    projectName: formatForId(ctx.project.getNameOrId()),
     version: "1.0",
     displayName: ctx.project.getNameOrId(),
     license: "",
