@@ -8,7 +8,6 @@ import {
   TransportKind,
 } from "vscode-languageclient/node";
 import { validateAction } from "./cli/actions/validateAction";
-import { importCommand } from "./cli/actions/importAction";
 import { generateAction } from "./cli/actions/generateAction";
 import { TontoLibraryFileSystemProvider } from "./language-server/extension/TontoLibraryFileSystemProvider";
 import { importModularCommand } from "./cli/actions/importModularAction";

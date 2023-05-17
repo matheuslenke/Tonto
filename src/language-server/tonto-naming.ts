@@ -8,8 +8,6 @@ import { AstNode, DefaultNameProvider } from "langium";
 import {
   ClassDeclaration,
   ContextModule,
-  ElementRelation,
-  Model,
   isAttribute,
   isClassDeclaration,
   isComplexDataType,

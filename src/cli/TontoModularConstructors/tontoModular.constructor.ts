@@ -1,5 +1,5 @@
 import fs from "fs";
-import { CompositeGeneratorNode, NL, toString } from "langium";
+import { CompositeGeneratorNode, toString } from "langium";
 import { OntoumlElement, OntoumlType, Package, Project } from "ontouml-js";
 import path from "path";
 import { TontoManifest, toJson } from "../model/TontoManifest";

@@ -66,5 +66,5 @@ function getContainersFromRelationSpecializations(actualPackage: Package): Packa
     .flatMap((item: Generalization) => [item.general, item.specific])
     .flatMap(item => item.container as Package)
     .filter((item: Package) => item !== undefined);
-  return [];
+  return generalizationContainers;
 }

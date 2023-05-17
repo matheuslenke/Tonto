@@ -6,9 +6,9 @@ import {
   TontoServices,
   createTontoServices,
 } from "../../language-server/tonto-module";
-import { MultilingualText, Package, Project } from "ontouml-js";
+import { MultilingualText, Project } from "ontouml-js";
 import { Model } from "../../language-server/generated/ast";
-import { extractAllAstNodes, extractAstNode } from "../cli-util";
+import { extractAllAstNodes } from "../cli-util";
 import { TontoManifest } from "../model/TontoManifest";
 import { glob } from "glob";
 import { basicDataTypes } from "../../language-server/workspace/builtins/basicDataTypes";
@@ -48,6 +48,17 @@ export const generateModularAction = async (
   }
   console.log(chalk.bold("tonto.json file parsed successfully."));
 
+  createModel(dir, manifest, services, folderAbsolutePath);
+
+  console.log(chalk.green("JSON File generated successfully: "));
+};
+
+async function createModel(
+  dir: string,
+  manifest: TontoManifest,
+  services: TontoServices,
+  folderAbsolutePath: string,
+): Promise<void> {
   const project = new Project({
     name: new MultilingualText(manifest.projectName),
   });
@@ -66,37 +77,4 @@ export const generateModularAction = async (
 
   generateJSONFileModular(models, project, rootPackage, manifest, folderAbsolutePath);
 
-  project.toJSON();
-
-  // await walkSync(dir, services, rootPackage);
-  console.log(chalk.green("JSON File generated successfully: "));
-};
-
-async function createModel(
-  filePath: string,
-  services: TontoServices,
-  rootPackage: Package
-): Promise<void> {
-  const extName = path.extname(filePath);
-  if (extName === ".tonto") {
-    const model = await extractAstNode<Model>(filePath, services);
-    rootPackage.createPackage(model.module.name);
-  }
-}
-
-async function walkSync(
-  currentDirPath: string,
-  services: TontoServices,
-  rootPackage: Package
-) {
-  const files = fs.readdirSync(currentDirPath);
-  for (const file of files) {
-    const filePath = path.join(currentDirPath, file);
-    const stat = fs.statSync(filePath);
-    if (stat.isFile()) {
-      await createModel(filePath, services, rootPackage);
-    } else if (stat.isDirectory()) {
-      walkSync(filePath, services, rootPackage);
-    }
-  }
 }

@@ -3,7 +3,7 @@
     "displayName": "tonto",
     "publisher": "Lenke",
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.1.4",
+    "version": "0.2.0",
     "license": "MIT",
     "icon": "docs/images/TontoIcon.png",
     "repository": {
@@ -67,8 +67,8 @@
     "main": "./out/extension.js",
     "scripts": {
         "vscode:prepublish": "npm run clean && tsc --noEmit && npm run lint && node esbuild.js --minify",
-        "package": "vsce package --pre-release --baseContentUrl https://github.com/matheuslenke/Tonto",
-        "publish": "vsce publish --baseContentUrl https://github.com/matheuslenke/Tonto",
+        "package": "vsce package --pre-release",
+        "publish": "vsce publish ",
         "clean": "rimraf out",
         "lint": "eslint src --ext ts",
         "lint:fix": "eslint src --ext ts --fix",

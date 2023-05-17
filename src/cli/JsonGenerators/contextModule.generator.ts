@@ -31,8 +31,7 @@ export function contextModuleGenerator(
         const dataType = declaration as ComplexDataType;
         const newDataType = customDataTypeGenerator(
           dataType,
-          packageItem,
-          dataTypes
+          packageItem
         );
         attributeGenerator(dataType, newDataType, dataTypes);
         break;

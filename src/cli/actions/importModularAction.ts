@@ -1,18 +1,8 @@
 import { readFile } from "fs/promises";
-import { OntoumlElement, Project, serializationUtils } from "ontouml-js";
-import { generateTontoFile } from "../tontoGenerator";
+import { Project, serializationUtils } from "ontouml-js";
 import fs from "fs";
 import { generateTontoFileModular } from "../TontoModularConstructors/tontoModular.constructor";
 import chalk from "chalk";
-
-interface JsonElement {
-  model?: any;
-  diagrams?: any;
-  type: string;
-  id: string;
-  name: string;
-  description?: string;
-}
 
 export type ImportOptions = {
   destination?: string;
@@ -66,7 +56,7 @@ export const importModularCommand = async (
     return {
       success: true,
       message: "Tonto file generated",
-      filePath: "generatedFilePath",
+      filePath: generatedFilePath,
     } as ImportReturn;
   } catch (error) {
     const importReturn: ImportReturn = {

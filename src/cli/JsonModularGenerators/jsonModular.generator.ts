@@ -1,9 +1,8 @@
 import fs from "fs";
 import { CompositeGeneratorNode } from "langium";
-import { MultilingualText, Package, Project } from "ontouml-js";
+import { Package, Project } from "ontouml-js";
 import path from "path";
 import { Model } from "../../language-server/generated/ast";
-import { extractDestinationAndName } from "../cli-util";
 import { contextModuleModularGenerator } from "./contextModuleModular.generator";
 import { TontoManifest } from "../model/TontoManifest";
 import { GeneratedContextModuleData, contextModuleGenerateClasses } from "./contextModuleModular.generator";

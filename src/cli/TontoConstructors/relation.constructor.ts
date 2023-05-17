@@ -4,7 +4,6 @@ import {
   Cardinality,
   Class,
   Generalization,
-  OntoumlType,
   Property,
   Relation,
 } from "ontouml-js";
