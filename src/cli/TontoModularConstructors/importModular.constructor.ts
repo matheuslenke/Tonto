@@ -1,19 +1,18 @@
 import { CompositeGeneratorNode, NL } from "langium";
-import { OntoumlElement, OntoumlType, Package, Property } from "ontouml-js";
+import { Class, Generalization, OntoumlElement, OntoumlType, Package, Property, Relation } from "ontouml-js";
+import { formatForId } from "../utils/replaceWhitespace";
 
 export function createTontoImports(
   actualPackage: Package,
   fileNode: CompositeGeneratorNode
 ) {
-  const containers = actualPackage.getAllRelationEnds().flatMap((relationEnd: Property) => {
-    if (relationEnd.propertyType.type === OntoumlType.CLASS_TYPE) {
-      const parents = relationEnd.propertyType.getParents().map(e => e.container);
-      return parents;
-    }
-    return undefined;
-  }).filter(item => item !== undefined || item !== null);
+  // Getting containers from relations
+  const relationContainers: Package[] = getContainersFromRelations(actualPackage);
 
-  const uniqueContainers = new Set(containers);
+  // Getting containers from specializations
+  const generalizationContainers: Package[] = getContainersFromSpecializations(actualPackage);
+
+  const uniqueContainers = new Set([...relationContainers, ...generalizationContainers]);
   const externalPackages: OntoumlElement[] = [];
 
   uniqueContainers.forEach(container => {
@@ -23,6 +22,38 @@ export function createTontoImports(
   });
 
   externalPackages.forEach(externalPackage => {
-    fileNode.append(`import ${externalPackage.getNameOrId()}`, NL);
+    fileNode.append(`import ${formatForId(externalPackage.getNameOrId())}`, NL);
   });
+  if (externalPackages.length > 0) {
+    fileNode.appendNewLine();
+  }
+}
+
+function getContainersFromRelations(actualPackage: Package): Package[] {
+  const relationContainers: Package[] = actualPackage.getContents()
+    .filter((item: OntoumlElement) => item.type === OntoumlType.RELATION_TYPE)
+    .map((item: OntoumlElement) => item as Relation)
+    .flatMap((item: Relation) => item.properties as Property[])
+    .filter((item: Property) => item !== undefined)
+    .flatMap((property: Property) => {
+      return property.propertyType;
+    })
+    .map((item: OntoumlElement) => item.container as Package);
+  return relationContainers;
+}
+
+function getContainersFromSpecializations(actualPackage: Package): Package[] {
+  const generalizationContainers: Package[] = actualPackage.getContents()
+    .filter((item: OntoumlElement) => item.type === OntoumlType.CLASS_TYPE)
+    .map((item: OntoumlElement) => item as Class)
+    .flatMap(item => item.getGeneralizationsWhereSpecific())
+    .flatMap((item: Generalization) => [item.general, item.specific])
+    .map(item => {
+      // if (actualPackage.getName() === "Class")
+      // console.log(`${item.getName()} : ${actualPackage.getName()}`);
+      return item;
+    })
+    .flatMap(item => item.container as Package)
+    .filter((item: Package) => item !== undefined);
+  return generalizationContainers;
 }

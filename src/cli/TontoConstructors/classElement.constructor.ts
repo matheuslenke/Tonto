@@ -1,9 +1,10 @@
 import { CompositeGeneratorNode, NL } from "langium";
 import { Class, ClassStereotype } from "ontouml-js";
-import { replaceWhitespace } from "../utils/replaceWhitespace";
+import { formatForId } from "../utils/replaceWhitespace";
 import { createInstantiation } from "./instantiation.constructor";
 import { constructInternalRelations } from "./relation.constructor";
 import { createSpecializations } from "./specialization.constructor";
+import { constructAttributes } from "./attributes.constructor";
 
 export function constructClassElement(
   element: Class,
@@ -17,7 +18,7 @@ export function constructClassElement(
     createDatatype(element, fileNode);
   } else {
     fileNode.append(
-      `${stereotypeWord} ${replaceWhitespace(element.getName())} `
+      `${stereotypeWord} ${formatForId(element.getName())} `
     );
 
     createInstantiation(element, fileNode);
@@ -32,12 +33,12 @@ export function constructClassElement(
     if (relations.length > 0) {
       fileNode.append("{", NL);
       if (attributes.length > 0) {
-        // fileNode.indent((ident) => {
-        //   // constructAttributes(packageItem, element, attributes, ident);
-        // });
+        fileNode.indent((ident) => {
+          constructAttributes(attributes, ident);
+        });
       }
       fileNode.indent((ident) => {
-        // constructInternalRelations(element, relations, ident);
+        constructInternalRelations(element, relations, ident);
       });
       fileNode.append("}");
     }
@@ -46,15 +47,15 @@ export function constructClassElement(
 }
 
 function createEnumeration(element: Class, fileNode: CompositeGeneratorNode) {
-  fileNode.append(`enum ${replaceWhitespace(element.getName())} {`, NL);
+  fileNode.append(`enum ${formatForId(element.getName())} {`, NL);
 
   const literals = element.getOwnLiterals();
   fileNode.indent((ident) => {
     literals.forEach((literal, index) => {
       if (index < literals.length - 1) {
-        ident.append(replaceWhitespace(literal.getNameOrId()), ",", NL);
+        ident.append(formatForId(literal.getNameOrId()), ",", NL);
       } else {
-        ident.append(replaceWhitespace(literal.getNameOrId()), NL);
+        ident.append(formatForId(literal.getNameOrId()), NL);
       }
     });
   });
@@ -63,21 +64,24 @@ function createEnumeration(element: Class, fileNode: CompositeGeneratorNode) {
 }
 
 function createDatatype(element: Class, fileNode: CompositeGeneratorNode) {
-  fileNode.append(`datatype ${replaceWhitespace(element.getName())} {`, NL);
+  fileNode.append(`datatype ${formatForId(element.getName())}`);
 
-  // const literals = element.getAllAttributes();
+  const literals = element.getAllAttributes();
 
-  // fileNode.indent((ident) => {
-  //   literals.forEach((literal, index) => {
-  //     if (index < literals.length - 1) {
-  //       ident.append(replaceWhitespace(literal.getNameOrId()), ",", NL);
-  //     } else {
-  //       ident.append(replaceWhitespace(literal.getNameOrId()), NL);
-  //     }
-  //   });
-  // });
+  if (literals.length > 0) {
+    fileNode.append(" {", NL);
 
-  fileNode.append("}", NL);
+    fileNode.indent((ident) => {
+      literals.forEach((literal) => {
+        ident.append(formatForId(literal.getNameOrId()), " : ", literal.propertyType.getNameOrId(), NL);
+      });
+    });
+
+    fileNode.append("}", NL);
+  } else {
+    fileNode.appendNewLine();
+  }
+
 }
 
 function getStereotypeWord(stereotype: ClassStereotype): string {

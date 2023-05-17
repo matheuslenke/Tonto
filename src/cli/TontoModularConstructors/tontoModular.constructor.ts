@@ -1,10 +1,11 @@
 import fs from "fs";
-import { CompositeGeneratorNode, NL, isGeneratorNode, toString } from "langium";
+import { CompositeGeneratorNode, NL, toString } from "langium";
 import { OntoumlElement, OntoumlType, Package, Project } from "ontouml-js";
 import path from "path";
 import { TontoManifest, toJson } from "../model/TontoManifest";
 import { createTontoModuleModular } from "./contextModuleModular.constructor";
 import { createTontoImports } from "./importModular.constructor";
+import { formatForId, replaceWhitespace } from "../utils/replaceWhitespace";
 // import { createTontoModule } from "./TontoConstructors/contextModule.constructor";
 
 export function generateTontoFileModular(
@@ -81,7 +82,6 @@ function generateModule(
      * First, we need to generate all imports for this module
      */
     createTontoImports(packageElement, fileNode);
-    fileNode.append(NL);
     /**
      * Then, we create the elements of this package
      */
@@ -90,11 +90,11 @@ function generateModule(
     // Lastly, we call it again to create other packages inside it recursively
     for (const child of packageElement.getContents()) {
       if (child.type === OntoumlType.PACKAGE_TYPE || child.type === OntoumlType.PROJECT_TYPE) {
-        generateModule(newPath, child, new CompositeGeneratorNode());
+        generateModule(replaceWhitespace(newPath), child, new CompositeGeneratorNode());
       }
     }
     const generatedFilePath = path.join(newPath,
-      packageElement.name.getText()) + ".tonto";
+      formatForId(packageElement.getName())) + ".tonto";
     fs.writeFileSync(generatedFilePath, toString(fileNode));
   }
 }

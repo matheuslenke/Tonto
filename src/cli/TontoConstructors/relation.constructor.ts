@@ -8,7 +8,7 @@ import {
   Relation,
 } from "ontouml-js";
 import { notEmpty } from "../../utils/isEmpty";
-import { replaceWhitespace } from "../utils/replaceWhitespace";
+import { formatForId } from "../utils/replaceWhitespace";
 
 export function constructInternalRelations(
   element: Class,
@@ -16,7 +16,6 @@ export function constructInternalRelations(
   fileNode: CompositeGeneratorNode
 ) {
   relations.forEach((relation) => {
-    //   const sourceClass = relation.getSourceClass();
     const sourceProperty = relation.getSourceClassEnd();
     const targetClass = relation.getTargetClass();
     const targetProperty = relation.getTargetClassEnd();
@@ -28,18 +27,14 @@ export function constructInternalRelations(
     const targetName = targetClassPackage.getName();
 
     // FirstEnd Name
-    const firstEndName = replaceWhitespace(sourceProperty.getName());
-    if (firstEndName) {
-      fileNode.append(`(${firstEndName})`);
-    }
-
+    const firstEndName = formatForId(sourceProperty.getName());
     // FirstEnd Meta Attributes
-    constructEndMetaAttributes(sourceProperty, fileNode);
+    constructEndMetaAttributes(firstEndName, sourceProperty, fileNode);
 
     // First Cardinality
     constructCardinality(sourceProperty.cardinality, fileNode);
 
-    const relationName = replaceWhitespace(relation.getName());
+    const relationName = formatForId(relation.getName());
 
     if (sourceProperty.aggregationKind === AggregationKind.COMPOSITE) {
       fileNode.append("<>-- ");
@@ -64,21 +59,18 @@ export function constructInternalRelations(
 
     fileNode.append(` [${targetLowerBound}..${targetUpperBound}] `);
 
-    // SecondEnd Meta Attributes
-    constructEndMetaAttributes(targetProperty, fileNode);
-
     // Second Name
-    const secondEndName = replaceWhitespace(targetProperty.getName());
-    if (secondEndName) {
-      fileNode.append(`(${secondEndName})`);
-    }
+    const secondEndName = formatForId(targetProperty.getName());
+    // SecondEnd Meta Attributes
+    constructEndMetaAttributes(secondEndName, targetProperty, fileNode);
+
 
     let targetClassName = targetClass.getName();
     if (targetName !== sourceName) {
       targetClassName = `${targetClassPackage.getName()}.${targetClass.getName()}`;
     }
 
-    fileNode.append(" ", replaceWhitespace(targetClassName));
+    fileNode.append(" ", formatForId(targetClassName));
     fileNode.append(NL);
   });
 }
@@ -96,6 +88,7 @@ function constructCardinality(
 }
 
 function constructEndMetaAttributes(
+  firstEndName: string | undefined,
   property: Property,
   fileNode: CompositeGeneratorNode
 ) {
@@ -106,14 +99,18 @@ function constructEndMetaAttributes(
   ].filter(notEmpty);
 
   if (firstEndMetaAttributes.length > 0) {
-    fileNode.append(" {");
+    fileNode.append("( {");
     firstEndMetaAttributes.forEach((metaAttribute, index) => {
       fileNode.append(metaAttribute);
       if (index < firstEndMetaAttributes.length - 1) {
         fileNode.append(", ");
       }
     });
-    fileNode.append("}");
+    fileNode.append(" }");
+    if (firstEndName) {
+      fileNode.append(` ${firstEndName}`);
+    }
+    fileNode.append(" )");
   }
 }
 
@@ -125,7 +122,7 @@ function constructRelationSpecializations(
     fileNode.append(" specializes ");
     generalizations.forEach((generalization, index) => {
       fileNode.append(
-        `${replaceWhitespace(generalization.getSpecificRelation().getName())}`
+        `${formatForId(generalization.getSpecificRelation().getName())}`
       );
       if (index < generalizations.length - 1) {
         fileNode.append(",");

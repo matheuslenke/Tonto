@@ -6,6 +6,7 @@ import {
   GeneralizationSet,
 } from "../generated/ast";
 import { checkCircularSpecializationRecursiveWithGenset } from "../utils/CheckCircularSpecializationRecursive";
+import { TontoQualifiedNameProvider } from "../tonto-naming";
 
 export class ContextModuleValidator {
   checkContextModuleStartsWithCapital(
@@ -53,11 +54,12 @@ export class ContextModuleValidator {
     accept: ValidationAcceptor
   ): void {
     const names: string[] = [];
+    const nameProvider = new TontoQualifiedNameProvider();
 
     contextModule.declarations.forEach((declaration) => {
       if (declaration.$type === "ElementRelation") {
         const elementRelation = declaration as ElementRelation;
-        const nameExists = names.find((name) => name === elementRelation.name);
+        const nameExists = names.find((name) => name === nameProvider.getQualifiedName(elementRelation));
         const refName = elementRelation.name;
 
         if (nameExists) {
@@ -66,15 +68,18 @@ export class ContextModuleValidator {
             property: "name",
           });
         } else if (refName !== undefined) {
-          names.push(elementRelation.name!);
+          const qualifiedName = nameProvider.getQualifiedName(elementRelation);
+          if (qualifiedName) {
+            names.push(qualifiedName);
+          }
         }
       } else if (declaration.$type === "ClassDeclaration") {
         const classElement = declaration as ClassDeclaration;
         classElement.references.forEach((elementRelation) => {
           const nameExists = names.find(
-            (name) => name === elementRelation.name
+            (name) => name === nameProvider.getQualifiedName(elementRelation)
           );
-          const refName = elementRelation.name;
+          const refName = nameProvider.getQualifiedName(elementRelation);
 
           if (nameExists) {
             accept("error", "Duplicated Reference declaration", {
@@ -82,7 +87,10 @@ export class ContextModuleValidator {
               property: "name",
             });
           } else if (refName !== undefined) {
-            names.push(elementRelation.name!);
+            const qualifiedName = nameProvider.getQualifiedName(elementRelation);
+            if (qualifiedName) {
+              names.push(qualifiedName);
+            }
           }
         });
       }

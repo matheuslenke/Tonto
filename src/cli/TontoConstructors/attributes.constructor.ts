@@ -1,24 +1,16 @@
 import { CompositeGeneratorNode, NL } from "langium";
-import { Class, Package, Property } from "ontouml-js";
-import { replaceWhitespace } from "../utils/replaceWhitespace";
+import { Property } from "ontouml-js";
+import { formatForId } from "../utils/replaceWhitespace";
 
 export function constructAttributes(
-  packageItem: Package,
-  element: Class,
   attributes: Property[],
   fileNode: CompositeGeneratorNode
 ) {
   attributes.forEach((attribute) => {
-    const propertyType = attribute.propertyType;
+    const propertyType = attribute.propertyType.getName();
+
     if (propertyType) {
-      const attributeType = packageItem
-        .getAllClasses()
-        .find((classItem) => classItem.getName() === propertyType.getName());
-      fileNode.append(
-        `${replaceWhitespace(
-          attribute.getName()
-        )} : ${attributeType?.getName()}`
-      );
+      fileNode.append(`${formatForId(attribute.getName())} : ${propertyType}`);
 
       if (attribute.isReadOnly || attribute.isOrdered || attribute.isDerived) {
         fileNode.append(" { ");

@@ -1,6 +1,6 @@
 import { CompositeGeneratorNode } from "langium";
 import { Class } from "ontouml-js";
-import { replaceWhitespace } from "../utils/replaceWhitespace";
+import { formatForId } from "../utils/replaceWhitespace";
 
 export function createSpecializations(
   element: Class,
@@ -12,7 +12,7 @@ export function createSpecializations(
     fileNode.append(" specializes ");
     generalizations.forEach((generalization, index) => {
       fileNode.append(
-        `${replaceWhitespace(generalization.getGeneralClass().getName())}`
+        `${formatForId(generalization.getGeneralClass().getName())}`
       );
       if (index < generalizations.length - 1) {
         fileNode.append(", ");
