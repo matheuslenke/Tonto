@@ -115,7 +115,6 @@ export class TontoCompletionProvider extends DefaultCompletionProvider {
     if (!container) {
       return false;
     }
-    console.debug(isParserRule(container));
     if (isParserRule(container) && container.name === "ExternalRelation") {
       return true;
     }

@@ -147,7 +147,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
   ): Promise<AstNodeDescription[]> {
     const localDescriptions: AstNodeDescription[] = [];
     if (!container) {
-      return Promise.reject("Container is undefined");
+      return localDescriptions;
     }
     for (const element of container.declarations) {
       await interruptAndCheck(cancelToken);
