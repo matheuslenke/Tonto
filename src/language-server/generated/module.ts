@@ -3,13 +3,13 @@
  * DO NOT EDIT MANUALLY!
  ******************************************************************************/
 
-import { LangiumGeneratedServices, LangiumGeneratedSharedServices, LangiumSharedServices, LangiumServices, LanguageMetaData, Module } from 'langium';
-import { TontoAstReflection } from './ast';
-import { TontoGrammar } from './grammar';
+import { LangiumGeneratedServices, LangiumGeneratedSharedServices, LangiumSharedServices, LangiumServices, LanguageMetaData, Module } from "langium";
+import { TontoAstReflection } from "./ast";
+import { TontoGrammar } from "./grammar";
 
 export const TontoLanguageMetaData: LanguageMetaData = {
-    languageId: 'tonto',
-    fileExtensions: ['.tonto'],
+    languageId: "tonto",
+    fileExtensions: [".tonto"],
     caseInsensitive: false
 };
 
