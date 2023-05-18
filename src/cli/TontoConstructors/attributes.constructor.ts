@@ -7,7 +7,7 @@ export function constructAttributes(
   fileNode: CompositeGeneratorNode
 ) {
   attributes.forEach((attribute) => {
-    const propertyType = attribute.propertyType.getName();
+    const propertyType = attribute.propertyType?.getName();
 
     if (propertyType) {
       fileNode.append(`${formatForId(attribute.getName())} : ${propertyType}`);
@@ -21,6 +21,8 @@ export function constructAttributes(
       }
 
       fileNode.append(NL);
+    } else {
+      fileNode.append(`${formatForId(attribute.getName())}`, NL);
     }
   });
 }

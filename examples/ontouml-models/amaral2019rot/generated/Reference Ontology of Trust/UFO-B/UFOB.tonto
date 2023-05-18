@@ -1,0 +1,10 @@
+import ROT
+import UFOA
+
+package UFOB
+
+category Disposition {
+     [1..*] -- disposition_inheres_in_trustee --  [0..1] ( {const } subsets_inheres_in_substantial ) Trustee
+     [0..*] -- inheres_in_substantial --  [1..1] ( {const } ) Substantial
+}
+

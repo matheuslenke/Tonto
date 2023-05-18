@@ -59,6 +59,7 @@
     "files": [
         "bin",
         "out",
+        "lib",
         "src",
         "node.js",
         "node.d.ts"

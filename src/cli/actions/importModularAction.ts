@@ -59,6 +59,7 @@ export const importModularCommand = async (
       filePath: generatedFilePath,
     } as ImportReturn;
   } catch (error) {
+    console.log(chalk.red(error as string));
     const importReturn: ImportReturn = {
       message: error as string,
       success: false,

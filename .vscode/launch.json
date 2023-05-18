@@ -15,7 +15,7 @@
             "type": "node",
             "args": [
                 "generateModular",
-                "${workspaceFolder}/examples/ontouml-models/Aguiar2019ooco"
+                "${workspaceFolder}/examples/ontouml-models/amaral2019rot/generated"
             ]
         },
         {
@@ -28,7 +28,7 @@
             "type": "node",
             "args": [
                 "importModular",
-                "${workspaceFolder}/examples/ontouml-models/University.json"
+                "${workspaceFolder}/examples/ontouml-models/goncalves2011ecg/ontology.json"
             ]
         },
         {

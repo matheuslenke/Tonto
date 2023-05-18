@@ -40,17 +40,17 @@ export const generateModularAction = async (
 
     manifest = JSON.parse(tontoManifestContent);
     if (manifest === undefined) {
-      throw new Error();
+      throw new Error("Manifest file \"tonto.json\" not found");
     }
-  } catch {
-    console.log(chalk.red("Failed to read tonto.json file."));
+    console.log(chalk.bold("tonto.json file parsed successfully."));
+
+    createModel(dir, manifest, services, folderAbsolutePath);
+
+    console.log(chalk.green("JSON File generated successfully: "));
+  } catch (error) {
+    console.log(chalk.red(error));
     return Promise.reject();
   }
-  console.log(chalk.bold("tonto.json file parsed successfully."));
-
-  createModel(dir, manifest, services, folderAbsolutePath);
-
-  console.log(chalk.green("JSON File generated successfully: "));
 };
 
 async function createModel(

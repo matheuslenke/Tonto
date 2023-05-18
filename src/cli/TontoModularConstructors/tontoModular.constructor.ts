@@ -6,7 +6,6 @@ import { TontoManifest, toJson } from "../model/TontoManifest";
 import { createTontoModuleModular } from "./contextModuleModular.constructor";
 import { createTontoImports } from "./importModular.constructor";
 import { formatForId, replaceWhitespace } from "../utils/replaceWhitespace";
-// import { createTontoModule } from "./TontoConstructors/contextModule.constructor";
 
 export function generateTontoFileModular(
   project: Project,
@@ -38,7 +37,7 @@ function generate(ctx: GeneratorContext): string {
   // Create manifest file
   createTontoManifest(ctx);
 
-  const modelPath = path.join(ctx.destinationFolder, ctx.project.model.getNameOrId());
+  const modelPath = path.join(ctx.destinationFolder, ctx.project.model?.getNameOrId());
 
   if (!fs.existsSync(modelPath)) {
     fs.mkdirSync(modelPath);
@@ -49,8 +48,7 @@ function generate(ctx: GeneratorContext): string {
     generateModule(modelPath, ontoumlElement, fileNode);
   });
 
-  // return generatedFilePath;
-  return "";
+  return modelPath;
 }
 
 function generateModule(

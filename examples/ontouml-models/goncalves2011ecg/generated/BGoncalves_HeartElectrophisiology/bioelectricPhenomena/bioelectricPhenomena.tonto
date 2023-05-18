@@ -1,0 +1,113 @@
+import heart
+
+package bioelectricPhenomena
+
+kind HeartAsPump  specializes HumanHeart
+collective HeartCells {
+    ( {const } ) [1..1] --  [1..1] ( {const } ) HumanHeart
+}
+role LeftVentricleAsPump  specializes LeftVentricle{
+    ( {const } ) [1..1] --  [1..1] ( {const } ) HeartAsPump
+    ( {const } ) [1..1] --  [1..*] ( {const } ) LVContraction
+     [1..1] -- contraction --  [1..*]  PurkinjeElectircalImpulse
+}
+role RightVentricleAsPump  specializes RightVentricle{
+    ( {const } ) [1..1] --  [1..1] ( {const } ) HeartAsPump
+    ( {const } ) [1..1] --  [1..*] ( {const } ) RVContraction
+     [1..1] -- contraction --  [1..*]  PurkinjeElectircalImpulse
+}
+role RightAtriumAsPump  specializes RightAtrium{
+     [0..1] --  [1..1]  HeartAsPump
+    ( {const } ) [1..1] --  [1..*] ( {const } ) RAContraction
+     [0..*] -- contraction --  [1..*]  SAElecticalImpulse
+}
+role LeftAtriumAsPump  specializes LeftAtrium{
+     [0..1] --  [1..1]  HeartAsPump
+    ( {const } ) [1..1] --  [1..*] ( {const } ) LAContraction
+     [1..1] -- contraction --  [1..*]  SAElecticalImpulse
+}
+relator LVContraction {
+     [1..1] --  [1..1] ( {const } ) PurkinjeElectircalImpulse
+}
+relator RVContraction {
+     [1..1] --  [1..1] ( {const } ) PurkinjeElectircalImpulse
+}
+relator RAContraction {
+     [1..1] --  [1..1] ( {const } ) SAElecticalImpulse
+}
+relator LAContraction {
+     [1..1] --  [1..1] ( {const } ) SAElecticalImpulse
+}
+kind SAElecticalImpulse {
+     [1..1] --  [1..1]  HisPurkinjeElectricalImpulse
+     [1..*] -- givesRiseTo --  [1..1]  SANodeCells
+}
+phase PurkinjeElectircalImpulse  specializes HisPurkinjeElectricalImpulse
+kind HisPurkinjeElectricalImpulse 
+phase HisElectricalImpulse  specializes HisPurkinjeElectricalImpulse
+kind AVElectricalImpulse {
+     [1..1] --  [1..1]  HisPurkinjeElectricalImpulse
+}
+subkind PacemakerCells  specializes HeartCells
+subkind NonPacemakerCells  specializes HeartCells
+subkind SANodeCells  specializes PacemakerCells
+subkind AVNodeCells  specializes PacemakerCells{
+     [1..1] -- givesRiseTo --  [1..*]  AVElectricalImpulse
+}
+kind SANode {
+     [1..1] -- inheresIn --  [0..1] ( {const } ) ToConductCEI
+    -- partOf --  ConductingSystemOfAtria
+    -- partiallyConstitutedBy --  ECMOfSANode
+    -- partiallyConstitutedBy --  SANodeMyocytes
+}
+mode ToGenerateCEI {
+     [1..1] -- inheresIn --  [1..1] ( {const } ) SANode
+    -- realizedBy --  DepolarizationOfPacemakerSANodeMyocytes
+}
+role SANodeAsCEIConductor  specializes SANode, CEIConductor
+role SANodeAsCEIGenerator  specializes SANode, CEIGenerator
+roleMixin CEIGenerator 
+roleMixin CEIConductor 
+mode CardiacElectricalImpulse {
+    -- generatedBy --  CEIGenerator
+    -- conductedBy --  CEIConductor
+}
+event DepolarizationOfPacemakerSANodeMyocytes {
+    -- hasParticipant --  CardiacElectricalImpulse
+    ( {const } ) [1..*] -- participatedIn --  [0..*]  SANodeAsCEIGenerator
+}
+mode ToConductCEI {
+    -- realizedBy --  DepolarizationOfCSAMyocytes
+    -- realizedBy --  DepolarizationOfCSVMyocytes
+}
+event DepolarizationOfCSAMyocytes {
+    -- hasParticipant --  CardiacElectricalImpulse
+    ( {const } ) [1..*] -- participatedIn --  [0..*]  CSAAsCEIConductor
+    ( {const } ) [1..*] -- participatedIn --  [0..*]  SANodeAsCEIConductor
+}
+event DepolarizationOfCSVMyocytes {
+    -- hasParticipant --  CardiacElectricalImpulse
+    ( {const } ) [1..*] -- participatedIn --  [0..*]  CSVAsCEIConductor
+}
+kind ConductingSystemOfAtria {
+     [1..1] -- inheresIn --  [0..1] ( {const } ) ToConductCEI
+    -- partiallyConstitutedBy --  ECMOfCSA
+    -- partiallyConstitutedBy --  CSAMyocytes
+}
+role CSAAsCEIConductor  specializes CEIConductor, ConductingSystemOfAtria
+event RepolarizationOfCSVMyocytes {
+    ( {const } ) [1..*] -- participatedIn --  [0..*]  CSVAsEPsAccumulator
+}
+mode ToRestoreEPs {
+    -- realizedBy --  RepolarizationOfCSVMyocytes
+}
+kind ConductingSystemOfVentricles {
+    ( {const } ) [1..*] -- inheresIn --  [1..1] ( {const } ) ToRestoreEPs
+     [1..1] -- inheresIn --  [0..1] ( {const } ) ToConductCEI
+    -- partiallyConstitutedBy --  ECMOfCSV
+    -- partiallyConstitutedBy --  CSVMyocytes
+}
+role CSVAsCEIConductor  specializes ConductingSystemOfVentricles, CEIConductor
+role CSVAsEPsAccumulator  specializes ConductingSystemOfVentricles, EPsAccumulator
+roleMixin EPsAccumulator 
+

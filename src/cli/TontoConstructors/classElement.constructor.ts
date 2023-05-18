@@ -73,7 +73,12 @@ function createDatatype(element: Class, fileNode: CompositeGeneratorNode) {
 
     fileNode.indent((ident) => {
       literals.forEach((literal) => {
-        ident.append(formatForId(literal.getNameOrId()), " : ", literal.propertyType.getNameOrId(), NL);
+        const propertyType = literal.propertyType;
+        if (propertyType) {
+          ident.append(formatForId(literal.getNameOrId()), " : ", propertyType.getNameOrId(), NL);
+        } else {
+          // TODO: Add literal without propertyType
+        }
       });
     });
 

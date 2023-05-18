@@ -15,76 +15,81 @@ export function constructInternalRelations(
   relations: Relation[],
   fileNode: CompositeGeneratorNode
 ) {
-  relations.forEach((relation) => {
-    const sourceProperty = relation.getSourceClassEnd();
-    const targetClass = relation.getTargetClass();
-    const targetProperty = relation.getTargetClassEnd();
-    const generalizations = relation.getGeneralizationsWhereGeneral();
+  relations.filter(item => item.isBinary() === true)
+    .forEach((relation) => {
+      // console.log(relation.properties.length);
+      const sourceProperty = relation.getSourceEnd();
+      const targetClass = relation.getTarget();
+      const targetProperty = relation.getTargetEnd();
+      const generalizations = relation.getGeneralizationsWhereGeneral();
 
-    const sourceClassPackage = element.getModelOrRootPackage();
-    const sourceName = sourceClassPackage.getName();
-    const targetClassPackage = targetClass.getModelOrRootPackage();
-    const targetName = targetClassPackage.getName();
+      const sourceClassPackage = element.getModelOrRootPackage();
+      const sourceName = sourceClassPackage.getName();
+      const targetClassPackage = targetClass.getModelOrRootPackage();
+      const targetName = targetClassPackage.getName();
 
-    // FirstEnd Name
-    const firstEndName = formatForId(sourceProperty.getName());
-    // FirstEnd Meta Attributes
-    constructEndMetaAttributes(firstEndName, sourceProperty, fileNode);
+      // FirstEnd Name
+      const firstEndName = formatForId(sourceProperty.getName());
+      // FirstEnd Meta Attributes
+      constructEndMetaAttributes(firstEndName, sourceProperty, fileNode);
 
-    // First Cardinality
-    constructCardinality(sourceProperty.cardinality, fileNode);
+      // First Cardinality
+      constructCardinality(sourceProperty.cardinality, fileNode);
 
-    const relationName = formatForId(relation.getName());
+      const relationName = formatForId(relation.getName());
 
-    if (sourceProperty.aggregationKind === AggregationKind.COMPOSITE) {
-      fileNode.append("<>-- ");
-      if (relationName) {
-        fileNode.append(`${relationName}`);
-        fileNode.append(" <>-- ");
+      if (sourceProperty.aggregationKind === AggregationKind.COMPOSITE) {
+        fileNode.append("<>-- ");
+        if (relationName) {
+          fileNode.append(`${relationName}`);
+          fileNode.append(" <>-- ");
+        }
+      } else {
+        fileNode.append("-- ");
+        if (relationName) {
+          fileNode.append(`${relationName}`);
+          fileNode.append(" -- ");
+        }
       }
-    } else {
-      fileNode.append("-- ");
-      if (relationName) {
-        fileNode.append(`${relationName}`);
-        fileNode.append(" -- ");
+      // Second Cardinality
+      const bounds = targetProperty.cardinality.getCardinalityBounds();
+      if (bounds) {
+        const targetLowerBound = bounds.lowerBound;
+        const targetUpperBound = bounds.upperBound;
+
+        fileNode.append(` [${targetLowerBound}..${targetUpperBound}] `);
       }
-    }
-    // Second Cardinality
-    const {
-      lowerBound: targetLowerBound,
-      upperBound: targetUpperBound,
-    } = targetProperty.cardinality.getCardinalityBounds();
 
-    fileNode.append(` [${targetLowerBound}..${targetUpperBound}] `);
-
-    // Second Name
-    const secondEndName = formatForId(targetProperty.getName());
-    // SecondEnd Meta Attributes
-    constructEndMetaAttributes(secondEndName, targetProperty, fileNode);
+      // Second Name
+      const secondEndName = formatForId(targetProperty.getName());
+      // SecondEnd Meta Attributes
+      constructEndMetaAttributes(secondEndName, targetProperty, fileNode);
 
 
-    let targetClassName = targetClass.getName();
-    if (targetName !== sourceName) {
-      targetClassName = `${targetClassPackage.getName()}.${targetClass.getName()}`;
-    }
+      let targetClassName = targetClass.getName();
+      if (targetName !== sourceName) {
+        targetClassName = `${targetClassPackage.getName()}.${targetClass.getName()}`;
+      }
 
-    fileNode.append(" ", formatForId(targetClassName));
+      fileNode.append(" ", formatForId(targetClassName));
 
-    constructRelationSpecializations(generalizations, fileNode);
-    fileNode.append(NL);
-  });
+      constructRelationSpecializations(generalizations, fileNode);
+      fileNode.append(NL);
+    });
 }
 
 function constructCardinality(
   cardinality: Cardinality,
   fileNode: CompositeGeneratorNode
 ) {
-  const {
-    lowerBound: targetLowerBound,
-    upperBound: targetUpperBound,
-  } = cardinality.getCardinalityBounds();
 
-  fileNode.append(` [${targetLowerBound}..${targetUpperBound}] `);
+  const bounds = cardinality.getCardinalityBounds();
+  if (bounds) {
+    const targetLowerBound = bounds.lowerBound;
+    const targetUpperBound = bounds.upperBound;
+
+    fileNode.append(` [${targetLowerBound}..${targetUpperBound}] `);
+  }
 }
 
 function constructEndMetaAttributes(
@@ -121,18 +126,20 @@ function constructRelationSpecializations(
   if (generalizations.length > 0) {
     fileNode.append(" specializes ");
     generalizations.forEach((generalization, index) => {
-      const relationName = formatForId(generalization.getSpecificRelation().getName());
-      const properties = generalization.specific.properties;
-      const property = properties.at(0);
-      if (property) {
-        const className = formatForId(property.propertyType.getName());
-        fileNode.append(
-          `${className}.${relationName}`
-        );
-      } else {
-        fileNode.append(
-          `${relationName}`
-        );
+      if (generalization.involvesRelations()) {
+        const relationName = formatForId(generalization.getSpecificRelation().getName());
+        const properties = generalization.specific.properties;
+        const property = properties.at(0);
+        if (property) {
+          const className = formatForId(property.propertyType.getName());
+          fileNode.append(
+            `${className}.${relationName}`
+          );
+        } else {
+          fileNode.append(
+            `${relationName}`
+          );
+        }
       }
 
       if (index < generalizations.length - 1) {

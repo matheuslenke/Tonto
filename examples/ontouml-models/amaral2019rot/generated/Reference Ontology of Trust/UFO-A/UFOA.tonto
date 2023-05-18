@@ -1,0 +1,6 @@
+package UFOA
+
+category Endurant 
+category Substantial  specializes Endurant
+category Moment  specializes Endurant
+
