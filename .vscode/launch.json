@@ -7,7 +7,7 @@
     "configurations": [
         {
             "name": "CLI: GenerateModular",
-            "program": "${workspaceFolder}/bin/cli",
+            "program": "${workspaceFolder}/packages/tonto/bin/cli",
             "request": "launch",
             "skipFiles": [
                 "<node_internals>/**"
@@ -20,7 +20,7 @@
         },
         {
             "name": "CLI: Import Modular",
-            "program": "${workspaceFolder}/bin/cli",
+            "program": "${workspaceFolder}/packages/tonto/bin/cli",
             "request": "launch",
             "skipFiles": [
                 "<node_internals>/**"

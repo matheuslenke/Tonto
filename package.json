@@ -1,89 +1,27 @@
 {
-    "name": "tonto-cli",
-    "displayName": "Tonto",
-    "publisher": "Lenke",
+    "name": "tonto-workspaces",
+    "private": true,
     "description": "Tonto is a DSL for creating OntoUML models",
     "version": "0.1.6",
     "license": "MIT",
-    "icon": "docs/images/TontoIcon.png",
     "repository": {
         "type": "git",
         "url": "https://github.com/matheuslenke/Tonto"
     },
     "engines": {
-        "vscode": "^1.63.0"
+        "npm": ">= 7.7.0"
     },
-    "categories": [
-        "Programming Languages"
-    ],
-    "contributes": {
-        "languages": [
-            {
-                "id": "tonto",
-                "aliases": [
-                    "Tonto",
-                    "tonto"
-                ],
-                "extensions": [
-                    ".tonto"
-                ],
-                "configuration": "./language-configuration.json"
-            }
-        ],
-        "grammars": [
-            {
-                "language": "tonto",
-                "scopeName": "source.tonto",
-                "path": "./syntaxes/tonto.tmLanguage.json"
-            }
-        ],
-        "commands": [
-            {
-                "command": "extension.generateTonto",
-                "title": "Generate Tonto"
-            },
-            {
-                "command": "extension.generateJSON",
-                "title": "Generate JSON"
-            },
-            {
-                "command": "extension.validateModel",
-                "title": "Validate Model"
-            }
-        ],
-        "snippets": []
-    },
-    "activationEvents": [
-        "onLanguage:tonto"
-    ],
-    "files": [
-        "bin",
-        "out",
-        "lib",
-        "src",
-        "node.js",
-        "node.d.ts"
-    ],
-    "bin": {
-        "tonto-cli": "./bin/cli"
-    },
-    "main": "./out/extension.js",
-    "types": "./lib/index.d.ts",
     "scripts": {
-        "vscode:prepublish": "npm run clean && tsc --noEmit && npm run lint && node esbuild.js --minify",
-        "package": "vsce package --pre-release",
-        "publish": "vsce publish ",
-        "clean": "rimraf out",
-        "lint": "eslint src --ext ts",
-        "lint:fix": "eslint src --ext ts --fix",
-        "build": "node esbuild.js && tsc",
-        "watch": "node esbuild.js --watch",
+        "clean": "rimraf lib node_modules ./**/node_modules",
+        "build": "tsc -b tsconfig.build.json && npm run build --workspaces",
+        "lint": "npm run lint --workspaces",
+        "lint:fix": "npm run lint --workspaces --fix",
+        "watch": "concurrently -n tsc,esbuild -c blue,yellow \"tsc -b tsconfig.build.json -w\" \"npm run watch --workspace=langium-vscode\"",
         "test": "vitest",
         "test-ui": "vitest --ui",
         "coverage": "vitest run --coverage",
-        "langium:generate": "langium generate",
-        "langium:watch": "langium generate --watch",
-        "publish:npm": "npm publish --access public"
+        "langium:generate": "langium generate --workspace=tonto-cli",
+        "langium:watch": "langium generate --watch --workspace=tonto-cli"
     },
     "dependencies": {
         "ajv": "^8.11.0",
@@ -120,10 +58,15 @@
         "prettier": "^2.8.2",
         "typescript": "~4.9.5",
         "vite": "^4.0.2",
-        "vitest": "^0.23.2"
+        "vitest": "^0.23.2",
+        "shx": "^0.3.4"
     },
     "volta": {
         "node": "18.14.0",
         "npm": "9.3.1"
-    }
+    },
+    "workspaces": [
+        "packages/tonto",
+        "packages/tonto-vscode"
+    ]
 }
