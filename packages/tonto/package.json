@@ -25,7 +25,8 @@
     "lib",
     "src",
     "node.js",
-    "node.d.ts"
+    "node.d.ts",
+    "tonto-manifest-schema.json"
   ],
   "bin": {
     "tonto-cli": "./bin/cli.js"

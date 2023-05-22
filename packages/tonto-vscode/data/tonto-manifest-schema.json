@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "description": "An manifest object to determine a Tonto project configuration",
+  "properties": {
+    "projectName": {
+      "type": "string",
+      "description": "The name of the project without spaces or special characters"
+    },
+    "version": {
+      "type": "string",
+      "description": "Version of the project in the format of x.x.x"
+    },
+    "displayName": {
+      "type": "string",
+      "description": "The name of the project that will be displayed on the Project variable"
+    },
+    "license": {
+      "type": "string",
+      "description": "The license of the project"
+    },
+    "publisher": {
+      "type": "string",
+      "description": "The publisher of the project"
+    },
+    "authors": {
+      "type": "array",
+      "additionalProperties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "website": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "version": {
+            "type": "string"
+          },
+          "directory": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "url",
+          "version"
+        ]
+      }
+    },
+    "outFolder": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "projectName",
+    "version",
+    "displayName",
+    "license",
+    "publisher",
+    "dependencies",
+    "outFolder"
+  ]
+}

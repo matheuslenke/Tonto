@@ -52,7 +52,12 @@
                 "title": "Validate Model"
             }
         ],
-        "snippets": []
+        "jsonValidation": [
+            {
+                "fileMatch": "tonto.json",
+                "url": "./data/tonto-manifest-schema.json"
+            }
+        ]
     },
     "activationEvents": [
         "onLanguage:tonto",
@@ -68,7 +73,7 @@
     ],
     "main": "./out/extension.js",
     "scripts": {
-        "copy:schema": "shx cp ../tonto/syntaxes/tonto.tmLanguage.json ./data",
+        "copy:schema": "shx cp ../tonto/tonto-manifest-schema.json ./data",
         "prepare": "npm run copy:schema",
         "vscode:prepublish": "npm run clean && tsc --noEmit && npm run lint && node esbuild.js --minify",
         "package": "vsce package --no-dependencies",

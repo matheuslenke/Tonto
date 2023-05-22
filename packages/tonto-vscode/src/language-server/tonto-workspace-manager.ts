@@ -37,6 +37,11 @@ export class TontoGrammarWorkspaceManager extends DefaultWorkspaceManager {
     if (name.startsWith(".")) {
       return false;
     }
+    // If the file is not from this workspace folder, it should not be included
+    if (entry.uri.fsPath.startsWith(workspaceFolder.uri)) {
+      return false;
+    }
+
     if (entry.isDirectory) {
       return name !== "node_modules" && name !== "out";
     } else if (entry.isFile) {
