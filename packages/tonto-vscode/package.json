@@ -1,9 +1,9 @@
 {
-    "name": "tonto-vscode",
+    "name": "tonto",
     "displayName": "Tonto",
     "publisher": "Lenke",
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "license": "MIT",
     "icon": "data/images/TontoIcon.png",
     "repository": {

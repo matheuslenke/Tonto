@@ -1,13 +1,13 @@
 import {
   createDefaultModule,
   createDefaultSharedModule,
-  DeepPartial,
   DefaultSharedModuleContext,
   inject,
   LangiumServices,
   LangiumSharedServices,
   Module,
   PartialLangiumServices,
+  PartialLangiumSharedServices,
 } from "langium";
 import {
   TontoGeneratedModule,
@@ -71,12 +71,6 @@ export const TontoModule: Module<
 
 export type TontoSharedServices = LangiumSharedServices;
 
-export const TontoSharedModule: Module<
-  TontoSharedServices,
-  DeepPartial<LangiumSharedServices>
-> = {
-
-};
 
 /**
  * Create the full set of services required by Langium.
@@ -93,14 +87,17 @@ export const TontoSharedModule: Module<
  * @param context Optional module context with the LSP connection
  * @returns An object wrapping the shared services and the language-specific services
  */
-export function createTontoServices(context: DefaultSharedModuleContext): {
+export function createTontoServices(
+  context: DefaultSharedModuleContext,
+  sharedModule?: Module<TontoSharedServices, PartialLangiumSharedServices>
+): {
   shared: LangiumSharedServices;
   Tonto: TontoServices;
 } {
   const shared = inject(
     createDefaultSharedModule(context),
     TontoGeneratedSharedModule,
-    TontoSharedModule
+    sharedModule
   );
   const services = inject(
     createDefaultModule({ shared }),

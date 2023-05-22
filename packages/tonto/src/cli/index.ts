@@ -2,7 +2,6 @@ import { Command } from "commander";
 import { TontoLanguageMetaData } from "../language-server";
 import { generateAction } from "./actions/generateAction";
 import { importAction } from "./actions/importAction";
-import { generateModularAction } from "./actions/generateModularAction";
 import { importModularAction } from "./actions/importModularAction";
 
 export default function (): void {
@@ -17,20 +16,19 @@ export default function (): void {
   const fileExtensions = TontoLanguageMetaData.fileExtensions.join(", ");
 
   program
-    .command("generateModular")
+    .command("generate")
     .argument("<dir>", "Directory of the actual project")
-    .description("Generate JSON from your project")
-    .action(generateModularAction);
+    .option("-d, --destination <dir>", "Destination directory of generating")
+    .action(generateAction)
+    .description("Generate JSON from your project");
 
   program
-    .command("generate")
-    .argument(
-      "<file>",
-      `source file (possible file extensions: ${fileExtensions})`
-    )
-    .option("-d, --destination <dir>", "destination directory of generating")
-    .description("generates a JSON from your model to a source file")
-    .action(generateAction);
+    .command("generateSingle")
+    .argument("<file>",
+      `Generate on single file projects providing source file (possible file extensions: ${fileExtensions})`)
+    .option("-d", "--d <destination>", "Destination of generated JSON file")
+    .action(generateAction)
+    .description("Generate JSON from your project or a single file");
 
   program
     .command("import")
@@ -44,8 +42,5 @@ export default function (): void {
     .argument("<file>", "source file (possible file extensions: json)")
     .description("generates a tonto file from a JSON file")
     .action(importModularAction);
-  program.parse(process.argv);
+  program.parseAsync(process.argv);
 }
-
-// Export actions
-// export { generateAction, importAction, generateModularAction, importModularAction };
