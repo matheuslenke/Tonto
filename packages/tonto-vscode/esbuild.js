@@ -27,6 +27,7 @@ esbuild
         entryPoints: ["src/extension.ts", "src/language-server/main.ts"],
         outdir: "out",
         bundle: true,
+        loader: { ".ts": "ts" },
         external: ["vscode"], // the vscode-module is created on-the-fly and must be excluded.
         platform: "node", // VSCode extensions run in a node process
         sourcemap: !minify,

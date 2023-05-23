@@ -9,18 +9,16 @@ describe("checkGeneralizationSetConsistency", async () => {
 
   it("should have error with specialization with different elements", async () => {
     const stub = `
-    module CheckGeneralizationConsistency {
-      kind Person
-      role Doctor specializes Person
+    package CheckGeneralizationConsistency
+    kind Person
+    role Doctor specializes Person
 
-      relation  Doctor -- treats -- Person
+    relation  Doctor -- treats -- Person
 
-      genset GeneralizationSet {
-        general Person
-        specifics treats
-      }
+    genset GeneralizationSet {
+      general Person
+      specifics treats
     }
-
     `;
     const validationResult = await validate(stub);
 

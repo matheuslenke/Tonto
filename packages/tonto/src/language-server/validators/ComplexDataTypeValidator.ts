@@ -1,8 +1,10 @@
+/* eslint-disable max-len */
 import { ValidationAcceptor } from "langium";
 import { ComplexDataType } from "../generated/ast";
 import { natureUtils } from "../models/Natures";
 import { OntologicalCategoryEnum } from "../models/OntologicalCategory";
 import { allowedStereotypeRestrictedToMatches } from "../models/StereotypeUtils";
+import { formPhrase } from "../utils/formPhrase";
 
 export class ComplexDataTypeValidator {
   /**
@@ -31,10 +33,10 @@ export class ComplexDataTypeValidator {
         return false;
       });
       if (incompatibleNatures.length >= 1) {
+        const naturesString = formPhrase(incompatibleNatures);
         accept(
           "error",
-          `Incompatible stereotype and Nature restriction combination. 
-          Class ${complexDataType.name} has its value for 'restrictedTo' incompatible with the stereotype`,
+          `Incompatible stereotype and Nature restriction combination. Class ${complexDataType.name} has its value for 'restrictedTo' incompatible with the following natures: ${naturesString}`,
           {
             node: complexDataType,
             property: "name",

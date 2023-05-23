@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { ValidationAcceptor } from "langium";
 import { ClassDeclaration, GeneralizationSet } from "../generated/ast";
 import { ErrorMessages } from "../models/ErrorMessages";
@@ -101,9 +102,7 @@ export class GeneralizationValidator {
             ) {
               accept(
                 "error",
-                `Prohibited generalization: non-sortal specializing
-                 a sortal. The non-sortal class ${specificClass.name} 
-                 cannot specialize the sortal class ${generalItem.name}`,
+                `Prohibited generalization: non-sortal specializing a sortal. The non-sortal class ${specificClass.name} cannot specialize the sortal class ${generalItem.name}`,
                 {
                   node: genSet,
                   property: "specificItems",
@@ -155,9 +154,7 @@ export class GeneralizationValidator {
         ) {
           accept(
             "error",
-            `Prohibited specialization: rigid/semi-rigid
-            specializing an anti-rigid. 
-            The rigid/semi-rigid class ${refElement.name} cannot specialize the anti-rigid class ${generalItem.name}`,
+            `Prohibited specialization: rigid/semi-rigid specializing an anti-rigid. The rigid/semi-rigid class ${refElement.name} cannot specialize the anti-rigid class ${generalItem.name}`,
             {
               node: genSet,
               property: "generalItem",
@@ -165,9 +162,7 @@ export class GeneralizationValidator {
           );
           accept(
             "error",
-            `Prohibited specialization: rigid/semi-rigid specializing an 
-            anti-rigid. 
-            The rigid/semi-rigid class ${refElement.name} cannot specialize the anti-rigid class ${generalItem.name}`,
+            `Prohibited specialization: rigid/semi-rigid specializing an anti-rigid. The rigid/semi-rigid class ${refElement.name} cannot specialize the anti-rigid class ${generalItem.name}`,
             {
               node: genSet,
               property: "specificItems",

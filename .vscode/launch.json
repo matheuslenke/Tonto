@@ -36,12 +36,12 @@
             "type": "extensionHost",
             "request": "launch",
             "args": [
+                "${workspaceFolder}/examples/validators",
                 "--extensionDevelopmentPath=${workspaceFolder}/packages/tonto-vscode"
             ],
-            "resolveSourceMapLocations": [
-                "${workspaceFolder}/**",
-                "!**/node_modules/**"
-            ]
+            // "env": {
+            //     "DEBUG_BREAK": "true"
+            // },
         },
         {
             "name": "Attach to Language Server",
@@ -53,7 +53,7 @@
             ],
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceFolder}/out/**/*.js",
+                "${workspaceFolder}/packages/tonto/lib/**/*.js",
                 "${workspaceFolder}/node_modules/langium"
             ],
         },

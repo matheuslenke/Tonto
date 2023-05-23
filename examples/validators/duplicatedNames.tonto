@@ -1,8 +1,0 @@
-module Teste {
-    kind ElementOne
-    kind ElementOne
-    kind ElementThree
-    kind ElementFour
-    relation ElementOne -- relationName -- ElementThree
-    relation ElementThree -- relationName -- ElementFour
-}

@@ -8,10 +8,9 @@ describe("checkGeneralizationSortality", async () => {
 
   it("Should return error in class declaration", async () => {
     const stub = `
-    module CheckGeneralizationSortality {
-      kind Person
-      category Agent specializes Person
-    }
+    package CheckGeneralizationSortality 
+    kind Person
+    category Agent specializes Person
     `;
     const validationResult = await validate(stub);
 
@@ -29,16 +28,16 @@ describe("checkGeneralizationSortality", async () => {
 
   it("Should return error in generalizationSet", async () => {
     const stub = `
-    module CheckGeneralizationSortality {
-      kind Person
-      subkind Test specializes Person
-      category Agent
-  
-      genset GeneralizationSet {
-          general Person
-          specifics Test, Agent
-      }
+    package CheckGeneralizationSortality 
+    kind Person
+    subkind Test specializes Person
+    category Agent
+
+    genset GeneralizationSet {
+        general Person
+        specifics Test, Agent
     }
+  
     `;
     const validationResult = await validate(stub);
 

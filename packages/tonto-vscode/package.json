@@ -28,7 +28,7 @@
                 "extensions": [
                     ".tonto"
                 ],
-                "configuration": "./language-configuration.json"
+                "configuration": "./data/language-configuration.json"
             }
         ],
         "grammars": [

@@ -9,15 +9,14 @@ describe("checkGeneralizationSortality", async () => {
 
   it("Should return error in generalizationSet", async () => {
     const stub = `
-    module CheckGeneralizationSortality {
-      kind Person
-      subkind Test specializes Person
-      category Agent
+    package CheckGeneralizationSortality 
+    kind Person
+    subkind Test specializes Person
+    category Agent
 
-      genset GeneralizationSet {
-          general Person
-          specifics Test, Agent
-      }
+    genset GeneralizationSet {
+        general Person
+        specifics Test, Agent
     }
     `;
     const validationResult = await validate(stub);

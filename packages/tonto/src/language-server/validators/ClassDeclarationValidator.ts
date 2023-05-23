@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { ValidationAcceptor } from "langium";
 import { ClassDeclaration } from "../generated/ast";
 import { natureUtils } from "../models/Natures";
@@ -32,7 +33,7 @@ export class ClassDeclarationValidator {
     accept: ValidationAcceptor
   ): void {
     if (
-      classDeclaration.classElementType.ontologicalCategory ===
+      classDeclaration.classElementType?.ontologicalCategory ===
       OntologicalCategoryEnum.CLASS
     ) {
       accept(
@@ -59,7 +60,7 @@ export class ClassDeclarationValidator {
       return;
     }
     const ontologicalCategory =
-      classDeclaration.classElementType.ontologicalCategory;
+      classDeclaration.classElementType?.ontologicalCategory;
 
     if (ontologicalCategory === null || ontologicalCategory === undefined) {
       return;
@@ -98,7 +99,7 @@ export class ClassDeclarationValidator {
       return;
     }
     const ontologicalCategory =
-      classDeclaration.classElementType.ontologicalCategory;
+      classDeclaration.classElementType?.ontologicalCategory;
 
     // Check if it has a defined stereotype
     if (
@@ -112,7 +113,7 @@ export class ClassDeclarationValidator {
     if (
       isSortalOntoCategory(ontologicalCategory) &&
       !isUltimateSortalOntoCategory(
-        classDeclaration.classElementType.ontologicalCategory
+        classDeclaration.classElementType?.ontologicalCategory
       )
     ) {
       const totalUltimateSortalSpecializations =
@@ -183,7 +184,7 @@ export class ClassDeclarationValidator {
       return;
     }
     const ontologicalCategory =
-      classDeclaration.classElementType.ontologicalCategory;
+      classDeclaration.classElementType?.ontologicalCategory;
 
     // Check if it is a rigid stereotype
     if (
@@ -196,14 +197,12 @@ export class ClassDeclarationValidator {
           return;
         }
         const specOntologicalCategory =
-          specDeclaration.classElementType.ontologicalCategory;
+          specDeclaration.classElementType?.ontologicalCategory;
 
         if (isAntiRigidStereotype(specOntologicalCategory)) {
           accept(
             "error",
-            `Prohibited specialization: rigid/semi-rigid specializing an anti-rigid.
-             The rigid/semi-rigid class ${classDeclaration.name} cannot specialize the 
-             anti-rigid class ${specDeclaration.name}`,
+            `Prohibited specialization: rigid/semi-rigid specializing an anti-rigid. The rigid/semi-rigid class ${classDeclaration.name} cannot specialize the anti-rigid class ${specDeclaration.name}`,
             { node: classDeclaration }
           );
         }
@@ -248,7 +247,7 @@ export class ClassDeclarationValidator {
       return;
     }
     const ontologicalCategory =
-      classDeclaration.classElementType.ontologicalCategory;
+      classDeclaration.classElementType?.ontologicalCategory;
 
     if (ontologicalCategory === OntologicalCategoryEnum.CLASS) {
       return;
@@ -278,9 +277,7 @@ export class ClassDeclarationValidator {
 
           accept(
             "error",
-            `Incompatible stereotype and Nature restriction combination. 
-            Class ${classDeclaration.name} has its value for 'restrictedTo' 
-            incompatible with the following natures: ${naturesString}`,
+            `Incompatible stereotype and Nature restriction combination. Class ${classDeclaration.name} has its value for 'restrictedTo' incompatible with the following natures: ${naturesString}`,
             {
               node: classDeclaration,
               property: "ontologicalNatures",
@@ -424,18 +421,17 @@ export class ClassDeclarationValidator {
   ) {
     const generalItems = classDeclaration.specializationEndurants;
     const isNonSortal = hasNonSortalStereotype(
-      classDeclaration.classElementType.ontologicalCategory
+      classDeclaration.classElementType?.ontologicalCategory
     );
     if (isNonSortal) {
       generalItems.forEach((general) => {
         const generalClass = general.ref as ClassDeclaration;
         if (
-          hasSortalStereotype(generalClass.classElementType.ontologicalCategory)
+          hasSortalStereotype(generalClass.classElementType?.ontologicalCategory)
         ) {
           accept(
             "error",
-            `Prohibited generalization: non-sortal specializing a sortal. 
-            The non-sortal class ${classDeclaration.name} cannot specialize the sortal class ${generalClass.name}`,
+            `Prohibited generalization: non-sortal specializing a sortal. The non-sortal class ${classDeclaration.name} cannot specialize the sortal class ${generalClass.name}`,
             {
               node: classDeclaration,
               property: "specializationEndurants",

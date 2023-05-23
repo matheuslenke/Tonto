@@ -6,7 +6,7 @@ export default defineConfig({
     coverage: {
       provider: "c8",
       reporter: ["text", "html"],
-      include: ["src"],
+      include: ["packages/tonto/src"],
       exclude: ["**/generated"],
     },
   },

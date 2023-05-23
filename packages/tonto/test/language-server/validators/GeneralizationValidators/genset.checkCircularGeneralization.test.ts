@@ -9,13 +9,12 @@ describe("checkCircularGeneralization", async () => {
 
   it("should have circular generalization error", async () => {
     const stub = `
-    module CheckCircularGeneralizationSet {
-      kind Person
+    package CheckCircularGeneralizationSet
+    kind Person
 
-      genset GeneralizationSet {
-        general Person
-        specifics Person
-      }
+    genset GeneralizationSet {
+      general Person
+      specifics Person
     }
     `;
     const validationResult = await validate(stub);

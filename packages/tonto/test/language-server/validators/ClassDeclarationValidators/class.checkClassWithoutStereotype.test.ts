@@ -8,9 +8,8 @@ describe("checkClassWithoutStereotype", async () => {
 
   it("Should return specific class warning", async () => {
     const stub = `
-    module UFOS {
-      class ClassWithoutStereotype
-    }
+    package UFOS 
+    class ClassWithoutStereotype
     `;
     const validationResult = await validate(stub);
 

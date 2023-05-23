@@ -22,7 +22,6 @@ export function activate(context: vscode.ExtensionContext): void {
   createGenerateJsonStatusBarItem(context, generateJsonStatusBarItem);
   createTontoGenerationStatusBarItem(context, generateTontoStatusBarItem);
   // createValidationSatusBarItem(context, validateStatusBarItem);
-  // Activating library file system provider
 }
 
 // This function is called when the extension is deactivated.
