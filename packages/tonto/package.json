@@ -7,7 +7,7 @@
     "email": "matheuslenke@gmail.com"
   },
   "description": "Tonto is a DSL for creating OntoUML models",
-  "version": "0.1.7",
+  "version": "0.2.0",
   "license": "MIT",
   "icon": "data/images/TontoIcon.png",
   "repository": {

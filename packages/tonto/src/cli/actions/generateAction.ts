@@ -1,16 +1,14 @@
 import { extractAllAstNodes, extractAstNode } from "../cli-util";
 import { generateJSONFile } from "../jsonGenerator";
 import { NodeFileSystem } from "langium/node";
-import { createTontoServices, Model, TontoServices } from "../../language-server";
 import chalk from "chalk";
 import { glob } from "glob";
-import { Project, MultilingualText } from "ontouml-js";
 import path from "path";
-import { basicDataTypes } from "../../language-server/workspace/builtins/basicDataTypes";
 import { generateJSONFileModular } from "../JsonModularGenerators/jsonModular.generator";
-import { BuiltInLib } from "../model/BuiltInLib";
 import { TontoManifest } from "../model/TontoManifest";
 import fs from "fs";
+import { builtInLibs } from "../../language-server/workspace/builtins";
+import { createTontoServices, Model, TontoServices } from "../../language-server";
 
 export type GenerateOptions = {
   destination?: string;
@@ -92,24 +90,11 @@ async function createModel(
   services: TontoServices,
   folderAbsolutePath: string,
 ): Promise<string | undefined> {
-  const project = new Project({
-    name: new MultilingualText(manifest.projectName),
-  });
-  const rootPackage = project.createModel({
-    name: new MultilingualText(manifest.projectName),
-  });
-
   const allFiles = await glob(dir + "/**/*.tonto");
-  // // Load all builtIn files
-  const dataTypesLib: BuiltInLib = {
-    uri: "builtin://basicDatatypes.tonto",
-    content: basicDataTypes
-  };
 
-  // TODO
-  const models: Model[] = await extractAllAstNodes(allFiles, services, [dataTypesLib]);
+  const models: Model[] = await extractAllAstNodes(allFiles, services, builtInLibs, "all");
 
-  generateJSONFileModular(models, project, rootPackage, manifest, folderAbsolutePath);
+  generateJSONFileModular(models, manifest, folderAbsolutePath);
 
   return `${manifest.projectName}.json`;
 }

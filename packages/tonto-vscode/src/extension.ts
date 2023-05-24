@@ -9,11 +9,12 @@ import {
 import { TontoLibraryFileSystemProvider } from "./extension/TontoLibraryFileSystemProvider";
 import { createTontoGenerationStatusBarItem } from "./commands/TontoGenerationCommand";
 import { createGenerateJsonStatusBarItem } from "./commands/JsonGenerationCommands";
+import { createValidationSatusBarItem } from "./commands/validationCommand";
 
 let client: LanguageClient;
 let generateTontoStatusBarItem: vscode.StatusBarItem;
 let generateJsonStatusBarItem: vscode.StatusBarItem;
-// let validateStatusBarItem: vscode.StatusBarItem;
+let validateStatusBarItem: vscode.StatusBarItem;
 
 // This function is called when the extension is activated.
 export function activate(context: vscode.ExtensionContext): void {
@@ -21,7 +22,7 @@ export function activate(context: vscode.ExtensionContext): void {
   client = startLanguageClient(context);
   createGenerateJsonStatusBarItem(context, generateJsonStatusBarItem);
   createTontoGenerationStatusBarItem(context, generateTontoStatusBarItem);
-  // createValidationSatusBarItem(context, validateStatusBarItem);
+  createValidationSatusBarItem(context, validateStatusBarItem);
 }
 
 // This function is called when the extension is deactivated.

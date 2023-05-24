@@ -3,6 +3,7 @@ import { TontoLanguageMetaData } from "../language-server";
 import { generateAction } from "./actions/generateAction";
 import { importAction } from "./actions/importAction";
 import { importModularAction } from "./actions/importModularAction";
+import { validateAction } from "./actions";
 
 export default function (): void {
   const program = new Command();
@@ -19,8 +20,8 @@ export default function (): void {
     .command("generate")
     .argument("<dir>", "Directory of the actual project")
     .option("-d, --destination <dir>", "Destination directory of generating")
-    .action(generateAction)
-    .description("Generate JSON from your project");
+    .description("Generate JSON from your project")
+    .action(generateAction);
 
   program
     .command("generateSingle")
@@ -33,14 +34,20 @@ export default function (): void {
   program
     .command("import")
     .argument("<file>", "source file (possible file extensions: json)")
+    .description("generates a tonto file from a JSON file")
+    .action(importModularAction);
+
+  program
+    .command("importSingle")
+    .argument("<file>", "source file (possible file extensions: json)")
     .option("-d, --destination <dir>", "destination directory of generating")
     .description("generates a tonto file from a JSON file")
     .action(importAction);
 
   program
-    .command("importModular")
-    .argument("<file>", "source file (possible file extensions: json)")
-    .description("generates a tonto file from a JSON file")
-    .action(importModularAction);
+    .command("validate")
+    .argument("<dir>", "Directory of the actual project")
+    .description("Validate your Tonto project with the ontouml-js API")
+    .action(validateAction);
   program.parseAsync(process.argv);
 }

@@ -2,7 +2,6 @@ import { CompositeGeneratorNode } from "langium";
 import fetch from "node-fetch-native";
 import { MultilingualText, Project } from "ontouml-js";
 import { Model } from "../language-server/generated/ast";
-import { extractName } from "./cli-util";
 
 export interface ResultResponse {
   code?: string;
@@ -34,18 +33,8 @@ interface ErrorInfo {
 }
 
 export async function validateTontoFile(
-  model: Model,
-  filePath: string
-): Promise<ResultResponse[] | ErrorResultResponse | undefined> {
-  const name = extractName(filePath);
-
-  const ctx = <GeneratorContext>{
-    model,
-    name: name,
-    fileNode: new CompositeGeneratorNode(),
-  };
-
-  const project = parseProject(ctx);
+  project: Project
+): Promise<ResultResponse[] | ErrorResultResponse> {
   const body = {
     project,
     options: undefined,
@@ -67,7 +56,10 @@ export async function validateTontoFile(
   } catch (error) {
     console.log(error);
   }
-  return undefined;
+  return {
+    status: 500,
+    message: "error while validating model"
+  } as ErrorResultResponse;
 }
 
 interface GeneratorContext {

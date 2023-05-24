@@ -13,7 +13,8 @@ import { BuiltInLib } from "./model/BuiltInLib";
 export async function extractAllDocuments(
   fileNames: string[],
   services: LangiumServices,
-  builtInLibs: BuiltInLib[]
+  builtInLibs: BuiltInLib[],
+  validationChecks: "all" | "none"
 ): Promise<LangiumDocuments> {
   const documents: Array<LangiumDocument<AstNode>> = [];
 
@@ -33,7 +34,7 @@ export async function extractAllDocuments(
   }
 
   await services.shared.workspace.DocumentBuilder.build(documents, {
-    validationChecks: "all",
+    validationChecks,
   });
 
   let hasValidationError = false;
@@ -109,9 +110,10 @@ export async function extractDocument(
 export async function extractAllAstNodes<T extends AstNode>(
   fileNames: string[],
   services: LangiumServices,
-  builtInLibs: BuiltInLib[]
+  builtInLibs: BuiltInLib[],
+  validationChecks: "all" | "none"
 ): Promise<T[]> {
-  const docs = await extractAllDocuments(fileNames, services, builtInLibs);
+  const docs = await extractAllDocuments(fileNames, services, builtInLibs, validationChecks);
   const nodes: T[] = docs.all
     .flatMap((doc) => doc.parseResult?.value as T)
     .toArray();

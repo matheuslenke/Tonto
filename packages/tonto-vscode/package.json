@@ -3,7 +3,7 @@
     "displayName": "Tonto",
     "publisher": "Lenke",
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.1.7",
+    "version": "0.2.0",
     "license": "MIT",
     "icon": "data/images/TontoIcon.png",
     "repository": {
@@ -40,16 +40,19 @@
         ],
         "commands": [
             {
-                "command": "extension.generateTonto",
-                "title": "Generate Tonto"
+                "command": "tonto.generateTonto",
+                "title": "Generate Tonto project from JSON",
+                "category": "Tonto"
             },
             {
-                "command": "extension.generateJSON",
-                "title": "Generate JSON"
+                "command": "tonto.generateJSON",
+                "title": "Generate JSON from Tonto project",
+                "category": "Tonto"
             },
             {
-                "command": "extension.validateModel",
-                "title": "Validate Model"
+                "command": "tonto.validateModel",
+                "title": "Validate Tonto Model",
+                "category": "Tonto"
             }
         ],
         "jsonValidation": [

@@ -2,7 +2,7 @@
     "name": "tonto-workspaces",
     "private": true,
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.1.6",
+    "version": "0.2.0",
     "license": "MIT",
     "repository": {
         "type": "git",
