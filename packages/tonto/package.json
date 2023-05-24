@@ -35,7 +35,6 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "lint:fix": "eslint src --ext ts --fix",
-    "vscode:prepublish": "npm run clean && tsc --noEmit && npm run lint && node esbuild.js --minify",
     "clean": "shx rm -rf lib coverage",
     "build": "tsc",
     "watch": "tsc --watch",
