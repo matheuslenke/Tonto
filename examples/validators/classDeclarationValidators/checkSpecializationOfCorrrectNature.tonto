@@ -1,0 +1,12 @@
+package CheckSpecializationOfCorrectNature
+
+category A of intrinsic-modes
+category B of intrinsic-modes specializes A
+
+category C 
+category D of intrinsic-modes specializes C
+
+category E
+category F of functional-complexes specializes E
+category G of collectives specializes E
+category H of quantities specializes E

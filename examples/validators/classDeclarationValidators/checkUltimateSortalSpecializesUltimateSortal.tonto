@@ -1,3 +1,5 @@
+import CheckGeneralizationRigidity
+
 package CheckKindSpecialization 
 
 kind Pai

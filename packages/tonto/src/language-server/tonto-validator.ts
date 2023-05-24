@@ -22,10 +22,10 @@ export class TontoValidationRegistry extends ValidationRegistry {
         validator.ClassDeclarationValidator.checkDuplicatedReferenceNames,
         validator.ClassDeclarationValidator.checkCompatibleNatures,
         validator.ClassDeclarationValidator.checkNaturesOnlyOnNonSortals,
-        validator.ClassDeclarationValidator.checkSpecializationOfCorrectNature,
         validator.ClassDeclarationValidator.checkClassWithoutStereotype,
         validator.ClassDeclarationValidator.checkGeneralizationSortality,
         validator.ClassDeclarationValidator.checkGeneralizationDataType,
+        validator.ClassDeclarationValidator.checkSpecializationNatureRestrictions,
         validator.ClassDeclarationValidator.checkClassDeclarationShouldSpecializeUltimateSortal
       ],
       ContextModule: [

@@ -30,6 +30,7 @@
   <h1><summary>Table of Contents</summary></h1>
   <ol>
     <li><a href="#about-the-project">About The Project</a></li>
+    <li><a href="#packages">Packages separation</a></li>
     <li><a href="#built-with">Built With</a></li>
     <li><a href="#getting-started">Getting Started</a></li>
     <li><a href="#prerequisites">Prerequisites</a></li>
@@ -78,6 +79,23 @@ Here are some of the languages, frameworks, tools and libraries used in developm
 
 
 <div id="getting-started"> </div>
+
+<!-- PACKAGES -->
+##  Packages
+
+This project is divided in 3 packages, each of them responsible for a different part of Tonto.
+
+### [Tonto Grammar and CLI](packages/tonto/)
+- This package is where Tonto Grammar, the Language Server Protocol and the CLI is defined. All elements and commands are available in this package, and you can read more about it here:
+
+### [Tonto Extension](packages/tonto-vscode/)
+- This package is responsible for the [VSCode Extension](https://marketplace.visualstudio.com/items?itemName=Lenke.tonto)
+
+### [Tonto Package Manager](packages/tonto-package-manager/)
+- This package is responsible for the TPM responsible for managing
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
 
 <!-- GETTING STARTED -->
 ## ⌨️ Getting Started

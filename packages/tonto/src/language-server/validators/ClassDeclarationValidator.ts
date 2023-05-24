@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { ValidationAcceptor } from "langium";
-import { ClassDeclaration } from "../generated/ast";
+import { ClassDeclaration, OntologicalNature as ASTNature } from "../generated/ast";
 import { natureUtils } from "../models/Natures";
 import {
   getOntologicalCategory,
@@ -17,12 +17,12 @@ import {
   isSemiRigidStereotype,
 } from "../models/StereotypeUtils";
 import { checkCircularSpecializationRecursive } from "../utils/CheckCircularSpecializationRecursive";
-import { checkNatureCompatibleWithStereotype } from "../utils/checkNatureCompatibleWithStereotype";
 import { checkSortalSpecializesUniqueUltimateSortalRecursive } from "../utils/CheckSortalSpecializesUniqueUltimateSortalRecursive";
 import { checkUltimateSortalSpecializesUltimateSortalRecursive } from "../utils/CheckUltimateSortalSpecializesUltimateSortalRecursive";
 import { formPhrase } from "../utils/formPhrase";
 import { ErrorMessages } from "./../models/ErrorMessages";
 import { toQualifiedName } from "../tonto-naming";
+import { checkNatureCompatibleRestrictedTo } from "../utils/checkNatureCompatibleRestrictedTo";
 
 export class ClassDeclarationValidator {
   /**
@@ -305,7 +305,14 @@ export class ClassDeclarationValidator {
           (specializationEndurant) => {
             const specializationNatures =
               specializationEndurant.ref?.ontologicalNatures;
-            const natureExists = specializationNatures?.natures.find(
+            let specNatures: ASTNature[] = [];
+            if (!specializationNatures) {
+              specNatures = ["objects", "collectives", "quantities", "functional-complexes"];
+            } else {
+              specNatures = specializationNatures.natures;
+            }
+            console.log(classDeclaration.name, specializationEndurant.ref?.name, specNatures);
+            const natureExists = specNatures.find(
               (specializationNature) => {
                 return specializationNature === nature;
               }
@@ -335,22 +342,26 @@ export class ClassDeclarationValidator {
     accept: ValidationAcceptor
   ): void {
     const specializations = classDeclaration.specializationEndurants;
-    const ontologicalCategory =
-      classDeclaration.classElementType?.ontologicalCategory;
+    const sourceNatures = classDeclaration.ontologicalNatures?.natures;
+    if (!sourceNatures) {
+      return;
+    }
 
     specializations.forEach((specialization) => {
       const natures = specialization.ref?.ontologicalNatures?.natures;
       if (natures) {
         let hasCompatibleNatures = false;
-        natures.forEach((nature) => {
-          const isCompatible = checkNatureCompatibleWithStereotype(
-            nature,
-            ontologicalCategory
-          );
-          if (isCompatible === true) {
-            hasCompatibleNatures = true;
+        for (const specificNature of natures) {
+          for (const generalNature of sourceNatures) {
+            const isCompatible = checkNatureCompatibleRestrictedTo(
+              generalNature,
+              specificNature
+            );
+            if (isCompatible === true) {
+              hasCompatibleNatures = true;
+            }
           }
-        });
+        }
         if (hasCompatibleNatures === false) {
           let naturesList = natures.reduce((nature, lastString) => {
             return `${lastString}, ${nature}`;
