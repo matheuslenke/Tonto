@@ -14,7 +14,7 @@ import path from "path";
 import { CompositeGeneratorNode } from "langium";
 import fs from "fs";
 import { GeneratorContext } from "../JsonModularGenerators/jsonModular.generator";
-import { TontoManifest } from "../model/TontoManifest";
+import { TontoManifest, createDefaultTontoManifest } from "../model/TontoManifest";
 
 export const validateAction = async (dirName: string): Promise<void> => {
   if (!dirName) {
@@ -48,19 +48,26 @@ export const validateCommand = async (
 ): Promise<ResultResponse[] | ErrorResultResponse> => {
   const services = createTontoServices({ ...NodeFileSystem }).Tonto;
 
+  let manifest: TontoManifest | undefined;
+
   const folderAbsolutePath = path.resolve(dirName);
+  console.log(folderAbsolutePath);
   if (!fs.existsSync(path.join(folderAbsolutePath, "tonto.json"))) {
-    console.log(chalk.red("tonto.json not found!"));
+    manifest = createDefaultTontoManifest();
+  } else {
+    const filePath = path.join(dirName, "tonto.json");
+
+    const tontoManifestContent = fs.readFileSync(filePath, "utf-8");
+    manifest = JSON.parse(tontoManifestContent);
+  }
+
+  if (manifest === undefined) {
     return {
-      status: 300,
-      message: "tonto.json file not found in this folder",
+      status: 400,
+      message: "Could not find or create default tonto.json file"
     } as ErrorResultResponse;
   }
 
-  const filePath = path.join(dirName, "tonto.json");
-
-  const tontoManifestContent = fs.readFileSync(filePath, "utf-8");
-  const manifest: TontoManifest = JSON.parse(tontoManifestContent);
 
   const allFiles = await glob(dirName + "/**/*.tonto");
 

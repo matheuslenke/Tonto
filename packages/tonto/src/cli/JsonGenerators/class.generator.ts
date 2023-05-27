@@ -78,13 +78,22 @@ export function classElementGenerator(
         return packageItem.createPhase(classElement.name);
       }
       case "role": {
-        return packageItem.createRole(classElement.name);
+        return packageItem.createRole(classElement.name, natures[0]);
       }
       case "historicalRole": {
         return packageItem.createHistoricalRole(classElement.name);
       }
       case "relator": {
         return packageItem.createRelator(classElement.name);
+      }
+      case "type": {
+        return packageItem.createType(classElement.name);
+      }
+      case "situation": {
+        return packageItem.createSituation(classElement.name);
+      }
+      case "class": {
+        return packageItem.createClass(classElement.name, undefined, natures);
       }
     }
   }
@@ -159,11 +168,12 @@ export function generalizationGenerator(
 }
 
 export function createInstantiation(
-  model: Package,
-  sourceClass: Class,
-  targetClass: Class
+  _model: Package,
+  _sourceClass: Class,
+  _targetClass: Class
 ) {
-  model.createInstantiationRelation(sourceClass, targetClass);
+  // TODO: Waiting for ontouml-js to implement instantiation
+  // model.createInstantiationRelation(sourceClass, targetClass);
 }
 
 function getOntoUMLNatures(natures: Nature[]): OntologicalNature[] {
@@ -192,7 +202,11 @@ function getOntoUMLNatures(natures: Nature[]): OntologicalNature[] {
           OntologicalNature.quantity,
         ];
       default:
-        return OntologicalNature.functional_complex;
+        return [
+          OntologicalNature.functional_complex,
+          OntologicalNature.collective,
+          OntologicalNature.quantity,
+        ];
     }
   });
 }

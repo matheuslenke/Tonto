@@ -15,7 +15,7 @@
             "type": "node",
             "args": [
                 "generate",
-                "."
+                "${workspaceFolder}/examples/validators"
             ]
         },
         {
@@ -27,8 +27,21 @@
             ],
             "type": "node",
             "args": [
-                "importModular",
+                "import",
                 "${workspaceFolder}/examples/ontouml-models/goncalves2011ecg/ontology.json"
+            ]
+        },
+        {
+            "name": "CLI: Validate Model",
+            "program": "${workspaceFolder}/packages/tonto/bin/cli",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node",
+            "args": [
+                "validate",
+                "${workspaceFolder}/examples/validators"
             ]
         },
         {

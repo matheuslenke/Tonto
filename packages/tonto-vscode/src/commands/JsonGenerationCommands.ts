@@ -56,7 +56,6 @@ function updateJsonStatusBarItem(statusBarItem: vscode.StatusBarItem): void {
 
 async function generateJson(workspaceFolder: vscode.WorkspaceFolder) {
   const filePattern = workspaceFolder.uri.path + "tonto.json";
-  // const destination = path.join(workspaceFolder.uri.path, "generated");
   vscode.workspace.findFiles(filePattern).then(async (_) => {
     const generatedFileName = await generateModularCommand(workspaceFolder.uri.path);
     if (generatedFileName) {

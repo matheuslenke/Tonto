@@ -14,8 +14,8 @@ function completeForGenSetSnippets(
     sortText: "100",
     insertText: [
       "genset ${1:name} {",
-      "\tgeneral ${2:class}",
-      "\tspecifics ${3:class",
+      "\tgeneral ${2:Superclass}",
+      "\tspecifics ${3:Subclass}",
       "}",
     ].join("\n"),
     insertTextFormat: InsertTextFormat.Snippet,
@@ -28,8 +28,8 @@ function completeForGenSetSnippets(
     sortText: "100",
     insertText: [
       "complete genset ${1:name} {",
-      "\tgeneral ${2:class}",
-      "\tspecifics ${3:class",
+      "\tgeneral ${2:Superclass}",
+      "\tspecifics ${3:Subclass}",
       "}",
     ].join("\n"),
     insertTextFormat: InsertTextFormat.Snippet,
@@ -42,8 +42,8 @@ function completeForGenSetSnippets(
     sortText: "100",
     insertText: [
       "disjoint complete genset ${1:name} {",
-      "\tgeneral ${2:class}",
-      "\tspecifics ${3:class",
+      "\tgeneral ${2:Superclass}",
+      "\tspecifics ${3:Subclass}",
       "}",
     ].join("\n"),
     insertTextFormat: InsertTextFormat.Snippet,

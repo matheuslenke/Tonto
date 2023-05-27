@@ -5,7 +5,7 @@ import chalk from "chalk";
 import { glob } from "glob";
 import path from "path";
 import { generateJSONFileModular } from "../JsonModularGenerators/jsonModular.generator";
-import { TontoManifest } from "../model/TontoManifest";
+import { TontoManifest, createDefaultTontoManifest } from "../model/TontoManifest";
 import fs from "fs";
 import { builtInLibs } from "../../language-server/workspace/builtins";
 import { createTontoServices, Model, TontoServices } from "../../language-server";
@@ -60,15 +60,20 @@ export async function generateModularCommand(dir: string): Promise<string | unde
   try {
     folderAbsolutePath = path.resolve(dir);
     const tontoManifest = fs.readdirSync(dir).includes("tonto.json");
-    if (tontoManifest === undefined) {
-      console.log(chalk.red("tonto.json not found!"));
-      return Promise.reject();
+
+    /** 
+     * Create Tonto Manifest file if it does not exist or read from an existing
+     * one
+     */
+    if (tontoManifest === false) {
+      manifest = createDefaultTontoManifest();
+    } else {
+      const filePath = path.join(dir, "tonto.json");
+
+      const tontoManifestContent = fs.readFileSync(filePath, "utf-8");
+      manifest = JSON.parse(tontoManifestContent);
     }
-    const filePath = path.join(dir, "tonto.json");
 
-    const tontoManifestContent = fs.readFileSync(filePath, "utf-8");
-
-    manifest = JSON.parse(tontoManifestContent);
     if (manifest === undefined) {
       throw new Error("Manifest file \"tonto.json\" not found");
     }

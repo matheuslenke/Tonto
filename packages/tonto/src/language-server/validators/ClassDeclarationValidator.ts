@@ -307,6 +307,9 @@ export class ClassDeclarationValidator {
               specializationEndurant.ref?.ontologicalNatures;
             let specNatures: ASTNature[] = [];
             if (!specializationNatures) {
+              if (specializationEndurant.ref?.classElementType.ontologicalCategory === OntologicalCategoryEnum.CLASS) {
+                return;
+              }
               specNatures = ["objects", "collectives", "quantities", "functional-complexes"];
             } else {
               specNatures = specializationNatures.natures;

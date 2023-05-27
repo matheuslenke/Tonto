@@ -39,7 +39,7 @@ Declaration:
 ;
 
 AuxiliaryDeclaration:
-	ComplexDataType | Enum | GeneralizationSetImpl | ExternalRelation
+	DataType | Enum | GeneralizationSetImpl | ExternalRelation
 ;
 
 interface Generalization {
@@ -159,7 +159,7 @@ ExternalRelation infers ElementRelation:
 ;
 
 Attribute:
-	name=ID ':' attributeTypeRef=[ComplexDataType:QualifiedName]
+	name=ID ':' attributeTypeRef=[DataType:QualifiedName]
 	cardinality=Cardinality?
 	('{'((isOrdered?='ordered') & (isConst?='const') & (isDerived?='derived'))? '}')?
 ;
@@ -231,7 +231,7 @@ type ClassDeclarationOrRelation = ClassDeclaration | ElementRelation;
 
 // <--- DataTypes --->
 
-ComplexDataType:
+DataType:
 	'datatype' name=ID ontologicalNature=ElementOntologicalNature? ('{'
 		(attributes+=Attribute)*
 	'}')?

@@ -41,7 +41,10 @@ export function customDataTypeAttributesGenerator(
         createdAttribute.isOrdered = element.isOrdered;
 
         // Set the attribute isDerived meta-attribute
-        createdAttribute.isDerived = !element.isConst;
+        createdAttribute.isDerived = element.isDerived;
+
+        // Set the attribute isReadOnly meta-attribute
+        createdAttribute.isReadOnly = element.isConst;
       }
     });
   } else {

@@ -102,7 +102,8 @@ function createTontoManifest(ctx: GeneratorContext) {
     license: "",
     publisher: "",
     dependencies: {},
-    outFolder: ""
+    outFolder: "",
+    authors: []
   };
   const jsonString = toJson(manifest);
   const manifestPath = path.join(ctx.destinationFolder, "tonto.json");
