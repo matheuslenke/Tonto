@@ -51,3 +51,5 @@ export default function (): void {
     .action(validateAction);
   program.parseAsync(process.argv);
 }
+
+export * from "./actions";

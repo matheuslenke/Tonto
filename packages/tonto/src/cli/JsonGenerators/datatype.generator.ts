@@ -1,9 +1,9 @@
 import { Class, Package, Property } from "ontouml-js";
-import { ComplexDataType } from "../../language-server/generated/ast";
-import { setAttributeCardinality } from "./class.generator";
+import { DataType } from "../../language-server/generated/ast";
+import { setPropertyCardinality } from "./cardinality.generator";
 
 export function customDataTypeGenerator(
-  dataType: ComplexDataType,
+  dataType: DataType,
   model: Package,
 ): Class {
   const dataTypeClass = model.createDatatype(dataType.name);
@@ -12,7 +12,7 @@ export function customDataTypeGenerator(
 }
 
 export function customDataTypeAttributesGenerator(
-  dataType: ComplexDataType,
+  dataType: DataType,
   dataTypes: Class[]
 ) {
   const dataTypeClass = dataTypes.find(item => item.getName() === dataType.name);
@@ -35,7 +35,7 @@ export function customDataTypeAttributesGenerator(
 
       if (createdAttribute) {
         // Set the attribute cardinality
-        setAttributeCardinality(element.cardinality, createdAttribute);
+        setPropertyCardinality(element.cardinality, createdAttribute);
 
         // Set the attribute isOrdered meta-attribute
         createdAttribute.isOrdered = element.isOrdered;

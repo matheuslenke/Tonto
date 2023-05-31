@@ -1,4 +1,4 @@
-import { generateModularCommand } from "tonto-cli/src/cli/actions";
+import { generateModularCommand } from "tonto-cli";
 import * as vscode from "vscode";
 import { CommandIds } from "./commandIds";
 

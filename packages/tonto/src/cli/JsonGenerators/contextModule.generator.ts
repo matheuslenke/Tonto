@@ -1,12 +1,12 @@
 import { Class, Package, Relation } from "ontouml-js";
-import { ClassDeclaration, ComplexDataType, ContextModule, ElementRelation, Enum, GeneralizationSet } from "../../language-server";
+import { ClassDeclaration, DataType, ContextModule, ElementRelation, GeneralizationSet } from "../../language-server";
 import { attributeGenerator, classElementGenerator } from "./class.generator";
 import { customDataTypeGenerator } from "./datatype.generator";
 import { enumGenerator } from "./enum.generator";
 import { generalizationSetGenerator } from "./genset.generator";
 import { generateInstantiations } from "./instantiation.generator";
 import { relationGenerator } from "./relation.generator";
-import { generateSpecializations } from "./specialization.generator";
+import { generateDataTypeSpecializations, generateSpecializations } from "./specialization.generator";
 
 export function contextModuleGenerator(
   contextModule: ContextModule,
@@ -18,6 +18,7 @@ export function contextModuleGenerator(
   // Creating base datatypes
 
   contextModule.declarations.forEach((declaration) => {
+    console.log(declaration.$type);
     switch (declaration.$type) {
       case "ClassDeclaration": {
         const classElement = declaration as ClassDeclaration;
@@ -27,19 +28,19 @@ export function contextModuleGenerator(
         break;
       }
 
-      case "ComplexDataType": {
-        const dataType = declaration as ComplexDataType;
-        const newDataType = customDataTypeGenerator(
-          dataType,
-          packageItem
-        );
-        attributeGenerator(dataType, newDataType, dataTypes);
-        break;
-      }
-
-      case "Enum": {
-        const enumData = declaration as Enum;
-        enumGenerator(enumData, packageItem);
+      case "DataType": {
+        const dataType = declaration as DataType;
+        if (dataType.isEnum) {
+          const newEnum = enumGenerator(dataType, packageItem);
+          dataTypes.push(newEnum);
+        } else {
+          const newDataType = customDataTypeGenerator(
+            dataType,
+            packageItem
+          );
+          attributeGenerator(dataType, newDataType, dataTypes);
+          dataTypes.push(newDataType);
+        }
         break;
       }
     }
@@ -49,6 +50,8 @@ export function contextModuleGenerator(
   generateInternalRelations(contextModule, classes, relations, packageItem);
   generateExternalRelations(contextModule, classes, relations, packageItem);
   generateSpecializations(contextModule, classes, relations, packageItem);
+  generateDataTypeSpecializations(contextModule, classes, dataTypes, packageItem);
+
   generateInstantiations(contextModule, classes, relations, packageItem);
 }
 

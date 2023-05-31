@@ -36,14 +36,17 @@ export class ClassDeclarationValidator {
       classDeclaration.classElementType?.ontologicalCategory ===
       OntologicalCategoryEnum.CLASS
     ) {
-      accept(
-        "warning",
-        "Consider using an annotation or a more specific class",
-        {
-          node: classDeclaration,
-          property: "classElementType",
-        }
-      );
+      const natures = classDeclaration.ontologicalNatures?.natures;
+      if (!natures) {
+        accept(
+          "warning",
+          "Consider using an annotation or a more specific class",
+          {
+            node: classDeclaration,
+            property: "classElementType",
+          }
+        );
+      }
     }
   }
 
@@ -303,13 +306,13 @@ export class ClassDeclarationValidator {
         let specializationDoesntExistsInParent = false;
         classDeclaration.specializationEndurants.forEach(
           (specializationEndurant) => {
+            if (specializationEndurant.ref?.classElementType.ontologicalCategory === OntologicalCategoryEnum.CLASS) {
+              return;
+            }
             const specializationNatures =
               specializationEndurant.ref?.ontologicalNatures;
             let specNatures: ASTNature[] = [];
             if (!specializationNatures) {
-              if (specializationEndurant.ref?.classElementType.ontologicalCategory === OntologicalCategoryEnum.CLASS) {
-                return;
-              }
               specNatures = ["objects", "collectives", "quantities", "functional-complexes"];
             } else {
               specNatures = specializationNatures.natures;

@@ -8,12 +8,12 @@ import {
   SemanticTokenTypes,
 } from "vscode-languageserver";
 import {
-  Enum,
+  DataType,
   isAttribute,
   isClassDeclaration,
   isContextModule,
+  isDataType,
   isElementRelation,
-  isEnum,
   isEnumElement,
   isOntologicalCategory,
   OntologicalCategory,
@@ -52,7 +52,7 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
     if (isElementRelation(node)) {
       this.elementRelationTokens(node, acceptor);
     }
-    if (isEnum(node)) {
+    if (isDataType(node) && node.isEnum) {
       this.enumTokens(node, acceptor);
     }
     if (isEnumElement(node)) {
@@ -161,7 +161,7 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
     });
   }
 
-  private enumTokens(node: Enum, acceptor: SemanticTokenAcceptor) {
+  private enumTokens(node: DataType, acceptor: SemanticTokenAcceptor) {
     acceptor({
       node,
       property: "name",

@@ -40,8 +40,9 @@ export class TontoValidationRegistry extends ValidationRegistry {
         validator.GeneralizationValidator.checkRigidSpecializesAntiRigid,
         validator.GeneralizationValidator.checkGeneralizationDataType,
       ],
-      ComplexDataType: [
+      DataType: [
         validator.ComplexDataTypeValidator.checkCompatibleNatures,
+        validator.ComplexDataTypeValidator.checkSpecialization
       ],
     };
     this.register(checks, validator);

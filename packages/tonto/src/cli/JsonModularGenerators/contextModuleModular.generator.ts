@@ -1,12 +1,12 @@
 import { Class, Package, Relation } from "ontouml-js";
-import { ClassDeclaration, ComplexDataType, ContextModule, ElementRelation, Enum, GeneralizationSet } from "../../language-server/generated/ast";
+import { ClassDeclaration, DataType, ContextModule, ElementRelation, GeneralizationSet } from "../../language-server/generated/ast";
 import { attributeGenerator, classElementGenerator } from "../JsonGenerators/class.generator";
 import { customDataTypeAttributesGenerator, customDataTypeGenerator } from "../JsonGenerators/datatype.generator";
 import { enumGenerator } from "../JsonGenerators/enum.generator";
 import { generalizationSetGenerator } from "../JsonGenerators/genset.generator";
 import { generateInstantiations } from "../JsonGenerators/instantiation.generator";
 import { relationGenerator } from "../JsonGenerators/relation.generator";
-import { generateSpecializations } from "../JsonGenerators/specialization.generator";
+import { generateDataTypeSpecializations, generateSpecializations } from "../JsonGenerators/specialization.generator";
 
 export interface GeneratedContextModuleData {
   classes: Class[];
@@ -32,24 +32,22 @@ export function contextModuleGenerateClasses(
       case "ClassDeclaration": {
         const classElement = declaration as ClassDeclaration;
         const newClass = classElementGenerator(classElement, packageItem);
-        attributeGenerator(classElement, newClass, returnData.dataTypes);
         returnData.classes.push(newClass);
         break;
       }
 
-      case "ComplexDataType": {
-        const dataType = declaration as ComplexDataType;
-        const newDataType = customDataTypeGenerator(
-          dataType,
-          packageItem
-        );
-        returnData.dataTypes.push(newDataType);
-        break;
-      }
-
-      case "Enum": {
-        const enumData = declaration as Enum;
-        enumGenerator(enumData, packageItem);
+      case "DataType": {
+        const dataType = declaration as DataType;
+        if (dataType.isEnum) {
+          const newEnum = enumGenerator(dataType, packageItem);
+          returnData.dataTypes.push(newEnum);
+        } else {
+          const newDataType = customDataTypeGenerator(
+            dataType,
+            packageItem
+          );
+          returnData.dataTypes.push(newDataType);
+        }
         break;
       }
     }
@@ -76,14 +74,15 @@ export function contextModuleModularGenerator(
   dataTypes.push(...importedData.flatMap((data) => data.dataTypes));
 
   generateGenSets(contextModule, classes, packageItem);
-
   generateComplexDataTypesAttributes(contextModule, dataTypes);
 
   // Generate all relations first, without looking for specializations
 
   generateInternalRelations(contextModule, classes, relations, packageItem);
   generateExternalRelations(contextModule, classes, relations, packageItem);
+  generateClassDeclarationAttributes(contextModule, classes, dataTypes);
   generateSpecializations(contextModule, classes, relations, packageItem);
+  generateDataTypeSpecializations(contextModule, classes, dataTypes, packageItem);
   generateInstantiations(contextModule, classes, relations, packageItem);
 }
 
@@ -123,6 +122,28 @@ function generateExternalRelations(
   });
 }
 
+function generateClassDeclarationAttributes(
+  contextModule: ContextModule,
+  classes: Class[],
+  dataTypes: Class[]
+): void {
+  contextModule.declarations.forEach((declaration) => {
+    switch (declaration.$type) {
+      case "ClassDeclaration": {
+        const classDeclaration = declaration as ClassDeclaration;
+        const createdClass = classes.find(item => item.getName() === classDeclaration.name);
+        if (createdClass) {
+          attributeGenerator(
+            classDeclaration,
+            createdClass,
+            dataTypes
+          );
+        }
+      }
+    }
+  });
+}
+
 function generateInternalRelations(
   contextModule: ContextModule,
   classes: Class[],
@@ -154,8 +175,8 @@ function generateComplexDataTypesAttributes(
   dataTypes: Class[]
 ): void {
   contextModule.declarations.forEach((declaration) => {
-    if (declaration.$type === "ComplexDataType") {
-      const dataType = declaration as ComplexDataType;
+    if (declaration.$type === "DataType") {
+      const dataType = declaration as DataType;
       customDataTypeAttributesGenerator(dataType,
         dataTypes);
     }

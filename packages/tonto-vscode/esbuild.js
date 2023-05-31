@@ -30,7 +30,7 @@ esbuild
         loader: { ".ts": "ts" },
         external: ["vscode"], // the vscode-module is created on-the-fly and must be excluded.
         platform: "node", // VSCode extensions run in a node process
-        sourcemap: !minify,
+        sourcemap: "both",
         watch: watch
             ? {
                 onRebuild(error) {

@@ -10,10 +10,9 @@ import {
   ContextModule,
   isAttribute,
   isClassDeclaration,
-  isComplexDataType,
+  isDataType,
   isContextModule,
   isElementRelation,
-  isEnum,
   isEnumElement,
   isGeneralizationSet,
 } from "./generated/ast";
@@ -45,7 +44,7 @@ export class TontoQualifiedNameProvider extends DefaultNameProvider {
       if (!node.name) {
         return undefined;
       }
-      const parent = node.$container;
+      const parent = node.$container ?? node.firstEnd?.ref;
       if (isClassDeclaration(parent)) {
         return `${parent.name}.${node.name}`;
       }
@@ -56,8 +55,7 @@ export class TontoQualifiedNameProvider extends DefaultNameProvider {
       isContextModule(node) ||
       isAttribute(node) ||
       isGeneralizationSet(node) ||
-      isComplexDataType(node) ||
-      isEnum(node) ||
+      isDataType(node) ||
       isEnumElement(node)
     ) {
       return node.name;

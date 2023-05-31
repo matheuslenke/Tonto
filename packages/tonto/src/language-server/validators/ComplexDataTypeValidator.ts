@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { ValidationAcceptor } from "langium";
-import { ComplexDataType } from "../generated/ast";
+import { DataType } from "../generated/ast";
 import { natureUtils } from "../models/Natures";
 import { OntologicalCategoryEnum } from "../models/OntologicalCategory";
 import { allowedStereotypeRestrictedToMatches } from "../models/StereotypeUtils";
@@ -12,7 +12,7 @@ export class ComplexDataTypeValidator {
    * class stereotype.
    */
   checkCompatibleNatures(
-    complexDataType: ComplexDataType,
+    complexDataType: DataType,
     accept: ValidationAcceptor
   ): void {
     const elementNatures = complexDataType.ontologicalNature?.natures;
@@ -44,5 +44,47 @@ export class ComplexDataTypeValidator {
         );
       }
     }
+  }
+
+  checkSpecialization(
+    dataType: DataType,
+    accept: ValidationAcceptor
+  ): void {
+    const specializationItems = dataType.specializationEndurants;
+
+    specializationItems.forEach((specializationItem, index) => {
+      const specItem = specializationItem.ref;
+      if (!specItem) {
+        return;
+      }
+      const type = specItem.$type;
+      if (type === "ClassDeclaration") {
+        const stereotype = specItem.classElementType;
+        if (stereotype.ontologicalCategory === "class") {
+          if (!specItem.ontologicalNatures?.natures.includes("abstract-individuals")) {
+            accept(
+              "error",
+              "Specialization of a DataType can only be another DataType or a Class with nature 'abstract-individuals'",
+              {
+                node: dataType,
+                property: "specializationEndurants",
+                index
+              }
+            );
+          }
+        }
+        else {
+          accept(
+            "error",
+            "Specialization of a DataType can only be another DataType or a Class with nature 'abstract-individuals'",
+            {
+              node: dataType,
+              property: "specializationEndurants",
+              index
+            }
+          );
+        }
+      }
+    });
   }
 }

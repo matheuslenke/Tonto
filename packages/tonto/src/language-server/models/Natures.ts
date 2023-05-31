@@ -93,7 +93,7 @@ function getNatureFromAst(nature: ASTNature): OntologicalNature | undefined {
       return OntologicalNature.relator;
     case "types":
       return OntologicalNature.type;
-    case "abstracts":
+    case "abstract-individuals":
       return OntologicalNature.abstract;
     case "events":
       return OntologicalNature.event;

@@ -15,7 +15,7 @@
             "type": "node",
             "args": [
                 "generate",
-                "${workspaceFolder}/examples/validators"
+                "${workspaceFolder}/examples/fixingErrors"
             ]
         },
         {
@@ -41,20 +41,21 @@
             "type": "node",
             "args": [
                 "validate",
-                "${workspaceFolder}/examples/validators"
+                "${workspaceFolder}/examples/fixingErrors"
             ]
         },
         {
             "name": "Run Extension",
             "type": "extensionHost",
+            "sourceMaps": true,
             "request": "launch",
             "args": [
-                "${workspaceFolder}/examples/validators",
+                "${workspaceFolder}/examples/fixingErrors",
                 "--extensionDevelopmentPath=${workspaceFolder}/packages/tonto-vscode"
             ],
             // "env": {
             //     "DEBUG_BREAK": "true"
-            // },
+            // }
         },
         {
             "name": "Attach to Language Server",
@@ -67,8 +68,9 @@
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceFolder}/packages/tonto/lib/**/*.js",
-                "${workspaceFolder}/node_modules/langium"
-            ],
+                "${workspaceFolder}/packages/tonto/lib/cli/**/*.js",
+                "${workspaceFolder}/packages/tonto-vscode/out/**/*.js"
+            ]
         },
         {
             "name": "Attach to CLI",
@@ -79,10 +81,6 @@
                 "<node_internals>/**"
             ],
             "sourceMaps": true,
-            "outFiles": [
-                "${workspaceFolder}/out/cli/*.js",
-                "${workspaceFolder}/node_modules/langium"
-            ],
         }
     ],
     "compounds": [

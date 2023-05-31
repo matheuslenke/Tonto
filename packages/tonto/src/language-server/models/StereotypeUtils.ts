@@ -3,7 +3,7 @@ import { natureUtils, OntologicalNature } from "./Natures";
 import { OntologicalCategoryEnum } from "./OntologicalCategory";
 
 type AllowedStereotypes = {
-    [key in OntologicalCategoryEnum]: OntologicalNature[]
+  [key in OntologicalCategoryEnum]: OntologicalNature[]
 }
 
 const allowedStereotypeRestrictedToMatches: AllowedStereotypes = {
@@ -79,51 +79,51 @@ function isAntiRigidStereotype(stereotype: string): boolean {
   return false;
 }
 
-function getClassStereotype(stereotype: string): ClassStereotype | undefined
-{
+function getClassStereotype(stereotype: string): ClassStereotype | undefined {
   switch (stereotype) {
-  case "type":
-    return ClassStereotype.TYPE;
-  case "historicalRole":
-    return ClassStereotype.HISTORICAL_ROLE;
-  case "historicalRoleMixin":
-    return ClassStereotype.HISTORICAL_ROLE_MIXIN;
-  case "event":
-    return ClassStereotype.EVENT;
-  case "situation":
-    return ClassStereotype.SITUATION;
-  case "category":
-    return ClassStereotype.CATEGORY;
-  case "mixin":
-    return ClassStereotype.MIXIN;
-  case "roleMixin":
-    return ClassStereotype.ROLE_MIXIN;
-  case "phaseMixin":
-    return ClassStereotype.PHASE_MIXIN;
-  case "kind":
-    return ClassStereotype.KIND;
-  case "collective":
-    return ClassStereotype.COLLECTIVE;
-  case "quantity":
-    return ClassStereotype.QUANTITY;
-  case "relator":
-    return ClassStereotype.RELATOR;
-  case "quality":
-    return ClassStereotype.QUALITY;
-  case "mode":
-    return ClassStereotype.MODE;
-  case "subkind":
-    return ClassStereotype.SUBKIND;
-  case "role":
-    return ClassStereotype.ROLE;
-  case "phase":
-    return ClassStereotype.PHASE;
-  case "enumeration":
-    return ClassStereotype.ENUMERATION;
-  case "datatype":
-    return ClassStereotype.DATATYPE;
-  case "abstract":
-    return ClassStereotype.ABSTRACT;
+    case "type":
+      return ClassStereotype.TYPE;
+    case "historicalRole":
+      return ClassStereotype.HISTORICAL_ROLE;
+    case "historicalRoleMixin":
+      return ClassStereotype.HISTORICAL_ROLE_MIXIN;
+    case "event":
+      return ClassStereotype.EVENT;
+    case "situation":
+      return ClassStereotype.SITUATION;
+    case "category":
+      return ClassStereotype.CATEGORY;
+    case "mixin":
+      return ClassStereotype.MIXIN;
+    case "roleMixin":
+      return ClassStereotype.ROLE_MIXIN;
+    case "phaseMixin":
+      return ClassStereotype.PHASE_MIXIN;
+    case "kind":
+      return ClassStereotype.KIND;
+    case "collective":
+      return ClassStereotype.COLLECTIVE;
+    case "quantity":
+      return ClassStereotype.QUANTITY;
+    case "relator":
+      return ClassStereotype.RELATOR;
+    case "quality":
+      return ClassStereotype.QUALITY;
+    case "mode":
+      return ClassStereotype.MODE;
+    case "subkind":
+      return ClassStereotype.SUBKIND;
+    case "role":
+      return ClassStereotype.ROLE;
+    case "phase":
+      return ClassStereotype.PHASE;
+    case "enumeration":
+    case "enum":
+      return ClassStereotype.ENUMERATION;
+    case "datatype":
+      return ClassStereotype.DATATYPE;
+    case "abstract":
+      return ClassStereotype.ABSTRACT;
   }
   return undefined;
 }

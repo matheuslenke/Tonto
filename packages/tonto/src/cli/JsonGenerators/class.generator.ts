@@ -1,5 +1,4 @@
 import {
-  CardinalityValues,
   Class,
   ClassStereotype,
   OntologicalNature,
@@ -8,12 +7,12 @@ import {
 } from "ontouml-js";
 import {
   Attribute,
-  Cardinality,
   ClassDeclaration,
-  ComplexDataType,
+  DataType,
   OntologicalNature as Nature,
 } from "../../language-server/generated/ast";
 import { OntologicalCategoryEnum } from "../../language-server/models/OntologicalCategory";
+import { setPropertyCardinality } from "./cardinality.generator";
 
 export function classElementGenerator(
   classElement: ClassDeclaration,
@@ -93,6 +92,9 @@ export function classElementGenerator(
         return packageItem.createSituation(classElement.name);
       }
       case "class": {
+        if (classElement.ontologicalNatures?.natures.includes("abstract-individuals")) {
+          return packageItem.createAbstract(classElement.name, { stereotype: ClassStereotype.ABSTRACT });
+        }
         return packageItem.createClass(classElement.name, undefined, natures);
       }
     }
@@ -101,15 +103,15 @@ export function classElementGenerator(
 }
 
 export function attributeGenerator(
-  classElement: ClassDeclaration | ComplexDataType,
+  classElement: ClassDeclaration | DataType,
   createdClass: Class,
   dataTypes: Class[]
 ): void {
   classElement.attributes.forEach((attribute: Attribute) => {
     let createdAttribute: Property | undefined;
-    if (attribute.attributeTypeRef !== undefined) {
+    if (attribute.attributeTypeRef) {
       const customType = dataTypes.find(
-        (item) => item.name.getText() === attribute.attributeTypeRef?.toString()
+        (item) => item.name.getText() === attribute.attributeTypeRef.ref?.name
       );
       if (customType) {
         createdAttribute = createdClass.createAttribute(
@@ -120,43 +122,13 @@ export function attributeGenerator(
     }
     if (createdAttribute) {
       // Set the attribute cardinality
-      setAttributeCardinality(attribute.cardinality, createdAttribute);
+      setPropertyCardinality(attribute.cardinality, createdAttribute);
 
       createdAttribute.isOrdered = attribute.isOrdered;
       createdAttribute.isDerived = attribute.isDerived;
       createdAttribute.isReadOnly = attribute.isConst;
     }
   });
-}
-
-export function setAttributeCardinality(
-  cardinality: Cardinality | undefined,
-  end: Property
-): void {
-  if (cardinality) {
-    console.log("Cardinalidade", cardinality.lowerBound);
-    if (cardinality.lowerBound === "*") {
-      end.cardinality.setZeroToMany();
-      return;
-    } else if (typeof cardinality.lowerBound === "number") {
-      end.cardinality.setLowerBoundFromNumber(cardinality.lowerBound);
-    }
-    if (cardinality.upperBound && cardinality.upperBound === "*") {
-      end.cardinality.upperBound = CardinalityValues.MANY;
-    } else if (
-      cardinality.upperBound &&
-      typeof cardinality.upperBound === "number"
-    ) {
-      end.cardinality.setUpperBoundFromNumber(cardinality.upperBound);
-    } else if (!cardinality.upperBound) {
-      end.cardinality.setCardinalityFromNumbers(
-        cardinality.lowerBound,
-        cardinality.lowerBound
-      );
-    }
-  } else {
-    end.cardinality.setOneToOne(); // Default Value
-  }
 }
 
 export function generalizationGenerator(
@@ -202,11 +174,7 @@ function getOntoUMLNatures(natures: Nature[]): OntologicalNature[] {
           OntologicalNature.quantity,
         ];
       default:
-        return [
-          OntologicalNature.functional_complex,
-          OntologicalNature.collective,
-          OntologicalNature.quantity,
-        ];
+        return [];
     }
   });
 }
@@ -231,6 +199,8 @@ function getDefaultOntoUMLNature(
     OntologicalCategoryEnum.SITUATION
   ) {
     return [OntologicalNature.functional_complex];
+  } else if (element.classElementType.ontologicalCategory === "class") {
+    return Object.values(OntologicalNature);
   } else {
     return [];
   }

@@ -35,7 +35,7 @@ Import:
 // <--- Declarations --->
 
 Declaration:
-	ClassDeclaration | AuxiliaryDeclaration
+	ClassDeclarationRule | AuxiliaryDeclaration
 ;
 
 AuxiliaryDeclaration:
@@ -47,13 +47,24 @@ interface Generalization {
     specifics: @ClassDeclarationOrRelation[]
 }
 
-ClassDeclaration:
+interface ClassDeclaration {
+	classElementType: OntologicalCategory;
+	name: string;
+	ontologicalNatures?: ElementOntologicalNature;
+	instanceOf?: @ClassDeclaration;
+	specializationEndurants: @ClassDeclaration[];
+	attributes: Attribute[];
+	references: ElementRelation[];
+}
+
+ClassDeclarationRule returns ClassDeclaration:
 	classElementType=OntologicalCategory name=QualifiedName
 	ontologicalNatures=ElementOntologicalNature?
     ('(' 'instanceOf' instanceOf=[ClassDeclaration:QualifiedName] ')')?
-     ('specializes' specializationEndurants+=[ClassDeclaration:QualifiedName]
-	(',' specializationEndurants+=[ClassDeclaration:QualifiedName])?
-	)? ('{'
+    ('specializes' specializationEndurants+=[ClassDeclaration:QualifiedName]
+		(',' specializationEndurants+=[ClassDeclaration:QualifiedName])?
+		)? 
+		('{'
 			(attributes+=Attribute |
 			references+=InternalRelation)*
     '}')?
@@ -80,7 +91,7 @@ NonSortal returns string:
 ;
 
 UltimateSortal returns string:
-	'kind' | 'collective' | 'quantity' | 'quality' | 'mode' | 'intrinsicMode' | 'extrinsicMode' | 'relator' | 'type'
+	'kind' | 'collective' | 'quantity' | 'quality' | 'mode' | 'intrinsicMode' | 'extrinsicMode' | 'relator' | 'type' | 'powertype'
   // do we keep mode here?
 ;
 
@@ -95,7 +106,7 @@ ElementOntologicalNature:
 OntologicalNature returns string:
 	'objects' | 'functional-complexes' | 'collectives'  | 'quantities' |
     'relators' | 'intrinsic-modes' | 'extrinsic-modes' | 'qualities' |
-    'events' | 'situations' |  'types' | 'abstracts'
+    'events' | 'situations' |  'types' | 'abstract-individuals'
   // Note: 'objects' = 'functional-complexes' or 'collectives' or 'quantities'
 ;
 
@@ -112,7 +123,7 @@ InternalRelation infers ElementRelation:
 			(firstEndName=ID)?
 		')'
 	)?
-	cardinality=Cardinality?
+	firstCardinality=Cardinality?
 	(isAssociation?='--' | isComposition?='<>--') (name=QualifiedName '--')?
 
 	secondCardinality=Cardinality?
@@ -231,16 +242,26 @@ type ClassDeclarationOrRelation = ClassDeclaration | ElementRelation;
 
 // <--- DataTypes --->
 
+type DataTypeOrClass = DataType | ClassDeclaration;
+
 DataType:
-	'datatype' name=ID ontologicalNature=ElementOntologicalNature? ('{'
+	'datatype' name=ID ontologicalNature=ElementOntologicalNature? 
+	('specializes' specializationEndurants+=[DataTypeOrClass:QualifiedName]
+	(',' specializationEndurants+=[DataTypeOrClass:QualifiedName])?
+	)? 
+	('{'
 		(attributes+=Attribute)*
 	'}')?
 ;
 
 // <--- Enums --->
 
-Enum:
-	'enum' name=ID '{'
+Enum infers DataType:
+	isEnum?='enum' name=ID 
+	('specializes' specializationEndurants+=[DataTypeOrClass:QualifiedName]
+	(',' specializationEndurants+=[DataTypeOrClass:QualifiedName])?
+	)? 
+	'{'
 		(elements+=EnumElement
 		((',') elements+=EnumElement)*)?
 	'}'

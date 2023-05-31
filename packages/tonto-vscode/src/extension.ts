@@ -79,7 +79,7 @@ function startLanguageClient(context: vscode.ExtensionContext): LanguageClient {
     clientOptions
   );
 
-  // Start the client. This will also launch the
+  // Start the client. This will also launch the extension
   client.start();
 
   return client;

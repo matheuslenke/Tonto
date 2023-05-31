@@ -13,10 +13,9 @@ import { CancellationToken } from "vscode-jsonrpc";
 import {
   ContextModule,
   isClassDeclaration,
-  isComplexDataType,
+  isDataType,
   isContextModule,
   isElementRelation,
-  isEnum,
   isGeneralizationSet,
   Model,
 } from "./generated/ast";
@@ -64,7 +63,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
 
       if (
         isClassDeclaration(childNode) ||
-        isComplexDataType(childNode) ||
+        isDataType(childNode) ||
         isContextModule(childNode) ||
         isGeneralizationSet(childNode)
       ) {
@@ -164,8 +163,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
       }
       if (
         isClassDeclaration(element) ||
-        isComplexDataType(element) ||
-        isEnum(element)
+        isDataType(element)
       ) {
         if (element.name !== undefined) {
           const description = this.descriptions.createDescription(
