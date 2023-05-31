@@ -6,6 +6,8 @@ class AbstractClass of abstract-individuals
 
 class CollectivesClass of collectives
 
+relation AbstractClass -- nomeDaRelation -- CollectivesClass
+
 class SemEstereotipo {
 // teste: number [1..5]
 // testeSemEstereotipo: ComplexDataType [5]
@@ -31,3 +33,5 @@ datatype TestingDatatype specializes TestandoEnum {
   variavel: ComplexDataType
   segundaVariavel: ComplexDataType2
 }
+
+powertype Testing

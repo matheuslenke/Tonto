@@ -88,6 +88,11 @@ export function classElementGenerator(
       case "type": {
         return packageItem.createType(classElement.name);
       }
+      case "powertype": {
+        const powerType = packageItem.createType(classElement.name);
+        powerType.isPowertype = true;
+        return powerType;
+      }
       case "situation": {
         return packageItem.createSituation(classElement.name);
       }

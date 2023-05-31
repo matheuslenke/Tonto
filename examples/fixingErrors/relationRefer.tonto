@@ -1,0 +1,5 @@
+import ExportType
+
+package RelationRefer
+
+relation CollectivesClass -- nome2 -- AbstractClass specializes nomeDaRelation
