@@ -124,7 +124,7 @@ InternalRelation infers ElementRelation:
 		')'
 	)?
 	firstCardinality=Cardinality?
-	(isAssociation?='--' | isComposition?='<>--') (name=QualifiedName '--')?
+	(isAssociation?='--' | isAggregation?='<>--' | isComposition?='<o>--') (name=QualifiedName '--')?
 
 	secondCardinality=Cardinality?
 	(
@@ -153,7 +153,7 @@ ExternalRelation infers ElementRelation:
 	)?
 
 	firstCardinality=Cardinality?
-	(isAssociation?='--' | isComposition?='<>--') (name=QualifiedName '--')?
+	(isAssociation?='--' | isComposition?='<>--' | isComposition?='<o>--') (name=QualifiedName '--')?
 
 	secondCardinality=Cardinality?
 	(

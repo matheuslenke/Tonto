@@ -28,7 +28,7 @@
             "type": "node",
             "args": [
                 "import",
-                "${workspaceFolder}/examples/ontouml-models/goncalves2011ecg/ontology.json"
+                "${workspaceFolder}/examples/fixingErrors/ontology.json"
             ]
         },
         {

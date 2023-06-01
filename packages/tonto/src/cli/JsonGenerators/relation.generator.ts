@@ -56,11 +56,21 @@ export function relationGenerator(
         relation.getSourceEnd().aggregationKind = AggregationKind.COMPOSITE;
         relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
       }
-      else if (relationItem.isComposition) {
+
+      /**
+       * Based on relation type, set aggregation kind
+       * Aggregation: <>--
+       * Association: --
+       * Composition: <o>--
+       */
+      else if (relationItem.isAggregation) {
         relation.getSourceEnd().aggregationKind = AggregationKind.SHARED;
         relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
       } else if (relationItem.isAssociation) {
         relation.getSourceEnd().aggregationKind = AggregationKind.NONE;
+        relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
+      } else if (relationItem.isComposition) {
+        relation.getSourceEnd().aggregationKind = AggregationKind.COMPOSITE;
         relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
       }
 

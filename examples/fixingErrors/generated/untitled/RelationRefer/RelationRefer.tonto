@@ -1,0 +1,6 @@
+import ExportType
+
+package RelationRefer
+
+class Test  specializes AbstractClass
+

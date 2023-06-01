@@ -1263,11 +1263,20 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
               },
               {
                 "$type": "Assignment",
-                "feature": "isComposition",
+                "feature": "isAggregation",
                 "operator": "?=",
                 "terminal": {
                   "$type": "Keyword",
                   "value": "<>--"
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "isComposition",
+                "operator": "?=",
+                "terminal": {
+                  "$type": "Keyword",
+                  "value": "<o>--"
                 }
               }
             ]
@@ -1635,6 +1644,15 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
                 "terminal": {
                   "$type": "Keyword",
                   "value": "<>--"
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "isComposition",
+                "operator": "?=",
+                "terminal": {
+                  "$type": "Keyword",
+                  "value": "<o>--"
                 }
               }
             ]

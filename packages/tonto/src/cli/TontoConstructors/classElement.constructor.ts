@@ -1,5 +1,5 @@
 import { CompositeGeneratorNode, NL } from "langium";
-import { Class, ClassStereotype } from "ontouml-js";
+import { Class, ClassStereotype, Property } from "ontouml-js";
 import { formatForId } from "../utils/replaceWhitespace";
 import { createInstantiation } from "./instantiation.constructor";
 import { constructInternalRelations } from "./relation.constructor";
@@ -21,15 +21,18 @@ export function constructClassElement(
       `${stereotypeWord} ${formatForId(element.getName())} `
     );
 
+    // Construct Nature restrictions
+    createNatures(element, fileNode);
+
     createInstantiation(element, fileNode);
 
     // Construct specializations
     createSpecializations(element, fileNode);
 
-    // Construct Nature restrictions
-    const relations = element.getOwnOutgoingRelations();
-    const attributes = element.getAllAttributes();
 
+
+    const relations = element.getOwnOutgoingRelations();
+    const attributes: Property[] = element.getOwnAttributes();
     if (relations.length > 0) {
       fileNode.append("{", NL);
       if (attributes.length > 0) {
@@ -66,7 +69,7 @@ function createEnumeration(element: Class, fileNode: CompositeGeneratorNode) {
 function createDatatype(element: Class, fileNode: CompositeGeneratorNode) {
   fileNode.append(`datatype ${formatForId(element.getName())}`);
 
-  const literals = element.getAllAttributes();
+  const literals = element.getOwnAttributes();
 
   if (literals.length > 0) {
     fileNode.append(" {", NL);
@@ -86,7 +89,12 @@ function createDatatype(element: Class, fileNode: CompositeGeneratorNode) {
   } else {
     fileNode.appendNewLine();
   }
+}
 
+function createNatures(element: Class, fileNode: CompositeGeneratorNode) {
+  if (element.stereotype === ClassStereotype.ABSTRACT) {
+    fileNode.append("of abstract-individuals");
+  }
 }
 
 function getStereotypeWord(stereotype: ClassStereotype): string {
@@ -132,7 +140,7 @@ function getStereotypeWord(stereotype: ClassStereotype): string {
     case ClassStereotype.DATATYPE:
       return "datatype";
     case ClassStereotype.ABSTRACT:
-      return "abstract";
+      return "class";
     default:
       return "class";
   }

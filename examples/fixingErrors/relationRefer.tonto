@@ -2,6 +2,6 @@ import ExportType
 
 package RelationRefer
 
-relation ExportType.CollectivesClass -- nome2 -- AbstractClass specializes AbstractClass.nomeDaRelation
+relation ExportType.CollectivesClass <o>-- nome2 -- AbstractClass specializes AbstractClass.nomeDaRelation
 
 class Test specializes ExportType.AbstractClass

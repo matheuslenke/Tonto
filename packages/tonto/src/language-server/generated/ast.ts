@@ -156,6 +156,7 @@ export interface ElementRelation extends AstNode {
     firstEndName?: string
     hasInverse?: 'inverseOf'
     inverseEnd?: Reference<ElementRelation>
+    isAggregation: boolean
     isAssociation: boolean
     isComposition: boolean
     metaAttributes: Array<RelationMetaAttribute>
@@ -410,6 +411,7 @@ export class TontoAstReflection extends AbstractAstReflection {
                     name: 'ElementRelation',
                     mandatory: [
                         { name: 'firstEndMetaAttributes', type: 'array' },
+                        { name: 'isAggregation', type: 'boolean' },
                         { name: 'isAssociation', type: 'boolean' },
                         { name: 'isComposition', type: 'boolean' },
                         { name: 'metaAttributes', type: 'array' },

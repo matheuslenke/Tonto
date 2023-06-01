@@ -38,11 +38,17 @@ export function constructInternalRelations(
 
       const relationName = formatForId(relation.getName());
 
-      if (sourceProperty.aggregationKind === AggregationKind.COMPOSITE) {
+      if (sourceProperty.aggregationKind === AggregationKind.SHARED) {
         fileNode.append("<>-- ");
         if (relationName) {
           fileNode.append(`${relationName}`);
-          fileNode.append(" <>-- ");
+          fileNode.append(" -- ");
+        }
+      } else if (sourceProperty.aggregationKind === AggregationKind.COMPOSITE) {
+        fileNode.append("<o>-- ");
+        if (relationName) {
+          fileNode.append(`${relationName}`);
+          fileNode.append(" -- ");
         }
       } else {
         fileNode.append("-- ");

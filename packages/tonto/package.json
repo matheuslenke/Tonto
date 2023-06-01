@@ -7,7 +7,7 @@
     "email": "matheuslenke@gmail.com"
   },
   "description": "Tonto is a DSL for creating OntoUML models",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "license": "MIT",
   "icon": "data/images/TontoIcon.png",
   "repository": {
@@ -53,7 +53,7 @@
     "colors": "^1.4.0",
     "esm": "^3.2.25",
     "glob": "^10.2.2",
-    "langium": "~1.1.0",
+    "langium": "~1.2.0",
     "ontouml-js": "https://github.com/matheuslenke/ontouml-js#feature/include-types-in-build",
     "ontouml-schema": "0.2.4",
     "rimraf": "^4.1.2",

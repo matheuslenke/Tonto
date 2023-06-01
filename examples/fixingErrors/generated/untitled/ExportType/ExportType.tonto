@@ -1,0 +1,25 @@
+package ExportType
+
+type ExportingType 
+
+class AbstractClass of abstract-individuals specializes TestandoEnum
+
+class CollectivesClass 
+category Test  specializes CollectivesClass
+class SemEstereotipo 
+category Teste  specializes SemEstereotipo
+enum TestandoEnum {
+    Year,
+    Date,
+    Month,
+    Hour
+}
+datatype TestingDatatype {
+    teste : TestandoEnum
+    variavel : ComplexDataType
+    segundaVariavel : ComplexDataType2
+}
+type TestingPowertype 
+datatype ComplexDataType
+datatype ComplexDataType
+

@@ -3,7 +3,7 @@
     "displayName": "Tonto",
     "publisher": "Lenke",
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "license": "MIT",
     "icon": "data/images/TontoIcon.png",
     "repository": {
@@ -101,7 +101,7 @@
         "esm": "^3.2.25",
         "glob": "^10.2.2",
         "jsonfile": "^6.1.0",
-        "langium": "~1.1.0",
+        "langium": "~1.2.0",
         "node-fetch-native": "^1.0.1",
         "ontouml-js": "https://github.com/matheuslenke/ontouml-js#feature/include-types-in-build",
         "ontouml-schema": "0.2.4",

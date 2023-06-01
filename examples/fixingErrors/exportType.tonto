@@ -14,7 +14,7 @@ class SemEstereotipo {
 // teste: number [1..5]
 // testeSemEstereotipo: ComplexDataType [5]
 
-  [1..*] <>-- relationName -- [*] AbstractClass
+  [1..*] <o>-- relationName -- [*] AbstractClass
 }
 
 category Teste of collectives specializes SemEstereotipo
