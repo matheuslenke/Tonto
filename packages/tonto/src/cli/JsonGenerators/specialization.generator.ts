@@ -88,20 +88,18 @@ export function generateSpecializations(
         const elementRelationCreated = relations.find(
           (item) => item.name.getText() === elementRelation.name
         );
+        const targetRelation = relations.find(
+          (item) =>
+            item.name.getText() ===
+            elementRelation.specializeRelation?.ref?.name
+        );
 
-        if (elementRelationCreated) {
-          const targetRelation = relations.find(
-            (item) =>
-              item.name.getText() ===
-              elementRelation.specializeRelation?.ref?.name
+        if (elementRelationCreated && targetRelation) {
+          relationGeneralizationGenerator(
+            packageItem,
+            elementRelationCreated,
+            targetRelation
           );
-          if (targetRelation) {
-            relationGeneralizationGenerator(
-              packageItem,
-              elementRelationCreated,
-              targetRelation
-            );
-          }
         } else {
           console.log(chalk.yellow(
             `Warning: Could not create specializations for Relation ${elementRelation.name ?? "(No name)"} \

@@ -6,7 +6,7 @@ import {
   GeneralizationSet,
 } from "../generated/ast";
 import { checkCircularSpecializationRecursiveWithGenset } from "../utils/CheckCircularSpecializationRecursive";
-import { TontoQualifiedNameProvider } from "../tonto-naming";
+import { TontoQualifiedNameProvider } from "../references/tonto-name-provider";
 
 export class ContextModuleValidator {
   checkContextModuleStartsWithCapital(

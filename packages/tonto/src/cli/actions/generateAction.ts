@@ -97,7 +97,7 @@ async function createModel(
 ): Promise<string | undefined> {
   const allFiles = await glob(dir + "/**/*.tonto");
 
-  const models: Model[] = await extractAllAstNodes(allFiles, services, builtInLibs, "all");
+  const models: Model[] = await extractAllAstNodes(allFiles, services, builtInLibs, "none");
 
   generateJSONFileModular(models, manifest, folderAbsolutePath);
 

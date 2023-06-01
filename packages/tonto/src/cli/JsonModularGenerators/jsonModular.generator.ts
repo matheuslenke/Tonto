@@ -3,7 +3,7 @@ import { CompositeGeneratorNode } from "langium";
 import { MultilingualText, Package, Project } from "ontouml-js";
 import path from "path";
 import { Model } from "../../language-server";
-import { contextModuleModularGenerator } from "./contextModuleModular.generator";
+import { contextModuleGenerateRelations, contextModuleModularGenerator } from "./contextModuleModular.generator";
 import { TontoManifest } from "../model/TontoManifest";
 import { GeneratedContextModuleData, contextModuleGenerateClasses } from "./contextModuleModular.generator";
 
@@ -68,44 +68,73 @@ export function parseProject(ctx: GeneratorContext): Project {
     name: new MultilingualText(ctx.manifest.projectName),
   });
 
-  const generatedModelDatas: GeneratedModelData[] = [];
+  const generatedModelDatas: Map<string, GeneratedModelData> = new Map();
 
   /**
    * First we generate all the classes for each context module
    */
-  ctx.models.forEach(model => {
+  for (const model of ctx.models) {
     const contextModule = model.module;
 
     const createdPackage = rootPackage.createPackage(contextModule.name);
 
     const generatedContextModuleData = contextModuleGenerateClasses(contextModule, createdPackage);
+
     const generatedModelData: GeneratedModelData = {
       package: createdPackage,
       model: model,
       generatedData: generatedContextModuleData
     };
-    generatedModelDatas.push(generatedModelData);
+    generatedModelDatas.set(model.module.name, generatedModelData);
+  }
+
+  /**
+   * Secondly, we generate all the relations for each context module
+   */
+  ctx.models.forEach(model => {
+    const importedNames = model.imports.flatMap(e => e.referencedModel.ref?.name).filter(e => e !== undefined);
+    const arrayOfGeneratedModelDatas = Array.from(generatedModelDatas.values());
+
+    const globalDataTypes = arrayOfGeneratedModelDatas
+      .filter(data => data.model.module.isGlobal)
+      .map(data => data.generatedData);
+    const importedDataTypes = arrayOfGeneratedModelDatas
+      .filter(data => importedNames.includes(data.model.module.name))
+      .map(data => data.generatedData);
+
+    const createdPackage = generatedModelDatas.get(model.module.name)?.package;
+    const generatedContextModelData = generatedModelDatas.get(model.module.name)?.generatedData;
+    if (createdPackage && generatedContextModelData) {
+      contextModuleGenerateRelations(
+        model.module,
+        createdPackage,
+        generatedContextModelData,
+        [...importedDataTypes, ...globalDataTypes]
+      );
+    }
   });
 
   /**
    * Then, we navigate again through the models and generate the missing elements
-   * that needed the references of the classes generated in the previous step
+   * that needed the references of the classes and relations generated in the previous step
    */
   ctx.models.forEach(model => {
     const importedNames = model.imports.flatMap(e => e.referencedModel.ref?.name).filter(e => e !== undefined);
-    const globalDataTypes = generatedModelDatas
+    const arrayOfGeneratedModelDatas = Array.from(generatedModelDatas.values());
+
+    const globalDataTypes = arrayOfGeneratedModelDatas
       .filter(data => data.model.module.isGlobal)
       .map(data => data.generatedData);
-    const importedDataTypes = generatedModelDatas
+    const importedDataTypes = arrayOfGeneratedModelDatas
       .filter(data => importedNames.includes(data.model.module.name))
       .map(data => data.generatedData);
-    const createdPackage = generatedModelDatas.find(data => data.model === model)?.package;
 
-    const modelData = generatedModelDatas.find(data => data.model.module.name === model.module.name)?.generatedData;
+    const createdPackage = generatedModelDatas.get(model.module.name)?.package;
+    const generatedContextModelData = generatedModelDatas.get(model.module.name)?.generatedData;
 
-    if (createdPackage && modelData) {
+    if (createdPackage && generatedContextModelData) {
       contextModuleModularGenerator(model.module,
-        modelData,
+        generatedContextModelData,
         createdPackage,
         [...importedDataTypes, ...globalDataTypes]);
     }

@@ -1,21 +1,5 @@
-/******************************************************************************
- * Copyright 2021 TypeFox GmbH
- * This program and the accompanying materials are made available under the
- * terms of the MIT License, which is available in the project root.
- ******************************************************************************/
-
 import { AstNode, DefaultNameProvider } from "langium";
-import {
-  ClassDeclaration,
-  ContextModule,
-  isAttribute,
-  isClassDeclaration,
-  isDataType,
-  isContextModule,
-  isElementRelation,
-  isEnumElement,
-  isGeneralizationSet,
-} from "./generated/ast";
+import { ContextModule, ClassDeclaration, isContextModule, isClassDeclaration, isElementRelation, isAttribute, isGeneralizationSet, isDataType, isEnumElement } from "../generated/ast";
 
 export function toQualifiedName(
   pack: ContextModule | ClassDeclaration,
@@ -44,21 +28,26 @@ export class TontoQualifiedNameProvider extends DefaultNameProvider {
       if (!node.name) {
         return undefined;
       }
-      const parent = node.$container ?? node.firstEnd?.ref;
+      const parent = node.$container;
       if (isClassDeclaration(parent)) {
         return `${parent.name}.${node.name}`;
+      } else if (node.firstEnd?.$refText) {
+        return `${node.firstEnd?.$refText}.${node.name}`;
       }
+      return node.name;
+    }
+    if (isContextModule(node)) {
       return node.name;
     }
     if (
       isClassDeclaration(node) ||
-      isContextModule(node) ||
       isAttribute(node) ||
       isGeneralizationSet(node) ||
       isDataType(node) ||
       isEnumElement(node)
     ) {
-      return node.name;
+      const parent = node.$container;
+      return `${parent.name}.${node.name}`;
     }
     return undefined;
   }

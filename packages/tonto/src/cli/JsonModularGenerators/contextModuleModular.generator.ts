@@ -52,7 +52,23 @@ export function contextModuleGenerateClasses(
       }
     }
   });
+
   return returnData;
+}
+
+export function contextModuleGenerateRelations(
+  contextModule: ContextModule,
+  packageItem: Package,
+  modelData: GeneratedContextModuleData,
+  importedData: GeneratedContextModuleData[]
+): void {
+  const classes: Class[] = [...modelData.classes];
+  classes.push(...importedData.flatMap((data) => data.classes));
+
+  const internalRelations = generateInternalRelations(contextModule, classes, packageItem);
+  const externalRelations = generateExternalRelations(contextModule, classes, packageItem);
+  console.log(externalRelations);
+  modelData.relations.push(...internalRelations, ...externalRelations);
 }
 
 export function contextModuleModularGenerator(
@@ -63,25 +79,17 @@ export function contextModuleModularGenerator(
 ): void {
   const classes: Class[] = [...modelData.classes];
   const dataTypes: Class[] = [...modelData.dataTypes];
-  const relations: Relation[] = [];
+  const relations: Relation[] = [...modelData.relations];
 
-  // Adding classes from imports
-  importedData.forEach((data) => {
-    classes.push(...data.classes);
-  });
-
-  // Adding dataTypes from imports
+  // Adding Elements from imports
+  classes.push(...importedData.flatMap((data) => data.classes));
   dataTypes.push(...importedData.flatMap((data) => data.dataTypes));
+  relations.push(...importedData.flatMap(data => data.relations));
 
   generateGenSets(contextModule, classes, packageItem);
   generateComplexDataTypesAttributes(contextModule, dataTypes);
-
-  // Generate all relations first, without looking for specializations
-
-  generateInternalRelations(contextModule, classes, relations, packageItem);
-  generateExternalRelations(contextModule, classes, relations, packageItem);
-  generateClassDeclarationAttributes(contextModule, classes, dataTypes);
   generateSpecializations(contextModule, classes, relations, packageItem);
+  generateClassDeclarationAttributes(contextModule, classes, dataTypes);
   generateDataTypeSpecializations(contextModule, classes, dataTypes, packageItem);
   generateInstantiations(contextModule, classes, relations, packageItem);
 }
@@ -95,29 +103,6 @@ function generateGenSets(
     if (declaration.$type === "GeneralizationSet") {
       const gensetData = declaration as GeneralizationSet;
       generalizationSetGenerator(gensetData, classes, packageItem);
-    }
-  });
-}
-
-function generateExternalRelations(
-  contextModule: ContextModule,
-  classes: Class[],
-  relations: Relation[],
-  packageItem: Package,
-): void {
-  contextModule.declarations.forEach((declaration) => {
-    switch (declaration.$type) {
-      case "ElementRelation": {
-        const elementRelation = declaration as ElementRelation;
-        const createdRelation = relationGenerator(
-          elementRelation,
-          packageItem,
-          classes
-        );
-        if (createdRelation) {
-          relations.push(createdRelation);
-        }
-      }
     }
   });
 }
@@ -144,12 +129,36 @@ function generateClassDeclarationAttributes(
   });
 }
 
+function generateExternalRelations(
+  contextModule: ContextModule,
+  classes: Class[],
+  packageItem: Package,
+): Relation[] {
+  const relations: Relation[] = [];
+  contextModule.declarations.forEach((declaration) => {
+    switch (declaration.$type) {
+      case "ElementRelation": {
+        const elementRelation = declaration as ElementRelation;
+        const createdRelation = relationGenerator(
+          elementRelation,
+          packageItem,
+          classes
+        );
+        if (createdRelation) {
+          relations.push(createdRelation);
+        }
+      }
+    }
+  });
+  return relations;
+}
+
 function generateInternalRelations(
   contextModule: ContextModule,
   classes: Class[],
-  relations: Relation[],
   packageItem: Package
-): void {
+): Relation[] {
+  const relations: Relation[] = [];
   contextModule.declarations.forEach((declaration) => {
     if (declaration.$type === "ClassDeclaration") {
       const classDeclaration = declaration as ClassDeclaration;
@@ -167,6 +176,7 @@ function generateInternalRelations(
       });
     }
   });
+  return relations;
 }
 
 

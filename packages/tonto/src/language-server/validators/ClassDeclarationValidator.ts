@@ -21,8 +21,8 @@ import { checkSortalSpecializesUniqueUltimateSortalRecursive } from "../utils/Ch
 import { checkUltimateSortalSpecializesUltimateSortalRecursive } from "../utils/CheckUltimateSortalSpecializesUltimateSortalRecursive";
 import { formPhrase } from "../utils/formPhrase";
 import { ErrorMessages } from "./../models/ErrorMessages";
-import { toQualifiedName } from "../tonto-naming";
 import { checkNatureCompatibleRestrictedTo } from "../utils/checkNatureCompatibleRestrictedTo";
+import { toQualifiedName } from "../references/tonto-name-provider";
 
 export class ClassDeclarationValidator {
   /**

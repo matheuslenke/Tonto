@@ -16,12 +16,12 @@ import {
 import { TontoActionProvider } from "./lsp/tonto-code-actions";
 import { TontoSemanticTokenProvider } from "./lsp/tonto-semantic-token-provider";
 import { TontoFormatter } from "./tonto-formatter";
-import { TontoQualifiedNameProvider } from "./tonto-naming";
-import { TontoScopeComputation } from "./tonto-scope";
 import { TontoValidationRegistry } from "./tonto-validator";
 import { TontoValidator } from "./validators/TontoValidator";
 import { TontoCompletionProvider } from "./lsp/tonto-completion-provider";
-import { TontoScopeProvider } from "./tonto-scope-provider";
+import { TontoQualifiedNameProvider } from "./references/tonto-name-provider";
+import { TontoScopeComputation } from "./references/tonto-scope-computation";
+import { TontoScopeProvider } from "./references/tonto-scope-provider";
 
 /**
  * Declaration of custom services - add your own service classes here.

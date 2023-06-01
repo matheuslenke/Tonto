@@ -1,10 +1,12 @@
 package ExportType
 
-// type Testando of 
+type ExportingType
 
 class AbstractClass of abstract-individuals
 
 class CollectivesClass of collectives
+
+category Test of collectives specializes CollectivesClass
 
 relation AbstractClass -- nomeDaRelation -- CollectivesClass
 
@@ -34,4 +36,4 @@ datatype TestingDatatype specializes TestandoEnum {
   segundaVariavel: ComplexDataType2
 }
 
-powertype Testing
+powertype TestingPowertype

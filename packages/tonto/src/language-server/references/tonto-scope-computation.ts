@@ -1,4 +1,3 @@
-import { TontoQualifiedNameProvider } from "./tonto-naming";
 import {
   AstNode,
   AstNodeDescription,
@@ -10,16 +9,10 @@ import {
   streamAllContents,
 } from "langium";
 import { CancellationToken } from "vscode-jsonrpc";
-import {
-  ContextModule,
-  isClassDeclaration,
-  isDataType,
-  isContextModule,
-  isElementRelation,
-  isGeneralizationSet,
-  Model,
-} from "./generated/ast";
-import { TontoServices } from "./tonto-module";
+import { isElementRelation, isClassDeclaration, isDataType, isContextModule, isGeneralizationSet, Model, ContextModule } from "../generated/ast";
+import { TontoServices } from "../tonto-module";
+import { TontoQualifiedNameProvider } from "./tonto-name-provider";
+
 
 export class TontoScopeComputation extends DefaultScopeComputation {
   qualifiedNameProvider: TontoQualifiedNameProvider;
@@ -151,6 +144,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
     for (const element of container.declarations) {
       await interruptAndCheck(cancelToken);
       if (isElementRelation(element)) {
+        const qualifiedName = this.qualifiedNameProvider.getQualifiedName(element);
         const name = this.qualifiedNameProvider.getQualifiedName(element);
         if (name) {
           const description = this.descriptions.createDescription(
@@ -158,7 +152,13 @@ export class TontoScopeComputation extends DefaultScopeComputation {
             name,
             document
           );
+          const descriptionQualified = this.descriptions.createDescription(
+            element,
+            qualifiedName,
+            document
+          );
           localDescriptions.push(description);
+          localDescriptions.push(descriptionQualified);
         }
       }
       if (
@@ -166,12 +166,20 @@ export class TontoScopeComputation extends DefaultScopeComputation {
         isDataType(element)
       ) {
         if (element.name !== undefined) {
+          const qualifiedName = this.qualifiedNameProvider.getQualifiedName(element);
+          const name = this.qualifiedNameProvider.getName(element);
           const description = this.descriptions.createDescription(
             element,
-            this.qualifiedNameProvider.getName(element),
+            name,
+            document
+          );
+          const descriptionQualified = this.descriptions.createDescription(
+            element,
+            qualifiedName,
             document
           );
           localDescriptions.push(description);
+          localDescriptions.push(descriptionQualified);
           if (isClassDeclaration(element) && element.references.length > 0) {
             for (const internalElement of element.references) {
               if (isElementRelation(internalElement)) {
