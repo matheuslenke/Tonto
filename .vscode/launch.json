@@ -15,7 +15,7 @@
             "type": "node",
             "args": [
                 "generate",
-                "${workspaceFolder}/examples/fixingErrors"
+                "${workspaceFolder}/examples/ontouml-models/Aguiar2019ooco"
             ]
         },
         {
@@ -45,12 +45,25 @@
             ]
         },
         {
+            "name": "CLI: Transform to GUFO",
+            "program": "${workspaceFolder}/packages/tonto/bin/cli",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node",
+            "args": [
+                "transform",
+                "${workspaceFolder}/examples/fixingErrors"
+            ]
+        },
+        {
             "name": "Run Extension",
             "type": "extensionHost",
             "sourceMaps": true,
             "request": "launch",
             "args": [
-                "${workspaceFolder}/examples/fixingErrors",
+                "${workspaceFolder}/examples/ontouml-models/Aguiar2019ooco",
                 "--extensionDevelopmentPath=${workspaceFolder}/packages/tonto-vscode"
             ],
             // "env": {

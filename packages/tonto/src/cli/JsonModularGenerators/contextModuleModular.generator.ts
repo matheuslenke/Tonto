@@ -67,7 +67,6 @@ export function contextModuleGenerateRelations(
 
   const internalRelations = generateInternalRelations(contextModule, classes, packageItem);
   const externalRelations = generateExternalRelations(contextModule, classes, packageItem);
-  console.log(externalRelations);
   modelData.relations.push(...internalRelations, ...externalRelations);
 }
 

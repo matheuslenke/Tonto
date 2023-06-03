@@ -5,9 +5,12 @@
   "version": "1.0.0",
   "license": "MIT",
   "dependencies": {
-    "SWO": "1.0.0",
-    "SPO": {
+    "SWO": {
       "url": "https://github.com/SWO",
+      "version": "1.0.0"
+    },
+    "SPO": {
+      "url": "https://github.com/SPO",
       "version": "1.0.0"
     }
   },

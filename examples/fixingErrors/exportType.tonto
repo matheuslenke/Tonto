@@ -2,38 +2,38 @@ package ExportType
 
 type ExportingType
 
-class AbstractClass of abstract-individuals
+// class AbstractClass of abstract-individuals
 
-class CollectivesClass of collectives
+// class CollectivesClass of collectives
 
-category Test of collectives specializes CollectivesClass
+// category Test of collectives specializes CollectivesClass
 
-relation AbstractClass -- nomeDaRelation -- CollectivesClass
+// relation AbstractClass -- nomeDaRelation -- CollectivesClass
 
-class SemEstereotipo {
-// teste: number [1..5]
-// testeSemEstereotipo: ComplexDataType [5]
+// class SemEstereotipo {
+// // teste: number [1..5]
+// // testeSemEstereotipo: ComplexDataType [5]
 
-  [1..*] <o>-- relationName -- [*] AbstractClass
-}
+//   [1..*] <o>-- relationName -- [*] AbstractClass
+// }
 
-category Teste of collectives specializes SemEstereotipo
+// category Teste of collectives specializes SemEstereotipo
 
-enum TestandoEnum specializes AbstractClass {
-  Year,
-  Date,
-  Month,
-  Hour
-}
+// enum TestandoEnum specializes AbstractClass {
+//   Year,
+//   Date,
+//   Month,
+//   Hour
+// }
 
-datatype ComplexDataType
-datatype ComplexDataType2
+// datatype ComplexDataType
+// datatype ComplexDataType2
 
-// Não está criado specialization de datatypes
-datatype TestingDatatype specializes TestandoEnum {
-  teste: TestandoEnum
-  variavel: ComplexDataType
-  segundaVariavel: ComplexDataType2
-}
+// // Não está criado specialization de datatypes
+// datatype TestingDatatype specializes TestandoEnum {
+//   teste: TestandoEnum
+//   variavel: ComplexDataType
+//   segundaVariavel: ComplexDataType2
+// }
 
-powertype TestingPowertype
+// powertype TestingPowertype

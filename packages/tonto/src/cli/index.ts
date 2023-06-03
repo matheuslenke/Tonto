@@ -4,6 +4,7 @@ import { generateAction } from "./actions/generateAction";
 import { importAction } from "./actions/importAction";
 import { importModularAction } from "./actions/importModularAction";
 import { validateAction } from "./actions";
+import { transformToGufoAction } from "./actions/gufoGenerateAction";
 
 export default function (): void {
   const program = new Command();
@@ -49,6 +50,13 @@ export default function (): void {
     .argument("<dir>", "Directory of the actual project")
     .description("Validate your Tonto project with the ontouml-js API")
     .action(validateAction);
+
+  program
+    .command("transform")
+    .argument("<dir>", "Directory of the actual project")
+    .description("Transform you Tonto project to gufo with the ontouml-js API")
+    .action(transformToGufoAction);
+
   program.parseAsync(process.argv);
 }
 

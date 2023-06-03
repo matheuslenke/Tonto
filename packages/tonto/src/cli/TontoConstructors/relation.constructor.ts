@@ -17,7 +17,6 @@ export function constructInternalRelations(
 ) {
   relations.filter(item => item.isBinary() === true)
     .forEach((relation) => {
-      // console.log(relation.properties.length);
       const sourceProperty = relation.getSourceEnd();
       const targetClass = relation.getTarget();
       const targetProperty = relation.getTargetEnd();

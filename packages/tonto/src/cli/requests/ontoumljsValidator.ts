@@ -1,7 +1,5 @@
-import { CompositeGeneratorNode } from "langium";
 import fetch from "node-fetch-native";
-import { MultilingualText, Project } from "ontouml-js";
-import { Model } from "../language-server/generated/ast";
+import { Project } from "ontouml-js";
 
 export interface ResultResponse {
   code?: string;
@@ -60,27 +58,4 @@ export async function validateTontoFile(
     status: 500,
     message: "error while validating model"
   } as ErrorResultResponse;
-}
-
-interface GeneratorContext {
-  model: Model;
-  name: string;
-  fileNode: CompositeGeneratorNode;
-}
-
-export function parseProject(ctx: GeneratorContext): Project {
-  const project = new Project({
-    name: new MultilingualText(`${ctx.name}`),
-  }); // creates an OntoUML projects
-  // TODO: Refactor parsing project
-  // const rootModel = project.createModel({
-  //   name: new MultilingualText("root"),
-  // });
-
-  // ctx.model.modules.forEach((contextModule, _) => {
-  //   const createdPackage = rootModel.createPackage(contextModule.name);
-  //   // Generate a contextModule
-  //   contextModuleGenerator(contextModule, createdPackage);
-  // });
-  return project;
 }

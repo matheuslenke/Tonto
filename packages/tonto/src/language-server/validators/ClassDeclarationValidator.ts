@@ -4,8 +4,6 @@ import { ClassDeclaration, OntologicalNature as ASTNature } from "../generated/a
 import { natureUtils } from "../models/Natures";
 import {
   getOntologicalCategory,
-  isSortalOntoCategory,
-  isUltimateSortalOntoCategory,
   OntologicalCategoryEnum,
 } from "../models/OntologicalCategory";
 import {
@@ -17,10 +15,8 @@ import {
   isSemiRigidStereotype,
 } from "../models/StereotypeUtils";
 import { checkCircularSpecializationRecursive } from "../utils/CheckCircularSpecializationRecursive";
-import { checkSortalSpecializesUniqueUltimateSortalRecursive } from "../utils/CheckSortalSpecializesUniqueUltimateSortalRecursive";
 import { checkUltimateSortalSpecializesUltimateSortalRecursive } from "../utils/CheckUltimateSortalSpecializesUltimateSortalRecursive";
 import { formPhrase } from "../utils/formPhrase";
-import { ErrorMessages } from "./../models/ErrorMessages";
 import { checkNatureCompatibleRestrictedTo } from "../utils/checkNatureCompatibleRestrictedTo";
 import { toQualifiedName } from "../references/tonto-name-provider";
 
@@ -95,65 +91,63 @@ export class ClassDeclarationValidator {
    * it needs to specialize an Ultimate Sortal
    */
   checkClassDeclarationShouldSpecializeUltimateSortal(
-    classDeclaration: ClassDeclaration,
-    accept: ValidationAcceptor
+    _classDeclaration: ClassDeclaration,
+    _accept: ValidationAcceptor
   ) {
-    if (!classDeclaration || !classDeclaration.classElementType) {
-      return;
-    }
-    const ontologicalCategory =
-      classDeclaration.classElementType?.ontologicalCategory;
+    // if (!classDeclaration || !classDeclaration.classElementType) {
+    //   return;
+    // }
+    // const ontologicalCategory =
+    //   classDeclaration.classElementType?.ontologicalCategory;
 
-    // Check if it has a defined stereotype
-    if (
-      !ontologicalCategory ||
-      ontologicalCategory === OntologicalCategoryEnum.CLASS
-    ) {
-      return;
-    }
+    // // Check if it has a defined stereotype
+    // if (
+    //   !ontologicalCategory ||
+    //   ontologicalCategory === OntologicalCategoryEnum.CLASS
+    // ) {
+    //   return;
+    // }
 
-    // Check if it is a Sortal but not an Ultimate Sortal
-    if (
-      isSortalOntoCategory(ontologicalCategory) &&
-      !isUltimateSortalOntoCategory(
-        classDeclaration.classElementType?.ontologicalCategory
-      )
-    ) {
-      const totalUltimateSortalSpecializations =
-        checkSortalSpecializesUniqueUltimateSortalRecursive(
-          classDeclaration,
-          0
-        );
-      if (totalUltimateSortalSpecializations === 0) {
-        const natures = classDeclaration.ontologicalNatures?.natures;
-        if (natures) {
-          const isRestrictedToType = natures.find(
-            (nature) => nature === "types"
-          );
-          if (isRestrictedToType === undefined) {
-            accept(
-              "error",
-              ErrorMessages.sortalSpecializesUniqueUltimateSortal,
-              {
-                node: classDeclaration,
-                property: "name",
-              }
-            );
-          }
-        } else {
-          accept("error", ErrorMessages.sortalSpecializeNoUltimateSortal, {
-            node: classDeclaration,
-            property: "name",
-          });
-        }
-      }
-      if (totalUltimateSortalSpecializations > 1) {
-        accept("error", ErrorMessages.sortalSpecializesUniqueUltimateSortal, {
-          node: classDeclaration,
-          property: "name",
-        });
-      }
-    }
+    // // Check if it is a Sortal but not an Ultimate Sortal
+    // if (
+    //   isSortalOntoCategory(ontologicalCategory) &&
+    //   !isUltimateSortalOntoCategory(ontologicalCategory)
+    // ) {
+    //   const totalUltimateSortalSpecializations =
+    //     checkSortalSpecializesUniqueUltimateSortalRecursive(
+    //       classDeclaration,
+    //       0
+    //     );
+    //   if (totalUltimateSortalSpecializations === 0) {
+    //     const natures = classDeclaration.ontologicalNatures?.natures;
+    //     if (natures) {
+    //       const isRestrictedToType = natures.find(
+    //         (nature) => nature === "types"
+    //       );
+    //       if (isRestrictedToType === undefined) {
+    //         accept(
+    //           "error",
+    //           ErrorMessages.sortalSpecializesUniqueUltimateSortal,
+    //           {
+    //             node: classDeclaration,
+    //             property: "name",
+    //           }
+    //         );
+    //       }
+    //     } else {
+    //       accept("error", ErrorMessages.sortalSpecializeNoUltimateSortal, {
+    //         node: classDeclaration,
+    //         property: "name",
+    //       });
+    //     }
+    //   }
+    //   if (totalUltimateSortalSpecializations > 1) {
+    //     accept("error", ErrorMessages.sortalSpecializesUniqueUltimateSortal, {
+    //       node: classDeclaration,
+    //       property: "name",
+    //     });
+    //   }
+    // }
   }
 
   /**

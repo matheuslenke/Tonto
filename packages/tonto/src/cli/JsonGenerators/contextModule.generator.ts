@@ -18,7 +18,6 @@ export function contextModuleGenerator(
   // Creating base datatypes
 
   contextModule.declarations.forEach((declaration) => {
-    console.log(declaration.$type);
     switch (declaration.$type) {
       case "ClassDeclaration": {
         const classElement = declaration as ClassDeclaration;

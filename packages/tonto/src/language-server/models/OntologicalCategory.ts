@@ -97,15 +97,16 @@ function isUltimateSortalOntoCategory(stereotype: string): boolean {
   const ontologicalCategory = allOntologicalCategories.find(
     (category) => category === stereotype
   );
-  if (ontologicalCategory) {
-    const categoryExists = UltimateSortalOntoCategories.find(
-      (category) => category === ontologicalCategory
-    );
-    if (categoryExists && categoryExists?.length > 0) {
-      return true;
-    }
+  if (!ontologicalCategory) {
+    return false
   }
-  return false;
+  const categoryExists = UltimateSortalOntoCategories.find(
+    (category) => category === ontologicalCategory
+  );
+  if (categoryExists && categoryExists?.length > 0) {
+    return true;
+  }
+  return false
 }
 
 function getOntologicalCategory(

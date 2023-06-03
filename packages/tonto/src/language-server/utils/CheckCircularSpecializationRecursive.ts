@@ -42,7 +42,6 @@ const checkCircularSpecializationRecursiveWithGenset = (
    * If the element is a ClassDeclaration, then we need to check its specialization items. And we need
    * also to check all generalization sets where this class is the specific
    */
-
   if (actualElement.$type === "ClassDeclaration") {
     const newVerificationList = [...verificationList, actualElement];
     actualElement.specializationEndurants.forEach((specializationItem) => {

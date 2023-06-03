@@ -13,11 +13,11 @@ describe("checkGeneralizationSetConsistency", async () => {
     kind Person
     role Doctor specializes Person
 
-    relation  Doctor -- treats -- Person
+    relation Doctor -- treats -- Person
 
     genset GeneralizationSet {
       general Person
-      specifics treats
+      specifics Doctor.treats
     }
     `;
     const validationResult = await validate(stub);

@@ -7,6 +7,9 @@ import {
 } from "../generated/ast";
 import { checkCircularSpecializationRecursiveWithGenset } from "../utils/CheckCircularSpecializationRecursive";
 import { TontoQualifiedNameProvider } from "../references/tonto-name-provider";
+import { isSortalOntoCategory, isUltimateSortalOntoCategory } from "../models/OntologicalCategory";
+import { checkSortalSpecializesUniqueUltimateSortalRecursive } from "../utils/CheckSortalSpecializesUniqueUltimateSortalRecursive";
+import { ErrorMessages } from "../models/ErrorMessages";
 
 export class ContextModuleValidator {
   checkContextModuleStartsWithCapital(
@@ -130,5 +133,76 @@ export class ContextModuleValidator {
         accept
       );
     });
+  }
+
+  checkClassDeclarationShouldSpecializeUltimateSortal(
+    contextModule: ContextModule,
+    accept: ValidationAcceptor
+  ): void {
+    const genSets = contextModule.declarations.filter((declaration) => {
+      return declaration.$type === "GeneralizationSet";
+    }) as GeneralizationSet[];
+
+    const declaredClasses: ClassDeclaration[] =
+      contextModule.declarations.filter((declaration) => {
+        return declaration.$type === "ClassDeclaration";
+      }) as ClassDeclaration[];
+
+    declaredClasses.forEach((declaredClass) => {
+      const ontologicalCategory = declaredClass.classElementType?.ontologicalCategory;
+      if (!ontologicalCategory) {
+        return;
+      }
+      // Check if it is a Sortal but not an Ultimate Sortal
+      if (
+        isSortalOntoCategory(ontologicalCategory) &&
+        !isUltimateSortalOntoCategory(ontologicalCategory)
+      ) {
+        const totalUltimateSortalSpecializations =
+          checkSortalSpecializesUniqueUltimateSortalRecursive(
+            declaredClass,
+            genSets,
+            accept,
+            0
+          );
+        if (totalUltimateSortalSpecializations === 0) {
+          const natures = declaredClass.ontologicalNatures?.natures;
+          if (natures) {
+            const isRestrictedToType = natures.find(
+              (nature) => nature === "types"
+            );
+            if (isRestrictedToType === undefined) {
+              accept(
+                "error",
+                ErrorMessages.sortalSpecializesUniqueUltimateSortal,
+                {
+                  node: declaredClass,
+                  property: "name",
+                }
+              );
+            }
+          } else {
+            accept("error", ErrorMessages.sortalSpecializeNoUltimateSortal, {
+              node: declaredClass,
+              property: "name",
+            });
+          }
+        }
+        if (totalUltimateSortalSpecializations > 1) {
+          accept("error", ErrorMessages.sortalSpecializesUniqueUltimateSortal, {
+            node: declaredClass,
+            property: "name",
+          });
+        }
+      }
+    });
+    // genSets.forEach((_genSet) => {
+    //   // checkCircularSpecializationRecursiveWithGenset(
+    //   //   genSet,
+    //   //   [],
+    //   //   genSets,
+    //   //   accept
+    //   // );
+    // });
   }
 }

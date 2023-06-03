@@ -1,6 +1,7 @@
 package Class
 
 kind Class
+kind NonClass
 
 subkind GenericClass specializes Class
 
@@ -21,6 +22,7 @@ disjoint complete genset ExtendClass {
 }
 
 subkind RootClass specializes ExtendableClass
+
 
 role SuperClass specializes ExtendableClass
 

@@ -32,6 +32,7 @@ export class TontoValidationRegistry extends ValidationRegistry {
         validator.ContextModuleValidator.checkDuplicatedClassName,
         validator.ContextModuleValidator.checkDuplicatedRelationName,
         validator.ContextModuleValidator.checkCircularSpecialization,
+        validator.ContextModuleValidator.checkClassDeclarationShouldSpecializeUltimateSortal,
       ],
       GeneralizationSet: [
         validator.GeneralizationValidator.checkCircularGeneralization,

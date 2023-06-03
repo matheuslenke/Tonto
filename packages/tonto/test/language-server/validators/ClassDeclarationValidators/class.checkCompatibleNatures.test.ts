@@ -10,7 +10,8 @@ describe("checkClassWithoutStereotype", async () => {
   it("should have Incompatible Natures error", async () => {
     const stub = `
     package CheckCompatibleNature
-    category Category of abstracts
+
+    category Category of abstract-individuals
     datatype Datatype of events
     event Event of collectives
     situation Situation of objects
@@ -18,7 +19,7 @@ describe("checkClassWithoutStereotype", async () => {
     roleMixin RoleMixin of situations
     phaseMixin PhaseMixin of situations
     historicalRoleMixin HistoricalRoleMixin of situations
-    kind Number of abstracts
+    kind Number of abstract-individuals
     collective Collective of events
     quantity Quantity of functional-complexes
     relator Relator of intrinsic-modes
@@ -45,7 +46,8 @@ describe("checkClassWithoutStereotype", async () => {
   it("should have no incompatible Natures error", async () => {
     const stub = `
     package CheckCompatibleNature
-    datatype CDatatype of abstracts
+
+    datatype CDatatype of abstract-individuals
     event CEvent of events
     situation CSituation of situations
     category CCategory of functional-complexes, collectives, qualities, quantities, intrinsic-modes, extrinsic-modes, relators, types

@@ -16,7 +16,7 @@ describe("checkGeneralizationSortality", async () => {
 
     genset GeneralizationSet {
         general Person
-        specifics Test, Agent
+        specifics Agent
     }
     `;
     const validationResult = await validate(stub);
