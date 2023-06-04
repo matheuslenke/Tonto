@@ -75,6 +75,21 @@ const checkSortalSpecializesUniqueUltimateSortalRecursive = (
       totalUltimateSortalSpecialized += 1;
     }
 
+    generalItem.specializationEndurants.forEach((specializationItem) => {
+      const specItem = specializationItem.ref;
+      if (specItem) {
+        if (isUltimateSortalOntoCategory(specItem.classElementType?.ontologicalCategory)) {
+          totalUltimateSortalSpecialized += 1;
+        }
+        totalUltimateSortalSpecialized = checkSortalSpecializesUniqueUltimateSortalRecursive(
+          specItem,
+          genSets,
+          accept,
+          totalUltimateSortalSpecialized
+        );
+      }
+     })
+
     const genSetsWhereElementIsSpecific = getGensetsWhereSpecific(
       generalItem.name ?? "",
       genSets
