@@ -1,110 +1,120 @@
-import { validateCommand } from "tonto-cli/src/cli/actions";
-import { ErrorResultResponse, ResultResponse } from "tonto-cli/src/cli/ontoumljsValidator";
-import * as vscode from "vscode";
-import { CommandIds } from "./commandIds";
-import chalk from "chalk";
+import { validateCommand } from 'tonto-cli/src/cli/actions'
+import * as vscode from 'vscode'
+import { CommandIds } from './commandIds'
+import chalk from 'chalk'
+import { ResultResponse, ErrorResultResponse } from 'tonto-cli/src/cli/requests/ontoumljsValidator'
 
-function createValidationSatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
+function createValidationSatusBarItem(
+  context: vscode.ExtensionContext,
+  statusBarItem: vscode.StatusBarItem,
+  outputChannel: vscode.OutputChannel
+) {
   context.subscriptions.push(
-    vscode.commands.registerCommand(CommandIds.validateTontoFromButton, createStatusBarItemValidateTontoCommand)
-  );
+    vscode.commands.registerCommand(CommandIds.validateTontoFromButton, () => {
+      createStatusBarItemValidateTontoCommand(outputChannel)
+    })
+  )
   context.subscriptions.push(
-    vscode.commands.registerCommand(CommandIds.validateTonto, createValidateTontoCommand)
-  );
+    vscode.commands.registerCommand(CommandIds.validateTonto, () => {
+      createValidateTontoCommand(outputChannel)
+    })
+  )
 
-  createStatusBarItem(context, statusBarItem);
+  createStatusBarItem(context, statusBarItem)
 }
 
 function createStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
   // create a new status bar item that we can now manage
-  statusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Right,
-    48
-  );
-  statusBarItem.command = CommandIds.validateTontoFromButton;
-  context.subscriptions.push(statusBarItem);
+  statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 48)
+  statusBarItem.command = CommandIds.validateTontoFromButton
+  context.subscriptions.push(statusBarItem)
 
   // register some listener that make sure the status bar
   // item always up-to-date
   context.subscriptions.push(
-    vscode.window.onDidChangeActiveTextEditor(() => { updateValidationStatusBarItem(statusBarItem); })
-  );
+    vscode.window.onDidChangeActiveTextEditor(() => {
+      updateValidationStatusBarItem(statusBarItem)
+    })
+  )
   context.subscriptions.push(
-    vscode.window.onDidChangeTextEditorSelection(() => { updateValidationStatusBarItem(statusBarItem); })
-  );
+    vscode.window.onDidChangeTextEditorSelection(() => {
+      updateValidationStatusBarItem(statusBarItem)
+    })
+  )
 
   // update status bar item once at start
-  updateValidationStatusBarItem(statusBarItem);
+  updateValidationStatusBarItem(statusBarItem)
 }
 
 function updateValidationStatusBarItem(statusBarItem: vscode.StatusBarItem): void {
-  statusBarItem.text = "$(check-all) Validate Model";
-  statusBarItem.show();
+  statusBarItem.text = '$(check-all) Validate Model'
+  statusBarItem.show()
 }
 
-async function createStatusBarItemValidateTontoCommand(uri: vscode.Uri) {
-  const editor = vscode.window.activeTextEditor;
-  if (!uri) {
-    const documentUri = editor?.document.uri;
-    if (documentUri) {
-      uri = documentUri;
-    }
+async function createStatusBarItemValidateTontoCommand(outputChannel: vscode.OutputChannel) {
+  const editor = vscode.window.activeTextEditor
+  let uri: vscode.Uri | undefined
+  const documentUri = editor?.document.uri
+  if (documentUri) {
+    uri = documentUri
   }
 
   if (uri) {
-    const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
+    const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri)
     if (workspaceFolder) {
-      await validateModel(workspaceFolder.uri);
+      await validateModel(workspaceFolder.uri, outputChannel)
     } else {
-      vscode.window.showErrorMessage("Failed! File needs to be in a workspace");
+      vscode.window.showErrorMessage('Failed! File needs to be in a workspace')
     }
   }
 }
 
-async function createValidateTontoCommand() {
+async function createValidateTontoCommand(outputChannel: vscode.OutputChannel) {
   const directoryUri = await vscode.window.showOpenDialog({
     canSelectFiles: false,
     canSelectFolders: true,
     canSelectMany: false,
-    openLabel: "Select Tonto Project directory"
-  });
+    openLabel: 'Select Tonto Project directory',
+  })
 
   if (directoryUri && directoryUri[0]) {
-    const selectedFolder = directoryUri[0];
-    await validateModel(selectedFolder);
+    const selectedFolder = directoryUri[0]
+    await validateModel(selectedFolder, outputChannel)
   } else {
-    vscode.window.showErrorMessage("Failed! Not a valid directory selected");
+    vscode.window.showErrorMessage('Failed! Not a valid directory selected')
   }
 }
 
-async function validateModel(directoryUri: vscode.Uri) {
-  await vscode.window.withProgress({
-    location: vscode.ProgressLocation.Notification,
-    title: "Validating model...",
-    cancellable: false
-  }, async () => {
-    const response = await validateCommand(directoryUri.fsPath);
+async function validateModel(directoryUri: vscode.Uri, outputChannel: vscode.OutputChannel) {
+  await vscode.window.withProgress(
+    {
+      location: vscode.ProgressLocation.Notification,
+      title: 'Validating model...',
+      cancellable: false,
+    },
+    async () => {
+      const response = await validateCommand(directoryUri.fsPath)
 
-    const outputChannel: vscode.OutputChannel = vscode.window.createOutputChannel("Tonto: Validation output");
-
-    if (Array.isArray(response)) {
-      const resultResponses = response as ResultResponse[];
-      resultResponses.forEach((resultResponse) => {
-        outputChannel.appendLine(chalk.bold.redBright(`[${resultResponse.severity}] ${resultResponse.title}:`));
-        outputChannel.appendLine(chalk.red(resultResponse.description));
-      });
-      outputChannel.show();
-    } else {
-      const error = response as ErrorResultResponse;
-      vscode.window.showErrorMessage(error.message ?? "Error validating model");
+      if (Array.isArray(response)) {
+        outputChannel.clear()
+        const resultResponses = response as ResultResponse[]
+        resultResponses.forEach((resultResponse) => {
+          outputChannel.appendLine(chalk.bold.redBright(`[${resultResponse.severity}] ${resultResponse.title}:`))
+          outputChannel.appendLine(chalk.red(resultResponse.description))
+        })
+        outputChannel.show()
+      } else {
+        const error = response as ErrorResultResponse
+        vscode.window.showErrorMessage(error.message ?? 'Error validating model')
+      }
     }
-  });
+  )
 }
 
 function isErrorResultResponse(
   response: void | ErrorResultResponse | ResultResponse[]
 ): response is ErrorResultResponse {
-  return (response as ErrorResultResponse).info !== undefined;
+  return (response as ErrorResultResponse).info !== undefined
 }
 
-export { createValidationSatusBarItem, isErrorResultResponse };
+export { createValidationSatusBarItem, isErrorResultResponse }

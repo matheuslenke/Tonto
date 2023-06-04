@@ -6,34 +6,34 @@ import Class
 
 package ClassMember
 
-// subkind AbstractMethod specializes Method
-// subkind ConcreteMethod specializes Method
-// subkind GenericMethod specializes Method
-// subkind InstanceMethod specializes Method
-// subkind ConstructorMethod specializes Method
-// subkind DestructorMethod specializes Method
-// subkind NonOverridableMethod specializes Method
-// subkind OverridableMethod specializes Method {
-//   name: string
-// @componentOf
-// [0..*] <>-- [1] ExtendableClass
-// }
-// subkind AccessorMethod specializes Method
-// subkind ClassMethod specializes Method
+subkind AbstractMethod specializes Method
+subkind ConcreteMethod specializes Method
+subkind GenericMethod specializes Method
+subkind InstanceMethod specializes Method
+subkind ConstructorMethod specializes Method
+subkind DestructorMethod specializes Method
+subkind NonOverridableMethod specializes Method
+subkind OverridableMethod specializes Method {
+  name: string
+@componentOf
+[0..*] <>-- [1] ExtendableClass
+}
+subkind AccessorMethod specializes Method
+subkind ClassMethod specializes Method
 
-// kind Block
-// subkind ClassVariable
-// subkind InstanceVariable
+kind Block
+subkind ClassVariable
+subkind InstanceVariable
 
-// disjoint complete genset ClassAndInstance {
-//   general Attribute
-//   specifics InstanceVariable, ClassVariable
-// }
+disjoint complete genset ClassAndInstance {
+  general Attribute
+  specifics InstanceVariable, ClassVariable
+}
 
-// subkind LocalVariable specializes MethodVariable {
-//   @componentOf
-//   [0..*] -- [1] Block
-// }
-// subkind MethodVariable specializes Variable
-// kind ParameterVariable
-// kind TypeParameter
+subkind LocalVariable specializes MethodVariable {
+  @componentOf
+  [0..*] -- [1] Block
+}
+subkind MethodVariable specializes Variable
+kind ParameterVariable
+kind TypeParameter

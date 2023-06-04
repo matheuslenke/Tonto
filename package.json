@@ -55,11 +55,13 @@
         "eslint": "^8.32.0",
         "eslint-config-prettier": "^8.8.0",
         "langium-cli": "^1.1.0",
-        "prettier": "^2.8.2",
+        "prettier": "2.8.8",
+        "prettier-eslint": "^15.0.1",
+        "prettier-plugin-eslint": "^1.0.2",
+        "shx": "^0.3.4",
         "typescript": "~4.9.5",
         "vite": "^4.3.8",
-        "vitest": "^0.31.1",
-        "shx": "^0.3.4"
+        "vitest": "^0.31.1"
     },
     "volta": {
         "node": "18.14.0",

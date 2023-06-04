@@ -53,6 +53,11 @@
                 "command": "tonto.validateModel",
                 "title": "Validate Tonto Model",
                 "category": "Tonto"
+            },
+            {
+                "command": "tonto.transformModel",
+                "title": "Transform Tonto Model to Gufo OWL",
+                "category": "Tonto"
             }
         ],
         "jsonValidation": [
