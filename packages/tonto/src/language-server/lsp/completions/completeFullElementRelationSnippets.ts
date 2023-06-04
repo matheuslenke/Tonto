@@ -8,8 +8,7 @@ function completeFullElementRelationSnippets(acceptor: CompletionAcceptor) {
     kind: CompletionItemKind.Snippet,
     detail: "Basic internal association",
     sortText: "102",
-    insertText:
-      "[${1:*}] -- ${2:relationName} -- [${3:*}] ${4:DeclarationName}",
+    insertText: "[${1:*}] -- ${2:relationName} -- [${3:*}] ${4:DeclarationName}",
     insertTextFormat: InsertTextFormat.Snippet,
   });
   acceptor({
@@ -39,8 +38,7 @@ function completeFullElementRelationSnippets(acceptor: CompletionAcceptor) {
     kind: CompletionItemKind.Snippet,
     detail: "Basic internal aggregation",
     sortText: "102",
-    insertText:
-      "[${1:*}] <>-- ${2:relationName} -- [${3:*}] ${4:DeclarationName}",
+    insertText: "[${1:*}] <>-- ${2:relationName} -- [${3:*}] ${4:DeclarationName}",
     insertTextFormat: InsertTextFormat.Snippet,
   });
   acceptor({
@@ -67,16 +65,13 @@ function completeFullElementRelationSnippets(acceptor: CompletionAcceptor) {
   });
 }
 
-function completeFullExternalElementRelationSnippets(
-  acceptor: CompletionAcceptor
-) {
+function completeFullExternalElementRelationSnippets(acceptor: CompletionAcceptor) {
   acceptor({
     label: "basic-external-association",
     kind: CompletionItemKind.Snippet,
     detail: "Basic external association",
     sortText: "102",
-    insertText:
-      "relation ${1:Reference} [${2:*}] -- ${3:relationName} -- [${4:*}] ${5:DeclarationName}",
+    insertText: "relation ${1:Reference} [${2:*}] -- ${3:relationName} -- [${4:*}] ${5:DeclarationName}",
     insertTextFormat: InsertTextFormat.Snippet,
   });
   acceptor({
@@ -106,8 +101,7 @@ function completeFullExternalElementRelationSnippets(
     kind: CompletionItemKind.Snippet,
     detail: "Basic external aggregation",
     sortText: "102",
-    insertText:
-      "relation ${1:Reference} [${2:*}] <>-- ${3:relationName} -- [${4:*}] ${5:DeclarationName}",
+    insertText: "relation ${1:Reference} [${2:*}] <>-- ${3:relationName} -- [${4:*}] ${5:DeclarationName}",
     insertTextFormat: InsertTextFormat.Snippet,
   });
   acceptor({
@@ -134,7 +128,4 @@ function completeFullExternalElementRelationSnippets(
   });
 }
 
-export {
-  completeFullElementRelationSnippets,
-  completeFullExternalElementRelationSnippets,
-};
+export { completeFullElementRelationSnippets, completeFullExternalElementRelationSnippets };

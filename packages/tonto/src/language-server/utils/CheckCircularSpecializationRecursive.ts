@@ -12,9 +12,7 @@ const checkCircularSpecializationRecursive = (
     if (!specItem) {
       return;
     }
-    const specializationExists = verificationList.find(
-      (item) => item.name === specItem.name
-    );
+    const specializationExists = verificationList.find((item) => item.name === specItem.name);
 
     if (specializationExists) {
       accept("error", ErrorMessages.cyclicSpecialization, {
@@ -50,9 +48,7 @@ const checkCircularSpecializationRecursiveWithGenset = (
         return;
       }
 
-      const specializationExists = verificationList.find(
-        (item) => item.name === specItem.name
-      );
+      const specializationExists = verificationList.find((item) => item.name === specItem.name);
 
       if (specializationExists) {
         accept("error", ErrorMessages.cyclicSpecialization, {
@@ -65,26 +61,13 @@ const checkCircularSpecializationRecursiveWithGenset = (
         });
         return;
       }
-      checkCircularSpecializationRecursiveWithGenset(
-        specItem,
-        newVerificationList,
-        genSets,
-        accept
-      );
+      checkCircularSpecializationRecursiveWithGenset(specItem, newVerificationList, genSets, accept);
       // Now, we need to check all the generalizationSets where actualElement is a specific
       // Get the genSets where the element is the specific
-      const genSetsWithElement: GeneralizationSet[] = getGensetsWhereSpecific(
-        specItem.name,
-        genSets
-      );
+      const genSetsWithElement: GeneralizationSet[] = getGensetsWhereSpecific(specItem.name, genSets);
 
       genSetsWithElement.forEach((genSet) => {
-        checkCircularSpecializationRecursiveWithGenset(
-          genSet,
-          newVerificationList,
-          genSets,
-          accept
-        );
+        checkCircularSpecializationRecursiveWithGenset(genSet, newVerificationList, genSets, accept);
       });
     });
   } else if (actualElement.$type === "GeneralizationSet") {
@@ -95,9 +78,7 @@ const checkCircularSpecializationRecursiveWithGenset = (
     if (!generalItem) {
       return;
     }
-    const specializationExists = verificationList.find(
-      (item) => item.name === generalItem.name
-    );
+    const specializationExists = verificationList.find((item) => item.name === generalItem.name);
     if (specializationExists) {
       accept("error", ErrorMessages.cyclicSpecialization, {
         node: actualElement,
@@ -110,42 +91,24 @@ const checkCircularSpecializationRecursiveWithGenset = (
       return;
     }
 
-    const genSetsWhereElementIsSpecific = getGensetsWhereSpecific(
-      generalItem.name ?? "",
-      genSets
-    );
+    const genSetsWhereElementIsSpecific = getGensetsWhereSpecific(generalItem.name ?? "", genSets);
 
     const specificItems = actualElement.specificItems
       .map((item) => item.ref)
-      .filter(
-        (item) => item !== undefined && item !== null
-      ) as ClassDeclaration[];
+      .filter((item) => item !== undefined && item !== null) as ClassDeclaration[];
     const newVerificationList = [...verificationList, ...specificItems];
 
     genSetsWhereElementIsSpecific.forEach((genSet) => {
-      checkCircularSpecializationRecursiveWithGenset(
-        genSet,
-        newVerificationList,
-        genSets,
-        accept
-      );
+      checkCircularSpecializationRecursiveWithGenset(genSet, newVerificationList, genSets, accept);
     });
   }
 };
 
-function getGensetsWhereSpecific(
-  declaration: string,
-  genSets: GeneralizationSet[]
-): GeneralizationSet[] {
+function getGensetsWhereSpecific(declaration: string, genSets: GeneralizationSet[]): GeneralizationSet[] {
   return genSets.filter((genSet) => {
-    const specificItem = genSet.specificItems.find(
-      (specific) => specific.ref?.name === declaration
-    );
+    const specificItem = genSet.specificItems.find((specific) => specific.ref?.name === declaration);
     return specificItem ?? undefined;
   });
 }
 
-export {
-  checkCircularSpecializationRecursive,
-  checkCircularSpecializationRecursiveWithGenset,
-};
+export { checkCircularSpecializationRecursive, checkCircularSpecializationRecursiveWithGenset };

@@ -1,10 +1,17 @@
 import { AstNode, DefaultNameProvider } from "langium";
-import { ContextModule, ClassDeclaration, isContextModule, isClassDeclaration, isElementRelation, isAttribute, isGeneralizationSet, isDataType, isEnumElement } from "../generated/ast";
+import {
+  ContextModule,
+  ClassDeclaration,
+  isContextModule,
+  isClassDeclaration,
+  isElementRelation,
+  isAttribute,
+  isGeneralizationSet,
+  isDataType,
+  isEnumElement,
+} from "../generated/ast";
 
-export function toQualifiedName(
-  pack: ContextModule | ClassDeclaration,
-  childName: string
-): string {
+export function toQualifiedName(pack: ContextModule | ClassDeclaration, childName: string): string {
   return (
     (isContextModule(pack.$container) || isClassDeclaration(pack.$container)
       ? toQualifiedName(pack.$container, pack.name)
@@ -21,9 +28,7 @@ export class TontoQualifiedNameProvider extends DefaultNameProvider {
    * @param name simple name
    * @returns qualified name separated by `.`
    */
-  getQualifiedName(
-    node: AstNode
-  ): string | undefined {
+  getQualifiedName(node: AstNode): string | undefined {
     if (isElementRelation(node)) {
       if (!node.name) {
         return undefined;

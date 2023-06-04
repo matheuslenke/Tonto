@@ -5,13 +5,10 @@ import { generateTontoFileModular } from "../TontoModularConstructors/tontoModul
 import chalk from "chalk";
 
 export type ImportModularOptions = {
-  destination?: string;
-};
+  destination?: string
+}
 
-export const importModularAction = async (
-  fileName: string,
-  opts: ImportModularOptions
-): Promise<void> => {
+export const importModularAction = async (fileName: string, opts: ImportModularOptions): Promise<void> => {
   console.log("Importing JSON!");
   const result = await importModularCommand(fileName, opts);
   if (result.success) {
@@ -21,18 +18,15 @@ export const importModularAction = async (
   }
 };
 
-export const importModularCommand = async (
-  fileName: string,
-  opts: ImportModularOptions
-): Promise<ImportReturn> => {
+export const importModularCommand = async (fileName: string, opts: ImportModularOptions): Promise<ImportReturn> => {
   try {
     const data = await readFile(fileName, { encoding: "utf8" });
     // eslint-disable-next-line prefer-const
     const project: Project = serializationUtils.parse(data, true) as Project;
 
-    /** 
+    /**
      * First we validate the imported model
-    */
+     */
     const isValid = serializationUtils.validate(project);
     if (isValid) {
       console.log(chalk.bold("Model is valid. Proceding to generate tonto project..."));
@@ -48,11 +42,7 @@ export const importModularCommand = async (
       fs.mkdirSync(project.getName());
     }
 
-    const generatedFilePath = generateTontoFileModular(
-      project,
-      fileName,
-      opts.destination
-    );
+    const generatedFilePath = generateTontoFileModular(project, fileName, opts.destination);
     return {
       success: true,
       message: "Tonto file generated",
@@ -69,7 +59,7 @@ export const importModularCommand = async (
 };
 
 export type ImportReturn = {
-  success: boolean;
-  message: string;
-  filePath?: string;
-};
+  success: boolean
+  message: string
+  filePath?: string
+}

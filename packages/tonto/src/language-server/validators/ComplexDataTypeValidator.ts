@@ -11,10 +11,7 @@ export class ComplexDataTypeValidator {
    * Verify if the class is not restricted with an incompatible Nature with this
    * class stereotype.
    */
-  checkCompatibleNatures(
-    complexDataType: DataType,
-    accept: ValidationAcceptor
-  ): void {
+  checkCompatibleNatures(complexDataType: DataType, accept: ValidationAcceptor): void {
     const elementNatures = complexDataType.ontologicalNature?.natures;
     const ontologicalCategory = OntologicalCategoryEnum.DATATYPE;
 
@@ -22,12 +19,8 @@ export class ComplexDataTypeValidator {
       const incompatibleNatures = elementNatures.filter((nature) => {
         const realNature = natureUtils.getNatureFromAst(nature);
         if (realNature) {
-          const stereotypeMatches =
-            allowedStereotypeRestrictedToMatches[ontologicalCategory];
-          const includesNature =
-            !allowedStereotypeRestrictedToMatches[ontologicalCategory].includes(
-              realNature
-            );
+          const stereotypeMatches = allowedStereotypeRestrictedToMatches[ontologicalCategory];
+          const includesNature = !allowedStereotypeRestrictedToMatches[ontologicalCategory].includes(realNature);
           return stereotypeMatches && includesNature;
         }
         return false;
@@ -46,10 +39,7 @@ export class ComplexDataTypeValidator {
     }
   }
 
-  checkSpecialization(
-    dataType: DataType,
-    accept: ValidationAcceptor
-  ): void {
+  checkSpecialization(dataType: DataType, accept: ValidationAcceptor): void {
     const specializationItems = dataType.specializationEndurants;
 
     specializationItems.forEach((specializationItem, index) => {
@@ -68,19 +58,18 @@ export class ComplexDataTypeValidator {
               {
                 node: dataType,
                 property: "specializationEndurants",
-                index
+                index,
               }
             );
           }
-        }
-        else {
+        } else {
           accept(
             "error",
             "Specialization of a DataType can only be another DataType or a Class with nature 'abstract-individuals'",
             {
               node: dataType,
               property: "specializationEndurants",
-              index
+              index,
             }
           );
         }

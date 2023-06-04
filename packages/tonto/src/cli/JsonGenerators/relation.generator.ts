@@ -1,12 +1,9 @@
-import {
-  AggregationKind, Class,
-  Package, Property, Relation, RelationStereotype
-} from "ontouml-js";
+import { AggregationKind, Class, Package, Property, Relation, RelationStereotype } from "ontouml-js";
 import {
   ClassDeclaration,
   ElementRelation,
   RelationMetaAttribute,
-  RelationStereotype as MRelationStereotype
+  RelationStereotype as MRelationStereotype,
 } from "../../language-server/generated/ast";
 import { RelationTypes } from "../../language-server/models/RelationType";
 import chalk from "chalk";
@@ -24,12 +21,8 @@ export function relationGenerator(
   const relationStereotype = getStereotype(relationItem.relationType);
 
   if (sourceClass && destinationClass) {
-    const sourceClassAlreadyCreated = classes.find(
-      (item) => item.name.getText() === sourceClass.name
-    );
-    const destinationClassAlreadyCreated = classes.find(
-      (item) => item.name.getText() === destinationClass.name
-    );
+    const sourceClassAlreadyCreated = classes.find((item) => item.name.getText() === sourceClass.name);
+    const destinationClassAlreadyCreated = classes.find((item) => item.name.getText() === destinationClass.name);
 
     if (sourceClassAlreadyCreated && destinationClassAlreadyCreated) {
       const relation = packageItem.createBinaryRelation(
@@ -46,8 +39,7 @@ export function relationGenerator(
       setMetaAttributes(targetEnd, relationItem.secondEndMetaAttributes);
 
       relationItem.firstEndName && sourceEnd.setName(relationItem.firstEndName);
-      relationItem.secondEndName &&
-        targetEnd.setName(relationItem.secondEndName);
+      relationItem.secondEndName && targetEnd.setName(relationItem.secondEndName);
 
       setPropertyCardinality(relationItem.firstCardinality, sourceEnd);
       setPropertyCardinality(relationItem.secondCardinality, targetEnd);
@@ -55,15 +47,13 @@ export function relationGenerator(
       if (relationItem.relationType === RelationTypes.SUBQUANTITY_OF) {
         relation.getSourceEnd().aggregationKind = AggregationKind.COMPOSITE;
         relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
-      }
-
-      /**
-       * Based on relation type, set aggregation kind
-       * Aggregation: <>--
-       * Association: --
-       * Composition: <o>--
-       */
-      else if (relationItem.isAggregation) {
+      } else if (relationItem.isAggregation) {
+        /**
+         * Based on relation type, set aggregation kind
+         * Aggregation: <>--
+         * Association: --
+         * Composition: <o>--
+         */
         relation.getSourceEnd().aggregationKind = AggregationKind.SHARED;
         relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
       } else if (relationItem.isAssociation) {
@@ -76,16 +66,19 @@ export function relationGenerator(
 
       return relation;
     } else {
-      console.log(chalk.yellow(`Could not create relation named (${relationItem.name ?? "(No name)"}) between ${sourceClass.name} and ${destinationClass.name} because one or both of them was not created.`));
+      console.log(
+        chalk.yellow(
+          `Could not create relation named (${relationItem.name ?? "(No name)"}) between ${sourceClass.name} and ${
+            destinationClass.name
+          } because one or both of them was not created.`
+        )
+      );
     }
   }
   return undefined;
 }
 
-function setMetaAttributes(
-  end: Property,
-  metaAttributes: RelationMetaAttribute[]
-) {
+function setMetaAttributes(end: Property, metaAttributes: RelationMetaAttribute[]) {
   metaAttributes.forEach((attribute) => {
     if (attribute.isOrdered) end.isOrdered = attribute.isOrdered;
     if (attribute.isConst) end.isReadOnly = attribute.isConst;
@@ -93,17 +86,11 @@ function setMetaAttributes(
   });
 }
 
-export function relationGeneralizationGenerator(
-  model: Package,
-  sourceRelation: Relation,
-  targetRelation: Relation
-) {
+export function relationGeneralizationGenerator(model: Package, sourceRelation: Relation, targetRelation: Relation) {
   model.createGeneralization(sourceRelation, targetRelation);
 }
 
-function getStereotype(
-  relationType: MRelationStereotype | undefined
-): RelationStereotype | undefined {
+function getStereotype(relationType: MRelationStereotype | undefined): RelationStereotype | undefined {
   switch (relationType) {
     case "bringsAbout":
       return RelationStereotype.BRINGS_ABOUT;

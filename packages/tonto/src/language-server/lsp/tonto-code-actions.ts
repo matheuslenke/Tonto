@@ -5,10 +5,7 @@ import { LangiumDocument, MaybePromise } from "langium";
 import { CodeActionProvider } from "langium/lib/lsp/code-action";
 
 export class TontoActionProvider implements CodeActionProvider {
-  getCodeActions(
-    document: LangiumDocument,
-    params: CodeActionParams
-  ): MaybePromise<Array<Command | CodeAction>> {
+  getCodeActions(document: LangiumDocument, params: CodeActionParams): MaybePromise<Array<Command | CodeAction>> {
     const result: CodeAction[] = [];
     for (const diagnostic of params.context.diagnostics) {
       const codeAction = this.createCodeAction(diagnostic, document);
@@ -19,22 +16,16 @@ export class TontoActionProvider implements CodeActionProvider {
     return result;
   }
 
-  private createCodeAction(
-    diagnostic: Diagnostic,
-    document: LangiumDocument
-  ): CodeAction | undefined {
+  private createCodeAction(diagnostic: Diagnostic, document: LangiumDocument): CodeAction | undefined {
     switch (diagnostic.code) {
-    case "name_lowercase":
-      return this.makeUpperCase(diagnostic, document);
-    default:
-      return undefined;
+      case "name_lowercase":
+        return this.makeUpperCase(diagnostic, document);
+      default:
+        return undefined;
     }
   }
 
-  private makeUpperCase(
-    diagnostic: Diagnostic,
-    document: LangiumDocument
-  ): CodeAction {
+  private makeUpperCase(diagnostic: Diagnostic, document: LangiumDocument): CodeAction {
     const range = {
       start: diagnostic.range.start,
       end: {

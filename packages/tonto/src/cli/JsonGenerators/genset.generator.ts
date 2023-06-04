@@ -6,15 +6,11 @@ export function generalizationSetGenerator(
   classes: Class[],
   model: Package
 ): GeneralizationSet | undefined {
-  const generalItem = classes.find(
-    (item) => item.name.getText() === enumData.generalItem?.ref?.name
-  );
+  const generalItem = classes.find((item) => item.name.getText() === enumData.generalItem?.ref?.name);
 
   const specifics: Class[] = enumData.specificItems
     .map((specificElement) => {
-      const specificItem = classes.find(
-        (item) => item.name.getText() === specificElement.ref?.name
-      );
+      const specificItem = classes.find((item) => item.name.getText() === specificElement.ref?.name);
       if (specificItem) {
         return specificItem;
       }

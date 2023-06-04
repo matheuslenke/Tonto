@@ -1,23 +1,9 @@
-import {
-  Class,
-  ClassStereotype,
-  OntologicalNature,
-  Package,
-  Property,
-} from "ontouml-js";
-import {
-  Attribute,
-  ClassDeclaration,
-  DataType,
-  OntologicalNature as Nature,
-} from "../../language-server/generated/ast";
+import { Class, ClassStereotype, OntologicalNature, Package, Property } from "ontouml-js";
+import { Attribute, ClassDeclaration, DataType, OntologicalNature as Nature } from "../../language-server/generated/ast";
 import { OntologicalCategoryEnum } from "../../language-server/models/OntologicalCategory";
 import { setPropertyCardinality } from "./cardinality.generator";
 
-export function classElementGenerator(
-  classElement: ClassDeclaration,
-  packageItem: Package
-): Class {
+export function classElementGenerator(classElement: ClassDeclaration, packageItem: Package): Class {
   if (classElement.classElementType) {
     const stereotype = classElement.classElementType.ontologicalCategory;
     let natures: OntologicalNature[] = [];
@@ -58,11 +44,10 @@ export function classElementGenerator(
         return packageItem.createQuality(classElement.name);
       }
       case "mode": {
-        return packageItem.createClass(
-          classElement.name,
-          ClassStereotype.MODE,
-          [OntologicalNature.extrinsic_mode, OntologicalNature.intrinsic_mode]
-        );
+        return packageItem.createClass(classElement.name, ClassStereotype.MODE, [
+          OntologicalNature.extrinsic_mode,
+          OntologicalNature.intrinsic_mode,
+        ]);
       }
       case "intrinsicMode": {
         return packageItem.createIntrinsicMode(classElement.name);
@@ -115,14 +100,9 @@ export function attributeGenerator(
   classElement.attributes.forEach((attribute: Attribute) => {
     let createdAttribute: Property | undefined;
     if (attribute.attributeTypeRef) {
-      const customType = dataTypes.find(
-        (item) => item.name.getText() === attribute.attributeTypeRef.ref?.name
-      );
+      const customType = dataTypes.find((item) => item.name.getText() === attribute.attributeTypeRef.ref?.name);
       if (customType) {
-        createdAttribute = createdClass.createAttribute(
-          customType,
-          attribute.name
-        );
+        createdAttribute = createdClass.createAttribute(customType, attribute.name);
       }
     }
     if (createdAttribute) {
@@ -136,19 +116,11 @@ export function attributeGenerator(
   });
 }
 
-export function generalizationGenerator(
-  model: Package,
-  sourceClass: Class,
-  targetClass: Class
-) {
+export function generalizationGenerator(model: Package, sourceClass: Class, targetClass: Class) {
   model.createGeneralization(sourceClass, targetClass);
 }
 
-export function createInstantiation(
-  _model: Package,
-  _sourceClass: Class,
-  _targetClass: Class
-) {
+export function createInstantiation(_model: Package, _sourceClass: Class, _targetClass: Class) {
   // TODO: Waiting for ontouml-js to implement instantiation
   // model.createInstantiationRelation(sourceClass, targetClass);
 }
@@ -173,35 +145,22 @@ function getOntoUMLNatures(natures: Nature[]): OntologicalNature[] {
       case "types":
         return OntologicalNature.type;
       case "objects":
-        return [
-          OntologicalNature.functional_complex,
-          OntologicalNature.collective,
-          OntologicalNature.quantity,
-        ];
+        return [OntologicalNature.functional_complex, OntologicalNature.collective, OntologicalNature.quantity];
       default:
         return [];
     }
   });
 }
 
-function getDefaultOntoUMLNature(
-  element: ClassDeclaration
-): OntologicalNature[] {
+function getDefaultOntoUMLNature(element: ClassDeclaration): OntologicalNature[] {
   if (
-    element.classElementType?.ontologicalCategory ===
-    OntologicalCategoryEnum.CATEGORY ||
-    element.classElementType?.ontologicalCategory ===
-    OntologicalCategoryEnum.MIXIN ||
-    element.classElementType?.ontologicalCategory ===
-    OntologicalCategoryEnum.PHASE_MIXIN ||
-    element.classElementType?.ontologicalCategory ===
-    OntologicalCategoryEnum.ROLE_MIXIN ||
-    element.classElementType?.ontologicalCategory ===
-    OntologicalCategoryEnum.HISTORICAL_ROLE_MIXIN ||
-    element.classElementType?.ontologicalCategory ===
-    OntologicalCategoryEnum.EVENT ||
-    element.classElementType?.ontologicalCategory ===
-    OntologicalCategoryEnum.SITUATION
+    element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.CATEGORY ||
+    element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.MIXIN ||
+    element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.PHASE_MIXIN ||
+    element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.ROLE_MIXIN ||
+    element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.HISTORICAL_ROLE_MIXIN ||
+    element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.EVENT ||
+    element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.SITUATION
   ) {
     return [OntologicalNature.functional_complex];
   } else if (element.classElementType.ontologicalCategory === "class") {

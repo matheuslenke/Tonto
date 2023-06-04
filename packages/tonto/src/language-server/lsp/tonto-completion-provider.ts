@@ -34,11 +34,7 @@ export class TontoCompletionProvider extends DefaultCompletionProvider {
     acceptor: CompletionAcceptor
   ): MaybePromise<void> {
     // Completion for Cardinality in any context
-    if (
-      ast.isKeyword(next.feature) &&
-      next.type === "Cardinality" &&
-      next.feature.value === "["
-    ) {
+    if (ast.isKeyword(next.feature) && next.type === "Cardinality" && next.feature.value === "[") {
       completeForCardinality(acceptor);
     }
 

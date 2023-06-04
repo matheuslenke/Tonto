@@ -6,11 +6,7 @@ import { Model } from "../language-server";
 import { extractDestinationAndName } from "./cli-util";
 import { contextModuleGenerator } from "./JsonGenerators/contextModule.generator";
 
-export function generateJSONFile(
-  model: Model,
-  filePath: string,
-  destination: string | undefined
-): string {
+export function generateJSONFile(model: Model, filePath: string, destination: string | undefined): string {
   const data = extractDestinationAndName(filePath, destination);
 
   const ctx = <GeneratorContext>{
@@ -24,11 +20,11 @@ export function generateJSONFile(
 }
 
 interface GeneratorContext {
-  model: Model;
-  name: string;
-  fileName: string;
-  destination: string;
-  fileNode: CompositeGeneratorNode;
+  model: Model
+  name: string
+  fileName: string
+  destination: string
+  fileNode: CompositeGeneratorNode
 }
 
 function generate(ctx: GeneratorContext): string {

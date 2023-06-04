@@ -4,10 +4,7 @@ import { CompletionAcceptor } from "langium";
 import { Keyword } from "langium/lib/grammar/generated/ast";
 import { completeForCardinality } from "./completeForCardinality";
 
-function completeForElementRelation(
-  keyword: Keyword,
-  acceptor: CompletionAcceptor
-) {
+function completeForElementRelation(keyword: Keyword, acceptor: CompletionAcceptor) {
   switch (keyword.value) {
     case "--":
       acceptor({

@@ -1,5 +1,11 @@
 import { Class, Package, Relation } from "ontouml-js";
-import { ClassDeclaration, DataType, ContextModule, ElementRelation, GeneralizationSet } from "../../language-server/generated/ast";
+import {
+  ClassDeclaration,
+  DataType,
+  ContextModule,
+  ElementRelation,
+  GeneralizationSet,
+} from "../../language-server/generated/ast";
 import { attributeGenerator, classElementGenerator } from "../JsonGenerators/class.generator";
 import { customDataTypeAttributesGenerator, customDataTypeGenerator } from "../JsonGenerators/datatype.generator";
 import { enumGenerator } from "../JsonGenerators/enum.generator";
@@ -9,22 +15,21 @@ import { relationGenerator } from "../JsonGenerators/relation.generator";
 import { generateDataTypeSpecializations, generateSpecializations } from "../JsonGenerators/specialization.generator";
 
 export interface GeneratedContextModuleData {
-  classes: Class[];
-  dataTypes: Class[];
-  enums: Class[];
-  relations: Relation[];
+  classes: Class[]
+  dataTypes: Class[]
+  enums: Class[]
+  relations: Relation[]
 }
 
 export function contextModuleGenerateClasses(
   contextModule: ContextModule,
   packageItem: Package
 ): GeneratedContextModuleData {
-
   const returnData: GeneratedContextModuleData = {
     classes: [],
     dataTypes: [],
     enums: [],
-    relations: []
+    relations: [],
   };
 
   contextModule.declarations.forEach((declaration) => {
@@ -42,10 +47,7 @@ export function contextModuleGenerateClasses(
           const newEnum = enumGenerator(dataType, packageItem);
           returnData.dataTypes.push(newEnum);
         } else {
-          const newDataType = customDataTypeGenerator(
-            dataType,
-            packageItem
-          );
+          const newDataType = customDataTypeGenerator(dataType, packageItem);
           returnData.dataTypes.push(newDataType);
         }
         break;
@@ -83,7 +85,7 @@ export function contextModuleModularGenerator(
   // Adding Elements from imports
   classes.push(...importedData.flatMap((data) => data.classes));
   dataTypes.push(...importedData.flatMap((data) => data.dataTypes));
-  relations.push(...importedData.flatMap(data => data.relations));
+  relations.push(...importedData.flatMap((data) => data.relations));
 
   generateGenSets(contextModule, classes, packageItem);
   generateComplexDataTypesAttributes(contextModule, dataTypes);
@@ -93,11 +95,7 @@ export function contextModuleModularGenerator(
   generateInstantiations(contextModule, classes, relations, packageItem);
 }
 
-function generateGenSets(
-  contextModule: ContextModule,
-  classes: Class[],
-  packageItem: Package
-) {
+function generateGenSets(contextModule: ContextModule, classes: Class[], packageItem: Package) {
   contextModule.declarations.forEach((declaration) => {
     if (declaration.$type === "GeneralizationSet") {
       const gensetData = declaration as GeneralizationSet;
@@ -106,43 +104,27 @@ function generateGenSets(
   });
 }
 
-function generateClassDeclarationAttributes(
-  contextModule: ContextModule,
-  classes: Class[],
-  dataTypes: Class[]
-): void {
+function generateClassDeclarationAttributes(contextModule: ContextModule, classes: Class[], dataTypes: Class[]): void {
   contextModule.declarations.forEach((declaration) => {
     switch (declaration.$type) {
       case "ClassDeclaration": {
         const classDeclaration = declaration as ClassDeclaration;
-        const createdClass = classes.find(item => item.getName() === classDeclaration.name);
+        const createdClass = classes.find((item) => item.getName() === classDeclaration.name);
         if (createdClass) {
-          attributeGenerator(
-            classDeclaration,
-            createdClass,
-            dataTypes
-          );
+          attributeGenerator(classDeclaration, createdClass, dataTypes);
         }
       }
     }
   });
 }
 
-function generateExternalRelations(
-  contextModule: ContextModule,
-  classes: Class[],
-  packageItem: Package,
-): Relation[] {
+function generateExternalRelations(contextModule: ContextModule, classes: Class[], packageItem: Package): Relation[] {
   const relations: Relation[] = [];
   contextModule.declarations.forEach((declaration) => {
     switch (declaration.$type) {
       case "ElementRelation": {
         const elementRelation = declaration as ElementRelation;
-        const createdRelation = relationGenerator(
-          elementRelation,
-          packageItem,
-          classes
-        );
+        const createdRelation = relationGenerator(elementRelation, packageItem, classes);
         if (createdRelation) {
           relations.push(createdRelation);
         }
@@ -152,23 +134,14 @@ function generateExternalRelations(
   return relations;
 }
 
-function generateInternalRelations(
-  contextModule: ContextModule,
-  classes: Class[],
-  packageItem: Package
-): Relation[] {
+function generateInternalRelations(contextModule: ContextModule, classes: Class[], packageItem: Package): Relation[] {
   const relations: Relation[] = [];
   contextModule.declarations.forEach((declaration) => {
     if (declaration.$type === "ClassDeclaration") {
       const classDeclaration = declaration as ClassDeclaration;
 
       classDeclaration.references.forEach((reference) => {
-        const createdRelation = relationGenerator(
-          reference,
-          packageItem,
-          classes,
-          classDeclaration
-        );
+        const createdRelation = relationGenerator(reference, packageItem, classes, classDeclaration);
         if (createdRelation) {
           relations.push(createdRelation);
         }
@@ -178,16 +151,11 @@ function generateInternalRelations(
   return relations;
 }
 
-
-function generateComplexDataTypesAttributes(
-  contextModule: ContextModule,
-  dataTypes: Class[]
-): void {
+function generateComplexDataTypesAttributes(contextModule: ContextModule, dataTypes: Class[]): void {
   contextModule.declarations.forEach((declaration) => {
     if (declaration.$type === "DataType") {
       const dataType = declaration as DataType;
-      customDataTypeAttributesGenerator(dataType,
-        dataTypes);
+      customDataTypeAttributesGenerator(dataType, dataTypes);
     }
   });
 }

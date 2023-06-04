@@ -6,22 +6,20 @@ export interface GufoResultResponse {
 }
 
 export interface ErrorGufoResultResponse {
-  id?: string;
-  message?: string;
-  status?: number;
-  info: ErrorInfo[];
+  id?: string
+  message?: string
+  status?: number
+  info: ErrorInfo[]
 }
 
 interface ErrorInfo {
-  code?: string;
-  description?: string;
-  severity?: string;
-  title?: string;
+  code?: string
+  description?: string
+  severity?: string
+  title?: string
 }
 
-export async function TransformTontoToGufo(
-  project: Project
-): Promise<GufoResultResponse | ErrorGufoResultResponse> {
+export async function TransformTontoToGufo(project: Project): Promise<GufoResultResponse | ErrorGufoResultResponse> {
   const body = {
     project,
     options: undefined,
@@ -45,6 +43,6 @@ export async function TransformTontoToGufo(
   }
   return {
     status: 500,
-    message: "error while transforming model to Gufo"
+    message: "error while transforming model to Gufo",
   } as ErrorGufoResultResponse;
 }

@@ -1,12 +1,5 @@
-import {
-  AbstractSemanticTokenProvider,
-  AstNode,
-  SemanticTokenAcceptor,
-} from "langium";
-import {
-  SemanticTokenModifiers,
-  SemanticTokenTypes,
-} from "vscode-languageserver";
+import { AbstractSemanticTokenProvider, AstNode, SemanticTokenAcceptor } from "langium";
+import { SemanticTokenModifiers, SemanticTokenTypes } from "vscode-languageserver";
 import {
   DataType,
   isAttribute,
@@ -33,10 +26,7 @@ import {
  * definitions for the members of the Tonto AST
  */
 export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
-  protected highlightElement(
-    node: AstNode,
-    acceptor: SemanticTokenAcceptor
-  ): void {
+  protected highlightElement(node: AstNode, acceptor: SemanticTokenAcceptor): void {
     if (isContextModule(node)) {
       this.contextModuleTokens(node, acceptor);
     }
@@ -67,10 +57,7 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
    * ---- HELPERS ----
    */
 
-  private contextModuleTokens(
-    node: ContextModule,
-    acceptor: SemanticTokenAcceptor
-  ) {
+  private contextModuleTokens(node: ContextModule, acceptor: SemanticTokenAcceptor) {
     acceptor({
       node,
       property: "name",
@@ -78,10 +65,7 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
     });
   }
 
-  private classElementTokens(
-    node: ClassDeclaration,
-    acceptor: SemanticTokenAcceptor
-  ) {
+  private classElementTokens(node: ClassDeclaration, acceptor: SemanticTokenAcceptor) {
     acceptor({
       node,
       property: "name",
@@ -95,10 +79,7 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
     });
   }
 
-  private ontologicalCategoryTokens(
-    node: OntologicalCategory,
-    acceptor: SemanticTokenAcceptor
-  ) {
+  private ontologicalCategoryTokens(node: OntologicalCategory, acceptor: SemanticTokenAcceptor) {
     acceptor({
       node,
       property: "ontologicalCategory",
@@ -120,10 +101,7 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
     });
   }
 
-  private elementRelationTokens(
-    node: ElementRelation,
-    acceptor: SemanticTokenAcceptor
-  ) {
+  private elementRelationTokens(node: ElementRelation, acceptor: SemanticTokenAcceptor) {
     acceptor({
       node,
       property: "relationType",
@@ -150,10 +128,7 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
       type: SemanticTokenTypes.property,
     });
   }
-  private relationMetaAttributeTokens(
-    node: RelationMetaAttribute,
-    acceptor: SemanticTokenAcceptor
-  ) {
+  private relationMetaAttributeTokens(node: RelationMetaAttribute, acceptor: SemanticTokenAcceptor) {
     acceptor({
       node,
       property: "subsetRelation",
@@ -169,10 +144,7 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
     });
   }
 
-  private enumElementTokens(
-    node: EnumElement,
-    acceptor: SemanticTokenAcceptor
-  ) {
+  private enumElementTokens(node: EnumElement, acceptor: SemanticTokenAcceptor) {
     acceptor({
       node,
       property: "name",

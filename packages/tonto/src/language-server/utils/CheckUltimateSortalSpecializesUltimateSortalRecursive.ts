@@ -13,8 +13,7 @@ const checkUltimateSortalSpecializesUltimateSortalRecursive = (
       return;
     }
 
-    const refOntologicalCategory =
-      specItem.classElementType?.ontologicalCategory;
+    const refOntologicalCategory = specItem.classElementType?.ontologicalCategory;
 
     if (
       refOntologicalCategory === OntologicalCategoryEnum.KIND ||

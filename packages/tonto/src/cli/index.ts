@@ -26,8 +26,10 @@ export default function (): void {
 
   program
     .command("generateSingle")
-    .argument("<file>",
-      `Generate on single file projects providing source file (possible file extensions: ${fileExtensions})`)
+    .argument(
+      "<file>",
+      `Generate on single file projects providing source file (possible file extensions: ${fileExtensions})`
+    )
     .option("-d", "--d <destination>", "Destination of generated JSON file")
     .action(generateAction)
     .description("Generate JSON from your project or a single file");

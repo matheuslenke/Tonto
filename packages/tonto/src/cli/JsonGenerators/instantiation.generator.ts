@@ -1,7 +1,5 @@
 import { Class, Package, Relation } from "ontouml-js";
-import {
-  ClassDeclaration, ContextModule
-} from "../../language-server";
+import { ClassDeclaration, ContextModule } from "../../language-server";
 import { createInstantiation } from "./class.generator";
 
 export function generateInstantiations(
@@ -16,14 +14,10 @@ export function generateInstantiations(
       const instanceOfClass = classElement.instanceOf?.ref;
 
       if (instanceOfClass) {
-        const sourceClass = classes.find(
-          (item) => item.name.getText() === classElement.name
-        );
+        const sourceClass = classes.find((item) => item.name.getText() === classElement.name);
 
         if (sourceClass) {
-          const targetClass = classes.find(
-            (item) => item.name.getText() === instanceOfClass.name
-          );
+          const targetClass = classes.find((item) => item.name.getText() === instanceOfClass.name);
           if (targetClass) {
             createInstantiation(packageItem, targetClass, sourceClass);
           }

@@ -3,22 +3,19 @@ import { OntoumlElement, serializationUtils } from "ontouml-js";
 import { generateTontoFile } from "../tontoGenerator";
 
 interface JsonElement {
-    model?: any;
-    diagrams?: any;
-    type: string;
-    id: string;
-    name: string;
-    description?: string;
+  model?: any
+  diagrams?: any
+  type: string
+  id: string
+  name: string
+  description?: string
 }
 
 export type ImportOptions = {
-    destination?: string;
-};
+  destination?: string
+}
 
-export const importAction = async (
-  fileName: string,
-  opts: ImportOptions
-): Promise<void> => {
+export const importAction = async (fileName: string, opts: ImportOptions): Promise<void> => {
   console.log("Importing JSON!");
   const result = await importCommand(fileName, opts);
   if (result.success) {
@@ -28,10 +25,7 @@ export const importAction = async (
   }
 };
 
-export const importCommand = async (
-  fileName: string,
-  opts: ImportOptions
-): Promise<ImportReturn> => {
+export const importCommand = async (fileName: string, opts: ImportOptions): Promise<ImportReturn> => {
   try {
     const data = await readFile(fileName, { encoding: "utf8" });
     const obj: JsonElement[] = JSON.parse(data);
@@ -39,19 +33,13 @@ export const importCommand = async (
 
     if (Array.isArray(obj)) {
       obj.forEach((item) => {
-        const ontoUMLModel = serializationUtils.parse(
-          JSON.stringify(item),
-          false
-        );
+        const ontoUMLModel = serializationUtils.parse(JSON.stringify(item), false);
 
         ontoumlElements.push(ontoUMLModel);
       });
     } else {
       const element: JsonElement = obj;
-      const ontoUMLModel = serializationUtils.parse(
-        JSON.stringify(element),
-        false
-      );
+      const ontoUMLModel = serializationUtils.parse(JSON.stringify(element), false);
       const isValid = serializationUtils.validate(ontoUMLModel);
       if (isValid) {
         ontoumlElements.push(ontoUMLModel);
@@ -60,11 +48,7 @@ export const importCommand = async (
       }
     }
 
-    const generatedFilePath = generateTontoFile(
-      ontoumlElements,
-      fileName,
-      opts.destination
-    );
+    const generatedFilePath = generateTontoFile(ontoumlElements, fileName, opts.destination);
     return {
       success: true,
       message: "Tonto file generated",
@@ -80,7 +64,7 @@ export const importCommand = async (
 };
 
 export type ImportReturn = {
-    success: boolean;
-    message: string;
-    filePath?: string;
-};
+  success: boolean
+  message: string
+  filePath?: string
+}

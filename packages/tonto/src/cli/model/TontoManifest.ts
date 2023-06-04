@@ -1,24 +1,24 @@
 export interface TontoManifest {
-  projectName: string;
-  displayName: string;
-  publisher: string;
-  version: string;
-  license: string;
+  projectName: string
+  displayName: string
+  publisher: string
+  version: string
+  license: string
   dependencies: {
     [key: string]:
-    | string
-    | {
-      url: string;
-      version: string;
-    };
-  };
-  outFolder: string;
-  authors: Author[];
+      | string
+      | {
+          url: string
+          version: string
+        }
+  }
+  outFolder: string
+  authors: Author[]
 }
 export interface Author {
-  name: string;
-  email?: string;
-  url?: string;
+  name: string
+  email?: string
+  url?: string
 }
 
 export const manifestFileName = "tonto.json";
@@ -35,6 +35,6 @@ export function createDefaultTontoManifest(): TontoManifest {
     publisher: "default publisher",
     license: "MIT",
     outFolder: "out",
-    dependencies: {}
+    dependencies: {},
   } as TontoManifest;
 }

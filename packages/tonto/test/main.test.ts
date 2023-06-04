@@ -1,10 +1,9 @@
-import { EmptyFileSystem, Grammar } from "langium";
-import { ParserRule } from "langium/lib/grammar/generated/ast";
+import { EmptyFileSystem } from "langium";
 import { createTontoServices } from "../src/language-server/tonto-module";
-import { parseHelper, validationHelper } from "../src/test/tonto-test";
+import { validationHelper } from "../src/test/tonto-test";
+import { Model } from "../src/language-server/generated/ast";
 
 describe("A", () => {
-
   const tontoStub = `
     module UFOS {
       kind Person
@@ -12,24 +11,18 @@ describe("A", () => {
     }
   `;
   const services = createTontoServices(EmptyFileSystem);
-  const parser = parseHelper<Grammar>(services.Tonto);
   const validate = validationHelper(services.Tonto);
 
-  const rules: ParserRule[] = [];
-
   test("should have a kind", async () => {
-    // const validationResult = await validate(tontoStub);
+    const validationResult = await validate(tontoStub);
 
-    // const astNode = validationResult.document.parseResult.value
-    // expect(astNode.$type).toBe("Model")
+    const astNode = validationResult.document.parseResult.value;
+    expect(astNode.$type).toBe("Model");
 
-    // const model = astNode as Model
+    const model = astNode as Model;
 
-    // const modules = model.modules
-    // const UFOSModule = modules[0];
+    const module = model.module;
 
-    // expect(UFOSModule.name).toBe("UFOS")
+    expect(module.name).toBe("UFOS");
   });
-
 });
-

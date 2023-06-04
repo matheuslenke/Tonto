@@ -4,8 +4,8 @@ import { basicDataTypes } from "./basicDataTypes";
 const builtInLibs: BuiltInLib[] = [
   {
     uri: "builtin://basicDataTypes.tonto",
-    content: basicDataTypes
-  }
+    content: basicDataTypes,
+  },
 ];
 
 export { builtInLibs };

@@ -2,10 +2,7 @@ import { CompositeGeneratorNode, NL } from "langium";
 import { Property } from "ontouml-js";
 import { formatForId } from "../utils/replaceWhitespace";
 
-export function constructAttributes(
-  attributes: Property[],
-  fileNode: CompositeGeneratorNode
-) {
+export function constructAttributes(attributes: Property[], fileNode: CompositeGeneratorNode) {
   attributes.forEach((attribute) => {
     const propertyType = attribute.propertyType?.getName();
 

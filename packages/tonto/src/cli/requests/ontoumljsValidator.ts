@@ -2,37 +2,35 @@ import fetch from "node-fetch-native";
 import { Project } from "ontouml-js";
 
 export interface ResultResponse {
-  code?: string;
+  code?: string
   data?: {
     source?: {
-      id?: string;
-      description?: string;
-      stereotype?: string;
-      type?: string;
-    };
-  };
-  description?: string;
-  severity?: string;
-  title?: string;
+      id?: string
+      description?: string
+      stereotype?: string
+      type?: string
+    }
+  }
+  description?: string
+  severity?: string
+  title?: string
 }
 
 export interface ErrorResultResponse {
-  id?: string;
-  message?: string;
-  status?: number;
-  info: ErrorInfo[];
+  id?: string
+  message?: string
+  status?: number
+  info: ErrorInfo[]
 }
 
 interface ErrorInfo {
-  keyword?: string;
-  message?: string;
-  dataPath?: string;
-  schemaPath?: string;
+  keyword?: string
+  message?: string
+  dataPath?: string
+  schemaPath?: string
 }
 
-export async function validateTontoFile(
-  project: Project
-): Promise<ResultResponse[] | ErrorResultResponse> {
+export async function validateTontoFile(project: Project): Promise<ResultResponse[] | ErrorResultResponse> {
   const body = {
     project,
     options: undefined,
@@ -56,6 +54,6 @@ export async function validateTontoFile(
   }
   return {
     status: 500,
-    message: "error while validating model"
+    message: "error while validating model",
   } as ErrorResultResponse;
 }

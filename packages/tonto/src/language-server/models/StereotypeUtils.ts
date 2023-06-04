@@ -36,7 +36,7 @@ const allowedStereotypeRestrictedToMatches: AllowedStereotypes = {
 
   [OntologicalCategoryEnum.TYPE]: [OntologicalNature.type],
 
-  [OntologicalCategoryEnum.CLASS]: []
+  [OntologicalCategoryEnum.CLASS]: [],
 };
 
 function hasSortalStereotype(stereotype: string): boolean {
@@ -135,6 +135,5 @@ export {
   getClassStereotype,
   isRigidStereotype,
   isAntiRigidStereotype,
-  isSemiRigidStereotype
+  isSemiRigidStereotype,
 };
-

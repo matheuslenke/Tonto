@@ -52,15 +52,9 @@ const MomentNatures = [
   OntologicalNature.relator,
 ];
 
-const IntrinsicMomentNatures = [
-  OntologicalNature.intrinsic_mode,
-  OntologicalNature.quality,
-];
+const IntrinsicMomentNatures = [OntologicalNature.intrinsic_mode, OntologicalNature.quality];
 
-const ExtrinsicMomentNatures = [
-  OntologicalNature.extrinsic_mode,
-  OntologicalNature.relator,
-];
+const ExtrinsicMomentNatures = [OntologicalNature.extrinsic_mode, OntologicalNature.relator];
 
 const naturesArrays = [
   Natures,

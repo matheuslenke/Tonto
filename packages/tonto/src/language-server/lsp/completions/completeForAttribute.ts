@@ -3,10 +3,7 @@ import { AbstractElement } from "langium/lib/grammar/generated/ast";
 import { CompletionItemKind } from "vscode-languageserver";
 import { InsertTextFormat } from "vscode-languageserver";
 
-function completeForAttributeSnippets(
-  next: NextFeature<AbstractElement>,
-  acceptor: CompletionAcceptor
-) {
+function completeForAttributeSnippets(next: NextFeature<AbstractElement>, acceptor: CompletionAcceptor) {
   if (next.property === "name") {
     acceptor({
       label: "attribute",

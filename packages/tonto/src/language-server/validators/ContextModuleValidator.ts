@@ -1,10 +1,5 @@
 import { ValidationAcceptor } from "langium";
-import {
-  ClassDeclaration,
-  ContextModule,
-  ElementRelation,
-  GeneralizationSet,
-} from "../generated/ast";
+import { ClassDeclaration, ContextModule, ElementRelation, GeneralizationSet } from "../generated/ast";
 import { checkCircularSpecializationRecursiveWithGenset } from "../utils/CheckCircularSpecializationRecursive";
 import { TontoQualifiedNameProvider } from "../references/tonto-name-provider";
 import { isSortalOntoCategory, isUltimateSortalOntoCategory } from "../models/OntologicalCategory";
@@ -12,10 +7,7 @@ import { checkSortalSpecializesUniqueUltimateSortalRecursive } from "../utils/Ch
 import { ErrorMessages } from "../models/ErrorMessages";
 
 export class ContextModuleValidator {
-  checkContextModuleStartsWithCapital(
-    contextModule: ContextModule,
-    accept: ValidationAcceptor
-  ): void {
+  checkContextModuleStartsWithCapital(contextModule: ContextModule, accept: ValidationAcceptor): void {
     if (contextModule.name) {
       const firstChar = contextModule.name.substring(0, 1);
       if (firstChar.toUpperCase() !== firstChar) {
@@ -27,10 +19,7 @@ export class ContextModuleValidator {
     }
   }
 
-  checkDuplicatedClassName(
-    contextModule: ContextModule,
-    accept: ValidationAcceptor
-  ): void {
+  checkDuplicatedClassName(contextModule: ContextModule, accept: ValidationAcceptor): void {
     const elements = contextModule.declarations;
     const names: string[] = [];
 
@@ -52,10 +41,7 @@ export class ContextModuleValidator {
     });
   }
 
-  checkDuplicatedRelationName(
-    contextModule: ContextModule,
-    accept: ValidationAcceptor
-  ): void {
+  checkDuplicatedRelationName(contextModule: ContextModule, accept: ValidationAcceptor): void {
     const names: string[] = [];
     const nameProvider = new TontoQualifiedNameProvider();
 
@@ -79,9 +65,7 @@ export class ContextModuleValidator {
       } else if (declaration.$type === "ClassDeclaration") {
         const classElement = declaration as ClassDeclaration;
         classElement.references.forEach((elementRelation) => {
-          const nameExists = names.find(
-            (name) => name === nameProvider.getQualifiedName(elementRelation)
-          );
+          const nameExists = names.find((name) => name === nameProvider.getQualifiedName(elementRelation));
           const refName = nameProvider.getQualifiedName(elementRelation);
 
           if (nameExists) {
@@ -104,49 +88,31 @@ export class ContextModuleValidator {
    * Checks if a ClassDeclaration has a ciclic specialization considering also
    * considering generalizationSets
    */
-  checkCircularSpecialization(
-    contextModule: ContextModule,
-    accept: ValidationAcceptor
-  ): void {
+  checkCircularSpecialization(contextModule: ContextModule, accept: ValidationAcceptor): void {
     const genSets = contextModule.declarations.filter((declaration) => {
       return declaration.$type === "GeneralizationSet";
     }) as GeneralizationSet[];
 
-    const declaredClasses: ClassDeclaration[] =
-      contextModule.declarations.filter((declaration) => {
-        return declaration.$type === "ClassDeclaration";
-      }) as ClassDeclaration[];
+    const declaredClasses: ClassDeclaration[] = contextModule.declarations.filter((declaration) => {
+      return declaration.$type === "ClassDeclaration";
+    }) as ClassDeclaration[];
 
     declaredClasses.forEach((declaredClass) => {
-      checkCircularSpecializationRecursiveWithGenset(
-        declaredClass,
-        [],
-        genSets,
-        accept
-      );
+      checkCircularSpecializationRecursiveWithGenset(declaredClass, [], genSets, accept);
     });
     genSets.forEach((genSet) => {
-      checkCircularSpecializationRecursiveWithGenset(
-        genSet,
-        [],
-        genSets,
-        accept
-      );
+      checkCircularSpecializationRecursiveWithGenset(genSet, [], genSets, accept);
     });
   }
 
-  checkClassDeclarationShouldSpecializeUltimateSortal(
-    contextModule: ContextModule,
-    accept: ValidationAcceptor
-  ): void {
+  checkClassDeclarationShouldSpecializeUltimateSortal(contextModule: ContextModule, accept: ValidationAcceptor): void {
     const genSets = contextModule.declarations.filter((declaration) => {
       return declaration.$type === "GeneralizationSet";
     }) as GeneralizationSet[];
 
-    const declaredClasses: ClassDeclaration[] =
-      contextModule.declarations.filter((declaration) => {
-        return declaration.$type === "ClassDeclaration";
-      }) as ClassDeclaration[];
+    const declaredClasses: ClassDeclaration[] = contextModule.declarations.filter((declaration) => {
+      return declaration.$type === "ClassDeclaration";
+    }) as ClassDeclaration[];
 
     declaredClasses.forEach((declaredClass) => {
       const ontologicalCategory = declaredClass.classElementType?.ontologicalCategory;
@@ -154,32 +120,22 @@ export class ContextModuleValidator {
         return;
       }
       // Check if it is a Sortal but not an Ultimate Sortal
-      if (
-        isSortalOntoCategory(ontologicalCategory) &&
-        !isUltimateSortalOntoCategory(ontologicalCategory)
-      ) {
-        const totalUltimateSortalSpecializations =
-          checkSortalSpecializesUniqueUltimateSortalRecursive(
-            declaredClass,
-            genSets,
-            accept,
-            0
-          );
+      if (isSortalOntoCategory(ontologicalCategory) && !isUltimateSortalOntoCategory(ontologicalCategory)) {
+        const totalUltimateSortalSpecializations = checkSortalSpecializesUniqueUltimateSortalRecursive(
+          declaredClass,
+          genSets,
+          accept,
+          0
+        );
         if (totalUltimateSortalSpecializations === 0) {
           const natures = declaredClass.ontologicalNatures?.natures;
           if (natures) {
-            const isRestrictedToType = natures.find(
-              (nature) => nature === "types"
-            );
+            const isRestrictedToType = natures.find((nature) => nature === "types");
             if (isRestrictedToType === undefined) {
-              accept(
-                "error",
-                ErrorMessages.sortalSpecializesUniqueUltimateSortal,
-                {
-                  node: declaredClass,
-                  property: "name",
-                }
-              );
+              accept("error", ErrorMessages.sortalSpecializesUniqueUltimateSortal, {
+                node: declaredClass,
+                property: "name",
+              });
             }
           } else {
             accept("error", ErrorMessages.sortalSpecializeNoUltimateSortal, {

@@ -16,14 +16,8 @@ export function parseHelper<T extends AstNode = AstNode>(
   const documentBuilder = services.shared.workspace.DocumentBuilder;
   return async (input) => {
     const randomNumber = Math.floor(Math.random() * 10000000) + 1000000;
-    const uri = URI.parse(
-      `file:///${randomNumber}${metaData.fileExtensions[0]}`
-    );
-    const document =
-      services.shared.workspace.LangiumDocumentFactory.fromString<T>(
-        input,
-        uri
-      );
+    const uri = URI.parse(`file:///${randomNumber}${metaData.fileExtensions[0]}`);
+    const document = services.shared.workspace.LangiumDocumentFactory.fromString<T>(input, uri);
     services.shared.workspace.LangiumDocuments.addDocument(document);
     await documentBuilder.build([document]);
     return document;
@@ -31,8 +25,8 @@ export function parseHelper<T extends AstNode = AstNode>(
 }
 
 export interface ValidationResult<T extends AstNode = AstNode> {
-  diagnostics: Diagnostic[];
-  document: LangiumDocument<T>;
+  diagnostics: Diagnostic[]
+  document: LangiumDocument<T>
 }
 
 /**
@@ -49,9 +43,7 @@ export function validationHelper<T extends AstNode = AstNode>(
     const document = await parse(input);
     return {
       document,
-      diagnostics: await services.validation.DocumentValidator.validateDocument(
-        document
-      ),
+      diagnostics: await services.validation.DocumentValidator.validateDocument(document),
     };
   };
 }

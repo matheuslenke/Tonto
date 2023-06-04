@@ -8,10 +8,7 @@ import { generateInstantiations } from "./instantiation.generator";
 import { relationGenerator } from "./relation.generator";
 import { generateDataTypeSpecializations, generateSpecializations } from "./specialization.generator";
 
-export function contextModuleGenerator(
-  contextModule: ContextModule,
-  packageItem: Package
-): void {
+export function contextModuleGenerator(contextModule: ContextModule, packageItem: Package): void {
   const classes: Class[] = [];
   const dataTypes: Class[] = [];
   const relations: Relation[] = [];
@@ -33,10 +30,7 @@ export function contextModuleGenerator(
           const newEnum = enumGenerator(dataType, packageItem);
           dataTypes.push(newEnum);
         } else {
-          const newDataType = customDataTypeGenerator(
-            dataType,
-            packageItem
-          );
+          const newDataType = customDataTypeGenerator(dataType, packageItem);
           attributeGenerator(dataType, newDataType, dataTypes);
           dataTypes.push(newDataType);
         }
@@ -54,11 +48,7 @@ export function contextModuleGenerator(
   generateInstantiations(contextModule, classes, relations, packageItem);
 }
 
-function generateGenSets(
-  contextModule: ContextModule,
-  classes: Class[],
-  packageItem: Package
-) {
+function generateGenSets(contextModule: ContextModule, classes: Class[], packageItem: Package) {
   contextModule.declarations.forEach((declaration) => {
     if (declaration.$type === "GeneralizationSet") {
       const gensetData = declaration as GeneralizationSet;
@@ -77,11 +67,7 @@ function generateExternalRelations(
     switch (declaration.$type) {
       case "ElementRelation": {
         const elementRelation = declaration as ElementRelation;
-        const createdRelation = relationGenerator(
-          elementRelation,
-          packageItem,
-          classes
-        );
+        const createdRelation = relationGenerator(elementRelation, packageItem, classes);
         if (createdRelation) {
           relations.push(createdRelation);
         }
@@ -101,12 +87,7 @@ function generateInternalRelations(
       const classDeclaration = declaration as ClassDeclaration;
 
       classDeclaration.references.forEach((reference) => {
-        const createdRelation = relationGenerator(
-          reference,
-          packageItem,
-          classes,
-          classDeclaration
-        );
+        const createdRelation = relationGenerator(reference, packageItem, classes, classDeclaration);
         if (createdRelation) {
           relations.push(createdRelation);
         }

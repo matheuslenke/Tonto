@@ -2,10 +2,7 @@
 import { ValidationAcceptor } from "langium";
 import { ClassDeclaration, OntologicalNature as ASTNature } from "../generated/ast";
 import { natureUtils } from "../models/Natures";
-import {
-  getOntologicalCategory,
-  OntologicalCategoryEnum,
-} from "../models/OntologicalCategory";
+import { getOntologicalCategory, OntologicalCategoryEnum } from "../models/OntologicalCategory";
 import {
   allowedStereotypeRestrictedToMatches,
   hasNonSortalStereotype,
@@ -24,24 +21,14 @@ export class ClassDeclarationValidator {
   /**
    * Check if the class declaration doesn't have a specific stereotype
    */
-  checkClassWithoutStereotype(
-    classDeclaration: ClassDeclaration,
-    accept: ValidationAcceptor
-  ): void {
-    if (
-      classDeclaration.classElementType?.ontologicalCategory ===
-      OntologicalCategoryEnum.CLASS
-    ) {
+  checkClassWithoutStereotype(classDeclaration: ClassDeclaration, accept: ValidationAcceptor): void {
+    if (classDeclaration.classElementType?.ontologicalCategory === OntologicalCategoryEnum.CLASS) {
       const natures = classDeclaration.ontologicalNatures?.natures;
       if (!natures) {
-        accept(
-          "warning",
-          "Consider using an annotation or a more specific class",
-          {
-            node: classDeclaration,
-            property: "classElementType",
-          }
-        );
+        accept("warning", "Consider using an annotation or a more specific class", {
+          node: classDeclaration,
+          property: "classElementType",
+        });
       }
     }
   }
@@ -51,15 +38,11 @@ export class ClassDeclarationValidator {
    * UltimateSortal (stereotypes: kind, collective, quantity, relator, quality,
    * mode, intrinsicMode or extrinsicMode)
    */
-  checkUltimateSortalSpecializeUltimateSortal(
-    classDeclaration: ClassDeclaration,
-    accept: ValidationAcceptor
-  ): void {
+  checkUltimateSortalSpecializeUltimateSortal(classDeclaration: ClassDeclaration, accept: ValidationAcceptor): void {
     if (!classDeclaration || !classDeclaration.classElementType) {
       return;
     }
-    const ontologicalCategory =
-      classDeclaration.classElementType?.ontologicalCategory;
+    const ontologicalCategory = classDeclaration.classElementType?.ontologicalCategory;
 
     if (ontologicalCategory === null || ontologicalCategory === undefined) {
       return;
@@ -76,10 +59,7 @@ export class ClassDeclarationValidator {
       ontologicalCategory === OntologicalCategoryEnum.INTRINSIC_MODE ||
       ontologicalCategory === OntologicalCategoryEnum.EXTRINSIC_MODE
     ) {
-      checkUltimateSortalSpecializesUltimateSortalRecursive(
-        classDeclaration,
-        accept
-      );
+      checkUltimateSortalSpecializesUltimateSortalRecursive(classDeclaration, accept);
     }
   }
 
@@ -99,7 +79,6 @@ export class ClassDeclarationValidator {
     // }
     // const ontologicalCategory =
     //   classDeclaration.classElementType?.ontologicalCategory;
-
     // // Check if it has a defined stereotype
     // if (
     //   !ontologicalCategory ||
@@ -107,7 +86,6 @@ export class ClassDeclarationValidator {
     // ) {
     //   return;
     // }
-
     // // Check if it is a Sortal but not an Ultimate Sortal
     // if (
     //   isSortalOntoCategory(ontologicalCategory) &&
@@ -153,10 +131,7 @@ export class ClassDeclarationValidator {
   /**
    *  Verify if the class starts with a Capital letter
    */
-  checkClassElementStartsWithCapital(
-    classDeclaration: ClassDeclaration,
-    accept: ValidationAcceptor
-  ): void {
+  checkClassElementStartsWithCapital(classDeclaration: ClassDeclaration, accept: ValidationAcceptor): void {
     if (classDeclaration.name) {
       const firstChar = classDeclaration.name.substring(0, 1);
       if (firstChar.toUpperCase() !== firstChar) {
@@ -173,28 +148,20 @@ export class ClassDeclarationValidator {
    * class has an Anti rigid stereotype and the specific class has a Rigid or
    * Anti Rigid stereotype
    */
-  checkRigidSpecializesAntiRigid(
-    classDeclaration: ClassDeclaration,
-    accept: ValidationAcceptor
-  ): void {
+  checkRigidSpecializesAntiRigid(classDeclaration: ClassDeclaration, accept: ValidationAcceptor): void {
     if (!classDeclaration || !classDeclaration.classElementType) {
       return;
     }
-    const ontologicalCategory =
-      classDeclaration.classElementType?.ontologicalCategory;
+    const ontologicalCategory = classDeclaration.classElementType?.ontologicalCategory;
 
     // Check if it is a rigid stereotype
-    if (
-      isRigidStereotype(ontologicalCategory) ||
-      isSemiRigidStereotype(ontologicalCategory)
-    ) {
+    if (isRigidStereotype(ontologicalCategory) || isSemiRigidStereotype(ontologicalCategory)) {
       classDeclaration.specializationEndurants.forEach((specializationItem) => {
         const specDeclaration = specializationItem.ref as ClassDeclaration;
         if (!specDeclaration) {
           return;
         }
-        const specOntologicalCategory =
-          specDeclaration.classElementType?.ontologicalCategory;
+        const specOntologicalCategory = specDeclaration.classElementType?.ontologicalCategory;
 
         if (isAntiRigidStereotype(specOntologicalCategory)) {
           accept(
@@ -210,10 +177,7 @@ export class ClassDeclarationValidator {
   /**
    * Verify if there are duplicated declaration names
    */
-  checkDuplicatedReferenceNames(
-    classDeclaration: ClassDeclaration,
-    accept: ValidationAcceptor
-  ): void {
+  checkDuplicatedReferenceNames(classDeclaration: ClassDeclaration, accept: ValidationAcceptor): void {
     const references = classDeclaration.references;
 
     const names: string[] = [];
@@ -236,15 +200,11 @@ export class ClassDeclarationValidator {
    * Verify if the class is not restricted with an incompatible Nature with this
    * class stereotype.
    */
-  checkCompatibleNatures(
-    classDeclaration: ClassDeclaration,
-    accept: ValidationAcceptor
-  ): void {
+  checkCompatibleNatures(classDeclaration: ClassDeclaration, accept: ValidationAcceptor): void {
     if (!classDeclaration || !classDeclaration.classElementType) {
       return;
     }
-    const ontologicalCategory =
-      classDeclaration.classElementType?.ontologicalCategory;
+    const ontologicalCategory = classDeclaration.classElementType?.ontologicalCategory;
 
     if (ontologicalCategory === OntologicalCategoryEnum.CLASS) {
       return;
@@ -253,18 +213,13 @@ export class ClassDeclarationValidator {
     const elementNatures = classDeclaration.ontologicalNatures?.natures;
 
     if (elementNatures) {
-      const ontologicalCategoryEnum =
-        getOntologicalCategory(ontologicalCategory);
+      const ontologicalCategoryEnum = getOntologicalCategory(ontologicalCategory);
       if (ontologicalCategoryEnum) {
         const incompatibleNatures = elementNatures.filter((nature) => {
           const realNature = natureUtils.getNatureFromAst(nature);
           if (realNature) {
-            const stereotypeMatches =
-              allowedStereotypeRestrictedToMatches[ontologicalCategoryEnum];
-            const includesNature =
-              !allowedStereotypeRestrictedToMatches[
-                ontologicalCategoryEnum
-              ].includes(realNature);
+            const stereotypeMatches = allowedStereotypeRestrictedToMatches[ontologicalCategoryEnum];
+            const includesNature = !allowedStereotypeRestrictedToMatches[ontologicalCategoryEnum].includes(realNature);
             return stereotypeMatches && includesNature;
           }
           return false;
@@ -289,46 +244,37 @@ export class ClassDeclarationValidator {
    * Verify if the class restricts to Natures that is general class also
    * restricts
    */
-  checkSpecializationNatureRestrictions(
-    classDeclaration: ClassDeclaration,
-    accept: ValidationAcceptor
-  ) {
+  checkSpecializationNatureRestrictions(classDeclaration: ClassDeclaration, accept: ValidationAcceptor) {
     const elementNatures = classDeclaration.ontologicalNatures;
 
     if (elementNatures) {
       elementNatures.natures.forEach((nature) => {
         let specializationDoesntExistsInParent = false;
-        classDeclaration.specializationEndurants.forEach(
-          (specializationEndurant) => {
-            if (specializationEndurant.ref?.classElementType.ontologicalCategory === OntologicalCategoryEnum.CLASS) {
-              return;
-            }
-            const specializationNatures =
-              specializationEndurant.ref?.ontologicalNatures;
-            let specNatures: ASTNature[] = [];
-            if (!specializationNatures) {
-              specNatures = ["objects", "collectives", "quantities", "functional-complexes"];
-            } else {
-              specNatures = specializationNatures.natures;
-            }
-            console.log(classDeclaration.name, specializationEndurant.ref?.name, specNatures);
-            const natureExists = specNatures.find(
-              (specializationNature) => {
-                return specializationNature === nature;
-              }
-            );
-            if (natureExists === undefined) {
-              specializationDoesntExistsInParent = true;
-            }
+        classDeclaration.specializationEndurants.forEach((specializationEndurant) => {
+          if (specializationEndurant.ref?.classElementType.ontologicalCategory === OntologicalCategoryEnum.CLASS) {
+            return;
           }
-        );
+          const specializationNatures = specializationEndurant.ref?.ontologicalNatures;
+          let specNatures: ASTNature[] = [];
+          if (!specializationNatures) {
+            specNatures = ["objects", "collectives", "quantities", "functional-complexes"];
+          } else {
+            specNatures = specializationNatures.natures;
+          }
+          console.log(classDeclaration.name, specializationEndurant.ref?.name, specNatures);
+          const natureExists = specNatures.find((specializationNature) => {
+            return specializationNature === nature;
+          });
+          if (natureExists === undefined) {
+            specializationDoesntExistsInParent = true;
+          }
+        });
 
         if (specializationDoesntExistsInParent) {
-          accept(
-            "error",
-            "This element cannot be restricted to Natures that its superclass is not restricted",
-            { node: classDeclaration, property: "ontologicalNatures" }
-          );
+          accept("error", "This element cannot be restricted to Natures that its superclass is not restricted", {
+            node: classDeclaration,
+            property: "ontologicalNatures",
+          });
         }
       });
     }
@@ -337,10 +283,7 @@ export class ClassDeclarationValidator {
   /**
    * Verify if the class is specializing a Nature permitted by its general class
    */
-  checkSpecializationOfCorrectNature(
-    classDeclaration: ClassDeclaration,
-    accept: ValidationAcceptor
-  ): void {
+  checkSpecializationOfCorrectNature(classDeclaration: ClassDeclaration, accept: ValidationAcceptor): void {
     const specializations = classDeclaration.specializationEndurants;
     const sourceNatures = classDeclaration.ontologicalNatures?.natures;
     if (!sourceNatures) {
@@ -353,10 +296,7 @@ export class ClassDeclarationValidator {
         let hasCompatibleNatures = false;
         for (const specificNature of natures) {
           for (const generalNature of sourceNatures) {
-            const isCompatible = checkNatureCompatibleRestrictedTo(
-              generalNature,
-              specificNature
-            );
+            const isCompatible = checkNatureCompatibleRestrictedTo(generalNature, specificNature);
             if (isCompatible === true) {
               hasCompatibleNatures = true;
             }
@@ -378,10 +318,7 @@ export class ClassDeclarationValidator {
     });
   }
 
-  checkNaturesOnlyOnNonSortals(
-    classElement: ClassDeclaration,
-    _: ValidationAcceptor
-  ): void {
+  checkNaturesOnlyOnNonSortals(classElement: ClassDeclaration, _: ValidationAcceptor): void {
     const ElementNatures = classElement.ontologicalNatures;
     if (ElementNatures) {
       // if (
@@ -409,10 +346,7 @@ export class ClassDeclarationValidator {
   /*
    * Checks if an Element has a ciclic specialization
    */
-  checkCircularSpecialization(
-    classElement: ClassDeclaration,
-    accept: ValidationAcceptor
-  ): void {
+  checkCircularSpecialization(classElement: ClassDeclaration, accept: ValidationAcceptor): void {
     classElement.specializationEndurants.forEach((specializationItem) => {
       const specItem = specializationItem.ref;
       if (!specItem) {
@@ -426,20 +360,13 @@ export class ClassDeclarationValidator {
    * Verify if the general class is a Sortal stereotype and the specific class
    * has a non-Sortal stereotype. This generalization is forbidden
    */
-  checkGeneralizationSortality(
-    classDeclaration: ClassDeclaration,
-    accept: ValidationAcceptor
-  ) {
+  checkGeneralizationSortality(classDeclaration: ClassDeclaration, accept: ValidationAcceptor) {
     const generalItems = classDeclaration.specializationEndurants;
-    const isNonSortal = hasNonSortalStereotype(
-      classDeclaration.classElementType?.ontologicalCategory
-    );
+    const isNonSortal = hasNonSortalStereotype(classDeclaration.classElementType?.ontologicalCategory);
     if (isNonSortal) {
       generalItems.forEach((general) => {
         const generalClass = general.ref as ClassDeclaration;
-        if (
-          hasSortalStereotype(generalClass.classElementType?.ontologicalCategory)
-        ) {
+        if (hasSortalStereotype(generalClass.classElementType?.ontologicalCategory)) {
           accept(
             "error",
             `Prohibited generalization: non-sortal specializing a sortal. The non-sortal class ${classDeclaration.name} cannot specialize the sortal class ${generalClass.name}`,
@@ -459,10 +386,7 @@ export class ClassDeclarationValidator {
    * specific são datatype, e se o estereótipo de general e specific são
    * diferentes
    */
-  checkGeneralizationDataType(
-    _classDeclaration: ClassDeclaration,
-    _accept: ValidationAcceptor
-  ) {
+  checkGeneralizationDataType(_classDeclaration: ClassDeclaration, _accept: ValidationAcceptor) {
     // TODO: Fix this to be a validator on datatype
     // const ontologicalCategory =
     //   classDeclaration.classElementType.ontologicalCategory;

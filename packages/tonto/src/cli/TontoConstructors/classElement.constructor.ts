@@ -6,10 +6,7 @@ import { constructInternalRelations } from "./relation.constructor";
 import { createSpecializations } from "./specialization.constructor";
 import { constructAttributes } from "./attributes.constructor";
 
-export function constructClassElement(
-  element: Class,
-  fileNode: CompositeGeneratorNode
-) {
+export function constructClassElement(element: Class, fileNode: CompositeGeneratorNode) {
   const stereotypeWord = getStereotypeWord(element.stereotype);
 
   if (element.stereotype === ClassStereotype.ENUMERATION) {
@@ -17,9 +14,7 @@ export function constructClassElement(
   } else if (element.stereotype === ClassStereotype.DATATYPE) {
     createDatatype(element, fileNode);
   } else {
-    fileNode.append(
-      `${stereotypeWord} ${formatForId(element.getName())} `
-    );
+    fileNode.append(`${stereotypeWord} ${formatForId(element.getName())} `);
 
     // Construct Nature restrictions
     createNatures(element, fileNode);
@@ -28,8 +23,6 @@ export function constructClassElement(
 
     // Construct specializations
     createSpecializations(element, fileNode);
-
-
 
     const relations = element.getOwnOutgoingRelations();
     const attributes: Property[] = element.getOwnAttributes();

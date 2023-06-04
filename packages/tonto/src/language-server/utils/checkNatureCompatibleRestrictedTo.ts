@@ -1,6 +1,4 @@
-import {
-  OntologicalNature,
-} from "../generated/ast";
+import { OntologicalNature } from "../generated/ast";
 
 function checkNatureCompatibleRestrictedTo(
   generalNature: OntologicalNature,

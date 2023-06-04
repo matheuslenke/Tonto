@@ -1,7 +1,7 @@
 import { ErrorMessages } from "../../../../src/language-server/models/ErrorMessages";
-import { EmptyFileSystem, Grammar } from "langium";
+import { EmptyFileSystem } from "langium";
 
-import { parseHelper, validationHelper } from "../../../../src/test/tonto-test";
+import { validationHelper } from "../../../../src/test/tonto-test";
 import { createTontoServices } from "../../../../src/language-server/tonto-module";
 
 describe("CheckCircularSpecialization", () => {

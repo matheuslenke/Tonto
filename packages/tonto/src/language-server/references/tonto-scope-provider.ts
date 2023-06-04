@@ -13,7 +13,6 @@ import {
  * Special scope provider that matches symbol names regardless of lowercase or uppercase.
  */
 export class TontoScopeProvider extends DefaultScopeProvider {
-
   override getScope(context: ReferenceInfo): Scope {
     const scopes: Array<Stream<AstNodeDescription>> = [];
     const referenceType = this.reflection.getReferenceType(context);
@@ -24,8 +23,7 @@ export class TontoScopeProvider extends DefaultScopeProvider {
       do {
         const allDescriptions = precomputed.get(currentNode);
         if (allDescriptions.length > 0) {
-          scopes.push(stream(allDescriptions).filter(
-            desc => this.reflection.isSubtype(desc.type, referenceType)));
+          scopes.push(stream(allDescriptions).filter((desc) => this.reflection.isSubtype(desc.type, referenceType)));
         }
         currentNode = currentNode.$container;
       } while (currentNode);
@@ -37,5 +35,4 @@ export class TontoScopeProvider extends DefaultScopeProvider {
     }
     return result;
   }
-
 }

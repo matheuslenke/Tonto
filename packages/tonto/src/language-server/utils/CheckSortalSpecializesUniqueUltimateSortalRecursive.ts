@@ -8,13 +8,12 @@ const validateSortalSpecializesUniqueUltimateSortalRecursive = (
   totalUltimateSortalSpecialized: number,
   accept: ValidationAcceptor
 ): void => {
-  const totalUltimateSortalSpecializations =
-    checkSortalSpecializesUniqueUltimateSortalRecursive(
-      actualElement,
-      [],
-      accept,
-      totalUltimateSortalSpecialized
-    );
+  const totalUltimateSortalSpecializations = checkSortalSpecializesUniqueUltimateSortalRecursive(
+    actualElement,
+    [],
+    accept,
+    totalUltimateSortalSpecialized
+  );
   if (totalUltimateSortalSpecializations > 1) {
     accept("error", ErrorMessages.sortalSpecializesUniqueUltimateSortal, {
       node: actualElement,
@@ -88,12 +87,9 @@ const checkSortalSpecializesUniqueUltimateSortalRecursive = (
           totalUltimateSortalSpecialized
         );
       }
-     })
+    });
 
-    const genSetsWhereElementIsSpecific = getGensetsWhereSpecific(
-      generalItem.name ?? "",
-      genSets
-    );
+    const genSetsWhereElementIsSpecific = getGensetsWhereSpecific(generalItem.name ?? "", genSets);
 
     genSetsWhereElementIsSpecific.forEach((genSet) => {
       totalUltimateSortalSpecialized = checkSortalSpecializesUniqueUltimateSortalRecursive(
@@ -107,19 +103,11 @@ const checkSortalSpecializesUniqueUltimateSortalRecursive = (
   return totalUltimateSortalSpecialized;
 };
 
-function getGensetsWhereSpecific(
-  declaration: string,
-  genSets: GeneralizationSet[]
-): GeneralizationSet[] {
+function getGensetsWhereSpecific(declaration: string, genSets: GeneralizationSet[]): GeneralizationSet[] {
   return genSets.filter((genSet) => {
-    const specificItem = genSet.specificItems.find(
-      (specific) => specific.ref?.name === declaration
-    );
+    const specificItem = genSet.specificItems.find((specific) => specific.ref?.name === declaration);
     return specificItem ?? undefined;
   });
 }
 
-export {
-  checkSortalSpecializesUniqueUltimateSortalRecursive,
-  validateSortalSpecializesUniqueUltimateSortalRecursive,
-};
+export { checkSortalSpecializesUniqueUltimateSortalRecursive, validateSortalSpecializesUniqueUltimateSortalRecursive };

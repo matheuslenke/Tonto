@@ -39,9 +39,7 @@ export const validateAction = async (dirName: string): Promise<void> => {
   }
 };
 
-export const validateCommand = async (
-  dirName: string
-): Promise<ResultResponse[] | ErrorResultResponse> => {
+export const validateCommand = async (dirName: string): Promise<ResultResponse[] | ErrorResultResponse> => {
   const services = createTontoServices({ ...NodeFileSystem }).Tonto;
 
   let manifest: TontoManifest | undefined;
@@ -60,10 +58,9 @@ export const validateCommand = async (
   if (manifest === undefined) {
     return {
       status: 400,
-      message: "Could not find or create default tonto.json file"
+      message: "Could not find or create default tonto.json file",
     } as ErrorResultResponse;
   }
-
 
   const allFiles = await glob(dirName + "/**/*.tonto");
 
@@ -73,7 +70,7 @@ export const validateCommand = async (
     models,
     fileNode: new CompositeGeneratorNode(),
     manifest: manifest,
-    folderAbsolutePath
+    folderAbsolutePath,
   };
 
   const project = parseProject(context);

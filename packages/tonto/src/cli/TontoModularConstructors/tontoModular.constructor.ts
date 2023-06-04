@@ -7,11 +7,7 @@ import { createTontoModuleModular } from "./contextModuleModular.constructor";
 import { createTontoImports } from "./importModular.constructor";
 import { formatForId, replaceWhitespace } from "../utils/replaceWhitespace";
 
-export function generateTontoFileModular(
-  project: Project,
-  filePath: string,
-  destination: string | undefined
-): string {
+export function generateTontoFileModular(project: Project, filePath: string, destination: string | undefined): string {
   const data = customExtractDestinationAndName(filePath, destination);
   const ctx = <GeneratorContext>{
     project,
@@ -23,14 +19,13 @@ export function generateTontoFileModular(
 }
 
 interface GeneratorContext {
-  project: Project;
-  name: string;
-  destinationFolder: string;
-  fileNode: CompositeGeneratorNode;
+  project: Project
+  name: string
+  destinationFolder: string
+  fileNode: CompositeGeneratorNode
 }
 
 function generate(ctx: GeneratorContext): string {
-
   if (!fs.existsSync(ctx.destinationFolder)) {
     fs.mkdirSync(ctx.destinationFolder, { recursive: true });
   }
@@ -88,8 +83,7 @@ function generateModule(
         generateModule(replaceWhitespace(newPath), child, new CompositeGeneratorNode());
       }
     }
-    const generatedFilePath = path.join(newPath,
-      formatForId(packageElement.getName())) + ".tonto";
+    const generatedFilePath = path.join(newPath, formatForId(packageElement.getName())) + ".tonto";
     fs.writeFileSync(generatedFilePath, toString(fileNode));
   }
 }
@@ -103,7 +97,7 @@ function createTontoManifest(ctx: GeneratorContext) {
     publisher: "",
     dependencies: {},
     outFolder: "",
-    authors: []
+    authors: [],
   };
   const jsonString = toJson(manifest);
   const manifestPath = path.join(ctx.destinationFolder, "tonto.json");
@@ -111,14 +105,11 @@ function createTontoManifest(ctx: GeneratorContext) {
 }
 
 interface FilePathData {
-  destination: string;
-  name: string;
+  destination: string
+  name: string
 }
 
-export function customExtractDestinationAndName(
-  filePath: string,
-  destination: string | undefined
-): FilePathData {
+export function customExtractDestinationAndName(filePath: string, destination: string | undefined): FilePathData {
   filePath = filePath.replace(/\.json/, "");
   return {
     destination: destination ?? path.join(path.dirname(filePath), "generated"),

@@ -1,21 +1,11 @@
 import { CompositeGeneratorNode, NL } from "langium";
-import {
-  AggregationKind,
-  Cardinality,
-  Class,
-  Generalization,
-  Property,
-  Relation,
-} from "ontouml-js";
+import { AggregationKind, Cardinality, Class, Generalization, Property, Relation } from "ontouml-js";
 import { notEmpty } from "../../utils/isEmpty";
 import { formatForId } from "../utils/replaceWhitespace";
 
-export function constructInternalRelations(
-  element: Class,
-  relations: Relation[],
-  fileNode: CompositeGeneratorNode
-) {
-  relations.filter(item => item.isBinary() === true)
+export function constructInternalRelations(element: Class, relations: Relation[], fileNode: CompositeGeneratorNode) {
+  relations
+    .filter((item) => item.isBinary() === true)
     .forEach((relation) => {
       const sourceProperty = relation.getSourceEnd();
       const targetClass = relation.getTarget();
@@ -70,7 +60,6 @@ export function constructInternalRelations(
       // SecondEnd Meta Attributes
       constructEndMetaAttributes(secondEndName, targetProperty, fileNode);
 
-
       let targetClassName = targetClass.getName();
       if (targetName !== sourceName) {
         targetClassName = `${targetClassPackage.getName()}.${targetClass.getName()}`;
@@ -83,11 +72,7 @@ export function constructInternalRelations(
     });
 }
 
-function constructCardinality(
-  cardinality: Cardinality,
-  fileNode: CompositeGeneratorNode
-) {
-
+function constructCardinality(cardinality: Cardinality, fileNode: CompositeGeneratorNode) {
   const bounds = cardinality.getCardinalityBounds();
   if (bounds) {
     const targetLowerBound = bounds.lowerBound;
@@ -124,10 +109,7 @@ function constructEndMetaAttributes(
   }
 }
 
-function constructRelationSpecializations(
-  generalizations: Generalization[],
-  fileNode: CompositeGeneratorNode
-) {
+function constructRelationSpecializations(generalizations: Generalization[], fileNode: CompositeGeneratorNode) {
   if (generalizations.length > 0) {
     fileNode.append(" specializes ");
     generalizations.forEach((generalization, index) => {
@@ -137,13 +119,9 @@ function constructRelationSpecializations(
         const property = properties.at(0);
         if (property) {
           const className = formatForId(property.propertyType.getName());
-          fileNode.append(
-            `${className}.${relationName}`
-          );
+          fileNode.append(`${className}.${relationName}`);
         } else {
-          fileNode.append(
-            `${relationName}`
-          );
+          fileNode.append(`${relationName}`);
         }
       }
 

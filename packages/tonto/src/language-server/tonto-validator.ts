@@ -14,8 +14,7 @@ export class TontoValidationRegistry extends ValidationRegistry {
         // validator.ModelValidator.checkDuplicatedContextModuleNames,
       ],
       ClassDeclaration: [
-        validator.ClassDeclarationValidator
-          .checkUltimateSortalSpecializeUltimateSortal,
+        validator.ClassDeclarationValidator.checkUltimateSortalSpecializeUltimateSortal,
         // validator.ClassDeclarationValidator
         //   .checkClassDeclarationShouldSpecializeUltimateSortal,
         validator.ClassDeclarationValidator.checkRigidSpecializesAntiRigid,
@@ -26,7 +25,7 @@ export class TontoValidationRegistry extends ValidationRegistry {
         validator.ClassDeclarationValidator.checkGeneralizationSortality,
         validator.ClassDeclarationValidator.checkGeneralizationDataType,
         validator.ClassDeclarationValidator.checkSpecializationNatureRestrictions,
-        validator.ClassDeclarationValidator.checkClassDeclarationShouldSpecializeUltimateSortal
+        validator.ClassDeclarationValidator.checkClassDeclarationShouldSpecializeUltimateSortal,
       ],
       ContextModule: [
         validator.ContextModuleValidator.checkDuplicatedClassName,
@@ -43,7 +42,7 @@ export class TontoValidationRegistry extends ValidationRegistry {
       ],
       DataType: [
         validator.ComplexDataTypeValidator.checkCompatibleNatures,
-        validator.ComplexDataTypeValidator.checkSpecialization
+        validator.ComplexDataTypeValidator.checkSpecialization,
       ],
     };
     this.register(checks, validator);

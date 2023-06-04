@@ -34,14 +34,7 @@
         }
       },
       "additionalProperties": false,
-      "required": [
-        "type",
-        "id",
-        "name",
-        "description",
-        "contents",
-        "propertyAssignments"
-      ]
+      "required": ["type", "id", "name", "description", "contents", "propertyAssignments"]
     },
     "Class": {
       "description": "An object representing a class element. Mandatory fields: constant \"type\": \"Class\", \"id\", \"name\", \"stereotypes\", \"properties\", \"propertyAssignments\", \"isAbstract\", \"isDerived\", \"isExtensional\", \"isPowertype\", \"order\", \"natures\". Additional fields NOT allowed.",
@@ -232,15 +225,7 @@
         }
       },
       "additionalProperties": false,
-      "required": [
-        "type",
-        "id",
-        "name",
-        "description",
-        "general",
-        "specific",
-        "propertyAssignments"
-      ]
+      "required": ["type", "id", "name", "description", "general", "specific", "propertyAssignments"]
     },
     "GeneralizationSet": {
       "description": "An object representing a generalization set element. Mandatory fields: constant \"type\": \"GeneralizationSet\", \"id\", \"name\", \"isDisjoint\", \"isComplete\", \"categorizer\", \"generalizations\", \"propertyAssignments\". Additional fields NOT allowed.",

@@ -1,10 +1,7 @@
 import { Property, CardinalityValues } from "ontouml-js";
 import { Cardinality } from "../../language-server/generated/ast";
 
-export function setPropertyCardinality(
-  cardinality: Cardinality | undefined,
-  end: Property
-): void {
+export function setPropertyCardinality(cardinality: Cardinality | undefined, end: Property): void {
   if (!cardinality) {
     end.cardinality.setOneToOne(); // Default Value
     return;
@@ -20,10 +17,7 @@ export function setPropertyCardinality(
   }
   if (cardinality.upperBound && cardinality.upperBound === "*") {
     end.cardinality.upperBound = CardinalityValues.MANY;
-  } else if (
-    cardinality.upperBound &&
-    typeof cardinality.upperBound === "number"
-  ) {
+  } else if (cardinality.upperBound && typeof cardinality.upperBound === "number") {
     end.cardinality.setUpperBoundFromNumber(cardinality.upperBound);
   }
 }

@@ -2,34 +2,23 @@ import { Class, Package, Property } from "ontouml-js";
 import { DataType } from "../../language-server/generated/ast";
 import { setPropertyCardinality } from "./cardinality.generator";
 
-export function customDataTypeGenerator(
-  dataType: DataType,
-  model: Package,
-): Class {
+export function customDataTypeGenerator(dataType: DataType, model: Package): Class {
   const dataTypeClass = model.createDatatype(dataType.name);
 
   return dataTypeClass;
 }
 
-export function customDataTypeAttributesGenerator(
-  dataType: DataType,
-  dataTypes: Class[]
-) {
-  const dataTypeClass = dataTypes.find(item => item.getName() === dataType.name);
+export function customDataTypeAttributesGenerator(dataType: DataType, dataTypes: Class[]) {
+  const dataTypeClass = dataTypes.find((item) => item.getName() === dataType.name);
   if (dataTypeClass) {
     dataType.attributes.forEach((element) => {
       let createdAttribute: Property | undefined;
 
       if (element.attributeTypeRef !== undefined) {
-        const customType = dataTypes.find(
-          (item) => item.getName() === element.attributeTypeRef.ref?.name
-        );
+        const customType = dataTypes.find((item) => item.getName() === element.attributeTypeRef.ref?.name);
 
         if (customType) {
-          createdAttribute = dataTypeClass.createAttribute(
-            customType,
-            element.name
-          );
+          createdAttribute = dataTypeClass.createAttribute(customType, element.name);
         }
       }
 

@@ -3,10 +3,7 @@ import { AbstractElement } from "langium/lib/grammar/generated/ast";
 import { CompletionItemKind } from "vscode-languageserver";
 import { InsertTextFormat } from "vscode-languageserver-types";
 
-function completeForEnumSnippets(
-  next: NextFeature<AbstractElement>,
-  acceptor: CompletionAcceptor
-) {
+function completeForEnumSnippets(next: NextFeature<AbstractElement>, acceptor: CompletionAcceptor) {
   acceptor({
     label: "enum",
     kind: CompletionItemKind.Snippet,

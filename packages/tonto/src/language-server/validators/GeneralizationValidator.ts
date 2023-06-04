@@ -14,10 +14,7 @@ export class GeneralizationValidator {
   /**
    * Verifica se o tipo de elemento do general (classe ou relation) é diferente do específico, dando erro caso seja.
    */
-  checkGeneralizationSetConsistency(
-    genSet: GeneralizationSet,
-    accept: ValidationAcceptor
-  ): void {
+  checkGeneralizationSetConsistency(genSet: GeneralizationSet, accept: ValidationAcceptor): void {
     const generalItem = genSet.generalItem.ref;
     const specificsItems = genSet.specificItems;
 
@@ -47,10 +44,7 @@ export class GeneralizationValidator {
   /**
    * Verifica se a generalização é circular
    */
-  checkCircularGeneralization(
-    genSet: GeneralizationSet,
-    accept: ValidationAcceptor
-  ): void {
+  checkCircularGeneralization(genSet: GeneralizationSet, accept: ValidationAcceptor): void {
     const generalItem = genSet.generalItem.ref;
     const specificsItems = genSet.specificItems;
 
@@ -72,10 +66,7 @@ export class GeneralizationValidator {
    * the general has a sortal stereotype and the specific has a non
    * sortal stereotype. If it has, the generalization is forbidden
    */
-  checkGeneralizationSortality(
-    genSet: GeneralizationSet,
-    accept: ValidationAcceptor
-  ) {
+  checkGeneralizationSortality(genSet: GeneralizationSet, accept: ValidationAcceptor) {
     const generalItem = genSet.generalItem.ref;
     const specificsItems = genSet.specificItems;
 
@@ -89,17 +80,11 @@ export class GeneralizationValidator {
     });
 
     if (generalItem.$type === "ClassDeclaration") {
-      if (
-        hasSortalStereotype(generalItem.classElementType.ontologicalCategory)
-      ) {
+      if (hasSortalStereotype(generalItem.classElementType.ontologicalCategory)) {
         specificsItems.forEach((specific, index) => {
           if (specific.ref?.$type === "ClassDeclaration") {
             const specificClass = specific.ref as ClassDeclaration;
-            if (
-              hasNonSortalStereotype(
-                specificClass.classElementType.ontologicalCategory
-              )
-            ) {
+            if (hasNonSortalStereotype(specificClass.classElementType.ontologicalCategory)) {
               accept(
                 "error",
                 `Prohibited generalization: non-sortal specializing a sortal. The non-sortal class ${specificClass.name} cannot specialize the sortal class ${generalItem.name}`,
@@ -121,10 +106,7 @@ export class GeneralizationValidator {
    * has an Anti Rigid stereotype and the specific has a Rigid or Anti Rigid
    * stereotype.
    */
-  checkRigidSpecializesAntiRigid(
-    genSet: GeneralizationSet,
-    accept: ValidationAcceptor
-  ): void {
+  checkRigidSpecializesAntiRigid(genSet: GeneralizationSet, accept: ValidationAcceptor): void {
     const generalItem = genSet.generalItem.ref;
     const specificItems = genSet.specificItems;
 
@@ -135,8 +117,7 @@ export class GeneralizationValidator {
       return;
     }
 
-    const ontologicalCategory =
-      generalItem.classElementType.ontologicalCategory;
+    const ontologicalCategory = generalItem.classElementType.ontologicalCategory;
 
     // Check if it is a anti-rigid stereotype
     if (isAntiRigidStereotype(ontologicalCategory)) {
@@ -145,13 +126,9 @@ export class GeneralizationValidator {
         if (!refElement || !refElement.classElementType) {
           return;
         }
-        const refOntologicalCategory =
-          refElement.classElementType.ontologicalCategory;
+        const refOntologicalCategory = refElement.classElementType.ontologicalCategory;
 
-        if (
-          isRigidStereotype(refOntologicalCategory) ||
-          isSemiRigidStereotype(refOntologicalCategory)
-        ) {
+        if (isRigidStereotype(refOntologicalCategory) || isSemiRigidStereotype(refOntologicalCategory)) {
           accept(
             "error",
             `Prohibited specialization: rigid/semi-rigid specializing an anti-rigid. The rigid/semi-rigid class ${refElement.name} cannot specialize the anti-rigid class ${generalItem.name}`,
@@ -177,10 +154,7 @@ export class GeneralizationValidator {
    * Verify if it is a generalization between two classes. Verify if the general
    * class has a DataType stereotype and the specific too
    */
-  checkGeneralizationDataType(
-    _genSet: GeneralizationSet,
-    _accept: ValidationAcceptor
-  ): void {
+  checkGeneralizationDataType(_genSet: GeneralizationSet, _accept: ValidationAcceptor): void {
     // const generalItem = genSet.generalItem.ref;
     // const specificItems = genSet.specificItems;
     // if (generalItem === undefined) {

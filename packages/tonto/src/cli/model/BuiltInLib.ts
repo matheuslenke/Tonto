@@ -1,4 +1,4 @@
 export interface BuiltInLib {
-  uri: string;
-  content: string;
+  uri: string
+  content: string
 }

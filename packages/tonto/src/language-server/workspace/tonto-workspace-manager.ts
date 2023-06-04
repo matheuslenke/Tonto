@@ -1,7 +1,3 @@
-import {
-  DefaultWorkspaceManager,
-} from "langium";
+import { DefaultWorkspaceManager } from "langium";
 
-
-export class TontoWorkspaceManager extends DefaultWorkspaceManager {
-}
+export class TontoWorkspaceManager extends DefaultWorkspaceManager {}

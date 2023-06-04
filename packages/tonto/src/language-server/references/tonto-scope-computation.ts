@@ -9,10 +9,17 @@ import {
   streamAllContents,
 } from "langium";
 import { CancellationToken } from "vscode-jsonrpc";
-import { isElementRelation, isClassDeclaration, isDataType, isContextModule, isGeneralizationSet, Model, ContextModule } from "../generated/ast";
+import {
+  isElementRelation,
+  isClassDeclaration,
+  isDataType,
+  isContextModule,
+  isGeneralizationSet,
+  Model,
+  ContextModule,
+} from "../generated/ast";
 import { TontoServices } from "../tonto-module";
 import { TontoQualifiedNameProvider } from "./tonto-name-provider";
-
 
 export class TontoScopeComputation extends DefaultScopeComputation {
   qualifiedNameProvider: TontoQualifiedNameProvider;
@@ -25,8 +32,8 @@ export class TontoScopeComputation extends DefaultScopeComputation {
   /**
    * Computes all scopes for the given document in order to export it globally. In Tonto,
    * this is done only for ContextModules that are global
-   * @param document 
-   * @param cancelToken 
+   * @param document
+   * @param cancelToken
    * @returns An array of AstNodeDescriptions
    */
   override async computeExports(
@@ -50,8 +57,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
         } else {
           name = childNode.name;
         }
-        if (name && contextModule.isGlobal)
-          descr.push(this.descriptions.createDescription(childNode, name, document));
+        if (name && contextModule.isGlobal) descr.push(this.descriptions.createDescription(childNode, name, document));
       }
 
       if (
@@ -60,30 +66,13 @@ export class TontoScopeComputation extends DefaultScopeComputation {
         isContextModule(childNode) ||
         isGeneralizationSet(childNode)
       ) {
-        if (
-          isContextModule(childNode.$container) &&
-          childNode.$container.isGlobal
-        ) {
-          descr.push(
-            this.descriptions.createDescription(
-              childNode,
-              childNode.name,
-              document
-            )
-          );
+        if (isContextModule(childNode.$container) && childNode.$container.isGlobal) {
+          descr.push(this.descriptions.createDescription(childNode, childNode.name, document));
         } else if (isContextModule(childNode) && !childNode.isGlobal) {
           if (childNode.name !== undefined) {
-            const fullyQualifiedName = this.qualifiedNameProvider.getQualifiedName(
-              childNode
-            );
+            const fullyQualifiedName = this.qualifiedNameProvider.getQualifiedName(childNode);
 
-            descr.push(
-              this.descriptions.createDescription(
-                childNode,
-                fullyQualifiedName,
-                document
-              )
-            );
+            descr.push(this.descriptions.createDescription(childNode, fullyQualifiedName, document));
           }
         }
       }
@@ -94,7 +83,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
   /**
    * Compute all the local scopes for the given document
    * @param document the current document
-   * @param cancelToken 
+   * @param cancelToken
    * @returns PrecomputedScopes
    */
   override async computeLocalScopes(
@@ -107,12 +96,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
     for (const importItem of model.imports) {
       const contextModule = importItem.referencedModel.ref;
       if (contextModule) {
-        await this.processContainer(
-          contextModule,
-          scopes,
-          document,
-          cancelToken
-        );
+        await this.processContainer(contextModule, scopes, document, cancelToken);
       }
     }
     await this.processContainer(model.module, scopes, document, cancelToken);
@@ -147,37 +131,18 @@ export class TontoScopeComputation extends DefaultScopeComputation {
         const qualifiedName = this.qualifiedNameProvider.getQualifiedName(element);
         const name = this.qualifiedNameProvider.getQualifiedName(element);
         if (name) {
-          const description = this.descriptions.createDescription(
-            element,
-            name,
-            document
-          );
-          const descriptionQualified = this.descriptions.createDescription(
-            element,
-            qualifiedName,
-            document
-          );
+          const description = this.descriptions.createDescription(element, name, document);
+          const descriptionQualified = this.descriptions.createDescription(element, qualifiedName, document);
           localDescriptions.push(description);
           localDescriptions.push(descriptionQualified);
         }
       }
-      if (
-        isClassDeclaration(element) ||
-        isDataType(element)
-      ) {
+      if (isClassDeclaration(element) || isDataType(element)) {
         if (element.name !== undefined) {
           const qualifiedName = this.qualifiedNameProvider.getQualifiedName(element);
           const name = this.qualifiedNameProvider.getName(element);
-          const description = this.descriptions.createDescription(
-            element,
-            name,
-            document
-          );
-          const descriptionQualified = this.descriptions.createDescription(
-            element,
-            qualifiedName,
-            document
-          );
+          const description = this.descriptions.createDescription(element, name, document);
+          const descriptionQualified = this.descriptions.createDescription(element, qualifiedName, document);
           localDescriptions.push(description);
           localDescriptions.push(descriptionQualified);
           if (isClassDeclaration(element) && element.references.length > 0) {
@@ -185,11 +150,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
               if (isElementRelation(internalElement)) {
                 const name = this.qualifiedNameProvider.getQualifiedName(internalElement);
                 if (name) {
-                  const internalDescription = this.descriptions.createDescription(
-                    internalElement,
-                    name,
-                    document
-                  );
+                  const internalDescription = this.descriptions.createDescription(internalElement, name, document);
                   localDescriptions.push(internalDescription);
                 }
               }
