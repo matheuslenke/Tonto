@@ -63,3 +63,5 @@ export default function (): void {
 }
 
 export * from "./actions";
+export * from "./utils/readManifest";
+export * from "./model/TontoManifest";

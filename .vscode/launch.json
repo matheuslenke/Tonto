@@ -58,6 +58,36 @@
             ]
         },
         {
+            "name": "TPM: Install",
+            "program": "${workspaceFolder}/packages/tonto-package-manager/bin/cli",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node",
+            "args": [
+                "install"
+            ],
+            "cwd": "${workspaceFolder}/examples/ontouml-models/Aguiar2019ooco"
+        },
+        {
+            "name": "TPM: Add dependency",
+            "program": "${workspaceFolder}/packages/tonto-package-manager/bin/cli",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node",
+            "args": [
+                "add",
+                "-n Test",
+                "-u https://github.com/matheuslenke/tonto-example-models.git",
+                "-v 1.0.0",
+                "-d SWO"
+            ],
+            "cwd": "${workspaceFolder}/examples/ontouml-models/Aguiar2019ooco"
+        },
+        {
             "name": "Run Extension",
             "type": "extensionHost",
             "sourceMaps": true,

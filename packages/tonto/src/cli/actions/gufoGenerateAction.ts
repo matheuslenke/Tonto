@@ -11,7 +11,7 @@ import fs from "fs";
 import { GeneratorContext } from "../JsonModularGenerators/jsonModular.generator";
 import { TontoManifest, createDefaultTontoManifest } from "../model/TontoManifest";
 import { ErrorGufoResultResponse, GufoResultResponse, TransformTontoToGufo } from "../requests/gufoTransform";
-import { readTontoManifest } from "../utils/readManifest";
+import { readOrCreateDefaultTontoManifest } from "../utils/readManifest";
 
 export const transformToGufoAction = async (dirName: string): Promise<void> => {
   if (!dirName) {
@@ -21,7 +21,7 @@ export const transformToGufoAction = async (dirName: string): Promise<void> => {
   console.log(chalk.bold("Transforming to gufo..."));
 
   try {
-    const manifest = readTontoManifest(dirName);
+    const manifest = readOrCreateDefaultTontoManifest(dirName);
     const response = await transformToGufoCommand(dirName);
 
     if (isGufoResultResponse(response)) {

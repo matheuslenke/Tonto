@@ -8,7 +8,7 @@ import { generateJSONFileModular } from "../JsonModularGenerators/jsonModular.ge
 import { TontoManifest } from "../model/TontoManifest";
 import { builtInLibs } from "../../language-server/workspace/builtins";
 import { createTontoServices, Model, TontoServices } from "../../language-server";
-import { readTontoManifest } from "../utils/readManifest";
+import { readOrCreateDefaultTontoManifest } from "../utils/readManifest";
 
 export type GenerateOptions = {
   destination?: string;
@@ -52,7 +52,7 @@ export async function generateModularCommand(dir: string): Promise<string | unde
      * Create Tonto Manifest file if it does not exist or read from an existing
      * one
      */
-    manifest = readTontoManifest(dir);
+    manifest = readOrCreateDefaultTontoManifest(dir);
 
     console.log(chalk.bold("tonto.json file parsed successfully."));
     folderAbsolutePath = path.resolve(dir);

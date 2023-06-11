@@ -46,18 +46,24 @@
         "properties": {
           "url": {
             "type": "string",
-            "format": "uri"
+            "format": "uri",
+            "description": "URL of git repository"
           },
           "version": {
-            "type": "string"
+            "type": "string",
+            "description": "The version tag to get the dependency"
           },
           "directory": {
-            "type": "string"
+            "type": "string",
+            "description": "The directory inside of the repository that this dependency is located"
+          },
+          "branch": {
+            "type": "string",
+            "description": "Branch of the project. If not specified, it gets the main branch of the repository"
           }
         },
         "required": [
-          "url",
-          "version"
+          "url"
         ]
       }
     },
@@ -67,7 +73,6 @@
   },
   "required": [
     "projectName",
-    "version",
     "displayName",
     "license",
     "publisher",
