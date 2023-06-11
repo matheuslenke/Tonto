@@ -23,7 +23,6 @@ disjoint complete genset ExtendClass {
 
 subkind RootClass specializes ExtendableClass
 
-
 role SuperClass specializes ExtendableClass
 
 role Subclass specializes Class

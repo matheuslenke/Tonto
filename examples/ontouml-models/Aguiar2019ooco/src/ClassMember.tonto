@@ -1,6 +1,5 @@
 // Obrigatório alias
 // import "https://google.com" // as Google
-import Java.Class
 import Core
 import Class
 
