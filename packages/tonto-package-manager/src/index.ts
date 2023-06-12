@@ -2,7 +2,6 @@ import { Command } from "commander";
 import figlet from "figlet";
 import { installAction } from "./actions/installAction";
 import { addDependencyAction } from "./actions/addDependencyAction";
-// import { installAction } from "./actions/installAction";
 
 export default function (): void {
   const program = new Command();
@@ -10,7 +9,7 @@ export default function (): void {
   program
     .name("tpm")
     .description("Tonto Package Manager: A Package Manager to manage dependencies in your Tonto project")
-    .version(require("../package.json").version)
+    .version("0.2.5")
     .addHelpText("before", figlet.textSync("TPM"));
 
   program
@@ -44,3 +43,6 @@ export default function (): void {
 
   program.parseAsync(process.argv);
 }
+
+export * from "./actions/installAction";
+export * from "./actions/addDependencyAction";

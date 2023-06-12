@@ -7,4 +7,15 @@ export enum CommandIds {
   validateTonto = "tonto.validateModel",
   transformTontoFromButton = "tonto.transformModelFromButton",
   transformTonto = "tonto.transformModel",
+  tpmInstall = "tonto.tpm.install",
+  tpmInstallFromButton = "tonto.tpm.installFromButton",
 }
+
+export const commandPalletteIds = [
+  CommandIds.generateJson,
+  CommandIds.generateTonto,
+  CommandIds.transformTonto,
+  CommandIds.validateTonto,
+  CommandIds.tpmInstall,
+  CommandIds.tpmInstallFromButton,
+];

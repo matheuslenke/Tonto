@@ -57,6 +57,11 @@ async function createStatusBarItemValidateTontoCommand(outputChannel: vscode.Out
   const documentUri = editor?.document.uri;
   if (documentUri) {
     uri = documentUri;
+  } else {
+    const currentRoot = vscode.workspace.workspaceFolders?.[0]?.uri;
+    if (currentRoot) {
+      uri = currentRoot;
+    }
   }
 
   if (uri) {
@@ -66,6 +71,8 @@ async function createStatusBarItemValidateTontoCommand(outputChannel: vscode.Out
     } else {
       vscode.window.showErrorMessage("Failed! File needs to be in a workspace");
     }
+  } else {
+    vscode.window.showErrorMessage("Failed! Could not find workspace to execute validation");
   }
 }
 

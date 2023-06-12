@@ -1,6 +1,7 @@
 package SWO
 
 kind Code
+kind TestingTontoReference
 kind Program
 kind SoftwareSystem
 subkind SourceCode specializes Code

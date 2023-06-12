@@ -5,7 +5,7 @@ import { isGufoResultResponse, transformToGufoCommand } from "tonto-cli/src/cli/
 import { GufoResultResponse } from "tonto-cli/src/cli/requests/gufoTransform";
 import fs from "fs";
 import path from "path";
-import { readTontoManifest } from "tonto-cli/src/cli/utils/readManifest";
+import { readOrCreateDefaultTontoManifest } from "tonto-cli/src/cli/utils/readManifest";
 
 function createTransformToGufoSatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
   context.subscriptions.push(
@@ -42,7 +42,7 @@ function createStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vs
 }
 
 function updateTransformToGufoStatusBarItem(statusBarItem: vscode.StatusBarItem): void {
-  statusBarItem.text = "$(keybindings-sort) Generate gufo owl";
+  statusBarItem.text = "$(keybindings-sort) Tonto -> gUFO";
   statusBarItem.show();
 }
 
@@ -52,6 +52,11 @@ async function createStatusBarItemValidateTontoCommand(uri: vscode.Uri) {
     const documentUri = editor?.document.uri;
     if (documentUri) {
       uri = documentUri;
+    } else {
+      const currentRoot = vscode.workspace.workspaceFolders?.[0]?.uri;
+      if (currentRoot) {
+        uri = currentRoot;
+      }
     }
   }
 
@@ -93,7 +98,7 @@ async function transformModel(directoryUri: vscode.Uri) {
 
       if (isGufoResultResponse(response)) {
         const gufoResult = response as GufoResultResponse;
-        const manifest = readTontoManifest(directoryUri.fsPath);
+        const manifest = readOrCreateDefaultTontoManifest(directoryUri.fsPath);
         const folderAbsolutePath = path.resolve(directoryUri.fsPath);
         const outFolder = path.join(folderAbsolutePath, manifest.outFolder);
         if (!fs.existsSync(outFolder)) {

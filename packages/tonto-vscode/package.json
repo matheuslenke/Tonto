@@ -3,7 +3,7 @@
     "displayName": "Tonto",
     "publisher": "Lenke",
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.2.4",
+    "version": "0.2.5",
     "license": "MIT",
     "icon": "data/images/TontoIcon.png",
     "repository": {
@@ -58,6 +58,11 @@
                 "command": "tonto.transformModel",
                 "title": "Transform Tonto Model to Gufo OWL",
                 "category": "Tonto"
+            },
+            {
+                "command": "tonto.tpm.install",
+                "title": "Install Tonto Dependencies based on tonto.json manifest file",
+                "category": "TPM"
             }
         ],
         "jsonValidation": [
@@ -86,7 +91,7 @@
         "vscode:prepublish": "npm run clean && tsc --noEmit && npm run lint && node esbuild.js --minify",
         "package": "vsce package --no-dependencies",
         "publish": "vsce publish",
-        "clean": "rimraf out",
+        "clean": "rimraf out node_modules",
         "lint": "eslint src --ext ts",
         "lint:fix": "eslint src --ext ts --fix",
         "build": "node esbuild.js && tsc",
@@ -98,18 +103,8 @@
     },
     "dependencies": {
         "tonto-cli": "../tonto",
-        "ajv": "^8.11.0",
-        "chalk": "^5.2.0",
-        "chevrotain": "^10.4.2",
-        "colors": "^1.4.0",
-        "commander": "^9.4.1",
-        "esm": "^3.2.25",
-        "glob": "^10.2.2",
-        "jsonfile": "^6.1.0",
+        "tonto-package-manager": "../tonto-package-manager",
         "langium": "~1.2.0",
-        "node-fetch-native": "^1.0.1",
-        "ontouml-js": "https://github.com/matheuslenke/ontouml-js#feature/include-types-in-build",
-        "ontouml-schema": "0.2.4",
         "rimraf": "^4.1.2",
         "vscode-languageclient": "~8.0.2",
         "vscode-languageserver": "~8.0.2",

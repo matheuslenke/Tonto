@@ -5,10 +5,9 @@ import { Model } from "../src/language-server/generated/ast";
 
 describe("A", () => {
   const tontoStub = `
-    module UFOS {
-      kind Person
-      kind School
-    }
+    package UFOS 
+    kind Person
+    kind School
   `;
   const services = createTontoServices(EmptyFileSystem);
   const validate = validationHelper(services.Tonto);

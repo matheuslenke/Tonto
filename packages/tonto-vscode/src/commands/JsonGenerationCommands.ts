@@ -2,24 +2,15 @@ import { generateModularCommand } from "tonto-cli";
 import * as vscode from "vscode";
 import { CommandIds } from "./commandIds";
 
-function createGenerateJsonStatusBarItem(
-  context: vscode.ExtensionContext,
-  statusBarItem: vscode.StatusBarItem
-) {
+function createGenerateJsonStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
   // Register the status bar item command
   context.subscriptions.push(
-    vscode.commands.registerCommand(
-      CommandIds.generateJsonFromButton,
-      createStatusBarItemGenerateJsonCommand
-    )
+    vscode.commands.registerCommand(CommandIds.generateJsonFromButton, createStatusBarItemGenerateJsonCommand)
   );
 
   // Register the command pallete command
   context.subscriptions.push(
-    vscode.commands.registerCommand(
-      CommandIds.generateJson,
-      createCommandPaletteGenerateJsonCommand
-    )
+    vscode.commands.registerCommand(CommandIds.generateJson, createCommandPaletteGenerateJsonCommand)
   );
 
   return createStatusBarItem(context, statusBarItem);
@@ -27,20 +18,21 @@ function createGenerateJsonStatusBarItem(
 
 function createStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
   // create a new status bar item that we can now manage
-  statusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Right,
-    100
-  );
+  statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
   statusBarItem.command = CommandIds.generateJsonFromButton;
   context.subscriptions.push(statusBarItem);
 
   // register some listener that make sure the status bar
   // item always up-to-date
   context.subscriptions.push(
-    vscode.window.onDidChangeActiveTextEditor(() => { updateJsonStatusBarItem(statusBarItem); })
+    vscode.window.onDidChangeActiveTextEditor(() => {
+      updateJsonStatusBarItem(statusBarItem);
+    })
   );
   context.subscriptions.push(
-    vscode.window.onDidChangeTextEditorSelection(() => { updateJsonStatusBarItem(statusBarItem); })
+    vscode.window.onDidChangeTextEditorSelection(() => {
+      updateJsonStatusBarItem(statusBarItem);
+    })
   );
 
   // update status bar item once at start
@@ -50,7 +42,7 @@ function createStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vs
 }
 
 function updateJsonStatusBarItem(statusBarItem: vscode.StatusBarItem): void {
-  statusBarItem.text = "$(bracket-dot) Generate JSON from Model";
+  statusBarItem.text = "$(bracket-dot) Tonto -> JSON";
   statusBarItem.show();
 }
 
@@ -69,7 +61,7 @@ async function createCommandPaletteGenerateJsonCommand() {
     canSelectFiles: false,
     canSelectFolders: true,
     canSelectMany: false,
-    openLabel: "Select Tonto Project directory"
+    openLabel: "Select Tonto Project directory",
   });
 
   if (directoryUri && directoryUri[0]) {
@@ -91,6 +83,11 @@ async function createStatusBarItemGenerateJsonCommand(uri: vscode.Uri) {
     const documentUri = editor?.document.uri;
     if (documentUri) {
       uri = documentUri;
+    } else {
+      const currentRoot = vscode.workspace.workspaceFolders?.[0]?.uri;
+      if (currentRoot) {
+        uri = currentRoot;
+      }
     }
   }
 

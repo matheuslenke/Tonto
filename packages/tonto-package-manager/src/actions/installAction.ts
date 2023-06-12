@@ -1,8 +1,9 @@
 import chalk from "chalk";
-import { TontoDependency, TontoManifest, readTontoManifest } from "tonto-cli";
-import shell, { ShellString } from "shelljs";
 import path from "path";
 import fs from "fs";
+import ora, { Ora } from "ora";
+import { TontoDependency, TontoManifest, readTontoManifest } from "tonto-cli";
+import execa from "execa";
 
 interface InstallOptions {
   dir: string;
@@ -13,14 +14,20 @@ interface InstallResponse {
   message: string;
 }
 
-const installAction = async (opts: InstallOptions): Promise<InstallResponse> => {
+const installAction = async (opts: InstallOptions): Promise<void> => {
+  await installCommand(opts);
+};
+
+const installCommand = async (opts: InstallOptions): Promise<InstallResponse> => {
   const manifest = readTontoManifest(opts.dir);
 
   if (!manifest) {
-    console.log(chalk.red("tonto.json manifest file not found. It is required in order to manage dependencies"));
+    console.log(
+      chalk.red("tonto.json manifest file not found. The manifest is required in order to manage dependencies")
+    );
     return {
       fail: true,
-      message: "tonto.json manifest file not found. It is required in order to manage dependencies",
+      message: "tonto.json manifest file not found. The manifest in order to manage dependencies",
     } as InstallResponse;
   }
 
@@ -30,7 +37,9 @@ const installAction = async (opts: InstallOptions): Promise<InstallResponse> => 
   const tmpPath = path.join(absolutePath, "tmp");
   const tontoDependenciesPath = path.join(absolutePath, "tonto_dependencies");
 
-  deleteTempFolder(tmpPath);
+  if (fs.existsSync(tmpPath)) {
+    deleteTempFolder(tmpPath);
+  }
   if (!fs.existsSync(tmpPath)) {
     fs.mkdirSync(tmpPath);
   }
@@ -38,7 +47,7 @@ const installAction = async (opts: InstallOptions): Promise<InstallResponse> => 
     fs.mkdirSync(tontoDependenciesPath);
   }
 
-  console.log(chalk.bold("Installing dependencies..."));
+  const spinner = ora({ text: "Installing dependencies" }).start();
 
   try {
     /**
@@ -52,18 +61,21 @@ const installAction = async (opts: InstallOptions): Promise<InstallResponse> => 
         tmpPath,
         tontoDependenciesPath,
         dependencyName,
-        dependency
+        dependency,
+        spinner,
+        false
       );
       joinDependencyMaps(dependencyMap, innerDependencies);
     }
-    console.log(chalk.green.bold("Dependency map resolved!"));
-
+    spinner.text = "Dependency map resolved! Moving folders...";
     /**
      * Then, after all dependencies are correctly set, we can copy from our temporary folder to the final
      * tonto_dependencies folder
      */
-    copyCorrectDependenciesToTontoDependenciesFolder(tmpPath, tontoDependenciesPath, dependencyMap);
+    await copyCorrectDependenciesToTontoDependenciesFolder(tmpPath, tontoDependenciesPath, dependencyMap, spinner);
+    spinner.succeed("Dependencies installed!");
   } catch (error) {
+    spinner.fail(`Install dependencies failed! Reason: ${error}`);
     return {
       fail: true,
       message: error,
@@ -71,7 +83,6 @@ const installAction = async (opts: InstallOptions): Promise<InstallResponse> => 
   } finally {
     deleteTempFolder(tmpPath);
   }
-  console.log(chalk.green.bold("Dependencies install finished!"));
   return {
     fail: false,
     message: "Dependencies install finished!",
@@ -80,7 +91,11 @@ const installAction = async (opts: InstallOptions): Promise<InstallResponse> => 
 
 async function deleteTempFolder(tmpPath: string) {
   if (fs.existsSync(tmpPath)) {
-    shell.exec(`rm -r ${tmpPath}`);
+    try {
+      fs.rmSync(tmpPath, { recursive: true });
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
 
@@ -88,39 +103,59 @@ async function getPackageContentFromGitAndBuildDependencyMap(
   installDir: string,
   tontoDependenciesPath: string,
   dependencyName: string,
-  dependency: TontoDependency
+  dependency: TontoDependency,
+  spinner: Ora,
+  verbose: boolean
 ): Promise<Map<string, TontoDependency>> {
   try {
-    if (!shell.which("git")) {
-      shell.echo("Sorry, this script requires git");
-      shell.exit(1);
-    }
     const dependencyTempPath = path.join(installDir, dependencyName);
 
+    if (fs.existsSync(dependencyTempPath)) {
+      return new Map();
+    }
     if (!fs.existsSync(dependencyTempPath)) {
       fs.mkdirSync(dependencyTempPath);
     }
     /**
      * First, we need to check if the tag exists on the remote
      */
+    spinner.text = `Installing ${dependencyName}`;
+    let cloneResponse: execa.ExecaReturnValue<string>;
     if (dependency.version) {
-      const response: ShellString = shell.exec(`git ls-remote --tags ${dependency.url}`);
-      const tags = response.stdout.split("\n");
+      const response = await execa.command(`git ls-remote --tags  ${dependency.url}`, {reject: verbose});
+      if (response.failed) {
+        console.log(chalk.red("Error while getting repository tags"));
+        spinner.fail("Error while getting repository tags");
+        return new Map();
+      }
+      const tags = parseRemoteTags(response.stdout);
       const tagExists = tags.find((item) => item === dependency.version);
 
       if (!tagExists) {
-        console.log(chalk.red(`Specified tag from dependency ${dependencyName} does not exist`));
+        // console.log(chalk.red(`Specified tag from dependency ${dependencyName} does not exist`));
         return Promise.reject(`Specified tag from dependency ${dependencyName} does not exist`);
       }
       /**
        * First, we clone the dependency to a temporary folder
        */
-      shell.exec(`git clone ${dependency.url} ${dependencyTempPath} --single-branch --branch ${dependency.version}`);
+      cloneResponse = await execa.command(
+        `git clone ${dependency.url} ${dependencyTempPath} --depth=1 --single-branch --branch ${dependency.version}`,
+        {reject: verbose}
+        );
     } else if (dependency.branch) {
-      shell.exec(`git clone ${dependency.url} ${dependencyTempPath} --single-branch --branch ${dependency.branch}`);
+      cloneResponse = await execa.command(
+        `git clone ${dependency.url} ${dependencyTempPath} --single-branch --branch ${dependency.branch}`,
+        {reject: verbose}
+      );
     } else {
-      shell.exec(`git clone ${dependency.url} ${dependencyTempPath}`);
+      cloneResponse = await execa.command(`git clone ${dependency.url} ${dependencyTempPath}`, {reject: verbose});
     }
+
+    if (cloneResponse.failed) {
+      // console.log(chalk.red("Error while cloning repository"));
+      return Promise.reject(`Error while clning repository ${dependency.url}`);
+    }
+
     let dependencyTempPathWithDirectory = dependencyTempPath;
     if (dependency.directory) {
       const dependencyWithDir = path.join(dependencyTempPath, dependency.directory);
@@ -137,23 +172,21 @@ async function getPackageContentFromGitAndBuildDependencyMap(
           installDir,
           tontoDependenciesPath,
           depName,
-          dep
+          dep,
+          spinner,
+          verbose
         );
         joinDependencyMaps(innerDependencies, getInnerDependencies);
       }
     } else {
-      console.log(
-        chalk.bold.red(
-          `The dependency ${dependencyName} does not seem to be a Tonto Project. Missing tonto.json manifest file`
-        )
-      );
-      // TODO: Return error
+
+      return Promise.reject(
+        `The dependency ${dependencyName} does not seem to be a Tonto Project. Missing tonto.json manifest file`);
     }
 
     return innerDependencies;
   } catch (error) {
-    console.error("An error occurred while downloading files:", error);
-    return Promise.reject();
+    return Promise.reject("Error while downloading files:" + error);
   }
 }
 /**
@@ -167,18 +200,19 @@ function joinDependencyMaps(map1: Map<string, TontoDependency>, map2: Map<string
   });
 }
 
-function copyCorrectDependenciesToTontoDependenciesFolder(
+async function copyCorrectDependenciesToTontoDependenciesFolder(
   installDir: string,
   tontoDependenciesPath: string,
-  dependencyMap: Map<string, TontoDependency>
-): void {
-  dependencyMap.forEach((dependency, dependencyName) => {
+  dependencyMap: Map<string, TontoDependency>,
+  spinner: Ora
+) {
+  dependencyMap.forEach(async (dependency, dependencyName) => {
     if (!dependency) {
       return;
     }
     const dependencyTempPath = path.join(installDir, dependencyName);
     const dependencyFinalPath = path.join(tontoDependenciesPath);
-    console.log(`Copying file from ${dependencyTempPath} to ${dependencyFinalPath}`);
+
     let dependencyTempPathWithDirectory = dependencyTempPath;
     if (dependency.directory) {
       const dependencyWithDir = path.join(dependencyTempPath, dependency.directory);
@@ -188,7 +222,20 @@ function copyCorrectDependenciesToTontoDependenciesFolder(
     if (!fs.existsSync(dependencyFinalPath)) {
       fs.mkdirSync(dependencyFinalPath);
     }
-    shell.exec(`cp -R ${dependencyTempPathWithDirectory} ${tontoDependenciesPath}`);
+    try {
+      if (fs.existsSync(path.join(tontoDependenciesPath, dependencyName))) {
+        spinner.fail(`Error while moving dependencies. Folder already exists: ${tontoDependenciesPath}`);
+      } else {
+        const response = await execa.command(`cp -R ${dependencyTempPathWithDirectory} ${tontoDependenciesPath}`,
+        {reject: false});
+        if (response.failed) {
+          spinner.fail("Error while moving dependencies.");
+        }
+      }
+    } catch (error) {
+      spinner.clear();
+      console.log(error);
+    }
   });
 }
 
@@ -196,4 +243,15 @@ function checkIfDependencyHasManifest(dependencyPath: string): TontoManifest | u
   return readTontoManifest(dependencyPath);
 }
 
-export { installAction };
+function parseRemoteTags(output: string): string[] {
+  // Extract tag names from the `ls-remote` output
+  const regex = /refs\/tags\/([^/]+)/g;
+  const tags: string[] = [];
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(output))) {
+    tags.push(match[1]);
+  }
+  return tags;
+}
+
+export { installAction, installCommand };

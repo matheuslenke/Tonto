@@ -1,15 +1,18 @@
 {
   "name": "tonto-package-manager",
-  "version": "0.2.4",
+  "displayName": "Tonto Package Manager",
+  "version": "0.2.5",
   "description": "A package manager for Tonto dependencies",
   "scripts": {
+    "clean": "rimraf lib node_modules",
     "build": "tsc",
     "watch": "tsc --watch",
     "test": "vitest"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/matheuslenke/Tonto.git"
+    "url": "git+https://github.com/matheuslenke/Tonto.git",
+    "directory": "packages/tonto-package-manager"
   },
   "keywords": [
     "CLI",
@@ -17,6 +20,12 @@
     "Manager",
     "Tonto",
     "DSL"
+  ],
+  "files": [
+    "lib",
+    "src",
+    "node.js",
+    "node.d.ts"
   ],
   "author": "Matheus Lenke Coutinho",
   "license": "MIT",
@@ -35,8 +44,10 @@
   "dependencies": {
     "axios": "^1.4.0",
     "chalk": "^4.1.0",
-    "commander": "^10.0.1",
+    "commander": "^9.4.1",
+    "execa": "^5.1.1",
     "figlet": "^1.6.0",
+    "ora": "^5.4.1",
     "shelljs": "^0.8.5",
     "tonto-cli": "../tonto"
   },

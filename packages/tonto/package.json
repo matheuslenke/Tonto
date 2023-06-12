@@ -7,16 +7,16 @@
     "email": "matheuslenke@gmail.com"
   },
   "description": "Tonto is a DSL for creating OntoUML models",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "license": "MIT",
   "icon": "data/images/TontoIcon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/matheuslenke/Tonto",
-    "directory": "packages/tonto-cli"
+    "directory": "packages/tonto"
   },
   "engines": {
-    "node": ">= 14.0.0"
+    "node": ">= 16.0.0"
   },
   "categories": [
     "Programming Languages"
@@ -54,8 +54,8 @@
     "esm": "^3.2.25",
     "glob": "^10.2.2",
     "langium": "~1.2.0",
+    "commander": "^9.4.1",
     "ontouml-js": "https://github.com/matheuslenke/ontouml-js#feature/include-types-in-build",
-    "ontouml-schema": "0.2.4",
     "rimraf": "^4.1.2",
     "vscode-languageclient": "~8.0.2",
     "vscode-languageserver": "~8.0.2",

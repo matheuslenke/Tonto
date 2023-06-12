@@ -18,18 +18,13 @@ function createTontoGenerationStatusBarItem(context: vscode.ExtensionContext, st
 
 function createStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
   // create a new status bar item that we can now manage
-  statusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Right,
-    49
-  );
+  statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 49);
   statusBarItem.command = CommandIds.generateTontoFromButton;
   context.subscriptions.push(statusBarItem);
 
   // register some listener that make sure the status bar
   // item always up-to-date
-  context.subscriptions.push(
-    vscode.window.onDidChangeActiveTextEditor(() => updateTontoStatusBarItem(statusBarItem))
-  );
+  context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(() => updateTontoStatusBarItem(statusBarItem)));
   context.subscriptions.push(
     vscode.window.onDidChangeTextEditorSelection(() => updateTontoStatusBarItem(statusBarItem))
   );
@@ -43,7 +38,7 @@ async function createCommandPaletteGenerateTontoCommand() {
     canSelectFiles: true,
     canSelectFolders: false,
     canSelectMany: false,
-    openLabel: "Select JSON File"
+    openLabel: "Select JSON File",
   });
 
   if (fileUri && fileUri[0]) {
@@ -51,7 +46,7 @@ async function createCommandPaletteGenerateTontoCommand() {
 
     const generatedDirectoryName = await vscode.window.showInputBox({
       prompt: "Enter the name of the directory to hold the generated model",
-      value: "generated"
+      value: "generated",
     });
     if (generatedDirectoryName) {
       await generateTonto(selectedFile, generatedDirectoryName);
@@ -78,7 +73,7 @@ async function createStatusBarItemGenerateTontoCommand(uri: vscode.Uri) {
 }
 
 function updateTontoStatusBarItem(statusBarItem: vscode.StatusBarItem): void {
-  statusBarItem.text = "$(keybindings-sort) Generate Tonto";
+  statusBarItem.text = "$(keybindings-sort) JSON -> Tonto";
   statusBarItem.show();
 }
 
