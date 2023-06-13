@@ -29,7 +29,7 @@ export const transformToGufoAction = async (dirName: string): Promise<void> => {
       if (!fs.existsSync(dirName)) {
         fs.mkdirSync(dirName);
       }
-      fs.writeFileSync(path.join(dirName, manifest.outFolder, "gufo.owl"), resultResponse.result);
+      fs.writeFileSync(path.join(dirName, manifest.outFolder, "gufo.ttl"), resultResponse.result);
       console.log(resultResponse.result);
     } else {
       const errorResponse = response as ErrorGufoResultResponse;

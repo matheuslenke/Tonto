@@ -12,12 +12,12 @@ export function setPropertyCardinality(cardinality: Cardinality | undefined, end
     return;
   }
   if (typeof cardinality.lowerBound === "number") {
-    end.cardinality.setLowerBoundFromNumber(cardinality.lowerBound);
-    // end.cardinality.setUpperBoundFromNumber(cardinality.lowerBound);
+    end.cardinality.lowerBound = cardinality.lowerBound.toString();
+    // end.cardinality.upperBound = cardinality.lowerBound.toString();
   }
   if (cardinality.upperBound && cardinality.upperBound === "*") {
     end.cardinality.upperBound = CardinalityValues.MANY;
   } else if (cardinality.upperBound && typeof cardinality.upperBound === "number") {
-    end.cardinality.setUpperBoundFromNumber(cardinality.upperBound);
+    end.cardinality.upperBound = cardinality.upperBound.toString();
   }
 }

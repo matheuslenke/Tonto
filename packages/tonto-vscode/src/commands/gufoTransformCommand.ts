@@ -104,7 +104,7 @@ async function transformModel(directoryUri: vscode.Uri) {
         if (!fs.existsSync(outFolder)) {
           fs.mkdirSync(outFolder);
         }
-        fs.writeFileSync(path.join(outFolder, "gufo.owl"), gufoResult.result);
+        fs.writeFileSync(path.join(outFolder, "gufo.ttl"), gufoResult.result);
         vscode.window.showInformationMessage("Generated gufo OWL file!");
       } else {
         const error = response as ErrorResultResponse;

@@ -15,7 +15,7 @@
             "type": "node",
             "args": [
                 "generate",
-                "${workspaceFolder}/examples/ontouml-models/Aguiar2019ooco"
+                "${workspaceFolder}/examples/fixingErrors"
             ]
         },
         {

@@ -2,7 +2,7 @@ import ExportType
 
 package RelationRefer
 
-kind TestKind
+kind TestKind of quantities
 
 relation ExportType.ExportingType <o>-- nome2 -- TestKind
 
