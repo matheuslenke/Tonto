@@ -110,7 +110,8 @@
         "vscode-languageclient": "^8.0.2",
         "vscode-languageserver": "^8.0.2",
         "vscode-languageserver-types": "^3.17.3",
-        "vscode-uri": "^3.0.7"
+        "vscode-uri": "^3.0.7",
+        "tonto-cli": "0.2.7"
     },
     "devDependencies": {
         "@types/jest": "^29.2.3",
