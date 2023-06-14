@@ -7,7 +7,7 @@
     "email": "matheuslenke@gmail.com"
   },
   "description": "Tonto is a DSL for creating OntoUML models",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "license": "MIT",
   "icon": "data/images/TontoIcon.png",
   "repository": {
@@ -60,7 +60,8 @@
     "vscode-languageclient": "~8.0.2",
     "vscode-languageserver": "~8.0.2",
     "vscode-languageserver-types": "^3.17.3",
-    "vscode-uri": "^3.0.2"
+    "vscode-uri": "^3.0.2",
+    "node-fetch-native": "^1.0.1"
   },
   "devDependencies": {
     "@types/jest": "^29.2.3",
