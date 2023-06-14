@@ -105,12 +105,16 @@ async function validateModel(directoryUri: vscode.Uri, outputChannel: vscode.Out
       if (Array.isArray(response)) {
         outputChannel.clear();
         const resultResponses = response as ResultResponse[];
-        resultResponses.forEach((resultResponse) => {
-          outputChannel.appendLine(chalk.bold.redBright(`[${resultResponse.severity}] ${resultResponse.title}:`));
-          outputChannel.appendLine(chalk.red(resultResponse.description));
-        });
-        outputChannel.show();
-      } else {
+        if (resultResponses.length === 0) {
+          vscode.window.showInformationMessage("Validation successful! No errors found.");
+        } else {
+          resultResponses.forEach((resultResponse) => {
+            outputChannel.appendLine(chalk.bold.redBright(`[${resultResponse.severity}] ${resultResponse.title}:`));
+            outputChannel.appendLine(chalk.red(resultResponse.description));
+          });
+          outputChannel.show();
+        }
+      } else if (isErrorResultResponse(response)) {
         const error = response as ErrorResultResponse;
         vscode.window.showErrorMessage(error.message ?? "Error validating model");
       }
