@@ -24,22 +24,6 @@
         "langium:watch": "langium generate --watch --workspace=tonto-cli"
     },
     "dependencies": {
-        "ajv": "^8.11.0",
-        "chalk": "^5.2.0",
-        "chevrotain": "^10.4.2",
-        "colors": "^1.4.0",
-        "esm": "^3.2.25",
-        "glob": "^10.2.2",
-        "jsonfile": "^6.1.0",
-        "langium": "~1.2.0",
-        "node-fetch-native": "^1.0.1",
-        "ontouml-js": "https://github.com/matheuslenke/ontouml-js#feature/include-types-in-build",
-        "ontouml-schema": "0.2.4",
-        "rimraf": "^4.1.2",
-        "vscode-languageclient": "~8.0.2",
-        "vscode-languageserver": "~8.0.2",
-        "vscode-languageserver-types": "^3.17.3",
-        "vscode-uri": "^3.0.2"
     },
     "devDependencies": {
         "@types/jest": "^29.2.3",
