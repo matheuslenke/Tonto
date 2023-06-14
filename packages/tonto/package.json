@@ -31,7 +31,7 @@
   "bin": {
     "tonto-cli": "./bin/cli.js"
   },
-  "main": "lib/cli/index.js",
+  "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "clean": "shx rm -rf lib coverage",
@@ -47,21 +47,19 @@
     "publish:latest": "npm publish --tag latest"
   },
   "dependencies": {
-    "ajv": "^8.11.0",
+    "ajv": "^8.12.0",
     "chalk": "^4.1.0",
     "chevrotain": "^10.4.2",
-    "colors": "^1.4.0",
-    "esm": "^3.2.25",
+    "commander": "^10.0.1",
     "glob": "^10.2.2",
-    "langium": "~1.2.0",
-    "commander": "^9.4.1",
-    "ontouml-js": "https://github.com/matheuslenke/ontouml-js#feature/include-types-in-build",
+    "langium": "^1.2.0",
+    "node-fetch-native": "^1.0.1",
+    "ontouml-js": "github:matheuslenke/ontouml-js#feature/include-types-in-build",
     "rimraf": "^4.1.2",
-    "vscode-languageclient": "~8.0.2",
-    "vscode-languageserver": "~8.0.2",
+    "vscode-languageclient": "^8.0.2",
+    "vscode-languageserver": "^8.0.2",
     "vscode-languageserver-types": "^3.17.3",
-    "vscode-uri": "^3.0.2",
-    "node-fetch-native": "^1.0.1"
+    "vscode-uri": "^3.0.7"
   },
   "devDependencies": {
     "@types/jest": "^29.2.3",
@@ -74,7 +72,7 @@
     "@vitest/ui": "^0.23.4",
     "eslint": "^8.32.0",
     "eslint-config-prettier": "^8.8.0",
-    "langium-cli": "^1.1.0",
+    "langium-cli": "^1.2.0",
     "prettier": "^2.8.2",
     "prettier-eslint": "^15.0.1",
     "typescript": "~4.9.5",

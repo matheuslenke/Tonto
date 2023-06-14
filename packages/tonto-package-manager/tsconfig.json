@@ -8,6 +8,7 @@
     "sourceMap": true,
     "declaration": true
   },
+  "references": [{ "path": "../tonto" }],
   "include": ["src/**/*.ts"],
   "exclude": ["lib", "node_modules"]
 }

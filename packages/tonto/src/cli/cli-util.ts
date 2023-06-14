@@ -1,9 +1,9 @@
-import colors from "colors";
 import path from "path";
 import fs from "fs";
 import { AstNode, LangiumDocument, LangiumDocuments, LangiumServices } from "langium";
 import { URI } from "vscode-uri";
 import { BuiltInLib } from "./model/BuiltInLib";
+import chalk from "chalk";
 
 export async function extractAllDocuments(
   fileNames: string[],
@@ -32,10 +32,10 @@ export async function extractAllDocuments(
   for (const document of documents) {
     const validationErrors = (document.diagnostics ?? []).filter((e) => e.severity === 1);
     if (validationErrors.length > 0) {
-      console.error(colors.red("There are validation errors:"));
+      console.error(chalk.red("There are validation errors:"));
       for (const validationError of validationErrors) {
         console.error(
-          colors.red(
+          chalk.red(
             `line ${validationError.range.start.line + 1}: ${validationError.message} [${document.textDocument.getText(
               validationError.range
             )}]`
@@ -55,7 +55,7 @@ export async function extractDocument(fileName: string, services: LangiumService
   // const extensions = services.LanguageMetaData.fileExtensions;
   // if (!extensions.includes(path.extname(fileName))) {
   //   console.error(
-  //     colors.yellow(
+  //     chalk.yellow(
   //       `Please choose a file with one of these extensions: ${ extensions }.`
   //     )
   //   );
@@ -63,7 +63,7 @@ export async function extractDocument(fileName: string, services: LangiumService
   // }
 
   if (!fs.existsSync(fileName)) {
-    console.error(colors.red(`File ${fileName} does not exist.`));
+    console.error(chalk.red(`File ${fileName} does not exist.`));
     process.exit(1);
   }
 
@@ -74,10 +74,10 @@ export async function extractDocument(fileName: string, services: LangiumService
 
   const validationErrors = (document.diagnostics ?? []).filter((e) => e.severity === 1);
   if (validationErrors.length > 0) {
-    console.error(colors.red("There are validation errors:"));
+    console.error(chalk.red("There are validation errors:"));
     for (const validationError of validationErrors) {
       console.error(
-        colors.red(
+        chalk.red(
           `line ${validationError.range.start.line + 1}: ${validationError.message} [${document.textDocument.getText(
             validationError.range
           )}]`

@@ -102,17 +102,15 @@
         "publish:npm": "npm publish --access public"
     },
     "dependencies": {
-        "tonto-cli": "../tonto",
-        "tonto-package-manager": "../tonto-package-manager",
-        "langium": "~1.2.0",
-        "rimraf": "^4.1.2",
-        "vscode-languageclient": "~8.0.2",
-        "vscode-languageserver": "~8.0.2",
-        "vscode-languageserver-types": "^3.17.3",
-        "vscode-uri": "^3.0.2",
         "chalk": "^4.1.0",
         "commander": "^10.0.1",
-        "node-fetch-native": "^1.0.1"
+        "langium": "^1.2.0",
+        "node-fetch-native": "^1.0.1",
+        "rimraf": "^4.1.2",
+        "vscode-languageclient": "^8.0.2",
+        "vscode-languageserver": "^8.0.2",
+        "vscode-languageserver-types": "^3.17.3",
+        "vscode-uri": "^3.0.7"
     },
     "devDependencies": {
         "@types/jest": "^29.2.3",

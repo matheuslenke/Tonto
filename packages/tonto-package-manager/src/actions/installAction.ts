@@ -2,7 +2,7 @@ import chalk from "chalk";
 import path from "path";
 import fs from "fs";
 import ora, { Ora } from "ora";
-import { TontoDependency, TontoManifest, readTontoManifest } from "tonto-cli";
+import { TontoDependency, TontoManifest, createDefaultTontoManifest, readTontoManifest } from "tonto-cli";
 import execa from "execa";
 
 interface InstallOptions {
@@ -23,11 +23,12 @@ const installCommand = async (opts: InstallOptions): Promise<InstallResponse> =>
 
   if (!manifest) {
     console.log(
-      chalk.red("tonto.json manifest file not found. The manifest is required in order to manage dependencies")
+      chalk.red("tonto.json manifest file not found. The manifest is required in order to manage dependencies. We created a default one")
     );
+    createDefaultManifest(opts.dir);
     return {
       fail: true,
-      message: "tonto.json manifest file not found. The manifest in order to manage dependencies",
+      message: "tonto.json manifest file not found. The manifest is required in order to manage dependencies, so we created a default one",
     } as InstallResponse;
   }
 
@@ -237,6 +238,14 @@ async function copyCorrectDependenciesToTontoDependenciesFolder(
       console.log(error);
     }
   });
+}
+
+function createDefaultManifest(dependencyPath: string) {
+  const manifestFile = path.join(dependencyPath, "tonto.json");
+  if (!fs.existsSync(manifestFile)) {
+    const defaultManifest = createDefaultTontoManifest();
+    fs.writeFileSync(manifestFile, JSON.stringify(defaultManifest, null,2 ));
+  }
 }
 
 function checkIfDependencyHasManifest(dependencyPath: string): TontoManifest | undefined {

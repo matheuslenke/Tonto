@@ -1,6 +1,7 @@
 {
     "name": "tonto-workspaces",
     "private": true,
+    "engineStrict": true,
     "description": "Tonto is a DSL for creating OntoUML models",
     "version": "0.2.5",
     "license": "MIT",
@@ -23,8 +24,6 @@
         "langium:generate": "langium generate --workspace=tonto-cli",
         "langium:watch": "langium generate --watch --workspace=tonto-cli"
     },
-    "dependencies": {
-    },
     "devDependencies": {
         "@types/jest": "^29.2.3",
         "@types/node": "^18.11.17",
@@ -37,7 +36,6 @@
         "esbuild": "^0.16.9",
         "eslint": "^8.32.0",
         "eslint-config-prettier": "^8.8.0",
-        "langium-cli": "^1.1.0",
         "prettier": "2.8.8",
         "prettier-eslint": "^15.0.1",
         "prettier-plugin-eslint": "^1.0.2",
@@ -52,6 +50,7 @@
     },
     "workspaces": [
         "packages/tonto",
-        "packages/tonto-vscode"
+        "packages/tonto-vscode",
+        "packages/tonto-package-manager"
     ]
 }
