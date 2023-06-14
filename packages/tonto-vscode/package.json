@@ -91,7 +91,7 @@
         "vscode:prepublish": "npm run clean && tsc --noEmit && npm run lint && node esbuild.js --minify",
         "package": "vsce package --no-dependencies",
         "publish": "vsce publish",
-        "clean": "rimraf out node_modules",
+        "clean": "rimraf out",
         "lint": "eslint src --ext ts",
         "lint:fix": "eslint src --ext ts --fix",
         "build": "node esbuild.js && tsc",
@@ -109,7 +109,10 @@
         "vscode-languageclient": "~8.0.2",
         "vscode-languageserver": "~8.0.2",
         "vscode-languageserver-types": "^3.17.3",
-        "vscode-uri": "^3.0.2"
+        "vscode-uri": "^3.0.2",
+        "chalk": "^4.1.0",
+        "commander": "^10.0.1",
+        "node-fetch-native": "^1.0.1"
     },
     "devDependencies": {
         "@types/jest": "^29.2.3",
