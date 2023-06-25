@@ -1,0 +1,28 @@
+import Core
+
+package Class
+
+subkind Generic_Class  specializes Class
+kind Type_Parameter {
+     [1..*] --  [1..1]  Generic_Class
+}
+subkind Concrete_Class  specializes Class
+subkind Abstract_Class  specializes Class, Extendable_Class
+subkind NonExtendable_Class  specializes Class
+subkind Extendable_Class  specializes Class
+subkind Root_Class  specializes Extendable_Class
+role Superclass  specializes Extendable_Class{
+     [1..*] -- inherited_in --  [1..*]  Inheritance
+}
+role Subclass  specializes Class{
+     [1..1] -- inherits_in --  [1..1]  Inheritance
+}
+relator Nesting 
+relator Inheritance 
+role Nested_Class  specializes Class{
+     [1..1] -- nested_in --  [1..1]  Nesting
+}
+quality Inheritance_Visibility {
+     [0..1] -- characterized_by --  [1..1] ( {const } ) Inheritance
+}
+

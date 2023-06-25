@@ -1,0 +1,36 @@
+import Class
+import Core
+
+package Class_Member
+
+subkind Method_Variable  specializes Variable
+subkind Overridable_Method  specializes Method_Member_Function{
+     [0..*] --  [1..1]  Extendable_Class
+}
+subkind NonOverridable_Method  specializes Method_Member_Function
+subkind Class_Method  specializes NonOverridable_Method, Concrete_Method
+subkind Instance_Method  specializes Concrete_Method
+subkind Abstract_Method  specializes Overridable_Method, Method_Member_Function{
+     [0..*] --  [1..1]  Abstract_Class
+}
+subkind Concrete_Method  specializes Method_Member_Function
+subkind Generic_Method  specializes Method_Member_Function
+subkind Class_Variable  specializes Attribute_Member_Variable
+subkind Instance_Variable  specializes Attribute_Member_Variable
+subkind Parameter_Variabe  specializes Method_Variable{
+    ( {ordered } ) [0..*] --  [1..1]  Method_Member_Function
+}
+subkind Local_Variable  specializes Method_Variable{
+     [0..*] --  [1..1]  Block
+}
+kind Type_Parameter {
+     [1..*] --  [1..1]  Generic_Method
+}
+kind Block {
+     [1..1] --  [1..1]  Concrete_Method
+     [0..*] --  [0..1]  Block
+}
+subkind Constructor_Method  specializes NonOverridable_Method, Instance_Method
+subkind Destructor_Method  specializes Instance_Method
+subkind Accessor_Method  specializes Instance_Method
+

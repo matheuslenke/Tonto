@@ -1,0 +1,6 @@
+package SPO
+
+category Artifact
+kind Language
+subkind ProgrammingLanguage specializes Language
+category SoftwareItem specializes Artifact

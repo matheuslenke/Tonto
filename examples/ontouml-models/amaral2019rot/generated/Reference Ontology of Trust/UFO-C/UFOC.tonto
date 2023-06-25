@@ -1,0 +1,22 @@
+import ROT
+import COVER
+import UFOA
+
+package UFOC
+
+category Object  specializes Substantial
+category Agent  specializes Substantial
+category Mental_Moment  specializes Moment{
+     [0..*] -- inheres_in_agent --  [1..1] ( {const } ) Agent
+}
+category Intention  specializes Mental_Moment{
+     [2..*] -- is_component_part_of_complex_intention --  [0..*]  Complex_Intention
+     [1..1] --  [0..*]  Trust
+     [1..*] -- intention_inhreres_in_trustor --  [0..1] ( {const } subsets_inheres_in_agent ) Trustor
+     [1..*] -- hurt_by_loss_situation --  [0..*]  Loss_Situation
+     [0..*] -- hurt_by_loss_event --  [0..*]  Loss_Event
+}
+category Belief  specializes Mental_Moment
+category Desire  specializes Mental_Moment
+category Perception  specializes Mental_Moment
+

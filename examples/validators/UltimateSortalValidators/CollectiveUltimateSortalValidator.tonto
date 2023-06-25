@@ -1,0 +1,13 @@
+// test case 2
+package CollectiveUltimateSortalValidator
+
+collective CollectiveUltimateSortal
+
+// kind PersonError specializes CollectiveUltimateSortal
+// collective CollectiveError specializes CollectiveUltimateSortal
+// quantity QuantityError specializes CollectiveUltimateSortal
+// relator RelatorError specializes CollectiveUltimateSortal
+// quality QualityError specializes CollectiveUltimateSortal
+// mode ModeError specializes CollectiveUltimateSortal
+// intrinsicMode  IntrinsicModeError specializes CollectiveUltimateSortal
+// extrinsicMode ExtrinsicModeError specializes CollectiveUltimateSortal

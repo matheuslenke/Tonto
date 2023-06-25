@@ -1,0 +1,13 @@
+module Employment 
+
+kind Person // Redeclaração ou específico do pacote? possível ponteiro para a declaração?
+role Employee specializes Person
+kind Organization
+
+relator Employment {
+    @mediation
+    -- involvesEmployee -- [1] Employee
+
+    @mediation
+    -- involvesEmployer -- [1] Organization
+}

@@ -1,0 +1,11 @@
+package SPO
+
+kind Language 
+subkind Programming_Language  specializes Language
+category Artifact {
+     [0..*] -- represented_in --  [1..*]  Language
+}
+category Software_Item  specializes Artifact{
+     [0..*] -- represented_in --  [1..*]  Programming_Language
+}
+

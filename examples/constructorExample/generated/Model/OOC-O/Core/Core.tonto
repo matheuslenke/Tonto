@@ -1,0 +1,48 @@
+import Class
+import SPO
+import SWO
+
+package Core
+
+subkind ObjectOriented_Programming_Language  specializes Programming_Language
+subkind ObjectOriented_Source_Code  specializes Source_Code{
+     [0..*] -- represented_by --  [1..*]  ObjectOriented_Programming_Language
+     [0..*] -- constituted_of --  [1..*]  Physical_Module
+}
+kind Module {
+     [0..*] --  [0..1]  Module
+}
+quality Name {
+     [1..1] -- characterized_by --  [1..1] ( {const } ) Named_Element
+}
+category Named_Element 
+quality Element_Visibility {
+     [0..1] -- characterized_by --  [1..1] ( {const } ) Named_Element
+}
+kind Class  specializes Named_Element, Type{
+     [1..*] --  [1..1]  Physical_Module
+     [0..*] -- organized_in --  [1..1]  Logical_Module
+     [1..1] -- contains --  [0..*]  Nesting
+}
+category Member {
+     [0..*] --  [1..1]  Class
+}
+kind Variable  specializes Named_Element
+quality Mutability {
+     [1..1] -- characterized_by --  [1..1] ( {const } ) Variable
+}
+subkind Primitive_Type  specializes Type
+subkind Physical_Module  specializes Module
+category Type 
+quality Return_Type {
+     [0..*] -- refers_to --  [0..1]  Type
+     [0..1] -- characterized_by --  [1..1] ( {const } method_Member_Function ) Method_Member_Function
+}
+subkind Logical_Module  specializes Module
+kind Method_Member_Function  specializes Member, Named_Element
+subkind Attribute_Member_Variable  specializes Member, Variable
+quality Value_Type {
+     [0..1] -- characterized_by --  [1..1] ( {const } ) Variable
+     [0..*] -- refers_to --  [1..1]  Type
+}
+

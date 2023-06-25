@@ -1,0 +1,83 @@
+import heart
+import bioelectricPhenomena
+
+package circulatoryPhenomenom
+
+role HeartAsBloodContainer  specializes HumanHeart
+role RightVentricleAsBloodContainer  specializes RightVentricle{
+    ( {const } ) [1..1] --  [1..1] ( {const } ) HeartAsBloodContainer
+     [1..1] -- storing --  [1..1]  BloodinRightVentricle
+}
+role LeftAtriumAsBloodContainer  specializes LeftAtrium{
+    ( {const } ) [1..1] --  [1..1] ( {const } ) HeartAsBloodContainer
+     [1..1] -- storing --  [1..1]  BloodInLeftAtrium
+    ( {const } ) [1..1] --  [1..1] ( {const } ) LABloodStoring
+}
+role RightAtriumAsBloodContainer  specializes RightAtrium{
+    ( {const } ) [1..1] --  [1..1] ( {const } ) HeartAsBloodContainer
+    ( {const } ) [1..1] --  [1..1] ( {const } ) RABloodStoring
+     [1..1] -- storing --  [1..1]  BloodinRightAtrium
+}
+role LeftVentricleAsBloodContainer  specializes LeftVentricle{
+    ( {const } ) [1..1] --  [1..1] ( {const } ) HeartAsBloodContainer
+    ( {const } ) [1..1] --  [1..1] ( {const } ) LVBloodStoring
+     [1..1] -- storing --  [1..1]  BloodInLeftVentricle
+}
+relator RABloodStoring {
+     [1..1] --  [1..1] ( {const } ) BloodinRightAtrium
+}
+kind BloodinRightAtrium {
+     [1..1] -- isMovedTo --  [1..1]  RightVentricleAsBloodContainer
+     [0..1] --  [1..1] ( {const } ) BloodInHumanBody
+     [1..1] -- isMovedTo --  [1..1]  BloodInPeripherals
+}
+relator RVBloodStoring {
+     [1..1] --  [1..1] ( {const } ) RightVentricleAsBloodContainer
+     [1..1] --  [1..1] ( {const } ) BloodinRightVentricle
+}
+kind BloodinRightVentricle {
+     [1..1] -- isMovedTo --  [1..1]  LungAsBloodContainer
+     [0..1] --  [1..1] ( {const } ) BloodInHumanBody
+}
+kind BloodInLeftAtrium {
+     [1..1] -- isMovedTo --  [1..1]  LeftVentricleAsBloodContainer
+     [0..1] --  [1..1] ( {const } inseparable ) BloodInHumanBody
+     [1..1] -- isMovedTo --  [1..1]  BloodInLungs
+}
+relator LABloodStoring {
+     [1..1] --  [1..1] ( {const } ) BloodInLeftAtrium
+}
+kind BloodInHumanBody {
+     [1..1] -- pumps --  [1..1]  HeartAsPump
+}
+relator LVBloodStoring 
+kind BloodInLeftVentricle {
+    ( {const } ) [1..1] --  [1..1] ( {const } ) LVBloodStoring
+     [0..1] --  [1..1] ( {const } ) BloodInHumanBody
+     [1..1] -- isMovedTo --  [1..1]  PeripheralsAsBloodContainer
+}
+kind Peripherals {
+     [1..1] --  [1..1]  HumanBody
+}
+kind Lungs {
+     [1..1] --  [1..1]  HumanBody
+}
+role PeripheralsAsBloodContainer  specializes Peripherals{
+     [1..1] -- storing --  [1..1]  BloodInPeripherals
+    ( {const } ) [1..1] --  [1..1] ( {const } ) PeripheralsBloodStoring
+}
+kind BloodInPeripherals {
+    ( {const } ) [1..1] --  [1..1] ( {const } ) PeripheralsBloodStoring
+     [0..1] --  [1..1] ( {const } ) BloodInHumanBody
+}
+relator PeripheralsBloodStoring 
+role LungAsBloodContainer  specializes Lungs{
+     [1..1] -- storing --  [1..1]  BloodInLungs
+    ( {const } ) [1..1] --  [1..1] ( {const } ) LungBloodStoring
+}
+relator LungBloodStoring 
+kind BloodInLungs {
+    ( {const } ) [1..1] --  [1..1] ( {const } ) LungBloodStoring
+     [0..1] --  [1..1] ( {const } ) BloodInHumanBody
+}
+

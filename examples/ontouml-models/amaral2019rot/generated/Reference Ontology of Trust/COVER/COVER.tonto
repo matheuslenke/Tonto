@@ -1,0 +1,13 @@
+package COVER
+
+situation Hazardous_Situation {
+    ( {const } ) [1..*] -- contributed_to_trigger_threat_event --  [1..*]  Threat_Event
+}
+event Threat_Event {
+     [1..*] -- caused_loss_event --  [1..*] ( {const } ) Loss_Event
+}
+event Loss_Event {
+    ( {const } ) [1..*] -- brought_about_loss_situation --  [0..1] ( {const } ) Loss_Situation
+}
+situation Loss_Situation 
+

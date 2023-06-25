@@ -1,0 +1,8 @@
+import ExportType
+
+package RelationRefer
+
+kind TestKind of quantities
+
+relation ExportType.ExportingType <o>-- nome2 -- TestKind
+

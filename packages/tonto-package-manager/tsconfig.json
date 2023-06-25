@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "lib",
+    "types": ["node"],
+    "noEmit": false,
+    "sourceMap": true,
+    "declaration": true
+  },
+  "references": [{ "path": "../tonto" }],
+  "include": ["src/**/*.ts"],
+  "exclude": ["lib", "node_modules"]
+}

@@ -1,0 +1,24 @@
+package CheckKindSpecialization 
+kind Person
+subkind Agent
+subkind Agent2 specializes Person
+
+kind X
+phase Y specializes X
+phase Z specializes Y 
+role  W specializes Y
+
+kind X2
+kind X3
+phase Y2 specializes X2
+phase Z2 specializes Y, X3
+role W2 specializes Y
+
+
+
+kind X4
+kind X5
+phase Y3 specializes X4
+phase Z3 specializes X5
+role W3 specializes Y, Z
+

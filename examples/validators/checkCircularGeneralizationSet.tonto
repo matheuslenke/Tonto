@@ -1,8 +1,0 @@
-module CheckCircularGeneralizationSet {
-  kind Person
-
-  genset GeneralizationSet {
-    general Person
-    specifics Person
-  }
-}

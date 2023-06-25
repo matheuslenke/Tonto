@@ -6,16 +6,99 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "CLI: GenerateModular",
+            "program": "${workspaceFolder}/packages/tonto/bin/cli.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node",
+            "args": [
+                "generate",
+                "${workspaceFolder}/examples/fixingErrors"
+            ]
+        },
+        {
+            "name": "CLI: Import Modular",
+            "program": "${workspaceFolder}/packages/tonto/bin/cli",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node",
+            "args": [
+                "import",
+                "${workspaceFolder}/examples/fixingErrors/ontology.json"
+            ]
+        },
+        {
+            "name": "CLI: Validate Model",
+            "program": "${workspaceFolder}/packages/tonto/bin/cli",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node",
+            "args": [
+                "validate",
+                "${workspaceFolder}/examples/fixingErrors"
+            ]
+        },
+        {
+            "name": "CLI: Transform to GUFO",
+            "program": "${workspaceFolder}/packages/tonto/bin/cli",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node",
+            "args": [
+                "transform",
+                "${workspaceFolder}/examples/fixingErrors"
+            ]
+        },
+        {
+            "name": "TPM: Install",
+            "program": "${workspaceFolder}/packages/tonto-package-manager/bin/cli",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node",
+            "args": [
+                "install"
+            ],
+            "cwd": "${workspaceFolder}/examples/ontouml-models/Aguiar2019ooco"
+        },
+        {
+            "name": "TPM: Add dependency",
+            "program": "${workspaceFolder}/packages/tonto-package-manager/bin/cli",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node",
+            "args": [
+                "add",
+                "-n Test",
+                "-u https://github.com/matheuslenke/tonto-example-models.git",
+                "-v 1.0.0",
+                "-d SWO"
+            ],
+            "cwd": "${workspaceFolder}/examples/ontouml-models/Aguiar2019ooco"
+        },
+        {
             "name": "Run Extension",
             "type": "extensionHost",
+            "sourceMaps": true,
             "request": "launch",
             "args": [
-                "--extensionDevelopmentPath=${workspaceFolder}"
+                "${workspaceFolder}/examples/ontouml-models/Aguiar2019ooco",
+                "--extensionDevelopmentPath=${workspaceFolder}/packages/tonto-vscode"
             ],
-            "resolveSourceMapLocations": [
-                "${workspaceFolder}/**",
-                "!**/node_modules/**"
-            ]
+            // "env": {
+            //     "DEBUG_BREAK": "true"
+            // }
         },
         {
             "name": "Attach to Language Server",
@@ -27,8 +110,36 @@
             ],
             "sourceMaps": true,
             "outFiles": [
-                "${workspaceFolder}/out/**/*.js",
-                "${workspaceFolder}/node_modules/langium"
+                "${workspaceFolder}/packages/tonto/lib/**/*.js",
+                "${workspaceFolder}/packages/tonto/lib/cli/**/*.js",
+                "${workspaceFolder}/packages/tonto-vscode/out/**/*.js"
+            ]
+        },
+        {
+            "name": "Attach to CLI",
+            "type": "node",
+            "port": 6009,
+            "request": "attach",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "sourceMaps": true,
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Run extension and Debug",
+            "configurations": [
+                "Run Extension",
+                "Attach to Language Server"
+            ],
+            "stopAll": true
+        },
+        {
+            "name": "Run CLI and Debug",
+            "configurations": [
+                "CLI: GenerateModular",
+                "Attach to Language Server"
             ],
         }
     ]

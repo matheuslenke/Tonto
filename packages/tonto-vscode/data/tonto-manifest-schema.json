@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "description": "An manifest object to determine a Tonto project configuration",
+  "properties": {
+    "projectName": {
+      "type": "string",
+      "description": "The name of the project without spaces or special characters"
+    },
+    "version": {
+      "type": "string",
+      "description": "Version of the project in the format of x.x.x"
+    },
+    "displayName": {
+      "type": "string",
+      "description": "The name of the project that will be displayed on the Project variable"
+    },
+    "license": {
+      "type": "string",
+      "description": "The license of the project"
+    },
+    "publisher": {
+      "type": "string",
+      "description": "The publisher of the project"
+    },
+    "authors": {
+      "type": "array",
+      "additionalProperties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "website": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL of git repository"
+          },
+          "version": {
+            "type": "string",
+            "description": "The version tag to get the dependency"
+          },
+          "directory": {
+            "type": "string",
+            "description": "The directory inside of the repository that this dependency is located"
+          },
+          "branch": {
+            "type": "string",
+            "description": "Branch of the project. If not specified, it gets the main branch of the repository"
+          }
+        },
+        "required": [
+          "url"
+        ]
+      }
+    },
+    "outFolder": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "projectName",
+    "displayName",
+    "license",
+    "publisher",
+    "dependencies",
+    "outFolder"
+  ]
+}

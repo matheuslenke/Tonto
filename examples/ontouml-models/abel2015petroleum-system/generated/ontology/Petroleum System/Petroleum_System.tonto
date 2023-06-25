@@ -1,0 +1,90 @@
+package Petroleum_System
+
+kind Boundary {
+    boundary : BoundaryType
+}
+quality Porosity {
+    value : Value
+}
+quality Quantity_Organic_matter {
+    value : Value
+}
+quantity Hidrocarbon 
+quantity Oil  specializes Hidrocarbon{
+}
+situation Pregeneration {
+    pressure
+    temperature
+}
+event Generation {
+}
+situation Oil__Mudstone__Porous_Rock {
+}
+event Migration {
+}
+situation Oil__Porous_rock {
+}
+event Acumulation {
+}
+situation Oil__Trap 
+role Source_Rock  specializes LithologicUnit_qua_shale
+role Seal  specializes LithologicUnit_qua_shale{
+    porosity : Value { const  } 
+    Dimensions : Dimensions
+    Top_Contact : contact
+    Bottom_Contact : contact
+}
+role Reservoir  specializes LithologicUnit_qua_sandstone{
+    porosity : Value { const  } 
+    Dimensions : Dimensions
+    Top_Contact : contact
+    Bottom_Contact : contact
+}
+mixin Trap {
+    structure : Structure
+}
+quantity Shale  specializes Siliciclastic_Rock
+quantity Sandstone  specializes Siliciclastic_Rock
+kind LithologicUnit_qua_shale  specializes Lithological_unit{
+    Dimensions : Dimensions
+    Top_Contact : contact
+    Bottom_Contact : contact
+}
+kind LithologicUnit_qua_sandstone  specializes Lithological_unit{
+    Dimensions : Dimensions
+    Top_Contact : contact
+    Bottom_Contact : contact
+}
+quantity Siliciclastic_Rock  specializes Rock
+quantity Rock 
+kind Lithological_unit {
+    Dimensions : Dimensions
+    Top_Contact : contact
+    Bottom_Contact : contact
+}
+enum Dimensions {
+    thickness,
+    length,
+    depth
+}
+enum Structure {
+    anticlinal,
+    dome,
+    fault
+}
+enum Value {
+    high,
+    medium,
+    low,
+    not_present
+}
+enum BoundaryType {
+    abrupt,
+    gradational
+}
+enum Granulometry {
+    argile,
+    sand
+}
+datatype contact
+
