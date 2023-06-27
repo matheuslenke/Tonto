@@ -1,0 +1,44 @@
+import CoreDatatypes
+import University
+
+package PersonPhases
+
+kind Person {
+  name: string [1..*]
+  age: number [1]
+  birthDate: date [1] { const }
+  eyeColor: EyeColor [1..*]
+  phoneNumber: CoreDatatypes.PhoneNumber [0..*]
+}
+
+phase Child
+phase Teenager
+phase Adult
+
+role UniversityStudent specializes Adult
+role EgressStudent specializes UniversityStudent
+role ActiveStudent specializes UniversityStudent
+
+genset PhasesOfPerson {
+  general Person
+  specifics Child, Teenager, Adult
+}
+
+roleMixin Professor
+role UniversityProfessor specializes Professor, Person
+
+relator Teaching {
+  @mediation
+  [0..*] -- [1] Staff
+  
+  @mediation
+  [1..*] -- [1] UniversityProfessor 
+}
+
+relator Enrollment {
+  @mediation
+  [0..*] -- [1] University
+  
+  @mediation
+  [1..*] -- [1] UniversityStudent 
+}

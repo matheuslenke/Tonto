@@ -9,7 +9,9 @@ import {
   isElementRelation,
   isEnumElement,
   isOntologicalCategory,
+  isRelationMetaAttributes,
   OntologicalCategory,
+  RelationMetaAttributes,
 } from "../generated/ast";
 import {
   Attribute,
@@ -47,6 +49,9 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
     }
     if (isEnumElement(node)) {
       this.enumElementTokens(node, acceptor);
+    }
+    if (isRelationMetaAttributes(node)) {
+      this.relationMetaAttributesTokens(node, acceptor);
     }
     if (isRelationMetaAttribute(node)) {
       this.relationMetaAttributeTokens(node, acceptor);
@@ -112,22 +117,22 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
       property: "name",
       type: SemanticTokenTypes.variable,
     });
-    acceptor({
-      node,
-      property: "firstEndName",
-      type: SemanticTokenTypes.variable,
-    });
-    acceptor({
-      node,
-      property: "secondEndName",
-      type: SemanticTokenTypes.variable,
-    });
+
     acceptor({
       node,
       property: "firstEndMetaAttributes",
       type: SemanticTokenTypes.property,
     });
   }
+
+  private relationMetaAttributesTokens(node: RelationMetaAttributes, acceptor: SemanticTokenAcceptor) {
+    acceptor({
+      node,
+      property: "endName",
+      type: SemanticTokenTypes.variable,
+    });
+  }
+
   private relationMetaAttributeTokens(node: RelationMetaAttribute, acceptor: SemanticTokenAcceptor) {
     acceptor({
       node,

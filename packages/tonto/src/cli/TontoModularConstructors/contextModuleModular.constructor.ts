@@ -1,9 +1,10 @@
-import { CompositeGeneratorNode, NL } from "langium";
+import { CompositeGeneratorNode, Generated, NL, expandToNode, joinToNode } from "langium";
 import { Class, OntoumlElement, OntoumlType } from "ontouml-js";
 import { constructClassElement } from "../TontoConstructors/classElement.constructor";
 import { formatForId } from "../utils/replaceWhitespace";
 
-export function createTontoModuleModular(element: OntoumlElement, fileNode: CompositeGeneratorNode) {
+export function createTontoModuleModular(element: OntoumlElement, fileNode: CompositeGeneratorNode): Generated {
+  // return generateTonto(element);
   fileNode.append(`package ${formatForId(element.getNameOrId())}`, NL, NL);
   element.getContents().forEach((content) => {
     if (content.type === OntoumlType.CLASS_TYPE) {
@@ -12,4 +13,21 @@ export function createTontoModuleModular(element: OntoumlElement, fileNode: Comp
     }
   });
   fileNode.append(NL);
+  return fileNode;
+}
+
+function joinWithExtraNL<T>(content: T[], toString: (e: T) => Generated): Generated {
+  return joinToNode(content, toString, { appendNewLineIfNotEmpty: true });
+}
+
+export function generateTonto(element: OntoumlElement): Generated {
+  const classes = element
+    .getContents()
+    .filter((item) => item.type === OntoumlType.CLASS_TYPE)
+    .map((item) => item as Class);
+  return expandToNode`
+    package ${formatForId(element.getNameOrId())}
+
+    ${joinWithExtraNL(classes, (classItem) => `${classItem.getName()}`)}
+  `;
 }

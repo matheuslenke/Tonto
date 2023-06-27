@@ -1,0 +1,17 @@
+import CoreDatatypes
+
+package PersonPhases
+
+kind Person {
+  name: string [1..*]
+  age: number [1]
+  birthDate: date [1] { const }
+  eyeColor: EyeColor [1..*]
+  phoneNumber: CoreDatatypes.PhoneNumber [0..*]
+}
+
+phase Child specializes Person
+phase Teenager specializes Person
+phase Adult specializes Person
+
+role Student specializes Adult

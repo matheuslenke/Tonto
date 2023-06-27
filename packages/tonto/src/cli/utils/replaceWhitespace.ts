@@ -8,7 +8,7 @@ export function replaceWhitespace(word: string | undefined): string {
 
 export function formatForId(word: string | undefined): string {
   if (word) {
-    return word.replace(/[ ]/g, "_").replace(/[^A-Za-z_]/g, "");
+    return word.replace(/[ ]/g, "_").replace(/[^A-Za-z0-9_]/g, "");
   } else {
     return "";
   }

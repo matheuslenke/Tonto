@@ -7,10 +7,14 @@ export function classElementGenerator(classElement: ClassDeclaration, packageIte
   if (classElement.classElementType) {
     const stereotype = classElement.classElementType.ontologicalCategory;
     let natures: OntologicalNature[] = [];
+    let firstNature: OntologicalNature | undefined;
     if (classElement.ontologicalNatures) {
       natures = getOntoUMLNatures(classElement.ontologicalNatures.natures);
     } else {
       natures = getDefaultOntoUMLNature(classElement);
+    }
+    if (natures.length > 0) {
+      firstNature = natures[0];
     }
     switch (stereotype) {
       case "category": {
@@ -56,13 +60,13 @@ export function classElementGenerator(classElement: ClassDeclaration, packageIte
         return packageItem.createExtrinsicMode(classElement.name);
       }
       case "subkind": {
-        return packageItem.createSubkind(classElement.name);
+        return packageItem.createSubkind(classElement.name, firstNature);
       }
       case "phase": {
-        return packageItem.createPhase(classElement.name);
+        return packageItem.createPhase(classElement.name, firstNature);
       }
       case "role": {
-        return packageItem.createRole(classElement.name, natures[0]);
+        return packageItem.createRole(classElement.name, firstNature);
       }
       case "historicalRole": {
         return packageItem.createHistoricalRole(classElement.name);

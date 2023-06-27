@@ -1,85 +1,108 @@
 import { CompositeGeneratorNode, NL } from "langium";
-import { AggregationKind, Cardinality, Class, Generalization, Property, Relation } from "ontouml-js";
+import { AggregationKind, Class, Generalization, Property, Relation } from "ontouml-js";
 import { notEmpty } from "../../utils/isEmpty";
 import { formatForId } from "../utils/replaceWhitespace";
+import { constructCardinality } from "./cardinality.constructor";
 
-export function constructInternalRelations(element: Class, relations: Relation[], fileNode: CompositeGeneratorNode) {
+export function constructInternalRelations(
+  element: Class,
+  relations: Relation[],
+  incomingRelations: Relation[],
+  fileNode: CompositeGeneratorNode
+) {
   relations
     .filter((item) => item.isBinary() === true)
     .forEach((relation) => {
-      const sourceProperty = relation.getSourceEnd();
-      const targetClass = relation.getTarget();
-      const targetProperty = relation.getTargetEnd();
-      const generalizations = relation.getGeneralizationsWhereGeneral();
+      constructRelation(relation, element, fileNode);
+    });
 
-      const sourceClassPackage = element.getModelOrRootPackage();
-      const sourceName = sourceClassPackage.getName();
-      const targetClassPackage = targetClass.getModelOrRootPackage();
-      const targetName = targetClassPackage.getName();
-
-      // FirstEnd Name
-      const firstEndName = formatForId(sourceProperty.getName());
-      // FirstEnd Meta Attributes
-      constructEndMetaAttributes(firstEndName, sourceProperty, fileNode);
-
-      // First Cardinality
-      constructCardinality(sourceProperty.cardinality, fileNode);
-
-      const relationName = formatForId(relation.getName());
-
-      if (sourceProperty.aggregationKind === AggregationKind.SHARED) {
-        fileNode.append("<>-- ");
-        if (relationName) {
-          fileNode.append(`${relationName}`);
-          fileNode.append(" -- ");
-        }
-      } else if (sourceProperty.aggregationKind === AggregationKind.COMPOSITE) {
-        fileNode.append("<o>-- ");
-        if (relationName) {
-          fileNode.append(`${relationName}`);
-          fileNode.append(" -- ");
-        }
-      } else {
-        fileNode.append("-- ");
-        if (relationName) {
-          fileNode.append(`${relationName}`);
-          fileNode.append(" -- ");
-        }
-      }
-      // Second Cardinality
-      const bounds = targetProperty.cardinality.getCardinalityBounds();
-      if (bounds) {
-        const targetLowerBound = bounds.lowerBound;
-        const targetUpperBound = bounds.upperBound;
-
-        fileNode.append(` [${targetLowerBound}..${targetUpperBound}] `);
-      }
-
-      // Second Name
-      const secondEndName = formatForId(targetProperty.getName());
-      // SecondEnd Meta Attributes
-      constructEndMetaAttributes(secondEndName, targetProperty, fileNode);
-
-      let targetClassName = targetClass.getName();
-      if (targetName !== sourceName) {
-        targetClassName = `${targetClassPackage.getName()}.${targetClass.getName()}`;
-      }
-
-      fileNode.append(" ", formatForId(targetClassName));
-
-      constructRelationSpecializations(generalizations, fileNode);
-      fileNode.append(NL);
+  incomingRelations
+    .filter((item) => item.isBinary() === true)
+    .forEach((relation) => {
+      constructRelation(relation, element, fileNode);
     });
 }
 
-function constructCardinality(cardinality: Cardinality, fileNode: CompositeGeneratorNode) {
-  const bounds = cardinality.getCardinalityBounds();
-  if (bounds) {
-    const targetLowerBound = bounds.lowerBound;
-    const targetUpperBound = bounds.upperBound;
+function constructRelation(relation: Relation, element: Class, fileNode: CompositeGeneratorNode) {
+  const sourceProperty = relation.getSourceEnd();
+  const targetClass = relation.getTarget();
+  const targetProperty = relation.getTargetEnd();
+  const generalizations = relation.getGeneralizationsWhereGeneral();
 
-    fileNode.append(` [${targetLowerBound}..${targetUpperBound}] `);
+  const sourceClassPackage = element.getModelOrRootPackage();
+  const sourceName = sourceClassPackage.getName();
+  const targetClassPackage = targetClass.getModelOrRootPackage();
+  const targetName = targetClassPackage.getName();
+  if (element.getName() === "Collection") {
+    console.log("foi");
   }
+
+  // Stereotype
+  if (relation.stereotype) {
+    fileNode.append(`@${relation.stereotype}`, NL);
+  }
+
+  // FirstEnd Name
+  const firstEndName = formatForId(sourceProperty.getName());
+  // FirstEnd Meta Attributes
+  constructEndMetaAttributes(firstEndName, sourceProperty, fileNode);
+
+  // First Cardinality
+  constructCardinality(sourceProperty.cardinality, fileNode);
+
+  const relationName = formatForId(relation.getName());
+
+  if (sourceProperty.aggregationKind === AggregationKind.SHARED) {
+    fileNode.append("<>-- ");
+    if (relationName) {
+      fileNode.append(`${relationName}`);
+      fileNode.append(" -- ");
+    }
+  } else if (sourceProperty.aggregationKind === AggregationKind.COMPOSITE) {
+    fileNode.append("<o>-- ");
+    if (relationName) {
+      fileNode.append(`${relationName}`);
+      fileNode.append(" -- ");
+    }
+  } else if (sourceProperty.aggregationKind === AggregationKind.NONE) {
+    // Here, we need to check if we have a basic association or a inverted relation
+    if (targetProperty.isAggregationEnd()) {
+      if (relationName) {
+        fileNode.append(" -- ");
+        fileNode.append(`${relationName}`);
+      }
+      fileNode.append(" --<o> ");
+    } else if (targetProperty.isComposite()) {
+      if (relationName) {
+        fileNode.append(" -- ");
+        fileNode.append(`${relationName}`);
+      }
+      fileNode.append(" --<> ");
+    } else {
+      fileNode.append("-- ");
+      if (relationName) {
+        fileNode.append(`${relationName}`);
+        fileNode.append(" -- ");
+      }
+    }
+  }
+  // Second Cardinality
+  constructCardinality(targetProperty.cardinality, fileNode);
+
+  // Second Name
+  const secondEndName = formatForId(targetProperty.getName());
+  // SecondEnd Meta Attributes
+  constructEndMetaAttributes(secondEndName, targetProperty, fileNode);
+
+  let targetClassName = targetClass.getName();
+  if (targetName !== sourceName) {
+    targetClassName = `${targetClassPackage.getName()}.${targetClass.getName()}`;
+  }
+
+  fileNode.append(" ", formatForId(targetClassName));
+
+  constructRelationSpecializations(generalizations, fileNode);
+  fileNode.append(NL);
 }
 
 function constructEndMetaAttributes(

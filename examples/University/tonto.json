@@ -1,0 +1,15 @@
+{
+  "projectName": "UniversityModel",
+  "displayName": "University Model",
+  "authors": ["Matheus Lenke Coutinho"],
+  "license": "MIT",
+  "version": "1.0.0",
+  "publisher": "UFES",
+  "dependencies": {
+    "CoreDataTypes": {
+      "url": "https:github.com/url-to-package",
+      "directory": "path/to/package"
+    }
+  },
+  "outFolder": "out"
+}

@@ -1,6 +1,7 @@
 import { CompositeGeneratorNode, NL } from "langium";
 import { Property } from "ontouml-js";
 import { formatForId } from "../utils/replaceWhitespace";
+import { constructCardinality } from "./cardinality.constructor";
 
 export function constructAttributes(attributes: Property[], fileNode: CompositeGeneratorNode) {
   attributes.forEach((attribute) => {
@@ -8,6 +9,10 @@ export function constructAttributes(attributes: Property[], fileNode: CompositeG
 
     if (propertyType) {
       fileNode.append(`${formatForId(attribute.getName())} : ${propertyType}`);
+
+      if (attribute.cardinality) {
+        constructCardinality(attribute.cardinality, fileNode);
+      }
 
       if (attribute.isReadOnly || attribute.isOrdered || attribute.isDerived) {
         fileNode.append(" { ");

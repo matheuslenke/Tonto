@@ -2,12 +2,12 @@ import { AggregationKind, Class, Package, Property, Relation, RelationStereotype
 import {
   ClassDeclaration,
   ElementRelation,
-  RelationMetaAttribute,
   RelationStereotype as MRelationStereotype,
+  RelationMetaAttributes,
 } from "../../language-server/generated/ast";
-import { RelationTypes } from "../../language-server/models/RelationType";
 import chalk from "chalk";
 import { setPropertyCardinality } from "./cardinality.generator";
+import { RelationTypes } from "../../language-server/models/RelationType";
 
 export function relationGenerator(
   relationItem: ElementRelation,
@@ -16,7 +16,7 @@ export function relationGenerator(
   sourceClassIncoming?: ClassDeclaration
 ): Relation | undefined {
   const sourceClass = sourceClassIncoming ?? relationItem.firstEnd?.ref;
-  const destinationClass = relationItem.secondEnd.ref;
+  const destinationClass = relationItem.secondEnd?.ref;
 
   const relationStereotype = getStereotype(relationItem.relationType);
 
@@ -38,8 +38,12 @@ export function relationGenerator(
       setMetaAttributes(sourceEnd, relationItem.firstEndMetaAttributes);
       setMetaAttributes(targetEnd, relationItem.secondEndMetaAttributes);
 
-      relationItem.firstEndName && sourceEnd.setName(relationItem.firstEndName);
-      relationItem.secondEndName && targetEnd.setName(relationItem.secondEndName);
+      relationItem.firstEndMetaAttributes &&
+        relationItem.firstEndMetaAttributes.endName &&
+        sourceEnd.setName(relationItem.firstEndMetaAttributes.endName);
+      relationItem.secondEndMetaAttributes &&
+        relationItem.secondEndMetaAttributes.endName &&
+        targetEnd.setName(relationItem.secondEndMetaAttributes.endName);
 
       setPropertyCardinality(relationItem.firstCardinality, sourceEnd);
       setPropertyCardinality(relationItem.secondCardinality, targetEnd);
@@ -56,11 +60,17 @@ export function relationGenerator(
          */
         relation.getSourceEnd().aggregationKind = AggregationKind.SHARED;
         relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
-      } else if (relationItem.isAssociation) {
-        relation.getSourceEnd().aggregationKind = AggregationKind.NONE;
-        relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
       } else if (relationItem.isComposition) {
         relation.getSourceEnd().aggregationKind = AggregationKind.COMPOSITE;
+        relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
+      } else if (relationItem.isCompositionInverted) {
+        relation.getSourceEnd().aggregationKind = AggregationKind.NONE;
+        relation.getTargetEnd().aggregationKind = AggregationKind.COMPOSITE;
+      } else if (relationItem.isAggregationInverted) {
+        relation.getSourceEnd().aggregationKind = AggregationKind.NONE;
+        relation.getTargetEnd().aggregationKind = AggregationKind.SHARED;
+      } else if (relationItem.isAssociation) {
+        relation.getSourceEnd().aggregationKind = AggregationKind.NONE;
         relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
       }
 
@@ -78,8 +88,11 @@ export function relationGenerator(
   return undefined;
 }
 
-function setMetaAttributes(end: Property, metaAttributes: RelationMetaAttribute[]) {
-  metaAttributes.forEach((attribute) => {
+function setMetaAttributes(end: Property, metaAttributes: RelationMetaAttributes | undefined) {
+  if (!metaAttributes) {
+    return;
+  }
+  metaAttributes.endMetaAttributes.forEach((attribute) => {
     if (attribute.isOrdered) end.isOrdered = attribute.isOrdered;
     if (attribute.isConst) end.isReadOnly = attribute.isConst;
     if (attribute.isDerived) end.isDerived = attribute.isDerived;

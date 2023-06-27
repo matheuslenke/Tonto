@@ -15,7 +15,7 @@
             "type": "node",
             "args": [
                 "generate",
-                "${workspaceFolder}/examples/fixingErrors"
+                "${workspaceFolder}/examples/library/generated"
             ]
         },
         {
@@ -28,7 +28,7 @@
             "type": "node",
             "args": [
                 "import",
-                "${workspaceFolder}/examples/fixingErrors/ontology.json"
+                "${workspaceFolder}/examples/library/ontology.json"
             ]
         },
         {

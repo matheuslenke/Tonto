@@ -13,7 +13,9 @@ export function setPropertyCardinality(cardinality: Cardinality | undefined, end
   }
   if (typeof cardinality.lowerBound === "number") {
     end.cardinality.lowerBound = cardinality.lowerBound.toString();
-    // end.cardinality.upperBound = cardinality.lowerBound.toString();
+    if (!cardinality.upperBound) {
+      end.cardinality.upperBound = cardinality.lowerBound.toString();
+    }
   }
   if (cardinality.upperBound && cardinality.upperBound === "*") {
     end.cardinality.upperBound = CardinalityValues.MANY;

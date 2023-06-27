@@ -1,11 +1,6 @@
 grammar Tonto
 
-interface Model {
-	imports: Import[];
-	module: ContextModule;
-}
-
-entry RModel returns Model:
+entry Model:
 	imports+=Import*
 	module=ContextModule
 ;
@@ -70,6 +65,7 @@ ClassDeclarationRule returns ClassDeclaration:
     '}')?
 ;
 
+// <--- Stereotypes --->
 OntologicalCategory:
 	ontologicalCategory=(UnspecifiedType | NonEndurantType | EndurantType)
 ;
@@ -99,6 +95,7 @@ Sortal returns string:
 	'subkind' | 'phase' | 'role' | 'historicalRole'
 ;
 
+// <--- Natures --->
 ElementOntologicalNature:
 	'of' natures+=OntologicalNature (',' natures+=OntologicalNature)*
 ;
@@ -110,69 +107,53 @@ OntologicalNature returns string:
   // Note: 'objects' = 'functional-complexes' or 'collectives' or 'quantities'
 ;
 
+// <--- Relations --->
 ElementRelation:
 	InternalRelation | ExternalRelation
 ;
 
 InternalRelation infers ElementRelation:
 	('@'relationType=RelationStereotype)?
-	(
-		'('
-			('{' metaAttributes+=RelationMetaAttribute 
-			(',' metaAttributes+=RelationMetaAttribute )* '}')?
-			(firstEndName=ID)?
-		')'
-	)?
-	firstCardinality=Cardinality?
-	(isAssociation?='--' | isAggregation?='<>--' | isComposition?='<o>--') (name=QualifiedName '--')?
-
-	secondCardinality=Cardinality?
-	(
-		'('
-			('{' secondEndMetaAttributes+=RelationMetaAttribute
-			(',' secondEndMetaAttributes+=RelationMetaAttribute )* '}')?
-			(secondEndName=ID)?
-		')'
-	)?
-
-	secondEnd=[ClassDeclaration:ID]
-	('specializes' specializeRelation=[ElementRelation:QualifiedName])?
-  (hasInverse='inverseOf' inverseEnd=[ElementRelation:QualifiedName])?
+	RelationData
 ;
 
 ExternalRelation infers ElementRelation:
 	('@'relationType=RelationStereotype)?
-	'relation'
-    firstEnd=[ClassDeclaration:QualifiedName]
-	(
-		'('
-		('{' firstEndMetaAttributes+=RelationMetaAttribute
-		(',' firstEndMetaAttributes+=RelationMetaAttribute )* '}')?
-		(firstEndName=ID)?
-		')'
-	)?
+	'relation' firstEnd=[ClassDeclaration:QualifiedName]
+	RelationData
+;
 
+fragment RelationData:
+	firstEndMetaAttributes=RelationMetaAttributes?
 	firstCardinality=Cardinality?
-	(isAssociation?='--' | isComposition?='<>--' | isComposition?='<o>--') (name=QualifiedName '--')?
-
+	RelationName
 	secondCardinality=Cardinality?
-	(
-		'('
-			('{' secondEndMetaAttributes+=RelationMetaAttribute
-			(',' secondEndMetaAttributes+=RelationMetaAttribute )* '}')?
-			(secondEndName=ID)?
-		')'
-	)?
+	secondEndMetaAttributes=RelationMetaAttributes?
 
 	secondEnd=[ClassDeclaration:ID]
 	('specializes' specializeRelation=[ElementRelation:QualifiedName])?
 	(hasInverse='inverseOf' inverseEnd=[ElementRelation:QualifiedName])?
 ;
 
-Attribute:
-	name=ID ':' attributeTypeRef=[DataType:QualifiedName]
-	cardinality=Cardinality?
-	('{'((isOrdered?='ordered') & (isConst?='const') & (isDerived?='derived'))? '}')?
+fragment RelationName:
+	(RelationConnectors (name=QualifiedName '--')?) 
+	|
+	(('--' name=QualifiedName)? InvertedRelationConnectors)
+;
+
+fragment RelationConnectors:
+	(isAssociation?='--' | isAggregation?='<>--' | isComposition?='<o>--')
+;
+fragment InvertedRelationConnectors:
+	(isAssociation?='--' | isAggregationInverted?='--<>' | isCompositionInverted?='--<o>')
+;
+
+RelationMetaAttributes:
+	'('
+	('{' endMetaAttributes+=RelationMetaAttribute
+	(',' endMetaAttributes+=RelationMetaAttribute )* '}')?
+	(endName=ID)?
+	')'
 ;
 
 RelationMetaAttribute:
@@ -208,13 +189,19 @@ RelationStereotype returns string:
 	'formal'
 ;
 
+// <--- Attributes --->
+Attribute:
+	name=ID ':' attributeTypeRef=[DataType:QualifiedName]
+	cardinality=Cardinality?
+	('{'((isOrdered?='ordered') & (isConst?='const') & (isDerived?='derived'))? '}')?
+;
+
 Cardinality:
 	'[' lowerBound=(INT | '*')
 	('..' upperBound=(INT | '*'))? ']'
 ;
 
 // <--- Generalization Set --->
-
 interface GeneralizationSet {
     disjoint: boolean
     complete: boolean
@@ -228,7 +215,6 @@ GeneralizationSetImpl returns GeneralizationSet:
 	(disjoint?='disjoint')? (complete?='complete')?
 	'genset' name=ID '{'
 	// TODO: Change to unordered group when Langium supports it
-	// Case 1
 			(
 				'general' generalItem=[ClassDeclarationOrRelation:QualifiedName]
 				('categorizer' categorizerItems+=[ClassDeclarationOrRelation:QualifiedName])?
@@ -241,7 +227,6 @@ GeneralizationSetImpl returns GeneralizationSet:
 type ClassDeclarationOrRelation = ClassDeclaration | ElementRelation;
 
 // <--- DataTypes --->
-
 type DataTypeOrClass = DataType | ClassDeclaration;
 
 DataType:
@@ -255,7 +240,6 @@ DataType:
 ;
 
 // <--- Enums --->
-
 Enum infers DataType:
 	isEnum?='enum' name=ID 
 	('specializes' specializationEndurants+=[DataTypeOrClass:QualifiedName]
