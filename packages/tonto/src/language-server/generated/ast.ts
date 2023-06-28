@@ -223,18 +223,6 @@ export function isEnumElement(item: unknown): item is EnumElement {
     return reflection.isInstance(item, EnumElement);
 }
 
-export interface Generalization extends AstNode {
-    readonly $type: 'Generalization';
-    general: Reference<ClassDeclarationOrRelation>
-    specifics: Array<Reference<ClassDeclarationOrRelation>>
-}
-
-export const Generalization = 'Generalization';
-
-export function isGeneralization(item: unknown): item is Generalization {
-    return reflection.isInstance(item, Generalization);
-}
-
 export interface GeneralizationSet extends AstNode {
     readonly $container: ClassDeclaration | ContextModule;
     readonly $type: 'GeneralizationSet';
@@ -331,7 +319,6 @@ export type TontoAstType = {
     ElementOntologicalNature: ElementOntologicalNature
     ElementRelation: ElementRelation
     EnumElement: EnumElement
-    Generalization: Generalization
     GeneralizationSet: GeneralizationSet
     Import: Import
     Model: Model
@@ -343,7 +330,7 @@ export type TontoAstType = {
 export class TontoAstReflection extends AbstractAstReflection {
 
     getAllTypes(): string[] {
-        return ['Attribute', 'AuxiliaryDeclaration', 'Cardinality', 'ClassDeclaration', 'ClassDeclarationOrRelation', 'ContextModule', 'DataType', 'DataTypeOrClass', 'Declaration', 'ElementOntologicalNature', 'ElementRelation', 'EnumElement', 'Generalization', 'GeneralizationSet', 'Import', 'Model', 'OntologicalCategory', 'RelationMetaAttribute', 'RelationMetaAttributes'];
+        return ['Attribute', 'AuxiliaryDeclaration', 'Cardinality', 'ClassDeclaration', 'ClassDeclarationOrRelation', 'ContextModule', 'DataType', 'DataTypeOrClass', 'Declaration', 'ElementOntologicalNature', 'ElementRelation', 'EnumElement', 'GeneralizationSet', 'Import', 'Model', 'OntologicalCategory', 'RelationMetaAttribute', 'RelationMetaAttributes'];
     }
 
     protected override computeIsSubtype(subtype: string, supertype: string): boolean {
@@ -390,8 +377,6 @@ export class TontoAstReflection extends AbstractAstReflection {
             case 'RelationMetaAttribute:subsetRelation': {
                 return ElementRelation;
             }
-            case 'Generalization:general':
-            case 'Generalization:specifics':
             case 'GeneralizationSet:categorizerItems':
             case 'GeneralizationSet:generalItem':
             case 'GeneralizationSet:specificItems': {
@@ -465,14 +450,6 @@ export class TontoAstReflection extends AbstractAstReflection {
                         { name: 'isAssociation', type: 'boolean' },
                         { name: 'isComposition', type: 'boolean' },
                         { name: 'isCompositionInverted', type: 'boolean' }
-                    ]
-                };
-            }
-            case 'Generalization': {
-                return {
-                    name: 'Generalization',
-                    mandatory: [
-                        { name: 'specifics', type: 'array' }
                     ]
                 };
             }

@@ -34,13 +34,8 @@ Declaration:
 ;
 
 AuxiliaryDeclaration:
-	DataType | Enum | GeneralizationSetImpl | ExternalRelation
+	DataType | Enum | GeneralizationSetImpl | GeneralizationSetShort | ExternalRelation
 ;
-
-interface Generalization {
-    general: @ClassDeclarationOrRelation
-    specifics: @ClassDeclarationOrRelation[]
-}
 
 interface ClassDeclaration {
 	classElementType: OntologicalCategory;
@@ -222,6 +217,13 @@ GeneralizationSetImpl returns GeneralizationSet:
 				(',' specificItems+=[ClassDeclarationOrRelation:QualifiedName])*
 			)
 	'}'
+;
+
+GeneralizationSetShort returns GeneralizationSet:
+	(disjoint?='disjoint')? (complete?='complete')?
+	'genset' name=ID 'where' 
+	specificItems+=[ClassDeclarationOrRelation:QualifiedName] 	(',' specificItems+=[ClassDeclarationOrRelation:QualifiedName])*
+	'specializes' generalItem=[ClassDeclarationOrRelation:QualifiedName]
 ;
 
 type ClassDeclarationOrRelation = ClassDeclaration | ElementRelation;

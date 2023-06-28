@@ -7,6 +7,67 @@
 
 <https://example.com> rdf:type owl:Ontology;
     owl:imports gufo:.
+:Organization rdf:type owl:Class, gufo:Kind, owl:NamedIndividual;
+    rdfs:subClassOf gufo:FunctionalComplex;
+    rdfs:label "Organization"@en.
+:University rdf:type owl:Class, gufo:SubKind, owl:NamedIndividual;
+    rdfs:label "University"@en.
+:Department rdf:type owl:Class, gufo:Kind, owl:NamedIndividual;
+    rdfs:subClassOf gufo:FunctionalComplex;
+    rdfs:label "Department"@en.
+:Staff rdf:type owl:Class, gufo:Kind, owl:NamedIndividual;
+    rdfs:subClassOf gufo:VariableCollection;
+    rdfs:label "Staff"@en.
+:Classrooms rdf:type owl:Class, gufo:Kind, owl:NamedIndividual;
+    rdfs:subClassOf gufo:VariableCollection;
+    rdfs:label "Classrooms"@en.
+:Room rdf:type owl:Class, gufo:Kind, owl:NamedIndividual;
+    rdfs:subClassOf gufo:FunctionalComplex;
+    rdfs:label "Room"@en.
+:Classroom rdf:type owl:Class, gufo:SubKind, owl:NamedIndividual;
+    rdfs:label "Classroom"@en.
+:Seatable rdf:type owl:Class, gufo:Mixin, owl:NamedIndividual;
+    rdfs:subClassOf gufo:FunctionalComplex;
+    rdfs:label "Seatable"@en.
+:Furniture rdf:type owl:Class, gufo:Category, owl:NamedIndividual;
+    rdfs:subClassOf gufo:FunctionalComplex;
+    rdfs:label "Furniture"@en.
+:Chair rdf:type owl:Class, gufo:Kind, owl:NamedIndividual;
+    rdfs:label "Chair"@en.
+:Person rdf:type owl:Class, gufo:Kind, owl:NamedIndividual;
+    rdfs:subClassOf gufo:FunctionalComplex;
+    rdfs:label "Person"@en.
+:Child rdf:type owl:Class, gufo:Phase, owl:NamedIndividual;
+    rdfs:label "Child"@en.
+:Teenager rdf:type owl:Class, gufo:Phase, owl:NamedIndividual;
+    rdfs:label "Teenager"@en.
+:Adult rdf:type owl:Class, gufo:Phase, owl:NamedIndividual;
+    rdfs:label "Adult"@en.
+:Student rdf:type owl:Class, gufo:Role, owl:NamedIndividual;
+    rdfs:label "Student"@en.
+:PhoneNumber rdf:type owl:Class, gufo:AbstractIndividualType, owl:NamedIndividual;
+    rdfs:subClassOf gufo:QualityValue;
+    rdfs:label "PhoneNumber"@en.
+:EyeColor rdf:type owl:Class, gufo:AbstractIndividualType, owl:NamedIndividual;
+    rdfs:subClassOf gufo:QualityValue;
+    owl:equivalentClass [
+  rdf:type owl:Class;
+  owl:oneOf (:Blue :Green :Brown :Black :Other)
+].
+:Blue rdf:type :EyeColor;
+    rdf:label "[object Object]".
+:Green rdf:type :EyeColor;
+    rdf:label "[object Object]".
+:Brown rdf:type :EyeColor;
+    rdf:label "[object Object]".
+:Black rdf:type :EyeColor;
+    rdf:label "[object Object]".
+:Other rdf:type :EyeColor;
+    rdf:label "[object Object]".
+:EyeColor rdfs:label "EyeColor"@en.
+:Address rdf:type owl:Class, gufo:AbstractIndividualType, owl:NamedIndividual;
+    rdfs:subClassOf gufo:QualityValue;
+    rdfs:label "Address"@en.
 :ObjectOrientedProgrammingLanguage rdf:type owl:Class, gufo:SubKind, owl:NamedIndividual;
     rdfs:label "ObjectOrientedProgrammingLanguage"@en.
 :ObjectOrientedSourceCode rdf:type owl:Class, gufo:SubKind, owl:NamedIndividual;
@@ -152,6 +213,14 @@
     rdfs:label "ProgrammingLanguage"@en.
 :SoftwareItem rdf:type owl:Class, gufo:Category, owl:NamedIndividual;
     rdfs:label "SoftwareItem"@en.
+:University rdfs:subClassOf :Organization.
+:Classroom rdfs:subClassOf :Classrooms.
+:Chair rdfs:subClassOf :Seatable, :Furniture.
+:Child rdfs:subClassOf :Person.
+:Teenager rdfs:subClassOf :Person.
+:Adult rdfs:subClassOf :Person.
+:Student rdfs:subClassOf :Adult.
+:number rdfs:subClassOf xsd:int.
 :PrimitiveType rdfs:subClassOf :Type.
 :representedBy rdfs:subPropertyOf :representedIn.
 :ObjectOrientedProgrammingLanguage rdfs:subClassOf :ProgrammingLanguage.
@@ -202,17 +271,92 @@
   rdf:type owl:Class;
   owl:unionOf (:ExtendableClass :NonExtendableClass)
 ].
+:address rdfs:domain :University;
+    rdfs:range :Address;
+    rdf:type owl:ObjectProperty;
+    rdfs:subPropertyOf gufo:hasReifiedQualityValue;
+    rdfs:label "address"@en.
+:name rdfs:domain :Department;
+    rdfs:range xsd:string;
+    rdf:type owl:DatatypeProperty;
+    rdfs:subPropertyOf gufo:hasQualityValue;
+    rdfs:label "name"@en.
+:name_1 rdfs:domain :Person;
+    rdfs:range xsd:string;
+    rdf:type owl:DatatypeProperty;
+    rdfs:subPropertyOf gufo:hasQualityValue;
+    rdfs:label "name"@en.
+:age rdfs:domain :Person;
+    rdfs:range :number;
+    rdf:type owl:DatatypeProperty;
+    rdfs:subPropertyOf gufo:hasQualityValue;
+    rdfs:label "age"@en.
+:birthDate rdfs:domain :Person;
+    rdfs:range xsd:date;
+    rdf:type owl:DatatypeProperty;
+    rdfs:subPropertyOf gufo:hasQualityValue;
+    rdfs:label "birthDate"@en.
+:eyeColor rdfs:domain :Person;
+    rdfs:range :EyeColor;
+    rdf:type owl:ObjectProperty;
+    rdfs:subPropertyOf gufo:hasReifiedQualityValue;
+    rdfs:label "eyeColor"@en.
+:phoneNumber rdfs:domain :Person;
+    rdfs:range :PhoneNumber;
+    rdf:type owl:ObjectProperty;
+    rdfs:subPropertyOf gufo:hasReifiedQualityValue;
+    rdfs:label "phoneNumber"@en.
+:countryCode rdfs:domain :PhoneNumber;
+    rdfs:range xsd:int;
+    rdf:type owl:DatatypeProperty;
+    rdfs:subPropertyOf gufo:hasValueComponent;
+    rdfs:label "countryCode"@en.
+:bodyNumber rdfs:domain :PhoneNumber;
+    rdfs:range xsd:int;
+    rdf:type owl:DatatypeProperty;
+    rdfs:subPropertyOf gufo:hasValueComponent;
+    rdfs:label "bodyNumber"@en.
+:country rdfs:domain :Address;
+    rdfs:range xsd:string;
+    rdf:type owl:DatatypeProperty;
+    rdfs:subPropertyOf gufo:hasValueComponent;
+    rdfs:label "country"@en.
+:city rdfs:domain :Address;
+    rdfs:range xsd:string;
+    rdf:type owl:DatatypeProperty;
+    rdfs:subPropertyOf gufo:hasValueComponent;
+    rdfs:label "city"@en.
+:postalCode rdfs:domain :Address;
+    rdfs:range xsd:string;
+    rdf:type owl:DatatypeProperty;
+    rdfs:subPropertyOf gufo:hasValueComponent;
+    rdfs:label "postalCode"@en.
+:street rdfs:domain :Address;
+    rdfs:range xsd:string;
+    rdf:type owl:DatatypeProperty;
+    rdfs:subPropertyOf gufo:hasValueComponent;
+    rdfs:label "street"@en.
+:number_1 rdfs:domain :Address;
+    rdfs:range xsd:string;
+    rdf:type owl:DatatypeProperty;
+    rdfs:subPropertyOf gufo:hasValueComponent;
+    rdfs:label "number"@en.
+:complement rdfs:domain :Address;
+    rdfs:range xsd:string;
+    rdf:type owl:DatatypeProperty;
+    rdfs:subPropertyOf gufo:hasValueComponent;
+    rdfs:label "complement"@en.
 :createdDate rdfs:domain :ObjectOrientedProgrammingLanguage;
     rdfs:range :MyDate;
     rdf:type owl:ObjectProperty;
     rdfs:subPropertyOf gufo:hasReifiedQualityValue;
     rdfs:label "createdDate"@en.
-:name rdfs:domain :LogicalModule;
+:name_2 rdfs:domain :LogicalModule;
     rdfs:range xsd:boolean;
     rdf:type owl:DatatypeProperty;
     rdfs:subPropertyOf gufo:hasQualityValue;
     rdfs:label "name"@en.
-:name_1 rdfs:domain :OverridableMethod;
+:name_3 rdfs:domain :OverridableMethod;
     rdfs:range xsd:string;
     rdf:type owl:DatatypeProperty;
     rdfs:subPropertyOf gufo:hasQualityValue;
@@ -232,6 +376,50 @@
     rdf:type owl:DatatypeProperty;
     rdfs:subPropertyOf gufo:hasValueComponent;
     rdfs:label "day"@en.
+:has rdf:type owl:ObjectProperty;
+    rdfs:domain :University;
+    rdfs:range :Department;
+    rdfs:label "has"@en;
+    rdfs:subPropertyOf gufo:isComponentOf.
+:universityIsComponentOfClassrooms rdf:type owl:ObjectProperty;
+    rdfs:domain :University;
+    rdfs:range :Classrooms;
+    rdfs:subPropertyOf gufo:isComponentOf.
+:name_4 rdf:type owl:ObjectProperty;
+    rdfs:domain :University;
+    rdfs:range :Classroom;
+    rdfs:label "name"@en;
+    rdfs:subPropertyOf gufo:isObjectProperPartOf.
+:name2 rdf:type owl:ObjectProperty;
+    rdfs:domain :University;
+    rdfs:range :Classroom;
+    rdfs:label "name2"@en;
+    rdfs:subPropertyOf gufo:isObjectProperPartOf.
+:name3 rdf:type owl:ObjectProperty;
+    rdfs:domain :University;
+    rdfs:range :Classroom;
+    rdfs:label "name3"@en.
+:name4 rdf:type owl:ObjectProperty;
+    rdfs:domain :University;
+    rdfs:range :Classroom;
+    rdfs:label "name4"@en.
+:name5 rdf:type owl:ObjectProperty;
+    rdfs:domain :University;
+    rdfs:range :Classroom;
+    rdfs:label "name5"@en.
+:departmentIsCollectionMemberOfStaff rdf:type owl:ObjectProperty;
+    rdfs:domain :Department;
+    rdfs:range :Staff;
+    rdfs:subPropertyOf gufo:isCollectionMemberOf.
+:classroomsIsComponentOfClassroom rdf:type owl:ObjectProperty;
+    rdfs:domain :Classrooms;
+    rdfs:range :Classroom;
+    rdfs:subPropertyOf gufo:isComponentOf.
+:has_1 rdf:type owl:ObjectProperty;
+    rdfs:domain :Classroom;
+    rdfs:range :Chair;
+    rdfs:label "has"@en;
+    rdfs:subPropertyOf gufo:isComponentOf.
 :representedBy rdf:type owl:ObjectProperty;
     rdfs:domain :ObjectOrientedProgrammingLanguage;
     rdfs:range :ObjectOrientedSourceCode;
@@ -313,3 +501,13 @@
     rdfs:domain :Nesting;
     rdfs:range :Class_1;
     rdfs:label "contains"@en.
+:Staff rdfs:subClassOf [
+  rdf:type owl:Restriction;
+  owl:onProperty [ owl:inverseOf :departmentIsCollectionMemberOfStaff ];
+  owl:someValuesFrom :Department
+].
+:Department rdfs:subClassOf [
+  rdf:type owl:Restriction;
+  owl:onProperty :departmentIsCollectionMemberOfStaff;
+  owl:someValuesFrom :Staff
+].

@@ -10,8 +10,10 @@ kind Person {
   phoneNumber: CoreDatatypes.PhoneNumber [0..*]
 }
 
-phase Child specializes Person
-phase Teenager specializes Person
-phase Adult specializes Person
+phase Child
+phase Teenager
+phase Adult
 
 role Student specializes Adult
+
+genset Testing where Child, Teenager, Adult specializes Person

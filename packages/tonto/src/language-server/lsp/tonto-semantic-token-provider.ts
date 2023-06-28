@@ -2,12 +2,14 @@ import { AbstractSemanticTokenProvider, AstNode, SemanticTokenAcceptor } from "l
 import { SemanticTokenModifiers, SemanticTokenTypes } from "vscode-languageserver";
 import {
   DataType,
+  GeneralizationSet,
   isAttribute,
   isClassDeclaration,
   isContextModule,
   isDataType,
   isElementRelation,
   isEnumElement,
+  isGeneralizationSet,
   isOntologicalCategory,
   isRelationMetaAttributes,
   OntologicalCategory,
@@ -55,6 +57,9 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
     }
     if (isRelationMetaAttribute(node)) {
       this.relationMetaAttributeTokens(node, acceptor);
+    }
+    if (isGeneralizationSet(node)) {
+      this.generalizationSetTokens(node, acceptor);
     }
   }
 
@@ -154,6 +159,14 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
       node,
       property: "name",
       type: SemanticTokenTypes.enumMember,
+    });
+  }
+
+  private generalizationSetTokens(node: GeneralizationSet, acceptor: SemanticTokenAcceptor) {
+    acceptor({
+      node,
+      property: "name",
+      type: SemanticTokenTypes.variable,
     });
   }
 }

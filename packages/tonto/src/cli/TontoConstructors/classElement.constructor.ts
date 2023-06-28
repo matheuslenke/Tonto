@@ -1,5 +1,5 @@
 import { CompositeGeneratorNode, NL } from "langium";
-import { AggregationKind, Class, ClassStereotype, Property } from "ontouml-js";
+import { Class, ClassStereotype, Property } from "ontouml-js";
 import { formatForId } from "../utils/replaceWhitespace";
 import { createInstantiation } from "./instantiation.constructor";
 import { constructInternalRelations } from "./relation.constructor";
@@ -25,17 +25,14 @@ export function constructClassElement(element: Class, fileNode: CompositeGenerat
     createSpecializations(element, fileNode);
 
     const relations = element.getOwnOutgoingRelations();
-    const incomingRelations = element
-      .getOwnIncomingRelations()
-      .filter((relation) => relation.getTargetEnd().aggregationKind !== AggregationKind.NONE);
     const attributes: Property[] = element.getOwnAttributes();
-    if (relations.length > 0 || attributes.length > 0 || incomingRelations.length > 0) {
+    if (relations.length > 0 || attributes.length > 0) {
       fileNode.append("{", NL);
       fileNode.indent((ident) => {
         constructAttributes(attributes, ident);
       });
       fileNode.indent((ident) => {
-        constructInternalRelations(element, relations, incomingRelations, ident);
+        constructInternalRelations(element, relations, ident);
       });
       fileNode.append("}");
     }

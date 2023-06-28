@@ -4,19 +4,8 @@ import { notEmpty } from "../../utils/isEmpty";
 import { formatForId } from "../utils/replaceWhitespace";
 import { constructCardinality } from "./cardinality.constructor";
 
-export function constructInternalRelations(
-  element: Class,
-  relations: Relation[],
-  incomingRelations: Relation[],
-  fileNode: CompositeGeneratorNode
-) {
+export function constructInternalRelations(element: Class, relations: Relation[], fileNode: CompositeGeneratorNode) {
   relations
-    .filter((item) => item.isBinary() === true)
-    .forEach((relation) => {
-      constructRelation(relation, element, fileNode);
-    });
-
-  incomingRelations
     .filter((item) => item.isBinary() === true)
     .forEach((relation) => {
       constructRelation(relation, element, fileNode);
