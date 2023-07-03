@@ -24,14 +24,14 @@ export class TontoValidationRegistry extends ValidationRegistry {
         validator.ClassDeclarationValidator.checkClassWithoutStereotype,
         validator.ClassDeclarationValidator.checkGeneralizationSortality,
         validator.ClassDeclarationValidator.checkGeneralizationDataType,
-        validator.ClassDeclarationValidator.checkSpecializationNatureRestrictions,
-        validator.ClassDeclarationValidator.checkClassDeclarationShouldSpecializeUltimateSortal,
       ],
       ContextModule: [
         validator.ContextModuleValidator.checkDuplicatedClassName,
         validator.ContextModuleValidator.checkDuplicatedRelationName,
         validator.ContextModuleValidator.checkCircularSpecialization,
         validator.ContextModuleValidator.checkClassDeclarationShouldSpecializeUltimateSortal,
+        validator.ContextModuleValidator.checkCompatibleNaturesOfNonSortals,
+        validator.ContextModuleValidator.checkSpecializationNatureRestrictions,
       ],
       GeneralizationSet: [
         validator.GeneralizationValidator.checkCircularGeneralization,

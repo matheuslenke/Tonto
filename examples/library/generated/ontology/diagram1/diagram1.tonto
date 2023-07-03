@@ -22,7 +22,7 @@ kind Item {
     @formal
     [1] -- [1]  Work
 }
-role Items_Copy {
+role Items_Copy specializes Item {
     @mediation
     [1] -- [1] ( {const } ) Copy
 }
@@ -56,7 +56,7 @@ kind Copy {
     @mediation
     [1] -- [1] ( {const } ) Renew_Copy_for_Employee
 }
-role Copy_Reservation {
+role Copy_Reservation specializes Copy {
     @mediation
     [1] -- [1] ( {const } ) Make_Reservation_for_Student
 }
@@ -68,7 +68,8 @@ relator Student_Loan {
     @mediation
     [1] -- [1] ( {const } ) Student
 }
-role Delay {
+kind Time
+role Delay specializes Time {
     @mediation
     [1] -- [1] ( {const } ) Generate_Student_Delay
 }
@@ -82,7 +83,7 @@ relator Renew_Copy_for_Student {
     @mediation
     [1] -- [1] ( {const } ) Student
 }
-role Renew_Copy {
+role Renew_Copy specializes Copy {
     @mediation
     [1] -- [1] ( {const } ) Student
 }
@@ -149,15 +150,16 @@ relator Make_Reservation_for_Employee {
     @mediation
     [1] -- [1] ( {const } ) Employee
 }
-role Renew_Copy_for_Employee {
+kind Action
+role Renew_Copy_for_Employee specializes Action  {
     @mediation
     [1] -- [1] ( {const } ) Renew_Employee
 }
-role Reserve_Copy_for_Employee {
+role Reserve_Copy_for_Employee specializes Action {
     @mediation
     [1] -- [1] ( {const } ) Make_Reservation_for_Employee
 }
-role Employee_Loan_Role {
+role Employee_Loan_Role specializes Action {
     @mediation
     [1] -- [1] ( {const } ) Employee_Loan
 }

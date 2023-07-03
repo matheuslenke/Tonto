@@ -1,22 +1,26 @@
-import { Class, ClassStereotype, OntologicalNature, Package, Property } from "ontouml-js";
-import { Attribute, ClassDeclaration, DataType, OntologicalNature as Nature } from "../../language-server/generated/ast";
-import { OntologicalCategoryEnum } from "../../language-server/models/OntologicalCategory";
-import { setPropertyCardinality } from "./cardinality.generator";
+import { Class, ClassStereotype, OntologicalNature, Package } from "ontouml-js";
+import { ClassDeclaration, OntologicalNature as Nature } from "../../language-server/generated/ast";
+import {
+  isBaseSortalOntoCategory,
+  isNonSortalOntoCategory,
+  isUltimateSortalOntoCategory,
+} from "../../language-server/models/OntologicalCategory";
+import { getParentNatures } from "../../language-server/utils/getParentNatures";
+import { tontoNatureUtils } from "../../language-server/models/Natures";
 
 export function classElementGenerator(classElement: ClassDeclaration, packageItem: Package): Class {
   if (classElement.classElementType) {
     const stereotype = classElement.classElementType.ontologicalCategory;
-    let natures: OntologicalNature[] = [];
+    let natures: OntologicalNature[] | undefined = [];
     let firstNature: OntologicalNature | undefined;
-    if (classElement.ontologicalNatures) {
-      natures = getOntoUMLNatures(classElement.ontologicalNatures.natures);
-    } else {
-      natures = getDefaultOntoUMLNature(classElement);
-    }
-    if (natures.length > 0) {
+    natures = getOntoUMLNatures(classElement, classElement.ontologicalNatures?.natures ?? []);
+    if (natures && natures.length > 0) {
       firstNature = natures[0];
     }
     switch (stereotype) {
+      /**
+       * Non sortals
+       */
       case "category": {
         return packageItem.createCategory(classElement.name, natures);
       }
@@ -32,9 +36,19 @@ export function classElementGenerator(classElement: ClassDeclaration, packageIte
       case "historicalRoleMixin": {
         return packageItem.createRoleMixin(classElement.name, natures);
       }
+
+      /**
+       * Non Endurants
+       */
       case "event": {
         return packageItem.createEvent(classElement.name);
       }
+      case "situation": {
+        return packageItem.createSituation(classElement.name);
+      }
+      /**
+       * Ultimate Sortals
+       */
       case "kind": {
         return packageItem.createKind(classElement.name);
       }
@@ -48,28 +62,13 @@ export function classElementGenerator(classElement: ClassDeclaration, packageIte
         return packageItem.createQuality(classElement.name);
       }
       case "mode": {
-        return packageItem.createClass(classElement.name, ClassStereotype.MODE, [
-          OntologicalNature.extrinsic_mode,
-          OntologicalNature.intrinsic_mode,
-        ]);
+        return packageItem.createClass(classElement.name, ClassStereotype.MODE, natures);
       }
       case "intrinsicMode": {
         return packageItem.createIntrinsicMode(classElement.name);
       }
       case "extrinsicMode": {
         return packageItem.createExtrinsicMode(classElement.name);
-      }
-      case "subkind": {
-        return packageItem.createSubkind(classElement.name, firstNature);
-      }
-      case "phase": {
-        return packageItem.createPhase(classElement.name, firstNature);
-      }
-      case "role": {
-        return packageItem.createRole(classElement.name, firstNature);
-      }
-      case "historicalRole": {
-        return packageItem.createHistoricalRole(classElement.name);
       }
       case "relator": {
         return packageItem.createRelator(classElement.name);
@@ -82,9 +81,24 @@ export function classElementGenerator(classElement: ClassDeclaration, packageIte
         powerType.isPowertype = true;
         return powerType;
       }
-      case "situation": {
-        return packageItem.createSituation(classElement.name);
+      /**
+       * Base Sortals
+       */
+      case "subkind": {
+        return packageItem.createSubkind(classElement.name, firstNature);
       }
+      case "phase": {
+        return packageItem.createPhase(classElement.name, firstNature);
+      }
+      case "role": {
+        return packageItem.createRole(classElement.name, firstNature);
+      }
+      case "historicalRole": {
+        return packageItem.createHistoricalRole(classElement.name);
+      }
+      /**
+       * Undefined stereotype
+       */
       case "class": {
         if (classElement.ontologicalNatures?.natures.includes("abstract-individuals")) {
           return packageItem.createAbstract(classElement.name, { stereotype: ClassStereotype.ABSTRACT });
@@ -96,30 +110,6 @@ export function classElementGenerator(classElement: ClassDeclaration, packageIte
   return packageItem.createClass(classElement.name);
 }
 
-export function attributeGenerator(
-  classElement: ClassDeclaration | DataType,
-  createdClass: Class,
-  dataTypes: Class[]
-): void {
-  classElement.attributes.forEach((attribute: Attribute) => {
-    let createdAttribute: Property | undefined;
-    if (attribute.attributeTypeRef) {
-      const customType = dataTypes.find((item) => item.name.getText() === attribute.attributeTypeRef.ref?.name);
-      if (customType) {
-        createdAttribute = createdClass.createAttribute(customType, attribute.name);
-      }
-    }
-    if (createdAttribute) {
-      // Set the attribute cardinality
-      setPropertyCardinality(attribute.cardinality, createdAttribute);
-
-      createdAttribute.isOrdered = attribute.isOrdered;
-      createdAttribute.isDerived = attribute.isDerived;
-      createdAttribute.isReadOnly = attribute.isConst;
-    }
-  });
-}
-
 export function generalizationGenerator(model: Package, sourceClass: Class, targetClass: Class) {
   model.createGeneralization(sourceClass, targetClass);
 }
@@ -129,47 +119,38 @@ export function createInstantiation(_model: Package, _sourceClass: Class, _targe
   // model.createInstantiationRelation(sourceClass, targetClass);
 }
 
-function getOntoUMLNatures(natures: Nature[]): OntologicalNature[] {
-  return natures.flatMap((nature) => {
-    switch (nature) {
-      case "collectives":
-        return OntologicalNature.collective;
-      case "extrinsic-modes":
-        return OntologicalNature.extrinsic_mode;
-      case "functional-complexes":
-        return OntologicalNature.functional_complex;
-      case "intrinsic-modes":
-        return OntologicalNature.intrinsic_mode;
-      case "qualities":
-        return OntologicalNature.quality;
-      case "quantities":
-        return OntologicalNature.quantity;
-      case "relators":
-        return OntologicalNature.relator;
-      case "types":
-        return OntologicalNature.type;
-      case "objects":
-        return [OntologicalNature.functional_complex, OntologicalNature.collective, OntologicalNature.quantity];
-      default:
-        return [];
+function getOntoUMLNatures(classDeclaration: ClassDeclaration, natures: Nature[]): OntologicalNature[] | undefined {
+  /**
+   * If it is an UltimateSortal, it already has its own nature
+   */
+  if (isUltimateSortalOntoCategory(classDeclaration.classElementType.ontologicalCategory)) {
+    tontoNatureUtils.getNatureFromUltimateSortal(classDeclaration);
+    /**
+     * If it is an BaseSortal, it can have a defined nature from it's parents or a declared one
+     */
+  } else if (isBaseSortalOntoCategory(classDeclaration.classElementType.ontologicalCategory)) {
+    const parentNatures = getParentNatures(classDeclaration, [], []);
+    if (natures.length > 0) {
+      const specifiedNatures = natures.flatMap((nature) => {
+        return tontoNatureUtils.getNatureFromAst(nature);
+      });
+      return [...parentNatures, ...specifiedNatures];
     }
-  });
-}
-
-function getDefaultOntoUMLNature(element: ClassDeclaration): OntologicalNature[] {
-  if (
-    element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.CATEGORY ||
-    element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.MIXIN ||
-    element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.PHASE_MIXIN ||
-    element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.ROLE_MIXIN ||
-    element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.HISTORICAL_ROLE_MIXIN ||
-    element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.EVENT ||
-    element.classElementType?.ontologicalCategory === OntologicalCategoryEnum.SITUATION
-  ) {
-    return [OntologicalNature.functional_complex];
-  } else if (element.classElementType.ontologicalCategory === "class") {
-    return Object.values(OntologicalNature);
-  } else {
-    return [];
+    if (parentNatures.length > 0) {
+      return parentNatures;
+    }
+    return undefined;
+    /**
+     * If it is a Non Sortal, it can have functional-complexes by default, a declared one or based on its supertypes
+     */
+  } else if (isNonSortalOntoCategory(classDeclaration.classElementType.ontologicalCategory)) {
+    if (natures.length > 0) {
+      return natures.flatMap((nature) => {
+        return tontoNatureUtils.getNatureFromAst(nature);
+      });
+    } else {
+      tontoNatureUtils.getDefaultNatureFromNonSortal(classDeclaration);
+    }
   }
+  return undefined;
 }

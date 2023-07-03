@@ -1,107 +1,106 @@
-import { OntologicalNature as ASTNature } from "../generated/ast";
+import { OntologicalNature as ASTNature, ClassDeclaration, isUltimateSortal } from "../generated/ast";
+import { OntologicalNature } from "ontouml-js";
+import { isNonSortalOntoCategory } from "./OntologicalCategory";
 
-export enum OntologicalNature {
-  functional_complex = "functional-complex",
-  collective = "collective",
-  quantity = "quantity",
-  relator = "relator",
-  intrinsic_mode = "intrinsic-mode",
-  extrinsic_mode = "extrinsic-mode",
-  quality = "quality",
-  event = "event",
-  situation = "situation",
-  type = "type",
-  abstract = "abstract",
-}
-
-const Natures = [
-  OntologicalNature.functional_complex,
-  OntologicalNature.collective,
-  OntologicalNature.quantity,
-  OntologicalNature.intrinsic_mode,
-  OntologicalNature.extrinsic_mode,
-  OntologicalNature.quality,
-  OntologicalNature.relator,
-  OntologicalNature.event,
-  OntologicalNature.situation,
-  OntologicalNature.type,
-  OntologicalNature.abstract,
-];
-
-const EndurantNatures = [
-  OntologicalNature.functional_complex,
-  OntologicalNature.collective,
-  OntologicalNature.quantity,
-  OntologicalNature.intrinsic_mode,
-  OntologicalNature.extrinsic_mode,
-  OntologicalNature.quality,
-  OntologicalNature.relator,
-  OntologicalNature.type,
-];
-
-const SubstantialNatures = [
-  OntologicalNature.functional_complex,
-  OntologicalNature.collective,
-  OntologicalNature.quantity,
-];
-
-const MomentNatures = [
-  OntologicalNature.intrinsic_mode,
-  OntologicalNature.extrinsic_mode,
-  OntologicalNature.quality,
-  OntologicalNature.relator,
-];
-
-const IntrinsicMomentNatures = [OntologicalNature.intrinsic_mode, OntologicalNature.quality];
-
-const ExtrinsicMomentNatures = [OntologicalNature.extrinsic_mode, OntologicalNature.relator];
-
-const naturesArrays = [
-  Natures,
-  EndurantNatures,
-  SubstantialNatures,
-  MomentNatures,
-  IntrinsicMomentNatures,
-  ExtrinsicMomentNatures,
-];
-
-naturesArrays.forEach((array: OntologicalNature[]) => Object.freeze(array));
-
-function getNatureFromAst(nature: ASTNature): OntologicalNature | undefined {
+function getNatureFromAst(nature: ASTNature): OntologicalNature[] {
   switch (nature) {
     case "collectives":
-      return OntologicalNature.collective;
+      return [OntologicalNature.collective];
     case "extrinsic-modes":
-      return OntologicalNature.extrinsic_mode;
+      return [OntologicalNature.extrinsic_mode];
     case "intrinsic-modes":
-      return OntologicalNature.intrinsic_mode;
+      return [OntologicalNature.intrinsic_mode];
     case "functional-complexes":
-      return OntologicalNature.functional_complex;
+      return [OntologicalNature.functional_complex];
     case "objects":
-      return OntologicalNature.functional_complex;
+      return [OntologicalNature.functional_complex, OntologicalNature.collective, OntologicalNature.quantity];
     case "qualities":
-      return OntologicalNature.quality;
+      return [OntologicalNature.quality];
     case "quantities":
-      return OntologicalNature.quantity;
+      return [OntologicalNature.quantity];
     case "relators":
-      return OntologicalNature.relator;
+      return [OntologicalNature.relator];
     case "types":
-      return OntologicalNature.type;
+      return [OntologicalNature.type];
     case "abstract-individuals":
-      return OntologicalNature.abstract;
+      return [OntologicalNature.abstract];
     case "events":
-      return OntologicalNature.event;
+      return [OntologicalNature.event];
     case "situations":
-      return OntologicalNature.situation;
+      return [OntologicalNature.situation];
+    default:
+      return [];
   }
 }
 
-export const natureUtils = {
-  Natures,
-  EndurantNatures,
-  SubstantialNatures,
-  MomentNatures,
-  IntrinsicMomentNatures,
-  ExtrinsicMomentNatures,
+function getAstNatureFromOntoumljs(nature: OntologicalNature): string {
+  switch (nature) {
+    case OntologicalNature.functional_complex:
+      return "functional-complexes";
+    case OntologicalNature.collective:
+      return "collectives";
+    case OntologicalNature.quantity:
+      return "quantities";
+    case OntologicalNature.relator:
+      return "relators";
+    case OntologicalNature.intrinsic_mode:
+      return "intrinsic-modes";
+    case OntologicalNature.extrinsic_mode:
+      return "extrinsic-modes";
+    case OntologicalNature.quality:
+      return "qualities";
+    case OntologicalNature.event:
+      return "events";
+    case OntologicalNature.situation:
+      return "situations";
+    case OntologicalNature.type:
+      return "types";
+    case OntologicalNature.abstract:
+      return "abstract-individuals";
+  }
+}
+
+function getNatureFromUltimateSortal(classDeclaration: ClassDeclaration): OntologicalNature | undefined {
+  if (isUltimateSortal(classDeclaration.classElementType.ontologicalCategory)) {
+    switch (classDeclaration.classElementType.ontologicalCategory) {
+      case "collective":
+        return OntologicalNature.collective;
+      case "extrinsicMode":
+        return OntologicalNature.extrinsic_mode;
+      case "intrinsicMode":
+        return OntologicalNature.intrinsic_mode;
+      case "kind":
+        return OntologicalNature.functional_complex;
+      case "mode":
+        return OntologicalNature.intrinsic_mode;
+      case "powertype":
+        return OntologicalNature.type;
+      case "quality":
+        return OntologicalNature.quality;
+      case "quantity":
+        return OntologicalNature.quantity;
+      case "relator":
+        return OntologicalNature.relator;
+      case "type":
+        return OntologicalNature.type;
+    }
+  }
+  return undefined;
+}
+
+function getDefaultNatureFromNonSortal(classDeclaration: ClassDeclaration): OntologicalNature[] {
+  if (isNonSortalOntoCategory(classDeclaration.classElementType.ontologicalCategory)) {
+    return [OntologicalNature.functional_complex];
+  }
+  if (classDeclaration.classElementType.ontologicalCategory === "class") {
+    return Object.values(OntologicalNature);
+  }
+  return [];
+}
+
+export const tontoNatureUtils = {
   getNatureFromAst,
+  getNatureFromUltimateSortal,
+  getDefaultNatureFromNonSortal,
+  getAstNatureFromOntoumljs,
 };

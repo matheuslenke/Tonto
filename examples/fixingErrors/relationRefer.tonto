@@ -2,7 +2,15 @@ import ExportType
 
 package RelationRefer
 
-kind TestKind of quantities
+kind Test of functional-complexes
 
-relation ExportType.ExportingType <o>-- nome2 -- TestKind
 
+relator KindTest
+
+collective TestCollective
+// phase PhaseTest of collectives specializes KindTest
+role RoleTest of objects specializes TestCollective
+// subkind SubkindTest of qualities
+// historicalRole HistoricalRoleTest specializes KindTest
+
+// genset TestingGenset where RoleTest specializes KindTest

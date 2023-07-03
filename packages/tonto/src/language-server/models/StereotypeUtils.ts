@@ -1,10 +1,9 @@
-import { ClassStereotype, stereotypeUtils } from "ontouml-js";
-import { natureUtils, OntologicalNature } from "./Natures";
+import { ClassStereotype, stereotypeUtils, natureUtils, OntologicalNature } from "ontouml-js";
 import { OntologicalCategoryEnum } from "./OntologicalCategory";
 
 type AllowedStereotypes = {
-  [key in OntologicalCategoryEnum]: OntologicalNature[]
-}
+  [key in OntologicalCategoryEnum]: OntologicalNature[];
+};
 
 const allowedStereotypeRestrictedToMatches: AllowedStereotypes = {
   [OntologicalCategoryEnum.ABSTRACT]: [OntologicalNature.abstract],
