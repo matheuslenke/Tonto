@@ -2,14 +2,14 @@ import ExportType
 
 package RelationRefer
 
-kind Test of functional-complexes
+// kind Test of functional-complexes
 
 
-relator KindTest
+// relator KindTest
 
-collective TestCollective
-// phase PhaseTest of collectives specializes KindTest
-role RoleTest of objects specializes TestCollective
+// collective TestCollective
+// // phase PhaseTest of collectives specializes KindTest
+// role RoleTest of objects specializes TestCollective
 // subkind SubkindTest of qualities
 // historicalRole HistoricalRoleTest specializes KindTest
 

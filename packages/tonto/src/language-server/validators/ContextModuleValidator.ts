@@ -174,7 +174,7 @@ export class ContextModuleValidator {
    * @param contextModule Actual ContextModule
    * @param accept Error creator helper
    */
-  checkCompatibleNaturesOfNonSortals(contextModule: ContextModule, accept: ValidationAcceptor): void {
+  checkCompatibleNaturesOfBaseSortals(contextModule: ContextModule, accept: ValidationAcceptor): void {
     const genSets = contextModule.declarations.filter((declaration) => {
       return declaration.$type === "GeneralizationSet";
     }) as GeneralizationSet[];
@@ -228,7 +228,7 @@ export class ContextModuleValidator {
       if (classDeclaration.ontologicalNatures) {
         classDeclaration.ontologicalNatures.natures.forEach((nature) => {
           /**
-           * Check if parentNatures are incopatible with defined natures
+           * Check if parentNatures are incompatible with defined natures
            */
           const actualNatures = tontoNatureUtils.getNatureFromAst(nature);
           actualNatures.forEach((actualNature) => {

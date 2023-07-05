@@ -36,7 +36,6 @@ export function classElementGenerator(classElement: ClassDeclaration, packageIte
       case "historicalRoleMixin": {
         return packageItem.createRoleMixin(classElement.name, natures);
       }
-
       /**
        * Non Endurants
        */
@@ -124,7 +123,13 @@ function getOntoUMLNatures(classDeclaration: ClassDeclaration, natures: Nature[]
    * If it is an UltimateSortal, it already has its own nature
    */
   if (isUltimateSortalOntoCategory(classDeclaration.classElementType.ontologicalCategory)) {
-    tontoNatureUtils.getNatureFromUltimateSortal(classDeclaration);
+    const nature = tontoNatureUtils.getNatureFromUltimateSortal(classDeclaration);
+    if (classDeclaration.classElementType.ontologicalCategory === "mode") {
+      console.log(nature);
+    }
+    if (nature) {
+      return [nature];
+    }
     /**
      * If it is an BaseSortal, it can have a defined nature from it's parents or a declared one
      */

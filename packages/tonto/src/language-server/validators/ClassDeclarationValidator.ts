@@ -1,7 +1,11 @@
 /* eslint-disable max-len */
 import { ValidationAcceptor } from "langium";
 import { ClassDeclaration } from "../generated/ast";
-import { OntologicalCategoryEnum, getOntologicalCategory } from "../models/OntologicalCategory";
+import {
+  OntologicalCategoryEnum,
+  getOntologicalCategory,
+  isUltimateSortalOntoCategory,
+} from "../models/OntologicalCategory";
 import {
   allowedStereotypeRestrictedToMatches,
   hasNonSortalStereotype,
@@ -10,7 +14,6 @@ import {
   isRigidStereotype,
   isSemiRigidStereotype,
 } from "../models/StereotypeUtils";
-import { checkCircularSpecializationRecursive } from "../utils/CheckCircularSpecializationRecursive";
 import { checkUltimateSortalSpecializesUltimateSortalRecursive } from "../utils/CheckUltimateSortalSpecializesUltimateSortalRecursive";
 import { checkNatureCompatibleRestrictedTo } from "../utils/checkNatureCompatibleRestrictedTo";
 import { toQualifiedName } from "../references/tonto-name-provider";
@@ -49,16 +52,7 @@ export class ClassDeclarationValidator {
     }
     // Check if it is an UltimateSortal
     // 'kind' | 'collective' | 'quantity' | 'quality' | 'mode' | 'intrinsicMode' | 'extrinsicMode' | 'relator'
-    if (
-      ontologicalCategory === OntologicalCategoryEnum.KIND ||
-      ontologicalCategory === OntologicalCategoryEnum.COLLECTIVE ||
-      ontologicalCategory === OntologicalCategoryEnum.QUANTITY ||
-      ontologicalCategory === OntologicalCategoryEnum.QUALITY ||
-      ontologicalCategory === OntologicalCategoryEnum.RELATOR ||
-      ontologicalCategory === OntologicalCategoryEnum.MODE ||
-      ontologicalCategory === OntologicalCategoryEnum.INTRINSIC_MODE ||
-      ontologicalCategory === OntologicalCategoryEnum.EXTRINSIC_MODE
-    ) {
+    if (isUltimateSortalOntoCategory(ontologicalCategory)) {
       checkUltimateSortalSpecializesUltimateSortalRecursive(classDeclaration, accept);
     }
   }
@@ -155,9 +149,6 @@ export class ClassDeclarationValidator {
         }
       }
     }
-    // }
-    // else if (isNonSortalOntoCategory(classDeclaration.classElementType.ontologicalCategory)) {
-    // }
   }
 
   /**
@@ -198,44 +189,6 @@ export class ClassDeclarationValidator {
     });
   }
 
-  checkNaturesOnlyOnNonSortals(classElement: ClassDeclaration, _: ValidationAcceptor): void {
-    const ElementNatures = classElement.ontologicalNatures;
-    if (ElementNatures) {
-      // if (
-      //     hasSortalStereotype(
-      //         classElement.classElementType?.ontologicalCategory
-      //     )
-      // ) {
-      //     accept("error", "Only non-sortal types can specialize natures", {
-      //         node: classElement,
-      //         property: "ontologicalNatures",
-      //     });
-      // }
-    }
-  }
-
-  /**
-   * Verifica se a classe é da categoria TYPE, e caso seja, se sua meta-propriedade
-   * Powertype está definida
-   */
-  // TODO: Not implemented
-  // checkMissingIsPowertype(): // classDeclaration: ClassDeclaration,
-  //   // accept: ValidationAcceptor
-  //   void { }
-
-  /*
-   * Checks if an Element has a ciclic specialization
-   */
-  checkCircularSpecialization(classElement: ClassDeclaration, accept: ValidationAcceptor): void {
-    classElement.specializationEndurants.forEach((specializationItem) => {
-      const specItem = specializationItem.ref;
-      if (!specItem) {
-        return;
-      }
-      checkCircularSpecializationRecursive(specItem, [], accept);
-    });
-  }
-
   /**
    * Verify if the general class is a Sortal stereotype and the specific class
    * has a non-Sortal stereotype. This generalization is forbidden
@@ -258,33 +211,5 @@ export class ClassDeclarationValidator {
         }
       });
     }
-  }
-
-  /**
-   * Verifica se é uma generalização entre duas classes. Verifica se o general
-   * e o specific possuem estereótipo definido. Verifica se o general ou
-   * specific são datatype, e se o estereótipo de general e specific são
-   * diferentes
-   */
-  checkGeneralizationDataType(_classDeclaration: ClassDeclaration, _accept: ValidationAcceptor) {
-    // TODO: Fix this to be a validator on datatype
-    // const ontologicalCategory =
-    //   classDeclaration.classElementType.ontologicalCategory;
-    // if (ontologicalCategory === OntologicalCategoryEnum.DATATYPE) {
-    //   const specializationItems = classDeclaration.specializationEndurants;
-    //   specializationItems.forEach((item) => {
-    //     if (item.ref?.classElementType.ontologicalCategory === "datatype") {
-    //       accept(
-    //         "error",
-    //         "Prohibited generalization: datatype specialization.
-    //  A datatype can only be in generalization relation with other datatypes",
-    //         {
-    //           node: classDeclaration,
-    //           property: "specializationEndurants",
-    //         }
-    //       );
-    //     }
-    //   });
-    // }
   }
 }
