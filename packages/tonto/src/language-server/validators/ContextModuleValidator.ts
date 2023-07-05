@@ -13,6 +13,7 @@ import { getParentNatures } from "../utils/getParentNatures";
 import { tontoNatureUtils } from "../models/Natures";
 import { formPhrase } from "../utils/formPhrase";
 import { OntologicalNature } from "ontouml-js";
+import { compareArrays } from "../utils/compareArrays";
 
 export class ContextModuleValidator {
   checkContextModuleStartsWithCapital(contextModule: ContextModule, accept: ValidationAcceptor): void {
@@ -222,8 +223,8 @@ export class ContextModuleValidator {
         if (!specItem.ref) {
           return [];
         }
-        const a = getParentNatures(specItem.ref, [], genSets);
-        return a;
+        const natures = getParentNatures(specItem.ref, [], genSets);
+        return natures;
       });
       if (classDeclaration.ontologicalNatures) {
         classDeclaration.ontologicalNatures.natures.forEach((nature) => {
@@ -246,6 +247,51 @@ export class ContextModuleValidator {
             }
           });
         });
+      }
+    });
+  }
+
+  checkRedundantNatures(contextModule: ContextModule, accept: ValidationAcceptor) {
+    const genSets = contextModule.declarations.filter((declaration) => {
+      return declaration.$type === "GeneralizationSet";
+    }) as GeneralizationSet[];
+
+    const declaredClasses: ClassDeclaration[] = contextModule.declarations.filter((declaration) => {
+      return declaration.$type === "ClassDeclaration";
+    }) as ClassDeclaration[];
+
+    declaredClasses.forEach((classDeclaration) => {
+      if (classDeclaration.ontologicalNatures) {
+        let parentNatures: OntologicalNature[] = [];
+        parentNatures = classDeclaration.specializationEndurants.flatMap((specItem) => {
+          if (!specItem.ref) {
+            return [];
+          }
+          const natures = getParentNatures(specItem.ref, [], genSets);
+          return natures;
+        });
+        const ultimateSortalNature = tontoNatureUtils.getNatureFromUltimateSortal(classDeclaration);
+        if (ultimateSortalNature) {
+          parentNatures.push(ultimateSortalNature);
+        }
+        const parsedNatures = classDeclaration.ontologicalNatures.natures.flatMap((nature) =>
+          tontoNatureUtils.getNatureFromAst(nature)
+        );
+        /**
+         * This checks if the declaration of natures is redundant, because the nature
+         * of this element is already defined by its specializations
+         */
+        if (compareArrays(parsedNatures, parentNatures)) {
+          accept(
+            "warning",
+            "Redundant nature declaration. The ontological natures of this element is already defined from its specializations",
+            {
+              node: classDeclaration,
+              property: "ontologicalNatures",
+              code: 300,
+            }
+          );
+        }
       }
     });
   }

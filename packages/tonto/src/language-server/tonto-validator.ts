@@ -25,6 +25,7 @@ export class TontoValidationRegistry extends ValidationRegistry {
         validator.ContextModuleValidator.checkClassDeclarationShouldSpecializeUltimateSortal,
         validator.ContextModuleValidator.checkCompatibleNaturesOfBaseSortals,
         validator.ContextModuleValidator.checkSpecializationNatureRestrictions,
+        validator.ContextModuleValidator.checkRedundantNatures,
       ],
       GeneralizationSet: [
         validator.GeneralizationValidator.checkCircularGeneralization,
