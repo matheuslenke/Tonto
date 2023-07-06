@@ -1,12 +1,12 @@
 package UltimateSortalSpecialization
 
-kind Human of functional-complexes
+// kind Human of functional-complexes
 
-collective Collective of collectives
-
-
-kind Person
-role Student of functional-complexes specializes Person
+// collective Collective of collectives
 
 
-phase Phase of functional-complexes
+// kind Person
+// role Student of functional-complexes specializes Person
+
+
+// phase Phase of functional-complexes

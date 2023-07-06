@@ -7,8 +7,17 @@ import { getGensetsWhereSpecific } from "./genSetsWhereSpecific";
 const getParentNatures = (
   actualElement: ClassDeclaration | GeneralizationSet,
   natures: OntologicalNature[],
-  genSets: GeneralizationSet[]
+  genSets: GeneralizationSet[],
+  verifiedElements: Array<ClassDeclaration | GeneralizationSet> = []
 ): OntologicalNature[] => {
+  /**
+   * Because this is a recursive function, we need to add a stop condition
+   */
+  if (verifiedElements.find((item) => item.name === actualElement.name && item.$type === actualElement.$type)) {
+    return natures;
+  }
+  verifiedElements.push(actualElement);
+
   if (actualElement.$type === "ClassDeclaration") {
     actualElement.specializationEndurants.forEach((specializationItem) => {
       const specItem = specializationItem.ref;
@@ -26,7 +35,7 @@ const getParentNatures = (
       }
 
       const newNatures = [...natures, ...specElementNatures];
-      const parentNatures = getParentNatures(specItem, newNatures, genSets);
+      const parentNatures = getParentNatures(specItem, newNatures, genSets, verifiedElements);
 
       natures = [...natures, ...parentNatures];
     });
@@ -43,13 +52,13 @@ const getParentNatures = (
     const genSetsWithElement: GeneralizationSet[] = getGensetsWhereSpecific(actualElement.name, genSets);
     let parentGenSetNatures: OntologicalNature[] = [];
     genSetsWithElement.forEach((genSet) => {
-      parentGenSetNatures = getParentNatures(genSet, natures, genSets);
+      parentGenSetNatures = getParentNatures(genSet, natures, genSets, verifiedElements);
     });
     return [...natures, ...currentElementNatures, ...parentGenSetNatures];
   } else if (actualElement.$type === "GeneralizationSet") {
     let parentNatures: OntologicalNature[] = [];
     if (actualElement.generalItem.ref?.$type === "ClassDeclaration") {
-      parentNatures = getParentNatures(actualElement.generalItem.ref, natures, genSets);
+      parentNatures = getParentNatures(actualElement.generalItem.ref, natures, genSets, verifiedElements);
     }
     return [...natures, ...parentNatures];
   }

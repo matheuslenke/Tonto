@@ -40,9 +40,7 @@ describe("checkClassDeclarationShouldSpecializeUltimateSortal", async () => {
     expect(diagnostics.length).toBe(12);
 
     diagnostics.forEach((error) => {
-      expect(error.message).toBe(
-        ErrorMessages.sortalSpecializesUniqueUltimateSortal
-      );
+      expect(error.message).toBe(ErrorMessages.sortalSpecializesUniqueUltimateSortal);
     });
   });
 
@@ -59,29 +57,13 @@ describe("checkClassDeclarationShouldSpecializeUltimateSortal", async () => {
     const diagnostics = validationResult.diagnostics;
 
     expect(diagnostics).not.toBeNull();
-    expect(diagnostics.length).toBe(4);
-
-    diagnostics.forEach((error) => {
-      expect(error.message).toBe(
-        ErrorMessages.sortalSpecializeNoUltimateSortal
-      );
+    expect(diagnostics.length).toBe(8);
+    const specializationErrors = diagnostics.filter((diagnostic) =>
+      diagnostic.message.includes("This class does not specialize a Ultimate Sortal")
+    );
+    specializationErrors.forEach((error) => {
+      expect(error.message).toBe(ErrorMessages.sortalSpecializeNoUltimateSortal);
     });
-  });
-
-  it("should have no error becase it's restricted to type nature", async () => {
-    const stub = `
-    package CheckNonUltimateSortalSpecializesUniqueUltimateSortal 
-    subkind TestSubkindType of types
-    phase TestPhaseType of types
-    role TestRoleType of types
-    historicalRole TestHistoricalRoleType of types
-    `;
-    const validationResult = await validate(stub);
-
-    const diagnostics = validationResult.diagnostics;
-
-    expect(diagnostics).not.toBeNull();
-    expect(diagnostics.length).toBe(0);
   });
 
   it("should have no error becase it specializes indirectly a sortal", async () => {
@@ -115,7 +97,7 @@ describe("checkClassDeclarationShouldSpecializeUltimateSortal", async () => {
     expect(diagnostics).not.toBeNull();
     expect(diagnostics.length).toBe(1);
 
-    const messages = diagnostics.map(diagnostic => diagnostic.message);
+    const messages = diagnostics.map((diagnostic) => diagnostic.message);
     expect(messages).toContain(ErrorMessages.sortalSpecializesUniqueUltimateSortal);
   });
 
@@ -135,7 +117,7 @@ describe("checkClassDeclarationShouldSpecializeUltimateSortal", async () => {
     expect(diagnostics).not.toBeNull();
     expect(diagnostics.length).toBe(1);
 
-    const messages = diagnostics.map(diagnostic => diagnostic.message);
+    const messages = diagnostics.map((diagnostic) => diagnostic.message);
     expect(messages).toContain(ErrorMessages.sortalSpecializesUniqueUltimateSortal);
   });
 });

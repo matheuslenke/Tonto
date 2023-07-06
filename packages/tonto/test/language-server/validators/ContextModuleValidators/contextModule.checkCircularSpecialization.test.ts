@@ -143,7 +143,7 @@ describe("CheckCircularSpecialization", () => {
 
     expect(diagnostics).not.toBeNull();
     expect(diagnostics).not.toBeUndefined();
-    expect(diagnostics.length).toBe(5);
+    expect(diagnostics.length).toBe(4);
 
     diagnostics.forEach((error) => {
       expect(error.message).toBe(ErrorMessages.cyclicSpecialization);
