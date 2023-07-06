@@ -3,7 +3,7 @@
     "private": true,
     "engineStrict": true,
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.2.5",
+    "version": "0.2.10",
     "license": "MIT",
     "repository": {
         "type": "git",
