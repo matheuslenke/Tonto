@@ -1,8 +1,11 @@
 /* eslint-disable max-len */
 import { ValidationAcceptor } from "langium";
-import { ClassDeclaration, OntologicalNature as ASTNature } from "../generated/ast";
-import { natureUtils } from "../models/Natures";
-import { getOntologicalCategory, OntologicalCategoryEnum } from "../models/OntologicalCategory";
+import { ClassDeclaration } from "../generated/ast";
+import {
+  OntologicalCategoryEnum,
+  getOntologicalCategory,
+  isUltimateSortalOntoCategory,
+} from "../models/OntologicalCategory";
 import {
   allowedStereotypeRestrictedToMatches,
   hasNonSortalStereotype,
@@ -11,11 +14,11 @@ import {
   isRigidStereotype,
   isSemiRigidStereotype,
 } from "../models/StereotypeUtils";
-import { checkCircularSpecializationRecursive } from "../utils/CheckCircularSpecializationRecursive";
 import { checkUltimateSortalSpecializesUltimateSortalRecursive } from "../utils/CheckUltimateSortalSpecializesUltimateSortalRecursive";
-import { formPhrase } from "../utils/formPhrase";
 import { checkNatureCompatibleRestrictedTo } from "../utils/checkNatureCompatibleRestrictedTo";
 import { toQualifiedName } from "../references/tonto-name-provider";
+import { tontoNatureUtils } from "../models/Natures";
+import { formPhrase } from "../utils/formPhrase";
 
 export class ClassDeclarationValidator {
   /**
@@ -50,96 +53,11 @@ export class ClassDeclarationValidator {
     // Check if it is an UltimateSortal
     // 'kind' | 'collective' | 'quantity' | 'quality' | 'mode' | 'intrinsicMode' | 'extrinsicMode' | 'relator'
     if (
-      ontologicalCategory === OntologicalCategoryEnum.KIND ||
-      ontologicalCategory === OntologicalCategoryEnum.COLLECTIVE ||
-      ontologicalCategory === OntologicalCategoryEnum.QUANTITY ||
-      ontologicalCategory === OntologicalCategoryEnum.QUALITY ||
-      ontologicalCategory === OntologicalCategoryEnum.RELATOR ||
-      ontologicalCategory === OntologicalCategoryEnum.MODE ||
-      ontologicalCategory === OntologicalCategoryEnum.INTRINSIC_MODE ||
-      ontologicalCategory === OntologicalCategoryEnum.EXTRINSIC_MODE
+      isUltimateSortalOntoCategory(ontologicalCategory) ||
+      ontologicalCategory === "intrinsicMode" ||
+      ontologicalCategory === "extrinsicMode"
     ) {
       checkUltimateSortalSpecializesUltimateSortalRecursive(classDeclaration, accept);
-    }
-  }
-
-  /**
-   * Verify if the class declaration is a sortal and it's not an Ultimate
-   * Sortal. Verify if it does not specialize any Ultimate Sortal, and
-   * also verifies if it specialize more than one Ultimate Sortal. If
-   * it is not restricted to the Type nature, then it shows an error that
-   * it needs to specialize an Ultimate Sortal
-   */
-  checkClassDeclarationShouldSpecializeUltimateSortal(
-    _classDeclaration: ClassDeclaration,
-    _accept: ValidationAcceptor
-  ) {
-    // if (!classDeclaration || !classDeclaration.classElementType) {
-    //   return;
-    // }
-    // const ontologicalCategory =
-    //   classDeclaration.classElementType?.ontologicalCategory;
-    // // Check if it has a defined stereotype
-    // if (
-    //   !ontologicalCategory ||
-    //   ontologicalCategory === OntologicalCategoryEnum.CLASS
-    // ) {
-    //   return;
-    // }
-    // // Check if it is a Sortal but not an Ultimate Sortal
-    // if (
-    //   isSortalOntoCategory(ontologicalCategory) &&
-    //   !isUltimateSortalOntoCategory(ontologicalCategory)
-    // ) {
-    //   const totalUltimateSortalSpecializations =
-    //     checkSortalSpecializesUniqueUltimateSortalRecursive(
-    //       classDeclaration,
-    //       0
-    //     );
-    //   if (totalUltimateSortalSpecializations === 0) {
-    //     const natures = classDeclaration.ontologicalNatures?.natures;
-    //     if (natures) {
-    //       const isRestrictedToType = natures.find(
-    //         (nature) => nature === "types"
-    //       );
-    //       if (isRestrictedToType === undefined) {
-    //         accept(
-    //           "error",
-    //           ErrorMessages.sortalSpecializesUniqueUltimateSortal,
-    //           {
-    //             node: classDeclaration,
-    //             property: "name",
-    //           }
-    //         );
-    //       }
-    //     } else {
-    //       accept("error", ErrorMessages.sortalSpecializeNoUltimateSortal, {
-    //         node: classDeclaration,
-    //         property: "name",
-    //       });
-    //     }
-    //   }
-    //   if (totalUltimateSortalSpecializations > 1) {
-    //     accept("error", ErrorMessages.sortalSpecializesUniqueUltimateSortal, {
-    //       node: classDeclaration,
-    //       property: "name",
-    //     });
-    //   }
-    // }
-  }
-
-  /**
-   *  Verify if the class starts with a Capital letter
-   */
-  checkClassElementStartsWithCapital(classDeclaration: ClassDeclaration, accept: ValidationAcceptor): void {
-    if (classDeclaration.name) {
-      const firstChar = classDeclaration.name.substring(0, 1);
-      if (firstChar.toUpperCase() !== firstChar) {
-        accept("hint", "Class name should start with a capital.", {
-          node: classDeclaration,
-          property: "name",
-        });
-      }
     }
   }
 
@@ -201,35 +119,32 @@ export class ClassDeclarationValidator {
    * class stereotype.
    */
   checkCompatibleNatures(classDeclaration: ClassDeclaration, accept: ValidationAcceptor): void {
-    if (!classDeclaration || !classDeclaration.classElementType) {
-      return;
-    }
     const ontologicalCategory = classDeclaration.classElementType?.ontologicalCategory;
-
     if (ontologicalCategory === OntologicalCategoryEnum.CLASS) {
       return;
     }
-
+    // if (isUltimateSortalOntoCategory(classDeclaration.classElementType.ontologicalCategory)) {
     const elementNatures = classDeclaration.ontologicalNatures?.natures;
-
     if (elementNatures) {
       const ontologicalCategoryEnum = getOntologicalCategory(ontologicalCategory);
       if (ontologicalCategoryEnum) {
         const incompatibleNatures = elementNatures.filter((nature) => {
-          const realNature = natureUtils.getNatureFromAst(nature);
-          if (realNature) {
+          const realNature = tontoNatureUtils.getNatureFromAst(nature);
+          const results = realNature.flatMap((nature) => {
             const stereotypeMatches = allowedStereotypeRestrictedToMatches[ontologicalCategoryEnum];
-            const includesNature = !allowedStereotypeRestrictedToMatches[ontologicalCategoryEnum].includes(realNature);
+            const includesNature = !allowedStereotypeRestrictedToMatches[ontologicalCategoryEnum].includes(nature);
             return stereotypeMatches && includesNature;
+          });
+          if (results.includes(true)) {
+            return true;
           }
           return false;
         });
         if (incompatibleNatures.length >= 1) {
           const naturesString = formPhrase(incompatibleNatures);
-
           accept(
             "error",
-            `Incompatible stereotype and Nature restriction combination. Class ${classDeclaration.name} has its value for 'restrictedTo' incompatible with the following natures: ${naturesString}`,
+            `Incompatible stereotype and Nature restriction combination. Class ${classDeclaration.name} is incompatible with the following natures: ${naturesString}`,
             {
               node: classDeclaration,
               property: "ontologicalNatures",
@@ -237,46 +152,6 @@ export class ClassDeclarationValidator {
           );
         }
       }
-    }
-  }
-
-  /**
-   * Verify if the class restricts to Natures that is general class also
-   * restricts
-   */
-  checkSpecializationNatureRestrictions(classDeclaration: ClassDeclaration, accept: ValidationAcceptor) {
-    const elementNatures = classDeclaration.ontologicalNatures;
-
-    if (elementNatures) {
-      elementNatures.natures.forEach((nature) => {
-        let specializationDoesntExistsInParent = false;
-        classDeclaration.specializationEndurants.forEach((specializationEndurant) => {
-          if (specializationEndurant.ref?.classElementType.ontologicalCategory === OntologicalCategoryEnum.CLASS) {
-            return;
-          }
-          const specializationNatures = specializationEndurant.ref?.ontologicalNatures;
-          let specNatures: ASTNature[] = [];
-          if (!specializationNatures) {
-            specNatures = ["objects", "collectives", "quantities", "functional-complexes"];
-          } else {
-            specNatures = specializationNatures.natures;
-          }
-          console.log(classDeclaration.name, specializationEndurant.ref?.name, specNatures);
-          const natureExists = specNatures.find((specializationNature) => {
-            return specializationNature === nature;
-          });
-          if (natureExists === undefined) {
-            specializationDoesntExistsInParent = true;
-          }
-        });
-
-        if (specializationDoesntExistsInParent) {
-          accept("error", "This element cannot be restricted to Natures that its superclass is not restricted", {
-            node: classDeclaration,
-            property: "ontologicalNatures",
-          });
-        }
-      });
     }
   }
 
@@ -318,44 +193,6 @@ export class ClassDeclarationValidator {
     });
   }
 
-  checkNaturesOnlyOnNonSortals(classElement: ClassDeclaration, _: ValidationAcceptor): void {
-    const ElementNatures = classElement.ontologicalNatures;
-    if (ElementNatures) {
-      // if (
-      //     hasSortalStereotype(
-      //         classElement.classElementType?.ontologicalCategory
-      //     )
-      // ) {
-      //     accept("error", "Only non-sortal types can specialize natures", {
-      //         node: classElement,
-      //         property: "ontologicalNatures",
-      //     });
-      // }
-    }
-  }
-
-  /**
-   * Verifica se a classe é da categoria TYPE, e caso seja, se sua meta-propriedade
-   * Powertype está definida
-   */
-  // TODO: Not implemented
-  // checkMissingIsPowertype(): // classDeclaration: ClassDeclaration,
-  //   // accept: ValidationAcceptor
-  //   void { }
-
-  /*
-   * Checks if an Element has a ciclic specialization
-   */
-  checkCircularSpecialization(classElement: ClassDeclaration, accept: ValidationAcceptor): void {
-    classElement.specializationEndurants.forEach((specializationItem) => {
-      const specItem = specializationItem.ref;
-      if (!specItem) {
-        return;
-      }
-      checkCircularSpecializationRecursive(specItem, [], accept);
-    });
-  }
-
   /**
    * Verify if the general class is a Sortal stereotype and the specific class
    * has a non-Sortal stereotype. This generalization is forbidden
@@ -378,33 +215,5 @@ export class ClassDeclarationValidator {
         }
       });
     }
-  }
-
-  /**
-   * Verifica se é uma generalização entre duas classes. Verifica se o general
-   * e o specific possuem estereótipo definido. Verifica se o general ou
-   * specific são datatype, e se o estereótipo de general e specific são
-   * diferentes
-   */
-  checkGeneralizationDataType(_classDeclaration: ClassDeclaration, _accept: ValidationAcceptor) {
-    // TODO: Fix this to be a validator on datatype
-    // const ontologicalCategory =
-    //   classDeclaration.classElementType.ontologicalCategory;
-    // if (ontologicalCategory === OntologicalCategoryEnum.DATATYPE) {
-    //   const specializationItems = classDeclaration.specializationEndurants;
-    //   specializationItems.forEach((item) => {
-    //     if (item.ref?.classElementType.ontologicalCategory === "datatype") {
-    //       accept(
-    //         "error",
-    //         "Prohibited generalization: datatype specialization.
-    //  A datatype can only be in generalization relation with other datatypes",
-    //         {
-    //           node: classDeclaration,
-    //           property: "specializationEndurants",
-    //         }
-    //       );
-    //     }
-    //   });
-    // }
   }
 }

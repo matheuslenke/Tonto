@@ -1,12 +1,13 @@
 import { Class, Package, Relation } from "ontouml-js";
 import { ClassDeclaration, DataType, ContextModule, ElementRelation, GeneralizationSet } from "../../language-server";
-import { attributeGenerator, classElementGenerator } from "./class.generator";
+import { classElementGenerator } from "./class.generator";
 import { customDataTypeGenerator } from "./datatype.generator";
 import { enumGenerator } from "./enum.generator";
 import { generalizationSetGenerator } from "./genset.generator";
 import { generateInstantiations } from "./instantiation.generator";
 import { relationGenerator } from "./relation.generator";
 import { generateDataTypeSpecializations, generateSpecializations } from "./specialization.generator";
+import { attributeGenerator } from "./attribute.generator";
 
 export function contextModuleGenerator(contextModule: ContextModule, packageItem: Package): void {
   const classes: Class[] = [];

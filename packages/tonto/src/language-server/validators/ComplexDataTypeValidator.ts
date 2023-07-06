@@ -1,9 +1,6 @@
 /* eslint-disable max-len */
 import { ValidationAcceptor } from "langium";
 import { DataType } from "../generated/ast";
-import { natureUtils } from "../models/Natures";
-import { OntologicalCategoryEnum } from "../models/OntologicalCategory";
-import { allowedStereotypeRestrictedToMatches } from "../models/StereotypeUtils";
 import { formPhrase } from "../utils/formPhrase";
 
 export class ComplexDataTypeValidator {
@@ -13,29 +10,24 @@ export class ComplexDataTypeValidator {
    */
   checkCompatibleNatures(complexDataType: DataType, accept: ValidationAcceptor): void {
     const elementNatures = complexDataType.ontologicalNature?.natures;
-    const ontologicalCategory = OntologicalCategoryEnum.DATATYPE;
-
-    if (elementNatures) {
-      const incompatibleNatures = elementNatures.filter((nature) => {
-        const realNature = natureUtils.getNatureFromAst(nature);
-        if (realNature) {
-          const stereotypeMatches = allowedStereotypeRestrictedToMatches[ontologicalCategory];
-          const includesNature = !allowedStereotypeRestrictedToMatches[ontologicalCategory].includes(realNature);
-          return stereotypeMatches && includesNature;
-        }
-        return false;
-      });
-      if (incompatibleNatures.length >= 1) {
-        const naturesString = formPhrase(incompatibleNatures);
-        accept(
-          "error",
-          `Incompatible stereotype and Nature restriction combination. Class ${complexDataType.name} has its value for 'restrictedTo' incompatible with the following natures: ${naturesString}`,
-          {
-            node: complexDataType,
-            property: "name",
-          }
-        );
+    const wrongNatures = elementNatures?.flatMap((nature) => {
+      if (nature !== "abstract-individuals") {
+        return nature;
       }
+      return [];
+    });
+    if (wrongNatures && wrongNatures.length > 0) {
+      formPhrase;
+      accept(
+        "error",
+        `Incompatible stereotype and Nature restriction combination. Datatype ${
+          complexDataType.name
+        } is incompatible with the following natures: ${formPhrase(wrongNatures as string[])}`,
+        {
+          node: complexDataType,
+          property: "ontologicalNature",
+        }
+      );
     }
   }
 

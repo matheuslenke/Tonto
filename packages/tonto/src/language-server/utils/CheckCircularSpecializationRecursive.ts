@@ -1,6 +1,7 @@
 import { ErrorMessages } from "./../models/ErrorMessages";
 import { ValidationAcceptor } from "langium";
 import { ClassDeclaration, GeneralizationSet } from "../generated/ast";
+import { getGensetsWhereSpecific } from "./genSetsWhereSpecific";
 
 const checkCircularSpecializationRecursive = (
   actualElement: ClassDeclaration,
@@ -103,12 +104,5 @@ const checkCircularSpecializationRecursiveWithGenset = (
     });
   }
 };
-
-function getGensetsWhereSpecific(declaration: string, genSets: GeneralizationSet[]): GeneralizationSet[] {
-  return genSets.filter((genSet) => {
-    const specificItem = genSet.specificItems.find((specific) => specific.ref?.name === declaration);
-    return specificItem ?? undefined;
-  });
-}
 
 export { checkCircularSpecializationRecursive, checkCircularSpecializationRecursiveWithGenset };

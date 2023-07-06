@@ -6,19 +6,20 @@ import {
   ElementRelation,
   GeneralizationSet,
 } from "../../language-server/generated/ast";
-import { attributeGenerator, classElementGenerator } from "../JsonGenerators/class.generator";
+import { classElementGenerator } from "../JsonGenerators/class.generator";
 import { customDataTypeAttributesGenerator, customDataTypeGenerator } from "../JsonGenerators/datatype.generator";
 import { enumGenerator } from "../JsonGenerators/enum.generator";
 import { generalizationSetGenerator } from "../JsonGenerators/genset.generator";
 import { generateInstantiations } from "../JsonGenerators/instantiation.generator";
 import { relationGenerator } from "../JsonGenerators/relation.generator";
 import { generateDataTypeSpecializations, generateSpecializations } from "../JsonGenerators/specialization.generator";
+import { attributeGenerator } from "../JsonGenerators/attribute.generator";
 
 export interface GeneratedContextModuleData {
-  classes: Class[]
-  dataTypes: Class[]
-  enums: Class[]
-  relations: Relation[]
+  classes: Class[];
+  dataTypes: Class[];
+  enums: Class[];
+  relations: Relation[];
 }
 
 export function contextModuleGenerateClasses(

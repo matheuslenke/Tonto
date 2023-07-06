@@ -15,7 +15,7 @@
             "type": "node",
             "args": [
                 "generate",
-                "${workspaceFolder}/examples/library/generated"
+                "${workspaceFolder}/examples/fixingErrors"
             ]
         },
         {
@@ -93,7 +93,7 @@
             "sourceMaps": true,
             "request": "launch",
             "args": [
-                "${workspaceFolder}/examples/ontouml-models/Aguiar2019ooco",
+                "${workspaceFolder}/examples/fixingErrors",
                 "--extensionDevelopmentPath=${workspaceFolder}/packages/tonto-vscode"
             ],
             // "env": {

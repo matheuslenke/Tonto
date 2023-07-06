@@ -35,12 +35,13 @@ describe("checkClassWithoutStereotype", async () => {
 
     expect(diagnostics).not.toBeNull();
 
-    const messages = diagnostics.map(diagnostic => diagnostic.message);
+    const messages = diagnostics.map((diagnostic) => diagnostic.message);
 
-    const regex = /Incompatible stereotype and Nature restriction combination. Class .* has its value for 'restrictedTo' incompatible with the following natures: .*/i;
+    const regex =
+      /Incompatible stereotype and Nature restriction combination. Class .* is incompatible with the following natures: .*/i;
 
     const matchingMessages = messages.filter((message) => regex.test(message));
-    expect(matchingMessages.length).toBe(17);
+    expect(matchingMessages.length).toBe(16);
   });
 
   it("should have no incompatible Natures error", async () => {
@@ -50,22 +51,11 @@ describe("checkClassWithoutStereotype", async () => {
     datatype CDatatype of abstract-individuals
     event CEvent of events
     situation CSituation of situations
-    category CCategory of functional-complexes, collectives, qualities, quantities, intrinsic-modes, extrinsic-modes, relators, types
-    mixin CMixin of functional-complexes, collectives, qualities, quantities, intrinsic-modes, extrinsic-modes, relators, types
-    roleMixin CRoleMixin of functional-complexes, collectives, qualities, quantities, intrinsic-modes, extrinsic-modes, relators, types
-    phaseMixin CPhaseMixin of functional-complexes, collectives, qualities, quantities, intrinsic-modes, extrinsic-modes, relators, types
-    historicalRoleMixin CHistoricalRoleMixin of functional-complexes, collectives, qualities, quantities, intrinsic-modes, extrinsic-modes, relators, types
-    kind CKind of functional-complexes
-    collective CCollective of collectives
-    quantity CQuantity of quantities
-    relator CRelator of relators
-    mode CMode of extrinsic-modes, intrinsic-modes
-    quality CQuality of qualities
-    subkind CSubkind of functional-complexes, collectives, qualities, quantities, intrinsic-modes, extrinsic-modes, relators, types
-    role CRole of functional-complexes, collectives, qualities, quantities, intrinsic-modes, extrinsic-modes, relators, types
-    phase CPhase of functional-complexes, collectives, qualities, quantities, intrinsic-modes, extrinsic-modes, relators, types
-    historicalRole CHistoricalRole of functional-complexes, collectives, qualities, quantities, intrinsic-modes, extrinsic-modes, relators, types
-    type CType of types
+    category CCategory of functional-complexes, collectives, qualities, quantities, intrinsic-modes, extrinsic-modes, relators
+    mixin CMixin of functional-complexes, collectives, qualities, quantities, intrinsic-modes, extrinsic-modes, relators
+    roleMixin CRoleMixin of functional-complexes, collectives, qualities, quantities, intrinsic-modes, extrinsic-modes, relators
+    phaseMixin CPhaseMixin of functional-complexes, collectives, qualities, quantities, intrinsic-modes, extrinsic-modes, relators
+    historicalRoleMixin CHistoricalRoleMixin of functional-complexes, collectives, qualities, quantities, intrinsic-modes, extrinsic-modes, relators
     `;
     const validationResult = await validate(stub);
 

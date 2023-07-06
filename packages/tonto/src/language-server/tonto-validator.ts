@@ -10,28 +10,22 @@ export class TontoValidationRegistry extends ValidationRegistry {
     super(services);
     const validator = services.validation.TontoValidator;
     const checks: ValidationChecks<TontoAstType> = {
-      Model: [
-        // validator.ModelValidator.checkDuplicatedContextModuleNames,
-      ],
       ClassDeclaration: [
         validator.ClassDeclarationValidator.checkUltimateSortalSpecializeUltimateSortal,
-        // validator.ClassDeclarationValidator
-        //   .checkClassDeclarationShouldSpecializeUltimateSortal,
         validator.ClassDeclarationValidator.checkRigidSpecializesAntiRigid,
         validator.ClassDeclarationValidator.checkDuplicatedReferenceNames,
         validator.ClassDeclarationValidator.checkCompatibleNatures,
-        validator.ClassDeclarationValidator.checkNaturesOnlyOnNonSortals,
         validator.ClassDeclarationValidator.checkClassWithoutStereotype,
         validator.ClassDeclarationValidator.checkGeneralizationSortality,
-        validator.ClassDeclarationValidator.checkGeneralizationDataType,
-        validator.ClassDeclarationValidator.checkSpecializationNatureRestrictions,
-        validator.ClassDeclarationValidator.checkClassDeclarationShouldSpecializeUltimateSortal,
       ],
       ContextModule: [
         validator.ContextModuleValidator.checkDuplicatedClassName,
         validator.ContextModuleValidator.checkDuplicatedRelationName,
         validator.ContextModuleValidator.checkCircularSpecialization,
         validator.ContextModuleValidator.checkClassDeclarationShouldSpecializeUltimateSortal,
+        validator.ContextModuleValidator.checkCompatibleNaturesOfBaseSortals,
+        validator.ContextModuleValidator.checkSpecializationNatureRestrictions,
+        validator.ContextModuleValidator.checkRedundantNatures,
       ],
       GeneralizationSet: [
         validator.GeneralizationValidator.checkCircularGeneralization,

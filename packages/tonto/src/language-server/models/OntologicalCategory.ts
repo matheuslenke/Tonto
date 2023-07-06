@@ -41,6 +41,14 @@ const BaseSortalOntoCategories = [
   OntologicalCategoryEnum.HISTORICAL_ROLE,
 ];
 
+const NonSortalOntoCategories = [
+  OntologicalCategoryEnum.CATEGORY,
+  OntologicalCategoryEnum.MIXIN,
+  OntologicalCategoryEnum.PHASE_MIXIN,
+  OntologicalCategoryEnum.ROLE_MIXIN,
+  OntologicalCategoryEnum.HISTORICAL_ROLE_MIXIN,
+];
+
 const RigidOntoCategories = [
   OntologicalCategoryEnum.KIND,
   OntologicalCategoryEnum.QUANTITY,
@@ -88,6 +96,30 @@ function isUltimateSortalOntoCategory(stereotype: string): boolean {
     return false;
   }
   const categoryExists = UltimateSortalOntoCategories.find((category) => category === ontologicalCategory);
+  if (categoryExists && categoryExists?.length > 0) {
+    return true;
+  }
+  return false;
+}
+
+function isBaseSortalOntoCategory(stereotype: string): boolean {
+  const ontologicalCategory = allOntologicalCategories.find((category) => category === stereotype);
+  if (!ontologicalCategory) {
+    return false;
+  }
+  const categoryExists = BaseSortalOntoCategories.find((category) => category === ontologicalCategory);
+  if (categoryExists && categoryExists?.length > 0) {
+    return true;
+  }
+  return false;
+}
+
+function isNonSortalOntoCategory(stereotype: string): boolean {
+  const ontologicalCategory = allOntologicalCategories.find((category) => category === stereotype);
+  if (!ontologicalCategory) {
+    return false;
+  }
+  const categoryExists = NonSortalOntoCategories.find((category) => category === ontologicalCategory);
   if (categoryExists && categoryExists?.length > 0) {
     return true;
   }
@@ -157,5 +189,7 @@ export {
   SortalOntoCategories,
   isSortalOntoCategory,
   isUltimateSortalOntoCategory,
+  isBaseSortalOntoCategory,
+  isNonSortalOntoCategory,
   getOntologicalCategory,
 };
