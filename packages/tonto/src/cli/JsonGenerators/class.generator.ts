@@ -69,6 +69,10 @@ export function classElementGenerator(classElement: ClassDeclaration, packageIte
       case "extrinsicMode": {
         return packageItem.createExtrinsicMode(classElement.name);
       }
+
+      /**
+       * Base Sortals
+       */
       case "subkind": {
         const subkind = packageItem.createSubkind(classElement.name, firstNature);
         if (!firstNature) {
@@ -109,21 +113,6 @@ export function classElementGenerator(classElement: ClassDeclaration, packageIte
         const powerType = packageItem.createType(classElement.name);
         powerType.isPowertype = true;
         return powerType;
-      }
-      /**
-       * Base Sortals
-       */
-      case "subkind": {
-        return packageItem.createSubkind(classElement.name, firstNature);
-      }
-      case "phase": {
-        return packageItem.createPhase(classElement.name, firstNature);
-      }
-      case "role": {
-        return packageItem.createRole(classElement.name, firstNature);
-      }
-      case "historicalRole": {
-        return packageItem.createHistoricalRole(classElement.name);
       }
       /**
        * Undefined stereotype
