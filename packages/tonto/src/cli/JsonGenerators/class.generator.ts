@@ -69,6 +69,36 @@ export function classElementGenerator(classElement: ClassDeclaration, packageIte
       case "extrinsicMode": {
         return packageItem.createExtrinsicMode(classElement.name);
       }
+      case "subkind": {
+        const subkind = packageItem.createSubkind(classElement.name, firstNature);
+        if (!firstNature) {
+          subkind.restrictedTo = [];
+        }
+        return subkind;
+      }
+      case "phase": {
+        const phase = packageItem.createPhase(classElement.name, firstNature);
+        if (!firstNature) {
+          phase.restrictedTo = [];
+        }
+        return phase;
+      }
+      case "role": {
+        const role = packageItem.createRole(classElement.name, firstNature);
+        if (!firstNature) {
+          role.restrictedTo = [];
+        }
+        return role;
+      }
+      case "historicalRole": {
+        if (firstNature) {
+          return packageItem.createHistoricalRole(classElement.name, { restrictedTo: [firstNature] });
+        } else {
+          const historicalRole = packageItem.createHistoricalRole(classElement.name);
+          historicalRole.restrictedTo = [];
+          return historicalRole;
+        }
+      }
       case "relator": {
         return packageItem.createRelator(classElement.name);
       }

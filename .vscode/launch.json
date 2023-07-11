@@ -93,6 +93,7 @@
             "sourceMaps": true,
             "request": "launch",
             "args": [
+                // "${workspaceFolder}/../tonto-example-models/Library",
                 "${workspaceFolder}/examples/fixingErrors",
                 "--extensionDevelopmentPath=${workspaceFolder}/packages/tonto-vscode"
             ],
