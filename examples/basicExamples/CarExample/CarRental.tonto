@@ -1,4 +1,4 @@
-module CarRental 
+package CarRental 
 
 kind Person
 
@@ -8,14 +8,9 @@ role ResponsibleEmployee specializes Employee
 phase DeceasedPerson specializes Person
 phase LivingPerson specializes Person
 
-disjoint complete genset LifeStatus {
-    general Person
-    specifics Employee, DeceasedPerson, LivingPerson
-}
-
-phase Child specializes LivingPerson
-phase Teenager specializes LivingPerson
-phase Adult specializes LivingPerson
+phase Child
+phase Teenager
+phase Adult
 
 disjoint complete genset AgePhase {
     general LivingPerson
@@ -24,29 +19,18 @@ disjoint complete genset AgePhase {
 
 roleMixin Customer
 
-role PersonalCustomer specializes Customer
+role PersonalCustomer specializes Customer, Person
 
 kind Organization
 
 role CorporateCustomer specializes Organization
-
-disjoint complete genset CustomerNature {
-    general Customer
-    specifics CorporateCustomer, PersonalCustomer
-}
 
 kind Car
 
 phase AvailableCar specializes Car
 phase UnderMaintenanceCar specializes Car
 
-disjoint complete genset CarStatus {
-    general Car
-    specifics AvailableCar, UnderMaintenanceCar
-}
-
 role RentalCar specializes AvailableCar
-
 
 relator CarRental {
     @mediation
@@ -57,4 +41,3 @@ relator CarRental {
     @mediation
     -- involvesCustomer --[1] Customer
 }
-

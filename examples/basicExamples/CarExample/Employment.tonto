@@ -1,4 +1,4 @@
-module Employment 
+package Employment 
 
 kind Person // Redeclaração ou específico do pacote? possível ponteiro para a declaração?
 role Employee specializes Person

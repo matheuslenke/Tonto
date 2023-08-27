@@ -1,4 +1,4 @@
-module LivingThings.Human
+package LivingThings.Human
 
 kind Human
 
@@ -12,5 +12,5 @@ enum Gender {
 subkind Person specializes Human {
   name: string
   age: number
-  // gender: Gender TODO: Add enum to properties
+// gender: Gender TODO: Add enum to properties
 }

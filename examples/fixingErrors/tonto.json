@@ -1,9 +1,0 @@
-{
-  "projectName": "default-name",
-  "displayName": "Default Name",
-  "version": "1.0.0",
-  "publisher": "default publisher",
-  "license": "MIT",
-  "outFolder": "out",
-  "dependencies": {}
-}

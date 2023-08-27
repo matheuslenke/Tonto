@@ -1,44 +1,25 @@
 import CoreDatatypes
-import University
 
 package PersonPhases
 
-kind Person {
-  name: string [1..*]
-  age: number [1]
-  birthDate: date [1] { const }
-  eyeColor: EyeColor [1..*]
-  phoneNumber: CoreDatatypes.PhoneNumber [0..*]
-}
+kind Person
+
+type PersonTypeByAge
 
 phase Child
 phase Teenager
 phase Adult
 
-role UniversityStudent specializes Adult
-role EgressStudent specializes UniversityStudent
-role ActiveStudent specializes UniversityStudent
-
-genset PhasesOfPerson {
+disjoint complete genset PhasesOfPerson {
   general Person
   specifics Child, Teenager, Adult
 }
 
-roleMixin Professor
-role UniversityProfessor specializes Professor, Person
+// disjoint complete genset PhasesOfPerson where Child, Teenager, Adult specializes Person
 
-relator Teaching {
-  @mediation
-  [0..*] -- [1] Staff
-  
-  @mediation
-  [1..*] -- [1] UniversityProfessor 
-}
+role UniversityStudent specializes Person
+role FormerStudent specializes UniversityStudent
+role ActiveStudent specializes UniversityStudent
 
-relator Enrollment {
-  @mediation
-  [0..*] -- [1] University
-  
-  @mediation
-  [1..*] -- [1] UniversityStudent 
-}
+role Employee specializes Person
+role UniversityProfessor specializes Employee

@@ -1,6 +1,6 @@
 import LivingThings.Human
 
-module LivingThings.Teacher
+package LivingThings.Teacher
 
 role teacher specializes Person
 

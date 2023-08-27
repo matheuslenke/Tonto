@@ -1,7 +1,0 @@
-package NatureErrors
-
-// kind TestKind of functional-complexes
-// kind TestKind2 of objects
-// kind TestKind3 of collectives
-// kind TestKind4 of events
-

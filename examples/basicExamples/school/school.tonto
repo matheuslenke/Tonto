@@ -1,0 +1,18 @@
+package School
+
+category LegalPerson
+
+kind Person specializes LegalPerson {
+    name: string
+}
+
+kind Organization specializes LegalPerson
+
+subkind School specializes Organization
+
+phase LivingPerson specializes Person
+phase DeceasedPerson specializes Person
+
+role Student specializes LivingPerson
+
+relation Student [0..*] -- studiesIn -- [1..*] School

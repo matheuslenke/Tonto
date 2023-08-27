@@ -1,0 +1,16 @@
+import PersonHealth
+package HealthCareSystem
+
+kind Organization
+
+phase ActiveOrganization
+phase ExtinctOrganization
+
+disjoint complete genset OrganizationByStatus {
+    general Organization
+    specifics ActiveOrganization, ExtinctOrganization
+}
+
+role HealhcareProvider specializes ActiveOrganization {
+    @mediation -- providesTreatment -- [1..*] Person
+}
