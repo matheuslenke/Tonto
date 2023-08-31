@@ -7,10 +7,12 @@ import { createGenerateJsonStatusBarItem } from "./commands/JsonGenerationComman
 import { createValidationSatusBarItem } from "./commands/validationCommand";
 import { createTransformToGufoSatusBarItem } from "./commands/gufoTransformCommand";
 import { createTpmInstallCommands } from "./commands/TpmInstallCommand";
+import { createGenerateDiagramStatusBarItem } from "./commands/DiagramGenerationCommands";
 
 let client: LanguageClient;
 let generateTontoStatusBarItem: vscode.StatusBarItem;
 let generateJsonStatusBarItem: vscode.StatusBarItem;
+let generateDiagramStatusBarItem: vscode.StatusBarItem;
 let validateStatusBarItem: vscode.StatusBarItem;
 let transformToGufoStatusBarItem: vscode.StatusBarItem;
 let tpmInstallStatusBarItem: vscode.StatusBarItem;
@@ -18,11 +20,19 @@ let outputChannel: vscode.OutputChannel;
 
 // This function is called when the extension is activated.
 export function activate(context: vscode.ExtensionContext): void {
+
+  /*
+  context.subscriptions.push(vscode.commands.registerCommand('extension.openSettings', () => {
+    vscode.commands.executeCommand('workbench.action.openSettings', 'tonto');
+  }));
+  */
+
   outputChannel = vscode.window.createOutputChannel("Tonto: Validation output");
   TontoLibraryFileSystemProvider.register(context);
   client = startLanguageClient(context);
   createGenerateJsonStatusBarItem(context, generateJsonStatusBarItem);
   createTontoGenerationStatusBarItem(context, generateTontoStatusBarItem);
+  createGenerateDiagramStatusBarItem(context, generateDiagramStatusBarItem);
   createValidationSatusBarItem(context, validateStatusBarItem, outputChannel);
   createTransformToGufoSatusBarItem(context, transformToGufoStatusBarItem);
   createTpmInstallCommands(context, tpmInstallStatusBarItem);
@@ -35,6 +45,7 @@ export function deactivate(): Thenable<void> | undefined {
   }
   validateStatusBarItem.dispose();
   generateJsonStatusBarItem.dispose();
+  generateDiagramStatusBarItem.dispose();
   tpmInstallStatusBarItem.dispose();
   generateTontoStatusBarItem.dispose();
   transformToGufoStatusBarItem.dispose();

@@ -50,6 +50,11 @@
                 "category": "Tonto"
             },
             {
+                "command": "tonto.generateDiagram",
+                "title": "Generate Diagram from Tonto file",
+                "category": "Tonto"
+            },
+            {
                 "command": "tonto.validateModel",
                 "title": "Validate Tonto Model",
                 "category": "Tonto"
@@ -65,6 +70,65 @@
                 "category": "TPM"
             }
         ],
+        "configuration": {
+            "type": "object",
+            "title": "Tonto",
+            "properties": {
+                "Diagram.Entity.Attributes": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show the attributes of the entities."
+                },
+                "Diagram.Entity.Colors": {
+                    "type": "object",
+                    "default": {
+                        "stereotypes_1": "#7FFFD4",
+                        "stereotypes_2": "#7FFFD4",
+                        "stereotypes_3": "#7FFFD4"
+                    },
+                    "description": "Diagram colors.",
+                    "properties": {
+                        "stereotypes_1": {
+                            "type": "string",
+                            "description": "Color for stereotype 1."
+                        },
+                        "stereotypes_2": {
+                            "type": "string",
+                            "description": "Color for stereotype 2."
+                        },
+                        "stereotypes_3": {
+                            "type": "string",
+                            "description": "Color for stereotype 3."
+                        }
+                    }
+                },
+                "Diagram.Relation.Cardinality": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show the Cardinalities of the relationships."
+                },
+                "Diagram.Relation.Associations": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show the Stereotypes of the relationships."
+                },
+                "Diagram.Relation.AssociationsEndNames": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show the Nicknames of the relationships."
+                },
+                "Diagram.Datatype": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show Datatypes."
+                },
+                "Diagram.Enumeration": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show Enumerations."
+                }
+            }
+        },
         "jsonValidation": [
             {
                 "fileMatch": "tonto.json",
@@ -107,12 +171,12 @@
         "langium": "^1.2.0",
         "node-fetch-native": "^1.0.1",
         "rimraf": "^4.1.2",
+        "tonto-cli": "~0.2.7",
+        "tonto-package-manager": "~0.2.9",
         "vscode-languageclient": "^8.0.2",
         "vscode-languageserver": "^8.0.2",
         "vscode-languageserver-types": "^3.17.3",
-        "vscode-uri": "^3.0.7",
-        "tonto-cli": "~0.2.7",
-        "tonto-package-manager": "~0.2.9"
+        "vscode-uri": "^3.0.7"
     },
     "devDependencies": {
         "@types/jest": "^29.2.3",
@@ -128,6 +192,7 @@
         "eslint-config-prettier": "^8.8.0",
         "langium-cli": "^1.2.0",
         "prettier": "^2.8.2",
+        "shx": "^0.3.4",
         "typescript": "~4.9.5",
         "vite": "^4.0.2",
         "vitest": "^0.23.2"

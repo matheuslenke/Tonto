@@ -1,0 +1,28 @@
+// import CoreDataTypes
+
+package PersonPhases
+
+kind Person
+    // phone: PhoneNumber
+
+// phase Child specializes Person
+// phase Teenager specializes Person
+// phase Adult specializes Person
+
+// role UniversityStudant specializes Person
+// role FormerStudent specializes UniversityStudant
+// role ActiveStudent specializes UniversityStudant
+
+phase Child
+phase Teenager
+phase Adult
+phase Vish
+
+// complete genset PhasesOfPerson {
+//     general UniversityStudant
+//     specifics FormerStudent, ActiveStudent
+// }
+disjoint genset PhasesOfPerson {
+    general Person
+    specifics Child, Teenager, Adult, Vish
+}

@@ -1,4 +1,5 @@
 export * from "./language-server";
+export { Configuration } from "./utils/setExtensionConfig"
 export * from "./cli";
 
 import * as GrammarAST from "./language-server/generated/ast";
