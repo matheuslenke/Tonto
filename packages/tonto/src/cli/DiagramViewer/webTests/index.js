@@ -5,45 +5,34 @@ const content = document.querySelector('.content');
 let isDragging = false;
 let mouseDownX = 0;
 let mouseDownY = 0;
-let centerX = 0;
-let centerY = 0;
-let initCenterX = content.getBoundingClientRect().left;
-let initCenterY = content.getBoundingClientRect().top;
+var left = 0;
+var top = 0;
 
-// IDEIA: modificar o content.getBoundingClientRect().left e content.getBoundingClientRect().top para fazer o movimento em vez de usar o style.transform
-// body.addEventListener('mousedown', (e) => {
-//   isDragging = true;
-//   body.classList.add('grabbing');
+body.addEventListener('mousedown', (e) => {
+  isDragging = true;
+  body.classList.add('grabbing');
   
-//   mouseDownX = e.clientX;
-//   mouseDownY = e.clientY;
-//   console.log('MOUSEDOWN');
-//   console.log('INIT: ', initCenterX, initCenterY);
-//   centerX = content.getBoundingClientRect().left - initCenterX;
-//   centerY = content.getBoundingClientRect().top - initCenterY;
+  mouseDownX = e.clientX;
+  mouseDownY = e.clientY;
+  leftMargin = content.style.marginLeft.slice(0, -2);
+  topMargin = content.style.marginTop.slice(0, -2);
+});
 
-//   console.log('INIT: ', initCenterX, initCenterY);
-//   console.log('CENTER: ', centerX, centerY);
-//   console.log('DIST: ', content.getBoundingClientRect().left, content.getBoundingClientRect().top);
-// });
+body.addEventListener('mouseup', (e) => {
+  isDragging = false;
+  body.classList.remove('grabbing');
+});
 
-// body.addEventListener('mouseup', (e) => {
-//   isDragging = false;
-//   body.classList.remove('grabbing');
-// });
+body.addEventListener('mousemove', (e) => {
+  if(!isDragging) return;
 
-// body.addEventListener('mousemove', (e) => {
-//   if(!isDragging) return;
-
-//   const deltaX = e.clientX - mouseDownX + centerX;
-//   const deltaY = e.clientY - mouseDownY + centerY;
-
-//   content.style.transform = 'translate(' + deltaX + 'px, ' + deltaY + 'px)';
-// });
+  content.style.marginLeft = ((Number(e.clientX) - Number(mouseDownX))*2 + Number(leftMargin)) + 'px';
+  content.style.marginTop = ((Number(e.clientY) - Number(mouseDownY))*2 + Number(topMargin)) + 'px';
+});
 
 // ZOOM DIAGRAM
 let zoom = 1;
-body.addEventListener('mousewheel', (e) => {
+body.addEventListener('wheel', (e) => {
   if(e.ctrlKey){
     
     // Calculate the new zoom level based on the mouse scroll
@@ -51,37 +40,12 @@ body.addEventListener('mousewheel', (e) => {
     let newZoom = zoom - scroll;
 
     // Define the limits
-    console.log('ANTES: ', zoom, newZoom);
     zoom = Math.min(Math.max(newZoom, 1), 2);
-    console.log('DEPOIS: ', zoom, newZoom);
     
-    // Set the new zoom level
-    // content.style.transform = 'scale(' + zoom + ')';
-    
-    // Apply the new zoom level with a smooth transition
+    // Apply the new zoom levels
     content.style.transform = 'scale(' + zoom + ')';
-    
-    // Prevent the default scroll behavior
-    if (newZoom > 1 && newZoom < 2){
-      e.preventDefault();
-    }
   }
 });
-    
-    // Prevent the default scroll behavior
-    // e.preventDefault();
-//     initCenterX = content.getBoundingClientRect().left - (content.getBoundingClientRect().width - content.offsetWidth) / 2;
-//     initCenterY = content.getBoundingClientRect().top - (content.getBoundingClientRect().height - content.offsetHeight) / 2;
-//     centerX = content.getBoundingClientRect().left - initCenterX;
-//     centerY = content.getBoundingClientRect().top - initCenterY;
-
-//     console.log('MOUSEWHEEL');
-//     console.log('INIT: ', initCenterX, initCenterY);
-//     console.log('CENTER: ', centerX, centerY);
-//     console.log('DIST: ', content.getBoundingClientRect().width, content.offsetWidth);
-//     console.log('DIST: ', content.getBoundingClientRect().height, content.offsetHeight);
-//   }
-// });
 
 // Sets background color of classes
 // let background = document.querySelectorAll("body > div > svg > g > g > g:nth-child(2) > g > g > g:nth-child(1)");
@@ -105,18 +69,16 @@ for (const arrow of arrows) {
 // text.parentElement.parentElement.parentElement.childElementCount === 2
 
 // Do the breakline between the stereotype and the name
-// POSSIVEL ERRO: nao sei como lida com os nomes e estereotipos nas relações
+// POSSIVEL ERRO: nao testei como lida com os nomes e estereotipos nas relações
 const texts = document.getElementsByTagName("text");
 for (const text of texts) {
     if(/«.*»/.test(text.textContent)){
-        // console.log(text);
 
         let stereotype = document.createElementNS("http://www.w3.org/2000/svg", 'tspan');
         let name = document.createElementNS("http://www.w3.org/2000/svg", 'tspan');
         [stereotype.textContent, name.textContent] = text.textContent.split(' ');
         
         const textBox = text.getBBox();
-        // console.log(textBox);
 
         stereotype.setAttribute('y', textBox.height/4);
         stereotype.setAttribute('x', text.getAttribute("x"));
@@ -130,5 +92,55 @@ for (const text of texts) {
     }
 }
 
-// const genSet = document.querySelector("body > div > svg > g > g > g:nth-child(2) > g");
-// console.log(genSet);
+const elements = document.querySelector("body > div > svg > g > g > g:nth-child(2) > g");
+const genSet = ["{disjoint, complete}", "{disjoint, incomplete}", "{overlapping, complete}", "{overlapping, incomplete}"];
+
+for (let i = 0; i < elements.childElementCount; i++) {
+  const child = elements.children.item(i);
+
+  if(child.tagName === "text" && genSet.includes(child.textContent)){
+
+    const yValue = Number(child.getAttribute('y')) + 10;
+    const xValue = Number(child.getAttribute('x')) + 30;
+
+    child.setAttribute('y', yValue);
+    child.setAttribute('x', xValue);
+    
+    let dashedLine = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+    
+    const points = elements.children.item(i + 1).getAttribute("d").split(" ");
+    const numbersOnly = points.filter(item => /^\d+(\.\d+)?$/.test(item));
+    const maxY = Number(Math.max(...numbersOnly));
+    const initialX = Number(points[0].slice(1));
+
+    dashedLine.setAttribute("d", "M" + (initialX-200) + " " + maxY + " L" + (initialX+200) + " " + maxY);
+    dashedLine.setAttribute("stroke-dasharray", "5, 5");
+
+    elements.appendChild(dashedLine);
+  }
+}
+
+for (let i = 0; i < elements.childElementCount; i++) {
+  const child = elements.children.item(i);
+
+  if(child.tagName === "text" && genSet.includes(child.textContent)){
+
+    const yValue = Number(child.getAttribute('y')) + 10;
+    const xValue = Number(child.getAttribute('x')) + 30;
+
+    child.setAttribute('y', yValue);
+    child.setAttribute('x', xValue);
+    
+    let dashedLine = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+    
+    const points = elements.children.item(i + 1).getAttribute("d").split(" ");
+    const numbersOnly = points.filter(item => /^\d+(\.\d+)?$/.test(item));
+    const maxY = Number(Math.max(...numbersOnly));
+    const initialX = Number(points[0].slice(1));
+
+    dashedLine.setAttribute("d", `M${initialX-200} ${maxY} L${initialX+200} &{maxY}`);
+    dashedLine.setAttribute("stroke-dasharray", "5, 5");
+
+    elements.appendChild(dashedLine);
+  }
+}

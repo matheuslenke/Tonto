@@ -15,15 +15,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    transform: scale(1);
-    transition: transform 0.3s ease; /* Transição suave para o efeito de zoom */
     cursor: grab;
 }  
 
 .grabbing {
     cursor: grabbing;
 } 
-
-.content {
-    transform-origin: center center;
-}

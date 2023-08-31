@@ -1,4 +1,5 @@
 export const setHTML = (nomnomlContent: string) => {
+    // console.log(nomnomlContent);
     return `
 <!DOCTYPE html>
 <html lang="en">
@@ -27,54 +28,44 @@ const body = document.getElementsByTagName("body")[0];
 const content = document.querySelector('.content');
 
 let isDragging = false;
-let containerCenterX = 0;
-let containerCenterY = 0;
-let centerX = 0;
-let centerY = 0;
-let initCenterX = content.getBoundingClientRect().left;
-let initCenterY = content.getBoundingClientRect().top;
+let mouseDownX = 0;
+let mouseDownY = 0;
+var left = 0;
+var top = 0;
 
-document.addEventListener('mousedown', (e) => {
+body.addEventListener('mousedown', (e) => {
   isDragging = true;
   body.classList.add('grabbing');
   
-  containerCenterX = e.clientX;
-  containerCenterY = e.clientY;
-  centerX = content.getBoundingClientRect().left - initCenterX;
-  centerY = content.getBoundingClientRect().top - initCenterY;
+  mouseDownX = e.clientX;
+  mouseDownY = e.clientY;
+  leftMargin = content.style.marginLeft.slice(0, -2);
+  topMargin = content.style.marginTop.slice(0, -2);
 });
 
-document.addEventListener('mouseup', (e) => {
+body.addEventListener('mouseup', (e) => {
   isDragging = false;
   body.classList.remove('grabbing');
 });
 
-document.addEventListener('mousemove', (e) => {
+body.addEventListener('mousemove', (e) => {
   if(!isDragging) return;
 
-  const deltaX = e.clientX - containerCenterX + centerX;
-  const deltaY = e.clientY - containerCenterY + centerY;
-
-  content.style.transform = 'translate(' + deltaX + 'px, ' + deltaY + 'px)';
+  content.style.marginLeft = ((Number(e.clientX) - Number(mouseDownX))*2 + Number(leftMargin)) + 'px';
+  content.style.marginTop = ((Number(e.clientY) - Number(mouseDownY))*2 + Number(topMargin)) + 'px';
 });
 
 // ZOOM DIAGRAM
-let zoom = 1;
-body.addEventListener('mousewheel', (e) => {
+var zoom = 1;
+body.addEventListener('wheel', (e) => {
   if(e.ctrlKey){
     
     // Calculate the new zoom level based on the mouse scroll
     scroll = zoom < 2? e.deltaY * 0.0005 : e.deltaY * 0.001;
     zoom = zoom - scroll;
-    if(zoom <= 0.5) zoom = 0.5;
-    
-    // Set the new zoom level
-    body.style.transform = 'scale(' + zoom + ')';
-    
-    // Prevent the default scroll behavior
-    // e.preventDefault();
-    initCenterX = content.getBoundingClientRect().left;
-    initCenterY = content.getBoundingClientRect().top;
+
+    // Apply the new zoom levels
+    content.style.transform = 'scale(' + zoom + ')';
   }
 });
 
@@ -100,18 +91,16 @@ for (const arrow of arrows) {
 // text.parentElement.parentElement.parentElement.childElementCount === 2
 
 // Do the breakline between the stereotype and the name
-// POSSIVEL ERRO: nao sei como lida com os nomes e estereotipos nas relações
+// POSSIVEL ERRO: nao testei como lida com os nomes e estereotipos nas relações
 const texts = document.getElementsByTagName("text");
 for (const text of texts) {
     if(/«.*»/.test(text.textContent)){
-        console.log(text);
 
         let stereotype = document.createElementNS("http://www.w3.org/2000/svg", 'tspan');
         let name = document.createElementNS("http://www.w3.org/2000/svg", 'tspan');
         [stereotype.textContent, name.textContent] = text.textContent.split(' ');
         
         const textBox = text.getBBox();
-        console.log(textBox);
 
         stereotype.setAttribute('y', textBox.height/4);
         stereotype.setAttribute('x', text.getAttribute("x"));
@@ -125,8 +114,33 @@ for (const text of texts) {
     }
 }
 
-// const genSet = document.querySelector("body > div > svg > g > g > g:nth-child(2) > g");
-// console.log(genSet);
+const elements = document.querySelector("body > div > svg > g > g > g:nth-child(2) > g");
+const genSet = ["{disjoint, complete}", "{disjoint, incomplete}", "{overlapping, complete}", "{overlapping, incomplete}"];
+
+for (let i = 0; i < elements.childElementCount; i++) {
+  const child = elements.children.item(i);
+
+  if(child.tagName === "text" && genSet.includes(child.textContent)){
+
+    const yValue = Number(child.getAttribute('y')) + 10;
+    const xValue = Number(child.getAttribute('x')) + 30;
+
+    child.setAttribute('y', yValue);
+    child.setAttribute('x', xValue);
+    
+    let dashedLine = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+    
+    const points = elements.children.item(i + 1).getAttribute("d").split(" ");
+    const numbersOnly = points.filter(item => /^\d+(\.\d+)?$/.test(item));
+    const maxY = Number(Math.max(...numbersOnly));
+    const initialX = Number(points[0].slice(1));
+
+    dashedLine.setAttribute("d", \`M\${initialX-200} \${maxY} L\${initialX+200} \${maxY}\`);
+    dashedLine.setAttribute("stroke-dasharray", "5, 5");
+
+    elements.appendChild(dashedLine);
+  }
+}
 `;
 
 // codigo html/css para fazer a dashed line para o genSet.
@@ -134,7 +148,7 @@ for (const text of texts) {
 
 const CSS = `
 * {
-    border: solid red 2px;
+    border: 0;
     margin: 0;
     padding: 0;
 }
@@ -144,23 +158,17 @@ text, tspan{
 }
 
 body {
-    background-color: white;
     width: 100%;
     height: 100vh;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    transform: scale(1);
-    transition: transform 0.3s ease; /* Transição suave para o efeito de zoom */
     cursor: grab;
+    background: white;
 }  
 
 .grabbing {
     cursor: grabbing;
-} 
-
-.content {
-    transform-origin: center center;
 }
 `;

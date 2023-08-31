@@ -28,12 +28,12 @@ export function generalizationSetViewer(
 
   if(genSet.isPartition())
     genSetDefinition += "disjoint, complete";
-  else {
-    if(genSet.isDisjoint)
-      genSetDefinition += "disjoint, incomplete";
-    else
-      genSetDefinition += "overlapping, complete";
-  }
+  else if(genSet.isDisjoint)
+    genSetDefinition += "disjoint, incomplete";
+  else if(genSet.isComplete)
+    genSetDefinition += "overlapping, complete";
+  else
+  genSetDefinition += "overlapping, incomplete";  
 
   nomnomlCode += `[«${genSet.getGeneral().stereotype}» ${(genSet.getGeneral().name.getText("en") || "")}] <:- {${genSetDefinition}}[<hidden> ${hiddenContent}]\n`
   //`[<hidden> ${hiddenContent}] - [${specific.stereotype} ${(specific.name.getText("en") || "")}]\n`;
