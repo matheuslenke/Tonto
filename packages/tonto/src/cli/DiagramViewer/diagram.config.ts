@@ -51,22 +51,21 @@ body.addEventListener('mouseup', (e) => {
 body.addEventListener('mousemove', (e) => {
   if(!isDragging) return;
 
-  content.style.marginLeft = ((Number(e.clientX) - Number(mouseDownX))*2 + Number(leftMargin)) + 'px';
-  content.style.marginTop = ((Number(e.clientY) - Number(mouseDownY))*2 + Number(topMargin)) + 'px';
+  content.style.marginLeft = \`\${((Number(e.clientX) - Number(mouseDownX))*2 + Number(leftMargin))}px\`;
+  content.style.marginTop = \`\${((Number(e.clientY) - Number(mouseDownY))*2 + Number(topMargin))}px\`;
 });
 
 // ZOOM DIAGRAM
 var zoom = 1;
 body.addEventListener('wheel', (e) => {
-  if(e.ctrlKey){
     
-    // Calculate the new zoom level based on the mouse scroll
-    scroll = zoom < 2? e.deltaY * 0.0005 : e.deltaY * 0.001;
-    zoom = zoom - scroll;
+  // Calculate the new zoom level based on the mouse scroll
+  scroll = zoom < 2? e.deltaY * 0.001 : e.deltaY * 0.003;
+  zoom = zoom - scroll;
+  zoom = Math.min(Math.max(zoom, 0.5), 3);
 
-    // Apply the new zoom levels
-    content.style.transform = 'scale(' + zoom + ')';
-  }
+  // Apply the new zoom levels
+  content.style.transform = \`scale(\${zoom})\`;
 });
 
 // Sets background color of classes
@@ -79,68 +78,68 @@ body.addEventListener('wheel', (e) => {
 // ("body > div > svg > g > g > g:nth-child(2) > g > g > g")
 
 // Defina colors of arrows
-const arrows = document.getElementsByTagName("path");
-for (const arrow of arrows) {
-    if((Math.floor(arrow.getTotalLength()) === 39) || ((Math.ceil(arrow.getTotalLength()) === 43 || Math.floor(arrow.getTotalLength()) === 43) && arrow.parentElement.getAttribute("fill") === "#eee8d5")){
-        arrow.setAttribute("fill", "rgba(0,0,0,0)");
-        arrow.style.fill = "rgba(0,0,0,0)";
-    }
-}
+// const arrows = document.getElementsByTagName("path");
+// for (const arrow of arrows) {
+//     if((Math.floor(arrow.getTotalLength()) === 39) || ((Math.ceil(arrow.getTotalLength()) === 43 || Math.floor(arrow.getTotalLength()) === 43) && arrow.parentElement.getAttribute("fill") === "#eee8d5")){
+//         arrow.setAttribute("fill", "rgba(0,0,0,0)");
+//         arrow.style.fill = "rgba(0,0,0,0)";
+//     }
+// }
 
 // Forma para diferenciar classes de labels das relações
 // text.parentElement.parentElement.parentElement.childElementCount === 2
 
 // Do the breakline between the stereotype and the name
 // POSSIVEL ERRO: nao testei como lida com os nomes e estereotipos nas relações
-const texts = document.getElementsByTagName("text");
-for (const text of texts) {
-    if(/«.*»/.test(text.textContent)){
+// const texts = document.getElementsByTagName("text");
+// for (const text of texts) {
+//     if(/«.*»/.test(text.textContent)){
 
-        let stereotype = document.createElementNS("http://www.w3.org/2000/svg", 'tspan');
-        let name = document.createElementNS("http://www.w3.org/2000/svg", 'tspan');
-        [stereotype.textContent, name.textContent] = text.textContent.split(' ');
+//         let stereotype = document.createElementNS("http://www.w3.org/2000/svg", 'tspan');
+//         let name = document.createElementNS("http://www.w3.org/2000/svg", 'tspan');
+//         [stereotype.textContent, name.textContent] = text.textContent.split(' ');
         
-        const textBox = text.getBBox();
+//         const textBox = text.getBBox();
 
-        stereotype.setAttribute('y', textBox.height/4);
-        stereotype.setAttribute('x', text.getAttribute("x"));
-        name.setAttribute('y', textBox.height/0.75);
-        name.setAttribute('x', text.getAttribute("x"));
+//         stereotype.setAttribute('y', textBox.height/4);
+//         stereotype.setAttribute('x', text.getAttribute("x"));
+//         name.setAttribute('y', textBox.height/0.75);
+//         name.setAttribute('x', text.getAttribute("x"));
         
-        text.textContent = '';
+//         text.textContent = '';
 
-        text.appendChild(stereotype);
-        text.appendChild(name);
-    }
-}
+//         text.appendChild(stereotype);
+//         text.appendChild(name);
+//     }
+// }
 
-const elements = document.querySelector("body > div > svg > g > g > g:nth-child(2) > g");
-const genSet = ["{disjoint, complete}", "{disjoint, incomplete}", "{overlapping, complete}", "{overlapping, incomplete}"];
+// const elements = document.querySelector("body > div > svg > g > g > g:nth-child(2) > g");
+// const genSet = ["{disjoint, complete}", "{disjoint, incomplete}", "{overlapping, complete}", "{overlapping, incomplete}"];
 
-for (let i = 0; i < elements.childElementCount; i++) {
-  const child = elements.children.item(i);
+// for (let i = 0; i < elements.childElementCount; i++) {
+//   const child = elements.children.item(i);
 
-  if(child.tagName === "text" && genSet.includes(child.textContent)){
+//   if(child.tagName === "text" && genSet.includes(child.textContent)){
 
-    const yValue = Number(child.getAttribute('y')) + 10;
-    const xValue = Number(child.getAttribute('x')) + 30;
+//     const yValue = Number(child.getAttribute('y')) + 10;
+//     const xValue = Number(child.getAttribute('x')) + 30;
 
-    child.setAttribute('y', yValue);
-    child.setAttribute('x', xValue);
+//     child.setAttribute('y', yValue);
+//     child.setAttribute('x', xValue);
     
-    let dashedLine = document.createElementNS("http://www.w3.org/2000/svg", 'path');
+//     let dashedLine = document.createElementNS("http://www.w3.org/2000/svg", 'path');
     
-    const points = elements.children.item(i + 1).getAttribute("d").split(" ");
-    const numbersOnly = points.filter(item => /^\d+(\.\d+)?$/.test(item));
-    const maxY = Number(Math.max(...numbersOnly));
-    const initialX = Number(points[0].slice(1));
+//     const points = elements.children.item(i + 1).getAttribute("d").split(" ");
+//     const numbersOnly = points.filter(item => /^\d+(\.\d+)?$/.test(item));
+//     const maxY = Number(Math.max(...numbersOnly));
+//     const initialX = Number(points[0].slice(1));
 
-    dashedLine.setAttribute("d", \`M\${initialX-200} \${maxY} L\${initialX+200} \${maxY}\`);
-    dashedLine.setAttribute("stroke-dasharray", "5, 5");
+//     dashedLine.setAttribute("d", \`M\${initialX-200} \${maxY} L\${initialX+200} \${maxY}\`);
+//     dashedLine.setAttribute("stroke-dasharray", "5, 5");
 
-    elements.appendChild(dashedLine);
-  }
-}
+//     elements.appendChild(dashedLine);
+//   }
+// }
 `;
 
 // codigo html/css para fazer a dashed line para o genSet.
@@ -148,7 +147,7 @@ for (let i = 0; i < elements.childElementCount; i++) {
 
 const CSS = `
 * {
-    border: 0;
+    border: red solid 2px;
     margin: 0;
     padding: 0;
 }
@@ -166,6 +165,7 @@ body {
     justify-content: center;
     cursor: grab;
     background: white;
+    scale: 2;
 }  
 
 .grabbing {
