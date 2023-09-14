@@ -16,7 +16,6 @@ kind Person
 phase Child
 phase Teenager
 phase Adult
-phase Vish
 
 // complete genset PhasesOfPerson {
 //     general UniversityStudant
@@ -24,5 +23,5 @@ phase Vish
 // }
 disjoint genset PhasesOfPerson {
     general Person
-    specifics Child, Teenager, Adult, Vish
+    specifics Child, Teenager, Adult
 }

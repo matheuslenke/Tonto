@@ -1,5 +1,5 @@
 * {
-    border: solid red 2px;
+    border: red solid 2px;
     margin: 0;
     padding: 0;
 }
@@ -11,13 +11,20 @@ text, tspan{
 body {
     width: 100%;
     height: 100vh;
+    padding: 0;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: grab;
+    background: #f0fffe;
+    scale: 2;
 }  
+
+div, svg {
+    min-width: 100%;
+}
 
 .grabbing {
     cursor: grabbing;
-} 
+}

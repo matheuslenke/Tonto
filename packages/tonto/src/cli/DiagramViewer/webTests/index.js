@@ -1,4 +1,3 @@
-
 const body = document.getElementsByTagName("body")[0];
 const content = document.querySelector('.content');
 
@@ -26,25 +25,21 @@ body.addEventListener('mouseup', (e) => {
 body.addEventListener('mousemove', (e) => {
   if(!isDragging) return;
 
-  content.style.marginLeft = ((Number(e.clientX) - Number(mouseDownX))*2 + Number(leftMargin)) + 'px';
-  content.style.marginTop = ((Number(e.clientY) - Number(mouseDownY))*2 + Number(topMargin)) + 'px';
+  content.style.marginLeft = `${((Number(e.clientX) - Number(mouseDownX))*2 + Number(leftMargin))}px`;
+  content.style.marginTop = `${((Number(e.clientY) - Number(mouseDownY))*2 + Number(topMargin))}px`;
 });
 
 // ZOOM DIAGRAM
-let zoom = 1;
+var zoom = 1;
 body.addEventListener('wheel', (e) => {
-  if(e.ctrlKey){
     
-    // Calculate the new zoom level based on the mouse scroll
-    scroll = zoom < 2? e.deltaY * 0.0005 : e.deltaY * 0.001;
-    let newZoom = zoom - scroll;
+  // Calculate the new zoom level based on the mouse scroll
+  scroll = zoom < 2? e.deltaY * 0.001 : e.deltaY * 0.003;
+  zoom = zoom - scroll;
+  zoom = Math.min(Math.max(zoom, 0.5), 3);
 
-    // Define the limits
-    zoom = Math.min(Math.max(newZoom, 1), 2);
-    
-    // Apply the new zoom levels
-    content.style.transform = 'scale(' + zoom + ')';
-  }
+  // Apply the new zoom levels
+  content.style.transform = `scale(${zoom})`;
 });
 
 // Sets background color of classes
@@ -53,8 +48,6 @@ body.addEventListener('wheel', (e) => {
 // background.forEach(element => {
 //   element.style.fill = "#ffffff";
 // });
-
-// ("body > div > svg > g > g > g:nth-child(2) > g > g > g")
 
 // Defina colors of arrows
 const arrows = document.getElementsByTagName("path");
@@ -109,36 +102,11 @@ for (let i = 0; i < elements.childElementCount; i++) {
     let dashedLine = document.createElementNS("http://www.w3.org/2000/svg", 'path');
     
     const points = elements.children.item(i + 1).getAttribute("d").split(" ");
-    const numbersOnly = points.filter(item => /^\d+(\.\d+)?$/.test(item));
+    const numbersOnly = points.filter((element, index) => index % 2 === 1);
     const maxY = Number(Math.max(...numbersOnly));
     const initialX = Number(points[0].slice(1));
 
-    dashedLine.setAttribute("d", "M" + (initialX-200) + " " + maxY + " L" + (initialX+200) + " " + maxY);
-    dashedLine.setAttribute("stroke-dasharray", "5, 5");
-
-    elements.appendChild(dashedLine);
-  }
-}
-
-for (let i = 0; i < elements.childElementCount; i++) {
-  const child = elements.children.item(i);
-
-  if(child.tagName === "text" && genSet.includes(child.textContent)){
-
-    const yValue = Number(child.getAttribute('y')) + 10;
-    const xValue = Number(child.getAttribute('x')) + 30;
-
-    child.setAttribute('y', yValue);
-    child.setAttribute('x', xValue);
-    
-    let dashedLine = document.createElementNS("http://www.w3.org/2000/svg", 'path');
-    
-    const points = elements.children.item(i + 1).getAttribute("d").split(" ");
-    const numbersOnly = points.filter(item => /^\d+(\.\d+)?$/.test(item));
-    const maxY = Number(Math.max(...numbersOnly));
-    const initialX = Number(points[0].slice(1));
-
-    dashedLine.setAttribute("d", `M${initialX-200} ${maxY} L${initialX+200} &{maxY}`);
+    dashedLine.setAttribute("d", `M${initialX-200} ${maxY-1} L${initialX+200} ${maxY-1}`);
     dashedLine.setAttribute("stroke-dasharray", "5, 5");
 
     elements.appendChild(dashedLine);

@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diagram</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel='stylesheet' type='text/css' media='screen' href='index.css'>
-    <script defer src='index.js'></script>
 </head>
 <body>
 
     <div class="content">
-        <svg version="1.1" baseProfile="full" width="894.0" height="386.0" viewbox="0 0 894 386" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events">
+        <svg version="1.1" baseProfile="full" width="264.0" height="386.0" viewbox="0 0 264 386" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events">
             <desc >
             #edges: rounded
             #padding: 20
@@ -22,35 +20,26 @@
             PersonPhases
             [«kind» Person ]
             [«phase» Child ]
-            [«phase» Teenager ]
-            [«phase» Adult ]
-            [«phase» Vish ]
-            [«kind» Person] &lt;:- {disjoint, incomplete}[&lt;hidden&gt; generalizationSet: Child Teenager Adult Vish]
-            [&lt;hidden&gt; generalizationSet: Child Teenager Adult Vish] - [«phase» Child]
-            [&lt;hidden&gt; generalizationSet: Child Teenager Adult Vish] - [«phase» Teenager]
-            [&lt;hidden&gt; generalizationSet: Child Teenager Adult Vish] - [«phase» Adult]
-            [&lt;hidden&gt; generalizationSet: Child Teenager Adult Vish] - [«phase» Vish]
+            [«kind» Person] &lt;:- {disjoint, incomplete}[&lt;hidden&gt; generalizationSet: Child]
+            [&lt;hidden&gt; generalizationSet: Child] - [«phase» Child]
             </desc>
             <g stroke-width="1.0" text-align="left" font="12pt Helvetica, Arial, sans-serif" font-size="12pt" font-family="Helvetica" font-weight="bold" font-style="normal">
                 <g font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" stroke="#33322E">
                     <g stroke="transparent" fill="transparent">
-                        <rect x="0.0" y="0.0" height="386.0" width="894.0" stroke="none"></rect>
+                        <rect x="0.0" y="0.0" height="386.0" width="264.0" stroke="none"></rect>
                     </g>
-                    <g transform="translate(20, 20)" fill="#33322E" text-align="left">
+                    <g transform="translate(121, 20)" fill="#33322E" text-align="left">
                         <text x="0.0" y="13.5" stroke="none">PersonPhases</text>
                         <g transform="translate(20, 20)" fill="#33322E" font-family="Helvetica" font-size="12pt" font-weight="normal" font-style="normal">
-                            <text x="235.0" y="115.0" stroke="none">{disjoint, incomplete}</text>
-                            <path d="M419.0 68.3 L419 75 L419 95 L419 95 L419 115 L419 115 L419 135 L419.0 135.0 " fill="none"></path>
-                            <path d="M424.3 68.3 L419.0 68.3 L413.7 68.3 L419.0 55.0 Z"></path>
-                            <path d="M418.5 135.5 L83 156 L83 176 L83 176 L83 196 L83 196 L83 216 L83.0 216.0 " fill="none"></path>
-                            <path d="M418.5 135.6 L307 156 L307 176 L307 176 L307 196 L307 196 L307 216 L307.0 216.0 " fill="none"></path>
-                            <path d="M419.5 135.6 L531 156 L531 176 L531 176 L531 196 L531 196 L531 216 L531.0 216.0 " fill="none"></path>
-                            <path d="M419.5 135.5 L734 156 L734 176 L734 176 L734 196 L734 196 L734 216 L734.0 216.0 " fill="none"></path>
+                            <text x="-101.0" y="115.0" stroke="none">{disjoint, incomplete}</text>
+                            <path d="M83.0 68.3 L83 75 L83 95 L83 95 L83 115 L83 115 L83 135 L83.0 135.0 " fill="none"></path>
+                            <path d="M88.3 68.3 L83.0 68.3 L77.7 68.3 L83.0 55.0 Z"></path>
+                            <path d="M83.0 136.0 L83 156 L83 176 L83 176 L83 196 L83 196 L83 216 L83.0 216.0 " fill="none"></path>
                             <g data-name="«kind» Person">
                                 <g fill="#eee8d5" stroke="#33322E" data-name="«kind» Person">
-                                    <rect x="336.0" y="0.0" height="55.0" width="166.0" data-name="«kind» Person"></rect>
+                                    <rect x="0.0" y="0.0" height="55.0" width="166.0" data-name="«kind» Person"></rect>
                                 </g>
-                                <g transform="translate(336, 0)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="«kind» Person">
+                                <g transform="translate(0, 0)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="«kind» Person">
                                     <g transform="translate(20, 20)" fill="#33322E" text-align="center" data-name="«kind» Person">
                                         <text x="63.0" y="13.5" stroke="none" text-anchor="middle" data-name="«kind» Person">«kind» Person</text>
                                         
@@ -68,47 +57,16 @@
                                     </g>
                                 </g>
                             </g>
-                            <g data-name="«phase» Teenager">
-                                <g fill="#eee8d5" stroke="#33322E" data-name="«phase» Teenager">
-                                    <rect x="206.0" y="216.0" height="55.0" width="202.0" data-name="«phase» Teenager"></rect>
-                                </g>
-                                <g transform="translate(206, 216)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="«phase» Teenager">
-                                    <g transform="translate(20, 20)" fill="#33322E" text-align="center" data-name="«phase» Teenager">
-                                        <text x="81.0" y="13.5" stroke="none" text-anchor="middle" data-name="«phase» Teenager">«phase» Teenager</text>
-                                        
-                                    </g>
-                                </g>
-                            </g>
-                            <g data-name="«phase» Adult">
-                                <g fill="#eee8d5" stroke="#33322E" data-name="«phase» Adult">
-                                    <rect x="448.0" y="216.0" height="55.0" width="166.0" data-name="«phase» Adult"></rect>
-                                </g>
-                                <g transform="translate(448, 216)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="«phase» Adult">
-                                    <g transform="translate(20, 20)" fill="#33322E" text-align="center" data-name="«phase» Adult">
-                                        <text x="63.0" y="13.5" stroke="none" text-anchor="middle" data-name="«phase» Adult">«phase» Adult</text>
-                                        
-                                    </g>
-                                </g>
-                            </g>
-                            <g data-name="«phase» Vish">
-                                <g fill="#eee8d5" stroke="#33322E" data-name="«phase» Vish">
-                                    <rect x="654.0" y="216.0" height="55.0" width="160.0" data-name="«phase» Vish"></rect>
-                                </g>
-                                <g transform="translate(654, 216)" font-family="Helvetica" font-size="12pt" font-weight="bold" font-style="normal" data-name="«phase» Vish">
-                                    <g transform="translate(20, 20)" fill="#33322E" text-align="center" data-name="«phase» Vish">
-                                        <text x="60.0" y="13.5" stroke="none" text-anchor="middle" data-name="«phase» Vish">«phase» Vish</text>
-                                        
-                                    </g>
-                                </g>
-                            </g>
-                            <g data-name="generalizationSet: Child Teenager Adult Vish">
+                            <g data-name="generalizationSet: Child">
                                 
                             </g>
                         </g>
                     </g>
                 </g>
             </g>
-        </svg>        
-</div>
+        </svg>
+        
+    </div>
+    <script src='index.js'></script>
 </body>
 </html>

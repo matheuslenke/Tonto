@@ -35,7 +35,7 @@ export function generalizationSetViewer(
   else
   genSetDefinition += "overlapping, incomplete";  
 
-  nomnomlCode += `[«${genSet.getGeneral().stereotype}» ${(genSet.getGeneral().name.getText("en") || "")}] <:- {${genSetDefinition}}[<hidden> ${hiddenContent}]\n`
+  nomnomlCode += `[«${genSet.getGeneral().stereotype}» ${(genSet.getGeneral().name.getText("en") || "")}] <:- {${genSetDefinition}}-${genSet.getSpecifics().length} [<hidden> ${hiddenContent}]\n`
   //`[<hidden> ${hiddenContent}] - [${specific.stereotype} ${(specific.name.getText("en") || "")}]\n`;
   genSet.getSpecifics().forEach((specific) => {
     nomnomlCode += `[<hidden> ${hiddenContent}] - [«${specific.stereotype}» ${(specific.name.getText("en") || "")}]\n`
