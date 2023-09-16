@@ -2,7 +2,7 @@ import { NodeFileSystem } from "langium/node";
 import { createTontoServices, Model } from "../../language-server";
 import { extractAstNode } from "../cli-util";
 import { extractContent } from "../diagramGenerator";
-import { Configuration } from "../../utils/setExtensionConfig";
+import { Configuration } from "../../utils/extensionConfig";
 import { generateDiagram } from "../DiagramViewer/diagram.viewer";
 
 export const viewAction = async (fileName: string): Promise<void> => {

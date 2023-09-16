@@ -4,12 +4,9 @@ const content = document.querySelector('.content');
 let isDragging = false;
 let mouseDownX = 0;
 let mouseDownY = 0;
-var left = 0;
-var top = 0;
 
 body.addEventListener('mousedown', (e) => {
   isDragging = true;
-  body.classList.add('grabbing');
   
   mouseDownX = e.clientX;
   mouseDownY = e.clientY;
@@ -17,9 +14,8 @@ body.addEventListener('mousedown', (e) => {
   topMargin = content.style.marginTop.slice(0, -2);
 });
 
-body.addEventListener('mouseup', (e) => {
+body.addEventListener('mouseup', () => {
   isDragging = false;
-  body.classList.remove('grabbing');
 });
 
 body.addEventListener('mousemove', (e) => {
@@ -36,7 +32,7 @@ body.addEventListener('wheel', (e) => {
   // Calculate the new zoom level based on the mouse scroll
   scroll = zoom < 2? e.deltaY * 0.001 : e.deltaY * 0.003;
   zoom = zoom - scroll;
-  zoom = Math.min(Math.max(zoom, 0.5), 3);
+  zoom = Math.max(zoom, 0.3);
 
   // Apply the new zoom levels
   content.style.transform = `scale(${zoom})`;
@@ -58,11 +54,7 @@ for (const arrow of arrows) {
     }
 }
 
-// Forma para diferenciar classes de labels das relações
-// text.parentElement.parentElement.parentElement.childElementCount === 2
-
-// Do the breakline between the stereotype and the name
-// POSSIVEL ERRO: nao testei como lida com os nomes e estereotipos nas relações
+// Make the breakline between the stereotype and the name
 const texts = document.getElementsByTagName("text");
 for (const text of texts) {
     if(/«.*»/.test(text.textContent)){
@@ -85,28 +77,25 @@ for (const text of texts) {
     }
 }
 
+// Make the dashed line bellow the genSet
 const elements = document.querySelector("body > div > svg > g > g > g:nth-child(2) > g");
 const genSet = ["{disjoint, complete}", "{disjoint, incomplete}", "{overlapping, complete}", "{overlapping, incomplete}"];
-
 for (let i = 0; i < elements.childElementCount; i++) {
   const child = elements.children.item(i);
 
-  if(child.tagName === "text" && genSet.includes(child.textContent)){
-
-    const yValue = Number(child.getAttribute('y')) + 10;
-    const xValue = Number(child.getAttribute('x')) + 30;
-
-    child.setAttribute('y', yValue);
-    child.setAttribute('x', xValue);
-    
+  if(child.tagName === "text" && genSet.includes(child.textContent.split("-")[0])){
     let dashedLine = document.createElementNS("http://www.w3.org/2000/svg", 'path');
     
-    const points = elements.children.item(i + 1).getAttribute("d").split(" ");
-    const numbersOnly = points.filter((element, index) => index % 2 === 1);
-    const maxY = Number(Math.max(...numbersOnly));
-    const initialX = Number(points[0].slice(1));
+    const points = elements.children.item(i + 1).getAttribute("d").split(" ").slice(-3, -1);
+    const X = Number(points[0].slice(1));
+    const Y = Number(points[1]);
+    
+    const genSets = Number(child.textContent.split("-")[1]) | 1;
+    child.textContent = child.textContent.split("-")[0];
+    
+    console.log(X, Y, genSets);
 
-    dashedLine.setAttribute("d", `M${initialX-200} ${maxY-1} L${initialX+200} ${maxY-1}`);
+    dashedLine.setAttribute("d", `M${X-(genSets*95)} ${Y-1} L${X+(genSets*95)} ${Y-1}`);
     dashedLine.setAttribute("stroke-dasharray", "5, 5");
 
     elements.appendChild(dashedLine);

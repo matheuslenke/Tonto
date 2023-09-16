@@ -2,20 +2,26 @@
 
 package PersonPhases
 
-kind Person
+datatype number
+datatype string
+
+kind Person {
+    years: number
+    name: string
+}
     // phone: PhoneNumber
 
 // phase Child specializes Person
 // phase Teenager specializes Person
 // phase Adult specializes Person
 
-// role UniversityStudant specializes Person
-// role FormerStudent specializes UniversityStudant
-// role ActiveStudent specializes UniversityStudant
+role UniversityStudant specializes Person
+role FormerStudent specializes UniversityStudant
+role ActiveStudent specializes UniversityStudant
 
-phase Child
-phase Teenager
-phase Adult
+phase Child {a: number}
+phase Teenager {a: number}
+phase Adult 
 
 // complete genset PhasesOfPerson {
 //     general UniversityStudant

@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import * as path from "path";
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from "vscode-languageclient/node";
 import { TontoLibraryFileSystemProvider } from "./extension/TontoLibraryFileSystemProvider";
+import { createConfigurationCommands } from "./commands/ConfigurationCommands";
 import { createTontoGenerationStatusBarItem } from "./commands/TontoGenerationCommand";
 import { createGenerateJsonStatusBarItem } from "./commands/JsonGenerationCommands";
 import { createValidationSatusBarItem } from "./commands/validationCommand";
@@ -20,16 +21,11 @@ let outputChannel: vscode.OutputChannel;
 
 // This function is called when the extension is activated.
 export function activate(context: vscode.ExtensionContext): void {
-
-  /*
-  context.subscriptions.push(vscode.commands.registerCommand('extension.openSettings', () => {
-    vscode.commands.executeCommand('workbench.action.openSettings', 'tonto');
-  }));
-  */
-
+  
   outputChannel = vscode.window.createOutputChannel("Tonto: Validation output");
   TontoLibraryFileSystemProvider.register(context);
   client = startLanguageClient(context);
+  createConfigurationCommands(context);
   createGenerateJsonStatusBarItem(context, generateJsonStatusBarItem);
   createTontoGenerationStatusBarItem(context, generateTontoStatusBarItem);
   createGenerateDiagramStatusBarItem(context, generateDiagramStatusBarItem);

@@ -27,16 +27,17 @@ function generate(ctx: GeneratorContext): diagramContent {
   // Every OntoUML element can be created from a constructor that can receive a partial object
   // as references for its creation
   const project = parseProject(ctx);
+  let packs = project.getAllPackages();
+  packs.shift();
 
   let content: diagramContent = {
-    packages: project.getAllPackages(),
-    class: project.getAllPackages().map((package_) => { return package_.getAllClasses()}),
-    specializations: project.getAllPackages().map((package_) => { return package_.getAllGeneralizations() }),
-    specializationSets: project.getAllPackages().map((package_) => { return package_.getAllGeneralizationSets() }),
-    relations: project.getAllPackages().map((package_) => { return package_.getAllRelations() })
+    packages: packs,
+    class: packs.map((package_) => { return package_.getAllClasses()}),
+    specializations: packs.map((package_) => { return package_.getAllGeneralizations() }),
+    specializationSets: packs.map((package_) => { return package_.getAllGeneralizationSets() }),
+    relations: packs.map((package_) => { return package_.getAllRelations() })
   }
 
-  content.packages.shift();
   content.packages.forEach((package_, i) => {
     content.specializationSets[i].forEach((genSet) => {
       genSet.generalizations.forEach((genSetGen) => {
@@ -46,12 +47,7 @@ function generate(ctx: GeneratorContext): diagramContent {
       });
     })
   });
-
   return content;
-// context.AllEnumerations = project.getAllEnumerations();
-// context.AllProperties = project.getAllProperties();
-// context.AllAttributes = project.getAllAttributes();
-// context.AllLiterals = project.getAllLiterals();
 }
 
 function parseProject(ctx: GeneratorContext): Project {

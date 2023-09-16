@@ -3,6 +3,7 @@ import { viewCommand, Configuration } from "tonto-cli";
 import { CommandIds } from "./commandIds";
 
 function createGenerateDiagramStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
+
   // Register the status bar item command
   context.subscriptions.push(
     vscode.commands.registerCommand(CommandIds.generateDiagramFromButton, createStatusBarItemGenerateDiagramCommand)
@@ -50,39 +51,49 @@ async function generateDiagram(uri: vscode.Uri) {
     if (uri.scheme == "file") {
       vscode.workspace.openTextDocument(uri).then(async (document) => {
         if (document.languageId === "tonto") {
-
-          const panel = vscode.window.createWebviewPanel(
+          
+          let panel: vscode.WebviewPanel | null = vscode.window.createWebviewPanel(
             'View',
             `${document.fileName?.split('/').pop()?.replace('.tonto', '')}`,
             vscode.ViewColumn.Beside,
             { 
-            //   localResourceRoots: [
-            //     vscode.Uri.file(path.join(context.extensionPath, 'src/cli/WebConvert/styles')),
-            //     vscode.Uri.file(path.join(context.extensionPath, 'src/cli/WebConvert/scripts'))
-            //   ],
+              // localResourceRoots: [
+              //   vscode.Uri.file(`${auxContext.extensionPath}/src/extension/diagram.config`),
+              // ],
               retainContextWhenHidden: true,
               enableScripts: true
             }
           );
-        
-          // register a listener that make sure the webview
-          // is always up-to-date
-          // context.subscriptions.push(
-          //   vscode.workspace.onDidSaveTextDocument((document) => {
-          //     if (document.uri === uri) {
-          //       viewAction(document.fileName, panel.webview, src_CSS, src_JS);
-          //     }
-          // })
-          // );
 
+          panel.onDidDispose(() => {
+            panel = null
+          });
+        
           panel.webview.html = await viewCommand(
             document.fileName,
             {
               Entity: vscode.workspace.getConfiguration('Diagram').Entity,
-              Relation: vscode.workspace.getConfiguration('Diagram').Relation
+              Relation: vscode.workspace.getConfiguration('Diagram').Relation,
+              Datatype: vscode.workspace.getConfiguration('Diagram').Datatype,
+              Enumeration: vscode.workspace.getConfiguration('Diagram').Enumeration
             } as Configuration
           );
-          
+
+          vscode.workspace.onDidSaveTextDocument(async (document) => {
+            // const activeEditor = vscode.window.activeTextEditor;
+            // if(document === activeEditor.document)
+            if (panel && panel.title === document.fileName?.split('/').pop()?.replace('.tonto', '')) {
+              panel.webview.html = await viewCommand(
+                document.fileName,
+                {
+                  Entity: vscode.workspace.getConfiguration('Diagram').Entity,
+                  Relation: vscode.workspace.getConfiguration('Diagram').Relation,
+                  Datatype: vscode.workspace.getConfiguration('Diagram').Datatype,
+                  Enumeration: vscode.workspace.getConfiguration('Diagram').Enumeration
+                } as Configuration
+              );
+            }
+          });
         } else {
           vscode.window.showInformationMessage("Failed! File is not a Tonto");
         }
@@ -110,7 +121,6 @@ async function createCommandPaletteGenerateDiagramCommand() {
 
 async function createStatusBarItemGenerateDiagramCommand(uri: vscode.Uri) {
     const editor = vscode.window.activeTextEditor;
-    // const path = context.extensionPath;
     if (!uri) {
       const documentUri = editor?.document.uri;
       if (documentUri) {

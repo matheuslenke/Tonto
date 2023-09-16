@@ -1,5 +1,5 @@
 import { Property, Relation } from "ontouml-js";
-import { Configuration } from "../../utils/setExtensionConfig";
+import { Configuration } from "../../utils/extensionConfig";
 
 function getAssociation(
     relation: Relation,
@@ -87,9 +87,14 @@ export function relationViewer(
 ): string {
     let nomnomlCode = "";
 
-    nomnomlCode += firstAssociation(relation.properties[0], config);
-    nomnomlCode += associationKey(relation, [relation.properties[0].propertyType.getName('en'), relation.properties[1].propertyType.getName('en')], [relation.properties[0].aggregationKind, relation.properties[1].aggregationKind], config);
-    nomnomlCode += secondAssociation(relation.properties[1], config);
+    const dtype = [relation.properties[0].propertyType.stereotype === "datatype", relation.properties[1].propertyType.stereotype === "datatype"];
+    const enumm = [relation.properties[0].propertyType.stereotype === "enumeration", relation.properties[1].propertyType.stereotype === "enumeration"];
+
+    if((config.Datatype || !(dtype[0] || dtype[1])) && (config.Enumeration || !(enumm[0] || enumm[1]))){
+        nomnomlCode += firstAssociation(relation.properties[0], config);
+        nomnomlCode += associationKey(relation, [relation.properties[0].propertyType.getName('en'), relation.properties[1].propertyType.getName('en')], [relation.properties[0].aggregationKind, relation.properties[1].aggregationKind], config);
+        nomnomlCode += secondAssociation(relation.properties[1], config);
+    }
 
 return nomnomlCode;
 }

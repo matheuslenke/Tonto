@@ -40,6 +40,11 @@
         ],
         "commands": [
             {
+                "command": "tonto.openSettings",
+                "title": "open extension settings",
+                "category": "Tonto"
+            },
+            {
                 "command": "tonto.generateTonto",
                 "title": "Generate Tonto project from JSON",
                 "category": "Tonto"

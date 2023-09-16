@@ -1,5 +1,5 @@
 import { Class, GeneralizationSet } from "ontouml-js";
-import { Configuration } from "../../utils/setExtensionConfig";
+import { Configuration } from "../../utils/extensionConfig";
 
 export function generalizationViewer(
     general: Class,

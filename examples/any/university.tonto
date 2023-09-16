@@ -24,8 +24,8 @@ roleMixin Employer
 role UniversityEmployer specializes University, Employer
 
 collective Staff
-subkind JuniorStaff specializes Staff
+subkind JuniorStaffa specializes Staff
 subkind SeniorStaff specializes Staff
 
-relation Department [1] <>-- [1] JuniorStaff
+relation Department [1] <>-- [1] JuniorStaffa
 relation Department [1] <o>-- [1] SeniorStaff
