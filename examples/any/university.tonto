@@ -14,8 +14,9 @@ category Organization
 
 kind University specializes Organization {
     address: Address
+    aa: string
     @componentOf
-    [1] <>-- has -- [1..*] Department
+    (aaa) [1] <o>-- has -- [1..*] Department 
     @componentOf
     [1] <>-- [0..*] Classroom
 }
@@ -27,5 +28,8 @@ collective Staff
 subkind JuniorStaffa specializes Staff
 subkind SeniorStaff specializes Staff
 
-relation Department [1] <>-- [1] JuniorStaffa
-relation Department [1] <o>-- [1] SeniorStaff
+relation Department [1] -- [1] JuniorStaffa
+relation Department [1] <>-- [1] SeniorStaff
+
+quality a
+phase b specializes a

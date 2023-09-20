@@ -6,12 +6,12 @@ function createGenerateDiagramStatusBarItem(context: vscode.ExtensionContext, st
 
   // Register the status bar item command
   context.subscriptions.push(
-    vscode.commands.registerCommand(CommandIds.generateDiagramFromButton, createStatusBarItemGenerateDiagramCommand)
+    vscode.commands.registerCommand(CommandIds.generateDiagramFromButton, () => { createStatusBarItemGenerateDiagramCommand(context) })
   );
 
   // Register the command pallete command
   context.subscriptions.push(
-    vscode.commands.registerCommand(CommandIds.generateDiagram, createCommandPaletteGenerateDiagramCommand)
+    vscode.commands.registerCommand(CommandIds.generateDiagram, () => { createCommandPaletteGenerateDiagramCommand(context) })
   );
 
   return createStatusBarItem(context, statusBarItem);
@@ -47,18 +47,18 @@ function updateDiagramStatusBarItem(statusBarItem: vscode.StatusBarItem): void {
   statusBarItem.show();
 }
 
-async function generateDiagram(uri: vscode.Uri) {
+async function generateDiagram(uri: vscode.Uri, context: vscode.ExtensionContext) {
     if (uri.scheme == "file") {
       vscode.workspace.openTextDocument(uri).then(async (document) => {
         if (document.languageId === "tonto") {
-          
+
           let panel: vscode.WebviewPanel | null = vscode.window.createWebviewPanel(
             'View',
             `${document.fileName?.split('/').pop()?.replace('.tonto', '')}`,
             vscode.ViewColumn.Beside,
             { 
               // localResourceRoots: [
-              //   vscode.Uri.file(`${auxContext.extensionPath}/src/extension/diagram.config`),
+              //   vscode.Uri.joinPath(context.extensionUri, 'src/diagramConfiguration')
               // ],
               retainContextWhenHidden: true,
               enableScripts: true
@@ -68,9 +68,12 @@ async function generateDiagram(uri: vscode.Uri) {
           panel.onDidDispose(() => {
             panel = null
           });
+
+          const jsUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'src/diagramConfiguration/diagram.config.js'))
+          const cssUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'src/diagramConfiguration/diagram.config.css'))
         
           panel.webview.html = await viewCommand(
-            document.fileName,
+            document.fileName, jsUri, cssUri, 
             {
               Entity: vscode.workspace.getConfiguration('Diagram').Entity,
               Relation: vscode.workspace.getConfiguration('Diagram').Relation,
@@ -80,11 +83,9 @@ async function generateDiagram(uri: vscode.Uri) {
           );
 
           vscode.workspace.onDidSaveTextDocument(async (document) => {
-            // const activeEditor = vscode.window.activeTextEditor;
-            // if(document === activeEditor.document)
             if (panel && panel.title === document.fileName?.split('/').pop()?.replace('.tonto', '')) {
               panel.webview.html = await viewCommand(
-                document.fileName,
+                document.fileName, jsUri, cssUri, 
                 {
                   Entity: vscode.workspace.getConfiguration('Diagram').Entity,
                   Relation: vscode.workspace.getConfiguration('Diagram').Relation,
@@ -101,36 +102,30 @@ async function generateDiagram(uri: vscode.Uri) {
     }
 }
 
-async function createCommandPaletteGenerateDiagramCommand() {
+async function createCommandPaletteGenerateDiagramCommand(context: vscode.ExtensionContext) {
   
     const fileUri = await vscode.window.showOpenDialog({
     canSelectFiles: true,
     canSelectFolders: false,
-    canSelectMany: false,
-    openLabel: "Select Tonto File",
+    canSelectMany: true,
+    openLabel: "Select Tonto Files",
   });
 
   if (fileUri && fileUri[0]) {
 
     const selectedFile = fileUri[0];
-    await generateDiagram(selectedFile);
+    await generateDiagram(selectedFile, context);
   } else {
     vscode.window.showErrorMessage("Failed! Not a valid file selected");
   }
 }
 
-async function createStatusBarItemGenerateDiagramCommand(uri: vscode.Uri) {
-    const editor = vscode.window.activeTextEditor;
-    if (!uri) {
-      const documentUri = editor?.document.uri;
-      if (documentUri) {
-        uri = documentUri;
-      }
-    }
+async function createStatusBarItemGenerateDiagramCommand(context: vscode.ExtensionContext) {
+  const documentUri: vscode.Uri | undefined = vscode.window.activeTextEditor?.document.uri;
   
-    if (uri) {
-      await generateDiagram(uri);
-    }
+  if (documentUri) {
+    await generateDiagram(documentUri, context);
   }
+}
 
 export { createGenerateDiagramStatusBarItem };

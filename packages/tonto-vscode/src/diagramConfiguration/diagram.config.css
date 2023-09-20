@@ -1,0 +1,64 @@
+* {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+body {
+    width: 100%;
+    height: 100vh;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: crosshair;
+    background: #ffffff00;
+}  
+div, svg {
+    min-width: 100%;
+    overflow: visible;
+}
+
+/* set the color os the lines */
+body.vscode-light path{
+    stroke: black;
+}
+body.vscode-dark path{
+    stroke: white;
+}
+body.vscode-high-contrast path{
+    stroke: white;
+}
+body > div > svg > g > g > g:nth-child(2) > g > g > g:nth-child(1) > path{
+    stroke: black
+}
+
+/* set colors of the arrows */
+body.vscode-light .composition{
+    fill: black;
+}
+body.vscode-dark .composition{
+    fill: white;
+}
+body.vscode-high-contrast .composition{
+    fill: white;
+}
+
+/* set colors of the relation and generalization texts */
+body.vscode-light text, body.vscode-light tspan{
+    fill: black;
+}
+body.vscode-dark text, body.vscode-dark tspan{
+    fill: white;
+}
+body.vscode-high-contrast text, body.vscode-high-contrast tspan{
+    fill: white;
+}
+
+/* set colors of the classes texts */
+body > div > svg > g > g > g:nth-child(2) > g > g > g:nth-child(2) > g > text > tspan{
+    fill: black;
+}
+body > div > svg > g > g > g:nth-child(2) > g > g > g:nth-child(3) > g > text {
+    fill: black;
+}

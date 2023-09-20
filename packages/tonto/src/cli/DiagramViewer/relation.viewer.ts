@@ -25,24 +25,19 @@ return ["-", "->"];
 
 function associationKey(
     relation: Relation,
-    entitiesName: (string | undefined)[],
-    associationType: (string | undefined)[],
     config: Configuration
 ): string{
     let nomnomlCode = "";
-    const [firstAssociationType, secondAssociationType] = getAssociation(relation, associationType);
+    const [firstAssociationType, secondAssociationType] = getAssociation(relation, [relation.properties[0].aggregationKind, relation.properties[1].aggregationKind]);
 
     nomnomlCode += firstAssociationType + " ";
 
-    let stereotype = relation.stereotype || "",
-        name = relation.getName('en') || "";
-
-    if(config.Relation.AssociationsEndNames && relation.stereotype && relation.getName('en')){
-        nomnomlCode += `[<label> «${stereotype}» ${name}]\n`;
-        nomnomlCode += `[<label> «${stereotype}» ${name}] `;
+    if(config.Relation.Associations && relation.stereotype && relation.getName('en')){
+        nomnomlCode += `[<label> «${relation.stereotype || ""}» ${relation.getName('en') || ""}]\n`;
+        nomnomlCode += `[<label> «${relation.stereotype || ""}» ${relation.getName('en') || ""}] `;
     } else {
-        nomnomlCode += `[<hidden> ${entitiesName[0]} «${stereotype}» ${name} ${entitiesName[1]}]\n`;
-        nomnomlCode += `[<hidden> ${entitiesName[0]} «${stereotype}» ${name} ${entitiesName[1]}] `;
+        nomnomlCode += `[<hidden> ${relation.id}]\n`;
+        nomnomlCode += `[<hidden> ${relation.id}] `;
     }
     nomnomlCode += secondAssociationType + " ";
 
@@ -87,12 +82,12 @@ export function relationViewer(
 ): string {
     let nomnomlCode = "";
 
-    const dtype = [relation.properties[0].propertyType.stereotype === "datatype", relation.properties[1].propertyType.stereotype === "datatype"];
-    const enumm = [relation.properties[0].propertyType.stereotype === "enumeration", relation.properties[1].propertyType.stereotype === "enumeration"];
+    const dtype = relation.properties[0].propertyType.stereotype === "datatype" || relation.properties[1].propertyType.stereotype === "datatype";
+    const enumm = relation.properties[0].propertyType.stereotype === "enumeration" || relation.properties[1].propertyType.stereotype === "enumeration";
 
-    if((config.Datatype || !(dtype[0] || dtype[1])) && (config.Enumeration || !(enumm[0] || enumm[1]))){
+    if((config.Datatype || !dtype) && (config.Enumeration || !enumm)){
         nomnomlCode += firstAssociation(relation.properties[0], config);
-        nomnomlCode += associationKey(relation, [relation.properties[0].propertyType.getName('en'), relation.properties[1].propertyType.getName('en')], [relation.properties[0].aggregationKind, relation.properties[1].aggregationKind], config);
+        nomnomlCode += associationKey(relation, config);
         nomnomlCode += secondAssociation(relation.properties[1], config);
     }
 

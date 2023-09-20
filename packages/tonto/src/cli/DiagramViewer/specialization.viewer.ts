@@ -1,30 +1,22 @@
 import { Class, GeneralizationSet } from "ontouml-js";
-import { Configuration } from "../../utils/extensionConfig";
 
 export function generalizationViewer(
+    id: string,
     general: Class,
-    specific: Class,
-    config: Configuration
+    specific: Class
 ): string {
     let nomnomlCode = "";
-    const hiddenContent = `(${general.stereotype} ${(general.name.getText("en") || "")} <:- ${specific.stereotype} ${(specific.name.getText("en") || "")})`
 
-    nomnomlCode += `[«${general.stereotype}» ${(general.name.getText("en") || "")}] <:- [<hidden> ${hiddenContent}]
-[<hidden> ${hiddenContent}] - [«${specific.stereotype}» ${(specific.name.getText("en") || "")}]\n`;
+    nomnomlCode += `[«${general.stereotype}» ${(general.name.getText("en") || "")}] <:- [<hidden> ${id}]
+[<hidden> ${id}] - [«${specific.stereotype}» ${(specific.name.getText("en") || "")}]\n`;
   return nomnomlCode;
 }
 
 export function generalizationSetViewer(
-  genSet: GeneralizationSet,
-  config: Configuration
+  genSet: GeneralizationSet
 ): string {
   let nomnomlCode = "";
   let genSetDefinition = "";
-  let hiddenContent = `generalizationSet:`;
-
-  genSet.getSpecifics().forEach((specific) => {
-    hiddenContent += ` ${(specific.name.getText("en") || "")}`
-  });
 
   if(genSet.isPartition())
     genSetDefinition += "disjoint, complete";
@@ -35,10 +27,9 @@ export function generalizationSetViewer(
   else
   genSetDefinition += "overlapping, incomplete";  
 
-  nomnomlCode += `[«${genSet.getGeneral().stereotype}» ${(genSet.getGeneral().name.getText("en") || "")}] <:- {${genSetDefinition}}-${genSet.getSpecifics().length} [<hidden> ${hiddenContent}]\n`
-  //`[<hidden> ${hiddenContent}] - [${specific.stereotype} ${(specific.name.getText("en") || "")}]\n`;
+  nomnomlCode += `[«${genSet.getGeneral().stereotype}» ${(genSet.getGeneral().name.getText("en") || "")}] <:- {${genSetDefinition}}-${genSet.getSpecifics().length} [<hidden> ${genSet.id}]\n`
   genSet.getSpecifics().forEach((specific) => {
-    nomnomlCode += `[<hidden> ${hiddenContent}] - [«${specific.stereotype}» ${(specific.name.getText("en") || "")}]\n`
+    nomnomlCode += `[<hidden> ${genSet.id}] - [«${specific.stereotype}» ${(specific.name.getText("en") || "")}]\n`
   });
 
 return nomnomlCode;

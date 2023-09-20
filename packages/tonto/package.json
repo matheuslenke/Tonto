@@ -52,6 +52,7 @@
     "chevrotain": "^10.4.2",
     "commander": "^10.0.1",
     "glob": "^10.2.2",
+    "jspdf": "^2.5.1",
     "langium": "^1.2.0",
     "node-fetch-native": "^1.0.1",
     "nomnoml": "^1.6.2",

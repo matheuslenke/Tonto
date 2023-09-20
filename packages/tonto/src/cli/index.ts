@@ -5,7 +5,7 @@ import { importAction } from "./actions/importAction";
 import { importModularAction } from "./actions/importModularAction";
 import { validateAction } from "./actions";
 import { transformToGufoAction } from "./actions/gufoGenerateAction";
-import { viewAction } from "./actions/viewAction";
+// import { viewAction } from "./actions/viewAction";
 
 export default function (): void {
   const program = new Command();
@@ -48,11 +48,11 @@ export default function (): void {
     .description("generates a tonto file from a JSON file")
     .action(importAction);
 
-  program
-    .command("view")
-    .argument("<file>", "source file (possible file extensions: tonto)")
-    .description("generates a diagram from a tonto file")
-    .action(viewAction);
+  // program
+  //   .command("viewDiagram")
+  //   .argument("<file>", "source file (possible file extensions: tonto)")
+  //   .description("generates a diagram from a tonto file")
+  //   .action(viewAction);
 
   program
     .command("validate")

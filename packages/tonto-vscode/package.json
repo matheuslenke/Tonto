@@ -41,7 +41,7 @@
         "commands": [
             {
                 "command": "tonto.openSettings",
-                "title": "open extension settings",
+                "title": "Open extension settings",
                 "category": "Tonto"
             },
             {
