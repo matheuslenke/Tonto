@@ -16,17 +16,17 @@ kind Person {
 // phase Adult specializes Person
 
 role UniversityStudant specializes Person
-role FormerStudent specializes UniversityStudant
-role ActiveStudent specializes UniversityStudant
+role FormerStudent //specializes UniversityStudant
+role ActiveStudent //specializes UniversityStudant
 
 phase Child {a: number}
 phase Teenager {a: number}
 phase Adult 
 
-// complete genset PhasesOfPerson {
-//     general UniversityStudant
-//     specifics FormerStudent, ActiveStudent
-// }
+complete genset PhasesOfPerson {
+    general UniversityStudant
+    specifics FormerStudent, ActiveStudent
+}
 disjoint genset PhasesOfPerson {
     general Person
     specifics Child, Teenager, Adult

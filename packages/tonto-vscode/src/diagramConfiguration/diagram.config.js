@@ -87,7 +87,7 @@ for (let i = 0; i < elements.childElementCount; i++) {
     const genSets = Number(child.textContent.split("-")[1]) | 1;
     child.textContent = child.textContent.split("-")[0];
     
-    dashedLine.setAttribute("d", `M${X-(genSets*95)} ${Y-1} L${X+(genSets*95)} ${Y-1}`);
+    dashedLine.setAttribute("d", `M${X-(genSets*80)} ${Y-1} L${X+(genSets*80)} ${Y-1}`);
     dashedLine.setAttribute("stroke-dasharray", "10, 10");
     
     elements.appendChild(dashedLine);
@@ -99,6 +99,7 @@ for (let i = 0; i < elements.childElementCount; i++) {
     else
       child.setAttribute('x', Number(child.getAttribute('x'))-((Number(child.getAttribute('x'))-X+155)));
   }
+
   // else if(child.tagName === "text" && (elements.children[i+2].tagName === "path" || (elements.children[i+2].tagName === "g" && !(elements.children[i+2].getAttribute('data-name'))))){
   //   let points = 0;
   //   if(elements.children[i+2].tagName === "g")
@@ -149,7 +150,7 @@ const colors = {
 }
 
 // Set the colors of the stereotypes
-// Upgrade: define the colors based on the generalizations
+// Upgrade: define the colors based on the generalizations and relations
 const rectangles = document.querySelectorAll('body > div.content > svg > g > g > g:nth-child(2) > g > g > g > rect');
 for(rect of rectangles){
     const name = rect.getAttribute('data-name');
@@ -169,7 +170,7 @@ for(rect of rectangles){
     }
 }
 
-// Define as linhas no fim do svg, o que as sobrepoe aos outros elementos.
+// Put the paths and texts in the end of svg elements, this sets them above other elements.
 let num = elements.childElementCount;
 let i = 0;
 while(i<num) {
@@ -181,16 +182,35 @@ while(i<num) {
   i++;
 }
 
+// Import function
 const vscode = acquireVsCodeApi();
 const button = document.querySelector("body > div.download");
 button.addEventListener("click", () => {
   body.style.cursor = "progress";
   button.style.cursor = "progress";
   
-  vscode.postMessage({ command: 'Download' });
+  const svg = document.querySelector("body > div.content > svg");
   
-  setTimeout(() => {
-    body.style.cursor = "move";
-    button.style.cursor = "pointer";
-  }, 2000);
+  (async () => {
+    try {
+      const dataUrl = await domtoimage.toPng(svg)
+      
+      const downloadLink = document.createElement('a');
+      downloadLink.href = dataUrl;
+      downloadLink.download = document.title+'.png';
+      downloadLink.click();
+      
+      setTimeout(() => {
+        body.style.cursor = "move";
+        button.style.cursor = "pointer";
+      }, 2000);
+
+      vscode.postMessage({ command: 'Success Download' });
+
+      return;
+    } catch (error) {
+      console.error(error);
+    }
+    vscode.postMessage({ command: 'Fail Download' });
+  })()
 });

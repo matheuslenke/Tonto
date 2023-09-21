@@ -33,10 +33,10 @@ import { Uri } from "vscode";
 //   doc.save(`${fileName?.split('/').pop()}.pdf`);
 // };
 
-export const viewCommand = async (fileName: string, jsUri: Uri, cssUri: Uri, csp: string, config: Configuration): Promise<string> => {
+export const viewCommand = async (fileName: string, domToImgUri: Uri, jsUri: Uri, cssUri: Uri, csp: string, title: string, config: Configuration): Promise<string> => {
   const services = createTontoServices({ ...NodeFileSystem }).Tonto;
   let model = await extractAstNode<Model>(fileName, services);
   const generatedPackages = extractContent(model, fileName?.split('/').pop());
 
-  return generateDiagram(generatedPackages, jsUri, cssUri, csp, config);
+  return generateDiagram(generatedPackages, domToImgUri, jsUri, cssUri, csp, title, config);
 };

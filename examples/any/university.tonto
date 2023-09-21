@@ -1,3 +1,6 @@
+// Import não aparece na AST
+import CoreDataTypes
+
 package University
 
 datatype Address
@@ -5,7 +8,9 @@ datatype string
 
 kind Department {
     name: string
+    num: PhoneNumber // propriedade não aparece na AST
 }
+subkind d specializes aa // especialização não aparece na AST
 
 kind Room
 subkind Classroom specializes Room

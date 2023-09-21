@@ -84,29 +84,6 @@
                     "default": false,
                     "description": "Show the attributes of the entities."
                 },
-                "Diagram.Entity.Colors": {
-                    "type": "object",
-                    "default": {
-                        "stereotypes_1": "#7FFFD4",
-                        "stereotypes_2": "#7FFFD4",
-                        "stereotypes_3": "#7FFFD4"
-                    },
-                    "description": "Diagram colors.",
-                    "properties": {
-                        "stereotypes_1": {
-                            "type": "string",
-                            "description": "Color for stereotype 1."
-                        },
-                        "stereotypes_2": {
-                            "type": "string",
-                            "description": "Color for stereotype 2."
-                        },
-                        "stereotypes_3": {
-                            "type": "string",
-                            "description": "Color for stereotype 3."
-                        }
-                    }
-                },
                 "Diagram.Relation.Cardinality": {
                     "type": "boolean",
                     "default": false,
@@ -172,7 +149,9 @@
     },
     "dependencies": {
         "chalk": "^4.1.0",
+        "cheerio": "^1.0.0-rc.12",
         "commander": "^10.0.1",
+        "jspdf": "^2.5.1",
         "langium": "^1.2.0",
         "node-fetch-native": "^1.0.1",
         "puppeteer": "^21.3.1",

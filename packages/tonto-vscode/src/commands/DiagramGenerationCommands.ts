@@ -1,7 +1,10 @@
 import * as vscode from "vscode";
 import { viewCommand, Configuration } from "tonto-cli";
 import { CommandIds } from "./commandIds";
-import fs from "fs";
+// import jsPDF from "jspdf";
+// import fs from "fs";
+// import * as cheerio from 'cheerio';
+// import puppeteer from 'puppeteer';
 
 function createGenerateDiagramStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
 
@@ -71,11 +74,12 @@ async function generateDiagram(uri: vscode.Uri, context: vscode.ExtensionContext
           panel = null
         });
 
-        const jsUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'src/diagramConfiguration/diagram.config.js'))
-        const cssUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'src/diagramConfiguration/diagram.config.css'))
+        const jsUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'src/diagramConfiguration/diagram.config.js'));
+        const domToImgUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'src/diagramConfiguration/dom-to-image.min.js'));
+        const cssUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'src/diagramConfiguration/diagram.config.css'));
 
         panel.webview.html = await viewCommand(
-          document.fileName, jsUri, cssUri, panel.webview.cspSource, 
+          document.fileName, domToImgUri, jsUri, cssUri, panel.webview.cspSource, title || "Diagram", 
           {
             Entity: vscode.workspace.getConfiguration('Diagram').Entity,
             Relation: vscode.workspace.getConfiguration('Diagram').Relation,
@@ -84,10 +88,10 @@ async function generateDiagram(uri: vscode.Uri, context: vscode.ExtensionContext
           } as Configuration
         );
 
-        vscode.workspace.onDidSaveTextDocument(async (document) => {
-          if (panel && panel.title === title) {
+        vscode.workspace.onDidSaveTextDocument(async (doc) => {
+          if (panel && panel.title === doc.fileName?.split('/').pop()?.replace('.tonto', '')) {
             panel.webview.html = await viewCommand(
-              document.fileName, jsUri, cssUri, panel.webview.cspSource, 
+              doc.fileName, domToImgUri, jsUri, cssUri, panel.webview.cspSource, title || "Diagram", 
               {
                 Entity: vscode.workspace.getConfiguration('Diagram').Entity,
                 Relation: vscode.workspace.getConfiguration('Diagram').Relation,
@@ -99,40 +103,31 @@ async function generateDiagram(uri: vscode.Uri, context: vscode.ExtensionContext
         });
 
         // Handle messages from the webview
-        // ERRO: Para corrigir -> fazer o pdf apenas do svg e nao da pag completa
         panel.webview.onDidReceiveMessage(
-          message => {
+          async (message) => {
             switch (message.command) {
-              case 'Download':
-                if(panel){
-                  /*
-                  const doc = new jsPDF();
-                  doc.text(panel.webview.html, 15, 15);
-                  doc.save(document.fileName.replace('.tonto', '.pdf'));
-                  */
-
-                  /*
-                  const pdfName = document.fileName.replace('.tonto', '.html');
-                  // Crie o arquivo PDF
-                  fs.writeFileSync(pdfName, panel.webview.html);
-
-                  // Abra o arquivo PDF na guia do editor do VSCode
-                  vscode.workspace.openTextDocument(pdfName).then((document) => {
-                    vscode.window.showTextDocument(document);
-                  });
-
-                  vscode.window.showInformationMessage(`Download completed: "${pdfName.split('/').pop()}".`);
-                  */
-
-                  // vscode.window.showInformationMessage(`Download completed.`);
+              case 'Success Download':
+                if(panel && panel.title === title) {
+                  panel.webview.html = await viewCommand(
+                    document.fileName, domToImgUri, jsUri, cssUri, panel.webview.cspSource, title || "Diagram", 
+                    {
+                      Entity: vscode.workspace.getConfiguration('Diagram').Entity,
+                      Relation: vscode.workspace.getConfiguration('Diagram').Relation,
+                      Datatype: vscode.workspace.getConfiguration('Diagram').Datatype,
+                      Enumeration: vscode.workspace.getConfiguration('Diagram').Enumeration
+                    } as Configuration
+                  );
+                  vscode.window.showInformationMessage(`Diagram import successfully.`);
                 }
                 return;
+              
+              case 'Fail Download':
+                vscode.window.showInformationMessage(`Diagram import failed.`);
             }
           },
           undefined,
           context.subscriptions
         );
-
       } else {
         vscode.window.showInformationMessage("Failed! File is not a Tonto");
       }
@@ -150,9 +145,9 @@ async function createCommandPaletteGenerateDiagramCommand(context: vscode.Extens
   });
 
   if (fileUri && fileUri[0]) {
-
-    const selectedFile = fileUri[0];
-    await generateDiagram(selectedFile, context);
+    
+    for(const selectedFile of fileUri)
+      await generateDiagram(selectedFile, context);
   } else {
     vscode.window.showErrorMessage("Failed! Not a valid file selected");
   }

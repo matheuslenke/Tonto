@@ -8,11 +8,11 @@ interface GeneratorContext {
 }
 
 export interface diagramContent {
-  packages: Array<Package>,
-  class: Array<Array<Class>>,
-  specializations: Array<Array<Generalization>>,
-  specializationSets: Array<Array<GeneralizationSet>>,
-  relations: Array<Array<Relation>>
+  packages: Package,
+  class: Array<Class>,
+  specializations: Array<Generalization>,
+  specializationSets: Array<GeneralizationSet>,
+  relations: Array<Relation>
 }
 
 export function extractContent(model: Model, name: string | undefined): diagramContent {
@@ -31,22 +31,20 @@ function generate(ctx: GeneratorContext): diagramContent {
   packs.shift();
 
   let content: diagramContent = {
-    packages: packs,
-    class: packs.map((package_) => { return package_.getAllClasses()}),
-    specializations: packs.map((package_) => { return package_.getAllGeneralizations() }),
-    specializationSets: packs.map((package_) => { return package_.getAllGeneralizationSets() }),
-    relations: packs.map((package_) => { return package_.getAllRelations() })
+    packages: packs[0],
+    class: packs[0].getAllClasses(),
+    specializations: packs[0].getAllGeneralizations(),
+    specializationSets: packs[0].getAllGeneralizationSets(),
+    relations: packs[0].getAllRelations()
   }
 
-  content.packages.forEach((package_, i) => {
-    content.specializationSets[i].forEach((genSet) => {
+    content.specializationSets.forEach((genSet) => {
       genSet.generalizations.forEach((genSetGen) => {
         
-        let index = content.specializations[i].findIndex((gen) => { return gen ===  genSetGen});
-        if(index >= 0) content.specializations[i].splice(index, 1);
+        let index = content.specializations.findIndex((gen) => { return gen ===  genSetGen});
+        if(index >= 0) content.specializations.splice(index, 1);
       });
-    })
-  });
+    });
   return content;
 }
 

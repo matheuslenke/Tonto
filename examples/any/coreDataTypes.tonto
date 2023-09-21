@@ -1,7 +1,7 @@
 package CoreDataTypes
 
 datatype number
-// Erro, specializes esta invertido
+// Erro, specializes esta invertido nos datatypes e enums
 datatype int specializes number
 
 datatype PhoneNumber {
@@ -16,3 +16,9 @@ enum EyeColor {
     Black
 }
 enum color specializes EyeColor { red, blue, green }
+
+kind aa
+subkind b specializes aa
+
+
+situation c
