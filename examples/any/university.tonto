@@ -15,8 +15,9 @@ category Organization
 kind University specializes Organization {
     address: Address
     aa: string
+    
     @componentOf
-    (aaa) [1] <o>-- has -- [1..*] Department 
+    [1] <o>-- has -- [1..*] Department
     @componentOf
     [1] <>-- [0..*] Classroom
 }

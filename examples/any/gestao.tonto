@@ -1,0 +1,30 @@
+package gestao
+
+kind Init
+kind End
+
+mode A
+mode B
+mode C
+mode D 
+mode E
+mode F
+mode G
+mode H
+
+relation Init [1..1] -- [1..1] A
+relation Init [1..1] -- [1..1] B
+relation Init [1..1] -- [1..1] C
+
+relation A [1..1] -- [1..1] D
+relation B [1..1] -- [1..1] D
+relation B [1..1] -- [1..1] E
+relation C [1..1] -- [1..1] F
+relation D [1..1] -- [1..1] F
+relation E [1..1] -- [1..1] G
+relation C [1..1] -- [1..1] G
+relation F [1..1] -- [1..1] H
+relation G [1..1] -- [1..1] H
+
+relation E [1..1] -- [1..1] End
+relation H [1..1] -- [1..1] End

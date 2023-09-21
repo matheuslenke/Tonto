@@ -175,6 +175,7 @@
         "commander": "^10.0.1",
         "langium": "^1.2.0",
         "node-fetch-native": "^1.0.1",
+        "puppeteer": "^21.3.1",
         "rimraf": "^4.1.2",
         "tonto-cli": "~0.2.7",
         "tonto-package-manager": "~0.2.9",

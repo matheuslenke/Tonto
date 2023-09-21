@@ -7,7 +7,7 @@ import { generalizationSetViewer, generalizationViewer } from "./specialization.
 import { diagramContent } from "../diagramGenerator";
 import { Uri } from "vscode";
 
-export const generateDiagram = (content: diagramContent, jsUri: Uri, cssUri: Uri, config: Configuration): string => {
+export const generateDiagram = (content: diagramContent, jsUri: Uri, cssUri: Uri, csp: string, config: Configuration): string => {
   
   let svg: string = '';
 
@@ -49,5 +49,5 @@ export const generateDiagram = (content: diagramContent, jsUri: Uri, cssUri: Uri
     svg = renderSvg(nomnomlCode);
   });
 
-  return setHTML(svg, jsUri, cssUri);
+  return setHTML(svg, jsUri, cssUri, csp);
 };

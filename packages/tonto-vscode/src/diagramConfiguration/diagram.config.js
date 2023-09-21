@@ -1,5 +1,6 @@
-const body = document.getElementsByTagName("body")[0];
-const content = document.querySelector('.content');
+const body = document.getElementsByTagName("body")[0]; // body
+const content = document.querySelector('.content'); // div with the svg
+const elements = document.querySelector("body > div.content > svg > g > g > g:nth-child(2) > g"); // content of the svg
 
 // Drag diagram based on the position of the click before start to drag
 let isDragging = false;
@@ -72,9 +73,7 @@ for (const text of texts) {
 
 // Make the dashed line bellow the genSet
 // Fix the position of the cardinality and the relation end names
-const elements = document.querySelector("body > div > svg > g > g > g:nth-child(2) > g");
 const genSet = ["{disjoint, complete}", "{disjoint, incomplete}", "{overlapping, complete}", "{overlapping, incomplete}"];
-
 for (let i = 0; i < elements.childElementCount; i++) {
   const child = elements.children[i];
 
@@ -151,7 +150,7 @@ const colors = {
 
 // Set the colors of the stereotypes
 // Upgrade: define the colors based on the generalizations
-const rectangles = document.querySelectorAll('body > div > svg > g > g > g:nth-child(2) > g > g > g > rect');
+const rectangles = document.querySelectorAll('body > div.content > svg > g > g > g:nth-child(2) > g > g > g > rect');
 for(rect of rectangles){
     const name = rect.getAttribute('data-name');
     
@@ -169,3 +168,29 @@ for(rect of rectangles){
         }
     }
 }
+
+// Define as linhas no fim do svg, o que as sobrepoe aos outros elementos.
+let num = elements.childElementCount;
+let i = 0;
+while(i<num) {
+  if(elements.children[i].tagName !== 'g'){
+    elements.appendChild(elements.removeChild(elements.children[i]));
+    i--;
+    num--;
+  }
+  i++;
+}
+
+const vscode = acquireVsCodeApi();
+const button = document.querySelector("body > div.download");
+button.addEventListener("click", () => {
+  body.style.cursor = "progress";
+  button.style.cursor = "progress";
+  
+  vscode.postMessage({ command: 'Download' });
+  
+  setTimeout(() => {
+    body.style.cursor = "move";
+    button.style.cursor = "pointer";
+  }, 2000);
+});

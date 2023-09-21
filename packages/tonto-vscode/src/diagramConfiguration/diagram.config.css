@@ -11,12 +11,35 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: crosshair;
+    cursor: move;
     background: #ffffff00;
 }  
-div, svg {
+.content, .content svg {
     min-width: 100%;
     overflow: visible;
+}
+
+.download {
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    border-radius: 10px;
+    height: 22px;
+}
+.download:hover {
+    cursor: pointer
+}
+.download svg {
+    height: 100%;
+}
+body.vscode-light .download{
+    background-color: white;
+}
+body.vscode-dark .download, body.vscode-high-contrast .download{
+    background-color: black;
+}
+body.vscode-dark .download svg, body.vscode-high-contrast .download svg{
+    fill: white;
 }
 
 /* set the color os the lines */
@@ -29,7 +52,7 @@ body.vscode-dark path{
 body.vscode-high-contrast path{
     stroke: white;
 }
-body > div > svg > g > g > g:nth-child(2) > g > g > g:nth-child(1) > path{
+body > .content > svg > g > g > g:nth-child(2) > g > g > g:nth-child(1) > path{
     stroke: black
 }
 
@@ -56,9 +79,9 @@ body.vscode-high-contrast text, body.vscode-high-contrast tspan{
 }
 
 /* set colors of the classes texts */
-body > div > svg > g > g > g:nth-child(2) > g > g > g:nth-child(2) > g > text > tspan{
+body > .content > svg > g > g > g:nth-child(2) > g > g > g:nth-child(2) > g > text > tspan{
     fill: black;
 }
-body > div > svg > g > g > g:nth-child(2) > g > g > g:nth-child(3) > g > text {
+body > .content > svg > g > g > g:nth-child(2) > g > g > g:nth-child(3) > g > text {
     fill: black;
 }
