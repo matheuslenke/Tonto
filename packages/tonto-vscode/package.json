@@ -92,12 +92,12 @@
                 "Diagram.Relation.Associations": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Show the Stereotypes of the relationships."
+                    "description": "Show the Stereotypes and Names of the relationships."
                 },
                 "Diagram.Relation.AssociationsEndNames": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Show the Nicknames of the relationships."
+                    "description": "Show the Associations End Names of the relationships."
                 },
                 "Diagram.Datatype": {
                     "type": "boolean",
@@ -149,12 +149,9 @@
     },
     "dependencies": {
         "chalk": "^4.1.0",
-        "cheerio": "^1.0.0-rc.12",
         "commander": "^10.0.1",
-        "jspdf": "^2.5.1",
         "langium": "^1.2.0",
         "node-fetch-native": "^1.0.1",
-        "puppeteer": "^21.3.1",
         "rimraf": "^4.1.2",
         "tonto-cli": "~0.2.7",
         "tonto-package-manager": "~0.2.9",

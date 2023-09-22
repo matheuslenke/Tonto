@@ -1,10 +1,6 @@
 import * as vscode from "vscode";
 import { viewCommand, Configuration } from "tonto-cli";
 import { CommandIds } from "./commandIds";
-// import jsPDF from "jspdf";
-// import fs from "fs";
-// import * as cheerio from 'cheerio';
-// import puppeteer from 'puppeteer';
 
 function createGenerateDiagramStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
 

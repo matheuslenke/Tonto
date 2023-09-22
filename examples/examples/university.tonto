@@ -1,6 +1,3 @@
-// Import não aparece na AST
-import CoreDataTypes
-
 package University
 
 datatype Address
@@ -8,9 +5,7 @@ datatype string
 
 kind Department {
     name: string
-    num: PhoneNumber // propriedade não aparece na AST
 }
-subkind d specializes aa // especialização não aparece na AST
 
 kind Room
 subkind Classroom specializes Room
@@ -19,12 +14,12 @@ category Organization
 
 kind University specializes Organization {
     address: Address
-    aa: string
+    name: string
     
     @componentOf
-    [1] <o>-- has -- [1..*] Department
+    [1..1] <o>-- [1..*] Department
     @componentOf
-    [1] <>-- [0..*] Classroom
+    [1] <>-- has --[1..*] Classroom
 }
 
 roleMixin Employer
@@ -34,8 +29,5 @@ collective Staff
 subkind JuniorStaffa specializes Staff
 subkind SeniorStaff specializes Staff
 
-relation Department [1] -- [1] JuniorStaffa
 relation Department [1] <>-- [1] SeniorStaff
-
-quality a
-phase b specializes a
+relation Department [1] <>-- [1] JuniorStaffa
