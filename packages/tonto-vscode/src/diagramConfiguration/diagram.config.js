@@ -52,7 +52,7 @@ for (const arrow of arrows) {
 const texts = document.getElementsByTagName("text");
 for (const text of texts) {
     if(/«.*»/.test(text.textContent)){
-
+      if(text.textContent.split(' ').length === 2){
         let stereotype = document.createElementNS("http://www.w3.org/2000/svg", 'tspan');
         let name = document.createElementNS("http://www.w3.org/2000/svg", 'tspan');
         [stereotype.textContent, name.textContent] = text.textContent.split(' ');
@@ -68,7 +68,10 @@ for (const text of texts) {
 
         text.appendChild(stereotype);
         text.appendChild(name);
+      }
     }
+    if(text.textContent.split('_').length === 2)
+      text.textContent = text.textContent.split('_')[0];
 }
 
 // Make the dashed line bellow the genSet
@@ -99,20 +102,6 @@ for (let i = 0; i < elements.childElementCount; i++) {
     else
       child.setAttribute('x', Number(child.getAttribute('x'))-((Number(child.getAttribute('x'))-X+155)));
   }
-
-  // else if(child.tagName === "text" && (elements.children[i+2].tagName === "path" || (elements.children[i+2].tagName === "g" && !(elements.children[i+2].getAttribute('data-name'))))){
-  //   let points = 0;
-  //   if(elements.children[i+2].tagName === "g")
-  //     points = elements.children[i+2].children[0].getAttribute("d").split(" ").slice(-3, -1);
-  //   else
-  //     points = elements.children[i+2].getAttribute("d").split(" ").slice(-3, -1);
-
-  //   const X = Number(points[0].slice(1));
-  //   const Y = Number(points[1]);
-
-  //   child.setAttribute('y', Y-15);
-  //   child.setAttribute('x', X-30);
-  // }
 }
 
 // Define the colors os the stereotypes

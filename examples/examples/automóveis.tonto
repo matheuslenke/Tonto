@@ -1,0 +1,21 @@
+package Automoveis
+
+datatype string
+datatype number
+
+kind CarAgency
+kind Car {
+    cor: string
+    rodas: number
+}
+
+relator CarOwnership {
+    @mediation [0..*] -- [1] Car
+    @mediation [0..*] -- boughtFrom -- [1] CarAgency
+}
+
+kind Roda {
+    @componentOf [0..4] <>-- [1] Car
+}
+
+relation Car [1] -- a -- [4] Roda

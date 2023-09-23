@@ -4,8 +4,9 @@ export interface Configuration {
   },
   Relation: {
     Cardinality: boolean,
-    Associations: boolean,
-    AssociationsEndNames: boolean
+    Stereotype: boolean,
+    Name: boolean,
+    EndNames: boolean
   },
   Datatype: boolean,
   Enumeration: boolean

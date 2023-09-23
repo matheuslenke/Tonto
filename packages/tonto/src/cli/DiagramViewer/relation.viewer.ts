@@ -25,19 +25,27 @@ return ["-", "->"];
 
 function associationKey(
     relation: Relation,
+    id: number,
     config: Configuration
 ): string{
     let nomnomlCode = "";
     const [firstAssociationType, secondAssociationType] = getAssociation(relation, [relation.properties[0].aggregationKind, relation.properties[1].aggregationKind]);
 
     nomnomlCode += firstAssociationType + " ";
+    console.log(id);
 
-    if(config.Relation.Associations && relation.stereotype && relation.getName('en')){
-        nomnomlCode += `[<label> «${relation.stereotype || ""}» ${relation.getName('en') || ""}]\n`;
-        nomnomlCode += `[<label> «${relation.stereotype || ""}» ${relation.getName('en') || ""}] `;
+    if(config.Relation.Stereotype && config.Relation.Name && relation.stereotype && relation.getName('en')){
+        nomnomlCode += `[<label> «${relation.stereotype}» ${relation.getName('en')}]\n`;
+        nomnomlCode += `[<label> «${relation.stereotype}» ${relation.getName('en')}] `;
+    } else if(config.Relation.Stereotype && relation.stereotype) {
+        nomnomlCode += `[<label> «${relation.stereotype}»_${id}]\n`;
+        nomnomlCode += `[<label> «${relation.stereotype}»_${id}] `;
+    } else if(config.Relation.Name && relation.getName('en')){
+        nomnomlCode += `[<label> ${relation.getName('en')}_${id}]\n`;
+        nomnomlCode += `[<label> ${relation.getName('en')}_${id}] `;
     } else {
-        nomnomlCode += `[<hidden> ${relation.id}]\n`;
-        nomnomlCode += `[<hidden> ${relation.id}] `;
+        nomnomlCode += `[<hidden> ${id}]\n`;
+        nomnomlCode += `[<hidden> ${id}] `;
     }
     nomnomlCode += secondAssociationType + " ";
 
@@ -54,7 +62,7 @@ function firstAssociation(
     if(config.Relation.Cardinality && relation.cardinality.value)
         nomnomlCode += `${relation.cardinality.value} `;
 
-    if(config.Relation.AssociationsEndNames && relation.getName('en'))
+    if(config.Relation.EndNames && relation.getName('en'))
         nomnomlCode += `${relation.getName('en')} `
 
     return nomnomlCode;
@@ -69,7 +77,7 @@ function secondAssociation(
     if(config.Relation.Cardinality && relation.cardinality.value)
     nomnomlCode += `${relation.cardinality.value} `;
     
-    if(config.Relation.AssociationsEndNames && relation.getName('en'))
+    if(config.Relation.EndNames && relation.getName('en'))
         nomnomlCode += `${relation.getName('en')} `
     
     nomnomlCode += `[«${relation.propertyType.stereotype}» ${relation.propertyType.getName('en') || ""}]\n`;
@@ -78,6 +86,7 @@ return nomnomlCode;
 
 export function relationViewer(
     relation: Relation,
+    id: number,
     config: Configuration
 ): string {
     let nomnomlCode = "";
@@ -87,7 +96,7 @@ export function relationViewer(
 
     if((config.Datatype || !dtype) && (config.Enumeration || !enumm)){
         nomnomlCode += firstAssociation(relation.properties[0], config);
-        nomnomlCode += associationKey(relation, config);
+        nomnomlCode += associationKey(relation, id, config);
         nomnomlCode += secondAssociation(relation.properties[1], config);
     }
 

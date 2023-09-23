@@ -20,19 +20,6 @@ export const generateDiagram = (content: diagramContent, domToImgUri: Uri, jsUri
 #ranker: tight-tree
 `;
 
-  content.class.forEach((element) => {
-    if((config.Datatype || !element.hasDatatypeStereotype()) && (config.Enumeration || !element.hasEnumerationStereotype()))
-      nomnomlCode += classViewer(element, config);
-  });
-
-  content.specializationSets.forEach((genSet) => {
-    nomnomlCode += generalizationSetViewer(genSet);
-  });
-
-  content.relations.forEach((relation) => {
-    nomnomlCode += relationViewer(relation, config);
-  });
-
   content.specializations.forEach((generalization) => {
     const general = generalization.getGeneralClass();
     const specific = generalization.getSpecificClass();
@@ -40,8 +27,22 @@ export const generateDiagram = (content: diagramContent, domToImgUri: Uri, jsUri
     // This is necessary because there is an error in the ast
     if((config.Datatype && (general.hasDatatypeStereotype() || specific.hasDatatypeStereotype())) || (config.Enumeration && (general.hasEnumerationStereotype() || specific.hasEnumerationStereotype()))){
       nomnomlCode += generalizationViewer(generalization.id, specific, general);
-    } else if(!(general.hasDatatypeStereotype() || specific.hasDatatypeStereotype() || general.hasEnumerationStereotype() || specific.hasEnumerationStereotype()))
+    } else if(!(general.hasDatatypeStereotype() || specific.hasDatatypeStereotype() || general.hasEnumerationStereotype() || specific.hasEnumerationStereotype())){
       nomnomlCode += generalizationViewer(generalization.id, general, specific);
+    }
+  });
+
+  content.specializationSets.forEach((genSet) => {
+    nomnomlCode += generalizationSetViewer(genSet);
+  });
+    
+  content.relations.forEach((relation, id) => {
+    nomnomlCode += relationViewer(relation, id, config);
+  });
+
+  content.class.forEach((element) => {
+    if((config.Datatype || !element.hasDatatypeStereotype()) && (config.Enumeration || !element.hasEnumerationStereotype()))
+      nomnomlCode += classViewer(element, config);
   });
 
   // Generate the SVG for the diagram

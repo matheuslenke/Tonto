@@ -81,7 +81,7 @@
             "properties": {
                 "Diagram.Entity.Attributes": {
                     "type": "boolean",
-                    "default": false,
+                    "default": true,
                     "description": "Show the attributes of the entities."
                 },
                 "Diagram.Relation.Cardinality": {
@@ -89,15 +89,20 @@
                     "default": false,
                     "description": "Show the Cardinalities of the relationships."
                 },
-                "Diagram.Relation.Associations": {
+                "Diagram.Relation.Stereotype": {
                     "type": "boolean",
-                    "default": false,
-                    "description": "Show the Stereotypes and Names of the relationships."
+                    "default": true,
+                    "description": "Show the Stereotype of the relationships."
                 },
-                "Diagram.Relation.AssociationsEndNames": {
+                "Diagram.Relation.Name": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show the Name of the relationships."
+                },
+                "Diagram.Relation.EndNames": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Show the Associations End Names of the relationships."
+                    "description": "Show the End Names of the relationships."
                 },
                 "Diagram.Datatype": {
                     "type": "boolean",
