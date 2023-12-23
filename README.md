@@ -48,18 +48,9 @@ Tonto is an acronym with the words Textual and Ontology, because it is a written
 Tonto was designed as a friendly textual syntax for ontologies. It offers specialized support for constructs reflecting the UFO foundational ontology, which makes it possible to identify errors in the ontology that would otherwise pass unnoticed. The language was designed to allow transformation to a number of languages including UML (more specifically OntoUML), OWL (for gUFO-based ontologies), Alloy, Common Logic, and the TPTP syntax.
 
 ### The language supports:
-
-- UFO-based annotations to facilitate error checking and meaning negotiation
-
+- Declaration of OntoUML constructs in a easy-to-read syntax
+- Enumerations and custom datatypes
 - High-order types for multi-level taxomies
-
-- Structured comments for documentation generation
-
-- Constraints specification when extra precision is required
-
-- Ontology testing/verification directives 
-
- 
 
 As a textual syntax, the language can benefit from source control tools such as git, and ontologies can be viewed and edited without special tools. This VS Code extension is provided with support for syntax verification, syntax highlight, content assist and ontology visualization preview. The extension is integrated with the [OntoUML](https://github.com/OntoUML/OntoUML) server, to benefit from services designed for the language, such as transformation to OWL and generation of database schemas.
 
