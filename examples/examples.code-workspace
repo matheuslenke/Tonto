@@ -1,25 +1,10 @@
 {
 	"folders": [
 		{
-			"path": "drafts"
+			"path": "basicExamples/CarExample"
 		},
 		{
-			"path": "validators"
-		},
-		{
-			"path": "onto-examples"
-		},
-		{
-			"path": "scope-tests"
-		},
-		{
-			"path": "basicExamples"
-		},
-		{
-			"path": "generateTests"
-		},
-		{
-			"path": "ontouml-models"
+			"path": "ontouml-models/Aguiar2019ooco"
 		}
 	],
 	"settings": {}

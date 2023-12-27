@@ -1,0 +1,7 @@
+package core
+
+kind Person
+
+kind MyKind
+
+subkind MySubkind specializes MyKind

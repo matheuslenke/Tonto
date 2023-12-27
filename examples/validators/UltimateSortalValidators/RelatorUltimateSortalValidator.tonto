@@ -1,0 +1,12 @@
+// test case 4
+package RelatorUltimateSortalValidator
+// relator RelatorUltimateSortal
+
+// kind PersonError specializes RelatorUltimateSortal
+// collective CollectiveError specializes RelatorUltimateSortal
+// quantity QuantityError specializes RelatorUltimateSortal
+// relator RelatorError specializes RelatorUltimateSortal
+// quality QualityError specializes RelatorUltimateSortal
+// mode ModeError specializes RelatorUltimateSortal
+// intrinsicMode  IntrinsicModeError specializes RelatorUltimateSortal
+// extrinsicMode ExtrinsicModeError specializes RelatorUltimateSortal

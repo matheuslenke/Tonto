@@ -1,0 +1,8 @@
+import LivingThings.Human
+
+package LivingThings.Teacher
+
+role teacher specializes Person
+
+
+

@@ -1,0 +1,41 @@
+import CoreDatatypes
+package University
+
+kind Organization
+
+subkind University specializes Organization {
+  address: Address
+  @componentOf
+  [1..*] <>-- has -- [1] Department
+  @componentOf
+  [1] <>-- [0..*] Classrooms 
+
+  [1] -- name --<> Classroom
+  [1] -- name2 --<o> Classroom
+  [1] -- name3 -- Classroom
+  [1] <>-- name4 -- Classroom
+  [1] <o>-- name5 -- Classroom
+}
+
+kind Department {
+  name: string
+  @memberOf
+  ({const})[1..*] <o>-- [1..*] Staff
+}
+
+collective Staff
+collective Classrooms
+
+@componentOf
+relation Classrooms [1] <o>-- [1..*] Classroom
+
+kind Room
+subkind Classroom of collectives specializes Classrooms
+
+mixin Seatable
+category Furniture
+
+kind Chair specializes Seatable, Furniture
+
+@componentOf
+relation Classroom [1] <o>-- has -- [1..*] Chair

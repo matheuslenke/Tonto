@@ -1,0 +1,13 @@
+// test case 7
+package IntrinsicModeUltimateSortalValidator 
+
+intrinsicMode IntrinsicModeUltimateSortal
+
+// kind PersonError specializes IntrinsicModeUltimateSortal
+// collective CollectiveError specializes IntrinsicModeUltimateSortal
+// quantity QuantityError specializes IntrinsicModeUltimateSortal
+// relator RelatorError specializes IntrinsicModeUltimateSortal
+// quality QualityError specializes IntrinsicModeUltimateSortal
+// mode ModeError specializes IntrinsicModeUltimateSortal
+// intrinsicMode  IntrinsicModeError specializes IntrinsicModeUltimateSortal
+// extrinsicMode ExtrinsicModeError specializes IntrinsicModeUltimateSortal

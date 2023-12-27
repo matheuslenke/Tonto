@@ -1,0 +1,47 @@
+import core
+import LivingThings.Human
+
+package main
+
+kind MainFunction
+
+category MainCategory
+
+subkind MainSubkind specializes MyKind
+
+subkind SecondSubkind specializes Person
+
+kind TestingInternalRelationSnippets {
+  [*] <>-- namedAggregation -- [1..*] MyKind
+  [*] -- namedAssociation -- [*] Person
+  @externalDependence
+  (end1) [*] -- namedAssociation1 -- [*] (end2) SecondSubkind
+  @bringsAbout
+  ({ ordered } end1) [1..56] <>-- namedAggregation2 -- [60..120] ({ordered} end2) TestingInternalRelationSnippets
+// @subQuantityOf
+// ({ derived } end1) [1] -- namedAssociation2 -- [0..*] ({derived} end2) 
+}
+
+datatype name {
+  b: string
+  c: name
+// a: BasicDataTypes.number
+// gender: name [*] { derived }
+}
+enum NamedEnum {
+  CASE,
+  CASE,
+  CASE
+}
+
+enum TestEnum {
+  CASE1,
+  CASE2
+}
+enum Name {
+  case2
+}
+
+datatype noname of abstract-individuals {
+  name: main.noname
+}

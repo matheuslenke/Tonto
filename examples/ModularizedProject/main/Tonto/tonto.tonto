@@ -1,0 +1,3 @@
+package "https://github.com/matheuslenke/tonto"
+
+kind UrlKind

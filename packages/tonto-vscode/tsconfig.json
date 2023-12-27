@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "out",
+    "sourceMap": true
+  },
+  "references": [
+    {
+      "path": "../tonto"
+    }
+  ],
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "out",
+    "/node_modules"
+  ]
+}

@@ -1,0 +1,25 @@
+import CoreDatatypes
+
+package PersonPhases
+
+kind Person
+
+type PersonTypeByAge
+
+phase Child
+phase Teenager
+phase Adult
+
+disjoint complete genset PhasesOfPerson {
+  general Person
+  specifics Child, Teenager, Adult
+}
+
+// disjoint complete genset PhasesOfPerson where Child, Teenager, Adult specializes Person
+
+role UniversityStudent specializes Person
+role FormerStudent specializes UniversityStudent
+role ActiveStudent specializes UniversityStudent
+
+role Employee specializes Person
+role UniversityProfessor specializes Employee

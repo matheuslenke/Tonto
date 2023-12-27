@@ -1,0 +1,43 @@
+package CarRental 
+
+kind Person
+
+role Employee specializes Person
+role ResponsibleEmployee specializes Employee
+
+phase DeceasedPerson specializes Person
+phase LivingPerson specializes Person
+
+phase Child
+phase Teenager
+phase Adult
+
+disjoint complete genset AgePhase {
+    general LivingPerson
+    specifics Child, Teenager, Adult
+}
+
+roleMixin Customer
+
+role PersonalCustomer specializes Customer, Person
+
+kind Organization
+
+role CorporateCustomer specializes Organization
+
+kind Car
+
+phase AvailableCar specializes Car
+phase UnderMaintenanceCar specializes Car
+
+role RentalCar specializes AvailableCar
+
+relator CarRental {
+    @mediation
+    -- involvesRental -- [1] RentalCar
+    
+    -- involvesMediator -- [1] ResponsibleEmployee
+    
+    @mediation
+    -- involvesCustomer --[1] Customer
+}

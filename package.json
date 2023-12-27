@@ -1,100 +1,28 @@
 {
-    "name": "tonto",
-    "displayName": "tonto",
-    "publisher": "Lenke",
+    "name": "tonto-workspaces",
+    "private": true,
+    "engineStrict": true,
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.1.2",
+    "version": "0.2.10",
     "license": "MIT",
-    "icon": "docs/images/TontoIcon.png",
     "repository": {
         "type": "git",
         "url": "https://github.com/matheuslenke/Tonto"
     },
     "engines": {
-        "vscode": "^1.63.0"
+        "npm": ">= 7.7.0"
     },
-    "categories": [
-        "Programming Languages"
-    ],
-    "contributes": {
-        "languages": [
-            {
-                "id": "tonto",
-                "aliases": [
-                    "Tonto",
-                    "tonto"
-                ],
-                "extensions": [
-                    ".tonto"
-                ],
-                "configuration": "./language-configuration.json"
-            }
-        ],
-        "grammars": [
-            {
-                "language": "tonto",
-                "scopeName": "source.tonto",
-                "path": "./syntaxes/tonto.tmLanguage.json"
-            }
-        ],
-        "commands": [
-            {
-                "command": "extension.generateTonto",
-                "title": "Generate Tonto"
-            },
-            {
-                "command": "extension.generateJSON",
-                "title": "Generate JSON"
-            },
-            {
-                "command": "extension.validateModel",
-                "title": "Validate Model"
-            }
-        ]
-    },
-    "activationEvents": [
-        "onLanguage:tonto"
-    ],
-    "files": [
-        "bin",
-        "out",
-        "src"
-    ],
-    "bin": {
-        "tonto-cli": "./bin/cli"
-    },
-    "main": "./out/extension.js",
     "scripts": {
-        "vscode:prepublish": "npm run clean && tsc --noEmit && npm run lint && node esbuild.js --minify",
-        "package": "vsce package --pre-release --baseContentUrl https://github.com/matheuslenke/Tonto",
-        "publish": "vsce publish --baseContentUrl https://github.com/matheuslenke/Tonto",
-        "clean": "rimraf out",
-        "lint": "eslint src --ext ts",
-        "lint:fix": "eslint src --ext ts --fix",
-        "build": "node esbuild.js && tsc --noEmit",
-        "watch": "node esbuild.js --watch",
+        "clean": "rimraf lib node_modules",
+        "build": "tsc -b tsconfig.build.json && npm run build --workspaces",
+        "lint": "npm run lint --workspaces",
+        "lint:fix": "npm run lint --workspaces --fix",
+        "watch": "concurrently -n tsc,esbuild -c blue,yellow \"tsc -b tsconfig.build.json -w\" \"npm run watch --workspace=langium-vscode\"",
         "test": "vitest",
         "test-ui": "vitest --ui",
         "coverage": "vitest run --coverage",
-        "langium:generate": "langium generate",
-        "langium:watch": "langium generate --watch"
-    },
-    "dependencies": {
-        "ajv": "^8.11.0",
-        "chalk": "^5.2.0",
-        "chevrotain": "^10.4.2",
-        "colors": "^1.4.0",
-        "commander": "^9.4.1",
-        "jsonfile": "^6.1.0",
-        "langium": "~1.0.0",
-        "node-fetch-native": "^1.0.1",
-        "ontouml-js": "https://github.com/matheuslenke/ontouml-js#feature/include-types-in-build",
-        "ontouml-schema": "0.2.4",
-        "rimraf": "^4.1.2",
-        "vscode-languageclient": "~8.0.2",
-        "vscode-languageserver": "~8.0.2",
-        "vscode-languageserver-types": "^3.17.3",
-        "vscode-uri": "^3.0.2"
+        "langium:generate": "langium generate --workspace=tonto-cli",
+        "langium:watch": "langium generate --watch --workspace=tonto-cli"
     },
     "devDependencies": {
         "@types/jest": "^29.2.3",
@@ -107,14 +35,22 @@
         "@vitest/ui": "^0.23.4",
         "esbuild": "^0.16.9",
         "eslint": "^8.32.0",
-        "langium-cli": "^1.0.0",
-        "prettier": "^2.8.2",
-        "typescript": "~4.7.4",
-        "vite": "^4.0.2",
-        "vitest": "^0.23.2"
+        "eslint-config-prettier": "^8.8.0",
+        "prettier": "2.8.8",
+        "prettier-eslint": "^15.0.1",
+        "prettier-plugin-eslint": "^1.0.2",
+        "shx": "^0.3.4",
+        "typescript": "~4.9.5",
+        "vite": "^4.3.8",
+        "vitest": "^0.31.1"
     },
     "volta": {
         "node": "18.14.0",
         "npm": "9.3.1"
-    }
+    },
+    "workspaces": [
+        "packages/tonto",
+        "packages/tonto-vscode",
+        "packages/tonto-package-manager"
+    ]
 }

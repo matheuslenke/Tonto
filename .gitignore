@@ -12,3 +12,7 @@ coverage
 **/generated/*.json
 
 .yarn
+
+packages/tonto-vscode/data/tonto-tmLanguage.json
+
+**/tonto_dependencies

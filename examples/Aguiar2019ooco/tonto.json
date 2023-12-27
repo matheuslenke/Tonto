@@ -1,0 +1,19 @@
+{
+  "projectName": "Aguiar2019ooco",
+  "displayName": "Aguiar 2019 Object Oriented Example",
+  "publisher": "Aguiar",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "SWO": {
+      "url": "https://github.com/matheuslenke/tonto-example-models.git",
+      "directory": "SWO",
+      "branch": "feature/test-tonto-reference"
+    },
+    "SPO": {
+      "url": "https://github.com/matheuslenke/tonto-example-models.git",
+      "directory": "SPO"
+    }
+  },
+  "outFolder": "outDirectory"
+}

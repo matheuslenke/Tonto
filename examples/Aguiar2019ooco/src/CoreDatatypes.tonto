@@ -1,0 +1,25 @@
+package CoreDatatypes
+
+datatype PhoneNumber {
+  countryCode: int
+  bodyNumber: int
+}
+
+datatype int specializes number
+
+enum EyeColor {
+  Blue,
+  Green,
+  Brown,
+  Black,
+  Other
+}
+
+datatype Address {
+  country: string
+  city: string
+  postalCode: string
+  street: string
+  number: string
+  complement: string
+}

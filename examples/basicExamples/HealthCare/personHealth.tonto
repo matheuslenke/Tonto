@@ -1,0 +1,46 @@
+import PersonHealth
+
+package PersonHealth
+
+category PhysicalObject
+
+kind Hearth specializes PhysicalObject 
+
+kind Brain specializes PhysicalObject
+
+phase FunctionalBrain specializes Brain
+phase NonFunctionalBrain specializes Brain
+
+kind Person specializes PhysicalObject {
+    <>-- hasOneHearth -- [1] Hearth
+    <>-- hasOneBrain -- [1] Brain
+}
+
+phase DeceasedPerson 
+phase LivingPerson
+
+disjoint complete genset personByLivingCondition {
+    general Person
+    specifics DeceasedPerson, LivingPerson 
+}
+
+mode Sympton
+
+role Patient specializes LivingPerson {
+    @comparative 
+    -- isMoreCriticalThan -- Patient
+    @comparative 
+    -- isLessCriticalThan -- Patient
+
+    @material 
+    -- treatedIn -- [1..*] HealhcareProvider
+    
+    @characterization 
+    -- hasSympton -- [1..*] Sympton
+}
+
+relator Treatment {
+    @mediation --  [1..*] Patient
+    @mediation -- offeredByProvider -- [1] HealhcareProvider
+}
+

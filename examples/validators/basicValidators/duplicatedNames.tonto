@@ -1,0 +1,11 @@
+package Teste 
+
+kind ElementOne {
+  [*] <>-- TestName -- [*] ElementFour
+  [*] <>-- TestName -- [*] ElementFour
+}
+kind ElementOne
+kind ElementThree
+kind ElementFour
+relation ElementOne -- relationName -- ElementThree
+relation ElementThree -- relationName -- ElementFour

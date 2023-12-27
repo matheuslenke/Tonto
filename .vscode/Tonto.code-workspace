@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../packages/tonto"
+		},
+		{
+			"path": "../packages/tonto-vscode"
+		},
+		{
+			"path": "../packages/tonto-package-manager"
+		}
+	],
+	"settings": {}
+}

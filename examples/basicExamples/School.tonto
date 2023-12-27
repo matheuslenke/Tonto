@@ -1,8 +1,0 @@
-module School {
-    kind Pessoa
-    kind Organizacao
-    subkind Escola specializes Organizacao
-    role Estudante specializes Pessoa
-    relation Organizacao -- temMembro -- Pessoa
-    relation Estudante -- estudaEm -- Escola
-}

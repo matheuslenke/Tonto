@@ -30,6 +30,7 @@
   <h1><summary>Table of Contents</summary></h1>
   <ol>
     <li><a href="#about-the-project">About The Project</a></li>
+    <li><a href="#packages">Packages separation</a></li>
     <li><a href="#built-with">Built With</a></li>
     <li><a href="#getting-started">Getting Started</a></li>
     <li><a href="#prerequisites">Prerequisites</a></li>
@@ -47,18 +48,9 @@ Tonto is an acronym with the words Textual and Ontology, because it is a written
 Tonto was designed as a friendly textual syntax for ontologies. It offers specialized support for constructs reflecting the UFO foundational ontology, which makes it possible to identify errors in the ontology that would otherwise pass unnoticed. The language was designed to allow transformation to a number of languages including UML (more specifically OntoUML), OWL (for gUFO-based ontologies), Alloy, Common Logic, and the TPTP syntax.
 
 ### The language supports:
-
-- UFO-based annotations to facilitate error checking and meaning negotiation
-
+- Declaration of OntoUML constructs in a easy-to-read syntax
+- Enumerations and custom datatypes
 - High-order types for multi-level taxomies
-
-- Structured comments for documentation generation
-
-- Constraints specification when extra precision is required
-
-- Ontology testing/verification directives 
-
- 
 
 As a textual syntax, the language can benefit from source control tools such as git, and ontologies can be viewed and edited without special tools. This VS Code extension is provided with support for syntax verification, syntax highlight, content assist and ontology visualization preview. The extension is integrated with the [OntoUML](https://github.com/OntoUML/OntoUML) server, to benefit from services designed for the language, such as transformation to OWL and generation of database schemas.
 
@@ -78,6 +70,23 @@ Here are some of the languages, frameworks, tools and libraries used in developm
 
 
 <div id="getting-started"> </div>
+
+<!-- PACKAGES -->
+##  Packages
+
+This project is divided in 3 packages, each of them responsible for a different part of Tonto.
+
+### [Tonto Grammar and CLI](packages/tonto/)
+- This package is where Tonto Grammar, the Language Server Protocol and the CLI is defined. All elements and commands are available in this package, and you can read more about it here:
+
+### [Tonto Extension](packages/tonto-vscode/)
+- This package is responsible for the [VSCode Extension](https://marketplace.visualstudio.com/items?itemName=Lenke.tonto)
+
+### [Tonto Package Manager](packages/tonto-package-manager/)
+- This package is responsible for the TPM responsible for managing
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
 
 <!-- GETTING STARTED -->
 ## ⌨️ Getting Started
