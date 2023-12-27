@@ -125,7 +125,7 @@ fragment RelationData:
 	secondCardinality=Cardinality?
 	secondEndMetaAttributes=RelationMetaAttributes?
 
-	secondEnd=[ClassDeclaration:ID]
+	secondEnd=[ClassDeclaration:QualifiedName]
 	('specializes' specializeRelation=[ElementRelation:QualifiedName])?
 	(hasInverse='inverseOf' inverseEnd=[ElementRelation:QualifiedName])?
 ;

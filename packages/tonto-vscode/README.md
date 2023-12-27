@@ -4,7 +4,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/matheuslenke/Tonto">
-    <img src="../../docs/images/TontoLogo.png" alt="Logo"  height="100" alt="Tonto Logo image, a blue background with TONTO written in it">
+    <img src="/docs/images/TontoLogo.png" alt="Logo"  height="100" alt="Tonto Logo image, a blue background with TONTO written in it">
   </a>
 
   <h3 align="center">An DSL for Ontology models</h3>
