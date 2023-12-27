@@ -1080,7 +1080,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@34"
+                  "$ref": "#/rules@2"
                 },
                 "arguments": []
               },
