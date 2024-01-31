@@ -566,6 +566,10 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
           {
             "$type": "Keyword",
             "value": "situation"
+          },
+          {
+            "$type": "Keyword",
+            "value": "process"
           }
         ]
       },
@@ -1075,7 +1079,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
             "terminal": {
               "$type": "CrossReference",
               "type": {
-                "$ref": "#/interfaces@0"
+                "$ref": "#/types@1"
               },
               "terminal": {
                 "$type": "RuleCall",
@@ -1609,6 +1613,14 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
           {
             "$type": "Keyword",
             "value": "formal"
+          },
+          {
+            "$type": "Keyword",
+            "value": "manifestation"
+          },
+          {
+            "$type": "Keyword",
+            "value": "constitution"
           }
         ]
       },

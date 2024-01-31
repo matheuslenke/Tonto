@@ -45,10 +45,10 @@ export function isEndurantType(item: unknown): item is EndurantType {
     return isNonSortal(item) || isUltimateSortal(item) || isSortal(item);
 }
 
-export type NonEndurantType = 'event' | 'situation';
+export type NonEndurantType = 'event' | 'process' | 'situation';
 
 export function isNonEndurantType(item: unknown): item is NonEndurantType {
-    return item === 'event' || item === 'situation';
+    return item === 'event' || item === 'situation' || item === 'process';
 }
 
 export type NonSortal = 'category' | 'historicalRoleMixin' | 'mixin' | 'phaseMixin' | 'roleMixin';
@@ -69,10 +69,10 @@ export function isQualifiedName(item: unknown): item is QualifiedName {
     return typeof item === 'string';
 }
 
-export type RelationStereotype = 'aggregation' | 'bringsAbout' | 'characterization' | 'comparative' | 'componentOf' | 'composition' | 'creation' | 'derivation' | 'externalDependence' | 'formal' | 'historicalDependence' | 'inherence' | 'instantiation' | 'manifestation' | 'material' | 'mediation' | 'memberOf' | 'participation' | 'participational' | 'subCollectionOf' | 'subQuantityOf' | 'termination' | 'triggers' | 'value';
+export type RelationStereotype = 'aggregation' | 'bringsAbout' | 'characterization' | 'comparative' | 'componentOf' | 'composition' | 'constitution' | 'creation' | 'derivation' | 'externalDependence' | 'formal' | 'historicalDependence' | 'inherence' | 'instantiation' | 'manifestation' | 'material' | 'mediation' | 'memberOf' | 'participation' | 'participational' | 'subCollectionOf' | 'subQuantityOf' | 'termination' | 'triggers' | 'value';
 
 export function isRelationStereotype(item: unknown): item is RelationStereotype {
-    return item === 'material' || item === 'derivation' || item === 'comparative' || item === 'mediation' || item === 'characterization' || item === 'externalDependence' || item === 'componentOf' || item === 'memberOf' || item === 'subCollectionOf' || item === 'subQuantityOf' || item === 'instantiation' || item === 'termination' || item === 'participational' || item === 'participation' || item === 'historicalDependence' || item === 'creation' || item === 'manifestation' || item === 'bringsAbout' || item === 'triggers' || item === 'composition' || item === 'aggregation' || item === 'inherence' || item === 'value' || item === 'formal';
+    return item === 'material' || item === 'derivation' || item === 'comparative' || item === 'mediation' || item === 'characterization' || item === 'externalDependence' || item === 'componentOf' || item === 'memberOf' || item === 'subCollectionOf' || item === 'subQuantityOf' || item === 'instantiation' || item === 'termination' || item === 'participational' || item === 'participation' || item === 'historicalDependence' || item === 'creation' || item === 'manifestation' || item === 'bringsAbout' || item === 'triggers' || item === 'composition' || item === 'aggregation' || item === 'inherence' || item === 'value' || item === 'formal' || item === 'manifestation' || item === 'constitution';
 }
 
 export type Sortal = 'historicalRole' | 'phase' | 'role' | 'subkind';
@@ -200,7 +200,7 @@ export interface ElementRelation extends AstNode {
     name?: QualifiedName
     relationType?: RelationStereotype
     secondCardinality?: Cardinality
-    secondEnd: Reference<ClassDeclaration>
+    secondEnd: Reference<DataTypeOrClass>
     secondEndMetaAttributes?: RelationMetaAttributes
     specializeRelation?: Reference<ElementRelation>
 }
@@ -364,11 +364,11 @@ export class TontoAstReflection extends AbstractAstReflection {
             }
             case 'ClassDeclaration:instanceOf':
             case 'ClassDeclaration:specializationEndurants':
-            case 'ElementRelation:firstEnd':
-            case 'ElementRelation:secondEnd': {
+            case 'ElementRelation:firstEnd': {
                 return ClassDeclaration;
             }
-            case 'DataType:specializationEndurants': {
+            case 'DataType:specializationEndurants':
+            case 'ElementRelation:secondEnd': {
                 return DataTypeOrClass;
             }
             case 'ElementRelation:inverseEnd':

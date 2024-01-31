@@ -70,7 +70,7 @@ UnspecifiedType returns string:
 ;
 
 NonEndurantType returns string:
-	'event' | 'situation'
+	'event' | 'situation' | 'process'
 ;
 
 EndurantType returns string:
@@ -125,7 +125,7 @@ fragment RelationData:
 	secondCardinality=Cardinality?
 	secondEndMetaAttributes=RelationMetaAttributes?
 
-	secondEnd=[ClassDeclaration:QualifiedName]
+	secondEnd=[DataTypeOrClass:QualifiedName]
 	('specializes' specializeRelation=[ElementRelation:QualifiedName])?
 	(hasInverse='inverseOf' inverseEnd=[ElementRelation:QualifiedName])?
 ;
@@ -181,7 +181,9 @@ RelationStereotype returns string:
 	'aggregation' |
 	'inherence' |
 	'value' |
-	'formal'
+	'formal' |
+	'manifestation' |
+	'constitution'
 ;
 
 // <--- Attributes --->
@@ -198,12 +200,12 @@ Cardinality:
 
 // <--- Generalization Set --->
 interface GeneralizationSet {
-    disjoint: boolean
-    complete: boolean
-    name: string
-    generalItem: @ClassDeclarationOrRelation
-    categorizerItems: @ClassDeclarationOrRelation[]
-    specificItems: @ClassDeclarationOrRelation[]
+	disjoint: boolean
+	complete: boolean
+	name: string
+	generalItem: @ClassDeclarationOrRelation
+	categorizerItems: @ClassDeclarationOrRelation[]
+	specificItems: @ClassDeclarationOrRelation[]
 }
 
 GeneralizationSetImpl returns GeneralizationSet:
@@ -230,7 +232,6 @@ type ClassDeclarationOrRelation = ClassDeclaration | ElementRelation;
 
 // <--- DataTypes --->
 type DataTypeOrClass = DataType | ClassDeclaration;
-
 DataType:
 	'datatype' name=ID ontologicalNature=ElementOntologicalNature? 
 	('specializes' specializationEndurants+=[DataTypeOrClass:QualifiedName]
