@@ -1,6 +1,6 @@
 import { generateModularCommand } from "tonto-cli";
 import * as vscode from "vscode";
-import { CommandIds } from "./commandIds";
+import { CommandIds } from "./commandIds.js";
 
 function createGenerateJsonStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
   // Register the status bar item command
@@ -10,6 +10,7 @@ function createGenerateJsonStatusBarItem(context: vscode.ExtensionContext, statu
 
   // Register the command pallete command
   context.subscriptions.push(
+    
     vscode.commands.registerCommand(CommandIds.generateJson, createCommandPaletteGenerateJsonCommand)
   );
 

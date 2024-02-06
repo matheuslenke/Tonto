@@ -8,4 +8,4 @@ const builtInLibs: BuiltInLib[] = [
   },
 ];
 
-export { builtInLibs };
+export { builtInLibs, basicDataTypes };

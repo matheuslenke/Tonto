@@ -1,7 +1,7 @@
 import path from "path";
-import { importModularCommand } from "tonto-cli/src/cli/actions";
+import { importModularCommand } from "tonto-cli";
 import * as vscode from "vscode";
-import { CommandIds } from "./commandIds";
+import { CommandIds } from "./commandIds.js";
 
 function createTontoGenerationStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
   // Registering Status bar Item Command

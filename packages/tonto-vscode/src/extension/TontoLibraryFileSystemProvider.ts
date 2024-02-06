@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { basicDataTypes } from "tonto-cli/src/language-server/workspace/builtins/basicDataTypes";
+import { basicDataTypes } from "tonto-cli";
 
 export class TontoLibraryFileSystemProvider
   implements vscode.FileSystemProvider {

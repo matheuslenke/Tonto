@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { CommandIds } from "./commandIds";
+import { CommandIds } from "./commandIds.js";
 import { installCommand } from "tonto-package-manager";
 
 function createTpmInstallCommands(
