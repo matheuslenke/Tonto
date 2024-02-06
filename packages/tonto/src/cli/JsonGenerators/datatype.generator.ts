@@ -1,5 +1,5 @@
 import { Class, Package, Property } from "ontouml-js";
-import { DataType } from "../../language-server/generated/ast.js";
+import { DataType } from "../../language/generated/ast.js";
 import { setPropertyCardinality } from "./cardinality.generator.js";
 
 export function customDataTypeGenerator(dataType: DataType, model: Package): Class {

@@ -1,5 +1,5 @@
-import path from "path";
-import fs from "fs";
+import * as path from "node:path";
+import * as fs from "node:fs";
 import { TontoManifest, createDefaultTontoManifest } from "../model/TontoManifest.js";
 
 export function readTontoManifest(dirName: string): TontoManifest | undefined {

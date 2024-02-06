@@ -4,10 +4,10 @@ import {
   ElementRelation,
   RelationStereotype as MRelationStereotype,
   RelationMetaAttributes,
-} from "../../language-server/generated/ast.js";
+} from "../../language/generated/ast.js";
 import chalk from "chalk";
 import { setPropertyCardinality } from "./cardinality.generator.js";
-import { RelationTypes } from "../../language-server/models/RelationType.js";
+import { RelationTypes } from "../../language/models/RelationType.js";
 
 export function relationGenerator(
   relationItem: ElementRelation,

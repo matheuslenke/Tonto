@@ -1,12 +1,12 @@
 import * as vscode from "vscode";
 import * as path from "path";
-import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from "vscode-languageclient/node";
-import { TontoLibraryFileSystemProvider } from "./extension/TontoLibraryFileSystemProvider";
-import { createTontoGenerationStatusBarItem } from "./commands/TontoGenerationCommand";
-import { createGenerateJsonStatusBarItem } from "./commands/JsonGenerationCommands";
-import { createValidationSatusBarItem } from "./commands/validationCommand";
-import { createTransformToGufoSatusBarItem } from "./commands/gufoTransformCommand";
-import { createTpmInstallCommands } from "./commands/TpmInstallCommand";
+import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from "vscode-languageclient/node.js";
+import { TontoLibraryFileSystemProvider } from "./TontoLibraryFileSystemProvider.js";
+import { createTontoGenerationStatusBarItem } from "../commands/TontoGenerationCommand.js";
+import { createGenerateJsonStatusBarItem } from "../commands/JsonGenerationCommands.js";
+import { createValidationSatusBarItem } from "../commands/validationCommand.js";
+import { createTransformToGufoSatusBarItem } from "../commands/gufoTransformCommand.js";
+import { createTpmInstallCommands } from "../commands/TpmInstallCommand.js";
 
 let client: LanguageClient;
 let generateTontoStatusBarItem: vscode.StatusBarItem;
@@ -42,7 +42,7 @@ export function deactivate(): Thenable<void> | undefined {
 }
 
 function startLanguageClient(context: vscode.ExtensionContext): LanguageClient {
-  const serverModule = context.asAbsolutePath(path.join("out", "language-server", "main"));
+  const serverModule = context.asAbsolutePath(path.join("out", "language", "main.cjs"));
   // The debug options for the server
   // --inspect=6009: runs the server in Node's Inspector mode so VS Code can attach to the server for debugging.
   // By setting `process.env.DEBUG_BREAK` to a truthy value, the language server will wait until a debugger is attached.

@@ -97,6 +97,9 @@
                 "${workspaceFolder}/examples/",
                 "--extensionDevelopmentPath=${workspaceFolder}/packages/tonto-vscode"
             ],
+            "outFiles": [
+                "${workspaceFolder}/{packages,examples}/*/{lib,out}/**/*.js"
+            ]
             // "env": {
             //     "DEBUG_BREAK": "true"
             // }

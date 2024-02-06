@@ -1,6 +1,6 @@
 import { readFile } from "fs/promises";
 import { Project, serializationUtils } from "ontouml-js";
-import fs from "fs";
+import * as fs from "node:fs";
 import { generateTontoFileModular } from "../TontoModularConstructors/tontoModular.constructor.js";
 import chalk from "chalk";
 

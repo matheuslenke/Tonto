@@ -1,13 +1,13 @@
 import { NodeFileSystem } from "langium/node";
-import { Model, createTontoServices } from "../../language-server/index.js";
+import { Model, createTontoServices } from "../../language/index.js";
 import { extractAllAstNodes } from "../cli-util.js";
 import chalk from "chalk";
-import { builtInLibs } from "../../language-server/workspace/builtins/index.js";
+import { builtInLibs } from "../../language/workspace/builtins/index.js";
 import { glob } from "glob";
 import { parseProject } from "../JsonModularGenerators/jsonModular.generator.js";
-import path from "path";
+import * as path from "node:path";
 import { CompositeGeneratorNode } from "langium";
-import fs from "fs";
+import * as fs from "node:fs";
 import { GeneratorContext } from "../JsonModularGenerators/jsonModular.generator.js";
 import { TontoManifest, createDefaultTontoManifest } from "../model/TontoManifest.js";
 import { ResultResponse, ErrorResultResponse, validateTontoFile } from "../requests/ontoumljsValidator.js";
@@ -64,7 +64,7 @@ export const validateCommand = async (dirName: string): Promise<ResultResponse[]
 
   const allFiles = await glob(dirName + "/**/*.tonto");
 
-  const models: Model[] = await extractAllAstNodes(allFiles, services, builtInLibs, "none");
+  const models: Model[] = await extractAllAstNodes(allFiles, services, builtInLibs, false);
 
   const context: GeneratorContext = {
     models,

@@ -1,7 +1,7 @@
 import { AstNode, LangiumDocument } from "langium";
 import { Diagnostic } from "vscode-languageserver";
 import { URI } from "vscode-uri";
-import { TontoServices } from "../language-server/tonto-module.js";
+import { TontoServices } from "../language/tonto-module.js";
 
 /**
  * @param services: The Tonto Services

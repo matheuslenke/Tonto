@@ -1,4 +1,4 @@
-import path from "path";
+import * as path from "path";
 import { importModularCommand } from "tonto-cli";
 import * as vscode from "vscode";
 import { CommandIds } from "./commandIds.js";

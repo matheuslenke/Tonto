@@ -1,5 +1,5 @@
 import { Class, GeneralizationSet, Package } from "ontouml-js";
-import { GeneralizationSet as GenSetData } from "../../language-server/generated/ast.js";
+import { GeneralizationSet as GenSetData } from "../../language/generated/ast.js";
 
 export function generalizationSetGenerator(
   enumData: GenSetData,

@@ -3,11 +3,11 @@ import { generateJSONFile } from "../jsonGenerator.js";
 import { NodeFileSystem } from "langium/node";
 import chalk from "chalk";
 import { glob } from "glob";
-import path from "path";
+import * as path from "node:path";
 import { generateJSONFileModular } from "../JsonModularGenerators/jsonModular.generator.js";
 import { TontoManifest } from "../model/TontoManifest.js";
-import { builtInLibs } from "../../language-server/workspace/builtins/index.js";
-import { createTontoServices, Model, TontoServices } from "../../language-server/index.js";
+import { builtInLibs } from "../../language/workspace/builtins/index.js";
+import { createTontoServices, Model, TontoServices } from "../../language/index.js";
 import { readOrCreateDefaultTontoManifest } from "../utils/readManifest.js";
 
 export type GenerateOptions = {
@@ -74,7 +74,7 @@ async function createModel(
 ): Promise<string | undefined> {
   const allFiles = await glob(dir + "/**/*.tonto");
 
-  const models: Model[] = await extractAllAstNodes(allFiles, services, builtInLibs, "none");
+  const models: Model[] = await extractAllAstNodes(allFiles, services, builtInLibs, false);
 
   generateJSONFileModular(models, manifest, folderAbsolutePath);
 

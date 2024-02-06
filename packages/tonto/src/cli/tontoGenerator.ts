@@ -1,7 +1,7 @@
-import fs from "fs";
+import * as fs from "node:fs";
 import { CompositeGeneratorNode } from "langium";
 import { OntoumlElement } from "ontouml-js";
-import path from "path";
+import * as path from "node:path";
 import { createTontoModule } from "./TontoConstructors/contextModule.constructor.js";
 
 export function generateTontoFile(

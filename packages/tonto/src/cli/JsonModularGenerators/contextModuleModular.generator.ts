@@ -5,7 +5,7 @@ import {
   ContextModule,
   ElementRelation,
   GeneralizationSet,
-} from "../../language-server/generated/ast.js";
+} from "../../language/generated/ast.js";
 import { classElementGenerator } from "../JsonGenerators/class.generator.js";
 import { customDataTypeAttributesGenerator, customDataTypeGenerator } from "../JsonGenerators/datatype.generator.js";
 import { enumGenerator } from "../JsonGenerators/enum.generator.js";

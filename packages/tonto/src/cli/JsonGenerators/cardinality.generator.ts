@@ -1,5 +1,5 @@
 import { Property, CardinalityValues } from "ontouml-js";
-import { Cardinality } from "../../language-server/generated/ast.js";
+import { Cardinality } from "../../language/generated/ast.js";
 
 export function setPropertyCardinality(cardinality: Cardinality | undefined, end: Property): void {
   if (!cardinality) {

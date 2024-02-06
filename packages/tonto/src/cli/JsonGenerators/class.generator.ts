@@ -1,12 +1,12 @@
 import { Class, ClassStereotype, OntologicalNature, Package } from "ontouml-js";
-import { ClassDeclaration, OntologicalNature as Nature } from "../../language-server/generated/ast.js";
+import { ClassDeclaration, OntologicalNature as Nature } from "../../language/generated/ast.js";
 import {
   isBaseSortalOntoCategory,
   isNonSortalOntoCategory,
   isUltimateSortalOntoCategory,
-} from "../../language-server/models/OntologicalCategory.js";
-import { getParentNatures } from "../../language-server/utils/getParentNatures.js";
-import { tontoNatureUtils } from "../../language-server/models/Natures.js";
+} from "../../language/models/OntologicalCategory.js";
+import { getParentNatures } from "../../language/utils/getParentNatures.js";
+import { tontoNatureUtils } from "../../language/models/Natures.js";
 
 export function classElementGenerator(classElement: ClassDeclaration, packageItem: Package): Class {
   if (classElement.classElementType) {

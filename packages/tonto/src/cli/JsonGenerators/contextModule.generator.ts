@@ -1,5 +1,5 @@
 import { Class, Package, Relation } from "ontouml-js";
-import { ClassDeclaration, DataType, ContextModule, ElementRelation, GeneralizationSet } from "../../language-server/index.js";
+import { ClassDeclaration, DataType, ContextModule, ElementRelation, GeneralizationSet } from "../../language/index.js";
 import { classElementGenerator } from "./class.generator.js";
 import { customDataTypeGenerator } from "./datatype.generator.js";
 import { enumGenerator } from "./enum.generator.js";

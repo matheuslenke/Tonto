@@ -1,5 +1,5 @@
 import { Class, Package, Relation } from "ontouml-js";
-import { ClassDeclaration, ContextModule } from "../../language-server/index.js";
+import { ClassDeclaration, ContextModule } from "../../language/index.js";
 import { createInstantiation } from "./class.generator.js";
 
 export function generateInstantiations(

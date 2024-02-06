@@ -1,4 +1,4 @@
-import { ErrorMessages } from "./../models/ErrorMessages.js";
+import { ErrorMessages } from "../models/ErrorMessages.js";
 import { ValidationAcceptor } from "langium";
 import { ClassDeclaration, GeneralizationSet } from "../generated/ast.js";
 import { isUltimateSortalOntoCategory } from "../models/OntologicalCategory.js";

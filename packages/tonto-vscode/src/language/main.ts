@@ -1,8 +1,8 @@
 import { Module, PartialLangiumSharedServices, startLanguageServer } from "langium";
 import { NodeFileSystem } from "langium/node";
-import { createConnection, ProposedFeatures } from "vscode-languageserver/node";
+import { createConnection, ProposedFeatures } from "vscode-languageserver/node.js";
 import { TontoSharedServices, createTontoServices } from "tonto-cli";
-import { TontoGrammarWorkspaceManager } from "./tonto-workspace-manager";
+import { TontoGrammarWorkspaceManager } from "./tonto-workspace-manager.js";
 
 // Create a connection to the client
 const connection = createConnection(ProposedFeatures.all);

@@ -1,5 +1,5 @@
-import path from "path";
-import fs from "fs";
+import * as path from "node:path";
+import * as fs from "node:fs";
 import { AstNode, LangiumDocument, LangiumDocuments, LangiumServices } from "langium";
 import { URI } from "vscode-uri";
 import { BuiltInLib } from "./model/BuiltInLib.js";
@@ -9,7 +9,7 @@ export async function extractAllDocuments(
   fileNames: string[],
   services: LangiumServices,
   builtInLibs: BuiltInLib[],
-  validationChecks: "all" | "none"
+  validationChecks: boolean
 ): Promise<LangiumDocuments> {
   const documents: Array<LangiumDocument<AstNode>> = [];
 
@@ -25,7 +25,7 @@ export async function extractAllDocuments(
   }
 
   await services.shared.workspace.DocumentBuilder.build(documents, {
-    validation: true
+    validation: validationChecks
   });
 
   let hasValidationError = false;
@@ -94,7 +94,7 @@ export async function extractAllAstNodes<T extends AstNode>(
   fileNames: string[],
   services: LangiumServices,
   builtInLibs: BuiltInLib[],
-  validationChecks: "all" | "none"
+  validationChecks: boolean
 ): Promise<T[]> {
   const docs = await extractAllDocuments(fileNames, services, builtInLibs, validationChecks);
   const nodes: T[] = docs.all.flatMap((doc) => doc.parseResult?.value as T).toArray();

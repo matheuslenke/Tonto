@@ -3,7 +3,10 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "out",
-    "sourceMap": true
+    "sourceMap": true,
+    "module": "node16",
+    "moduleResolution": "node16",
+    "esModuleInterop": false,
   },
   "references": [
     {

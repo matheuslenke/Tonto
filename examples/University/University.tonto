@@ -4,7 +4,7 @@ package University
 
 category Organization
 kind University specializes Organization {
-  address: Address
+  attr address: Address
   @componentOf
   [1] <>-- has -- [1..*] Department
   @componentOf
@@ -14,11 +14,14 @@ kind University specializes Organization {
 relation Department [1] <>-- [1] JuniorStaff
 
 kind Department {
-  name: string
+  attr name: string
 }
 collective Staff
 subkind JuniorStaff specializes Staff
 
+kind teste {
+  
+}
 
 kind Room
 subkind Classroom specializes Room

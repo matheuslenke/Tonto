@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { TontoLanguageMetaData } from "../language-server/index.js";
+import { TontoLanguageMetaData } from "../language/index.js";
 import { generateAction } from "./actions/generateAction.js";
 import { importAction } from "./actions/importAction.js";
 import { importModularAction } from "./actions/importModularAction.js";
@@ -13,7 +13,7 @@ export default function (): void {
     .name("tonto-cli")
     .description("A CLI to run commands in your Tonto project")
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    .version(require("../../package.json").version);
+    .version("1.0");
 
   const fileExtensions = TontoLanguageMetaData.fileExtensions.join(", ");
 
@@ -65,5 +65,5 @@ export default function (): void {
 export * from "./actions/index.js";
 export * from "./utils/readManifest.js";
 export * from "./model/TontoManifest.js";
-export * from "./requests/ontoumljsValidator.js"
-export * from "./requests/gufoTransform.js"
+export * from "./requests/ontoumljsValidator.js";
+export * from "./requests/gufoTransform.js";

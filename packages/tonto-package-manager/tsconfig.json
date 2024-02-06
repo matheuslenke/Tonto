@@ -6,7 +6,10 @@
     "types": ["node"],
     "noEmit": false,
     "sourceMap": true,
-    "declaration": true
+    "declaration": true,
+    "module": "node16",
+    "moduleResolution": "node16",
+    "esModuleInterop": false,
   },
   "references": [{ "path": "../tonto" }],
   "include": ["src/**/*.ts"],

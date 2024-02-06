@@ -6,8 +6,12 @@
     "types": ["jest", "node"],
     "noEmit": false,
     "sourceMap": true,
-    "declaration": true
+    "declaration": true,
+    "baseUrl": "src/",
+    "esModuleInterop": true,
+    "module": "node16",
+    "moduleResolution": "node16",
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src"],
   "exclude": ["lib", "node_modules"]
 }

@@ -23,7 +23,7 @@ import {
   EnumElement,
   isRelationMetaAttribute,
   RelationMetaAttribute,
-} from "./../generated/ast.js";
+} from "../generated/ast.js";
 
 /*
  * This SemanticTokenProvider extension is made so we can create our own SemanticToken

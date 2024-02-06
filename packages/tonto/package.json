@@ -51,7 +51,7 @@
     "ajv": "^8.12.0",
     "chalk": "^4.1.0",
     "chevrotain": "^10.4.2",
-    "commander": "^10.0.1",
+    "commander": "^11.0.0",
     "glob": "^10.2.2",
     "langium": "^2.1.0",
     "node-fetch-native": "^1.0.1",

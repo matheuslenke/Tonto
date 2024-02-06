@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { CommandIds } from "./commandIds.js";
-import { installCommand } from "tonto-package-manager";
+// import { installCommand } from "tonto-package-manager";
 
 function createTpmInstallCommands(
   context: vscode.ExtensionContext,
@@ -96,13 +96,13 @@ async function tpmInstall(directoryUri: vscode.Uri) {
       cancellable: false,
     },
     async () => {
-      const response = await installCommand({ dir: directoryUri.path });
+      // const response = await installCommand({ dir: directoryUri.path });
 
-      if (response.fail === false) {
-        vscode.window.showInformationMessage("Successfully installed dependencies");
-      } else {
-        vscode.window.showErrorMessage(`Error installing dependencies: ${response.message}`);
-      }
+      // if (response.fail === false) {
+      //   vscode.window.showInformationMessage("Successfully installed dependencies");
+      // } else {
+      //   vscode.window.showErrorMessage(`Error installing dependencies: ${response.message}`);
+      // }
     }
   );
 }

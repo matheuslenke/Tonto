@@ -1,7 +1,7 @@
 import { Command } from "commander";
 import figlet from "figlet";
-import { installAction } from "./actions/installAction";
-import { addDependencyAction } from "./actions/addDependencyAction";
+import { installAction } from "./actions/installAction.js";
+import { addDependencyAction } from "./actions/addDependencyAction.js";
 
 export default function (): void {
   const program = new Command();
@@ -44,5 +44,5 @@ export default function (): void {
   program.parseAsync(process.argv);
 }
 
-export * from "./actions/installAction";
-export * from "./actions/addDependencyAction";
+export * from "./actions/installAction.js";
+export * from "./actions/addDependencyAction.js";

@@ -1,8 +1,8 @@
-import fs from "fs";
+import * as fs from "node:fs";
 import { CompositeGeneratorNode } from "langium";
 import { MultilingualText, Project } from "ontouml-js";
-import path from "path";
-import { Model } from "../language-server/index.js";
+import * as path from "node:path";
+import { Model } from "../language/index.js";
 import { extractDestinationAndName } from "./cli-util.js";
 import { contextModuleGenerator } from "./JsonGenerators/contextModule.generator.js";
 
