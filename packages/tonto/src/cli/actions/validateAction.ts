@@ -1,16 +1,16 @@
 import { NodeFileSystem } from "langium/node";
-import { Model, createTontoServices } from "../../language-server";
-import { extractAllAstNodes } from "../cli-util";
+import { Model, createTontoServices } from "../../language-server/index.js";
+import { extractAllAstNodes } from "../cli-util.js";
 import chalk from "chalk";
-import { builtInLibs } from "../../language-server/workspace/builtins";
+import { builtInLibs } from "../../language-server/workspace/builtins/index.js";
 import { glob } from "glob";
-import { parseProject } from "../JsonModularGenerators/jsonModular.generator";
+import { parseProject } from "../JsonModularGenerators/jsonModular.generator.js";
 import path from "path";
 import { CompositeGeneratorNode } from "langium";
 import fs from "fs";
-import { GeneratorContext } from "../JsonModularGenerators/jsonModular.generator";
-import { TontoManifest, createDefaultTontoManifest } from "../model/TontoManifest";
-import { ResultResponse, ErrorResultResponse, validateTontoFile } from "../requests/ontoumljsValidator";
+import { GeneratorContext } from "../JsonModularGenerators/jsonModular.generator.js";
+import { TontoManifest, createDefaultTontoManifest } from "../model/TontoManifest.js";
+import { ResultResponse, ErrorResultResponse, validateTontoFile } from "../requests/ontoumljsValidator.js";
 
 export const validateAction = async (dirName: string): Promise<void> => {
   if (!dirName) {

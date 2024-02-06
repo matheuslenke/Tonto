@@ -1,5 +1,5 @@
 import { ValidationAcceptor } from "langium";
-import { Model } from "../generated/ast";
+import { Model } from "../generated/ast.js";
 
 export class ModelValidator {
   /*

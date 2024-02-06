@@ -1,6 +1,6 @@
 import { CompositeGeneratorNode } from "langium";
 import { Class, RelationStereotype } from "ontouml-js";
-import { formatForId } from "../utils/replaceWhitespace";
+import { formatForId } from "../utils/replaceWhitespace.js";
 
 export function createInstantiation(element: Class, fileNode: CompositeGeneratorNode) {
   const ownRelations = element.getOwnIncomingRelations();

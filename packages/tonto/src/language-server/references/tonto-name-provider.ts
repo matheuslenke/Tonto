@@ -9,7 +9,7 @@ import {
   isGeneralizationSet,
   isDataType,
   isEnumElement,
-} from "../generated/ast";
+} from "../generated/ast.js";
 
 export function toQualifiedName(pack: ContextModule | ClassDeclaration, childName: string): string {
   return (

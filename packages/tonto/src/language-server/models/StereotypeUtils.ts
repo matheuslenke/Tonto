@@ -1,5 +1,5 @@
 import { ClassStereotype, stereotypeUtils, natureUtils, OntologicalNature } from "ontouml-js";
-import { OntologicalCategoryEnum } from "./OntologicalCategory";
+import { OntologicalCategoryEnum } from "./OntologicalCategory.js";
 
 type AllowedStereotypes = {
   [key in OntologicalCategoryEnum]: OntologicalNature[];

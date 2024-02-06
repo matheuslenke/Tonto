@@ -1,10 +1,10 @@
 import { CompositeGeneratorNode, NL } from "langium";
 import { Class, ClassStereotype, Property } from "ontouml-js";
-import { formatForId } from "../utils/replaceWhitespace";
-import { createInstantiation } from "./instantiation.constructor";
-import { constructInternalRelations } from "./relation.constructor";
-import { createSpecializations } from "./specialization.constructor";
-import { constructAttributes } from "./attributes.constructor";
+import { formatForId } from "../utils/replaceWhitespace.js";
+import { createInstantiation } from "./instantiation.constructor.js";
+import { constructInternalRelations } from "./relation.constructor.js";
+import { createSpecializations } from "./specialization.constructor.js";
+import { constructAttributes } from "./attributes.constructor.js";
 
 export function constructClassElement(element: Class, fileNode: CompositeGeneratorNode) {
   const stereotypeWord = getStereotypeWord(element.stereotype);

@@ -1,8 +1,8 @@
 import { CompositeGeneratorNode, NL } from "langium";
 import { AggregationKind, Class, Generalization, Property, Relation } from "ontouml-js";
-import { notEmpty } from "../../utils/isEmpty";
-import { formatForId } from "../utils/replaceWhitespace";
-import { constructCardinality } from "./cardinality.constructor";
+import { notEmpty } from "../../utils/isEmpty.js";
+import { formatForId } from "../utils/replaceWhitespace.js";
+import { constructCardinality } from "./cardinality.constructor.js";
 
 export function constructInternalRelations(element: Class, relations: Relation[], fileNode: CompositeGeneratorNode) {
   relations

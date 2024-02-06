@@ -2,10 +2,10 @@ import fs from "fs";
 import { CompositeGeneratorNode } from "langium";
 import { MultilingualText, Package, Project } from "ontouml-js";
 import path from "path";
-import { Model } from "../../language-server";
-import { contextModuleGenerateRelations, contextModuleModularGenerator } from "./contextModuleModular.generator";
-import { TontoManifest } from "../model/TontoManifest";
-import { GeneratedContextModuleData, contextModuleGenerateClasses } from "./contextModuleModular.generator";
+import { Model } from "../../language-server/index.js";
+import { contextModuleGenerateRelations, contextModuleModularGenerator } from "./contextModuleModular.generator.js";
+import { TontoManifest } from "../model/TontoManifest.js";
+import { GeneratedContextModuleData, contextModuleGenerateClasses } from "./contextModuleModular.generator.js";
 
 export function generateJSONFileModular(
   models: Model[],

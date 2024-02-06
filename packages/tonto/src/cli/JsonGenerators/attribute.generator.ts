@@ -1,6 +1,6 @@
 import { Class, Property } from "ontouml-js";
-import { Attribute, ClassDeclaration, DataType } from "../../language-server/generated/ast";
-import { setPropertyCardinality } from "./cardinality.generator";
+import { Attribute, ClassDeclaration, DataType } from "../../language-server/generated/ast.js";
+import { setPropertyCardinality } from "./cardinality.generator.js";
 
 export function attributeGenerator(
   classElement: ClassDeclaration | DataType,

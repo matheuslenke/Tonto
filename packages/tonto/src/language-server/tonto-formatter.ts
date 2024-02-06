@@ -1,5 +1,5 @@
 import { AbstractFormatter, AstNode, Formatting } from "langium";
-import * as ast from "./generated/ast";
+import * as ast from "./generated/ast.js";
 
 export class TontoFormatter extends AbstractFormatter {
   protected format(node: AstNode): void {

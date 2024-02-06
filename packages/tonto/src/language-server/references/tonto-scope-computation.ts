@@ -17,9 +17,9 @@ import {
   isGeneralizationSet,
   Model,
   ContextModule,
-} from "../generated/ast";
-import { TontoServices } from "../tonto-module";
-import { TontoQualifiedNameProvider } from "./tonto-name-provider";
+} from "../generated/ast.js";
+import { TontoServices } from "../tonto-module.js";
+import { TontoQualifiedNameProvider } from "./tonto-name-provider.js";
 
 export class TontoScopeComputation extends DefaultScopeComputation {
   qualifiedNameProvider: TontoQualifiedNameProvider;

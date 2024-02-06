@@ -1,10 +1,10 @@
 import { Command } from "commander";
-import { TontoLanguageMetaData } from "../language-server";
-import { generateAction } from "./actions/generateAction";
-import { importAction } from "./actions/importAction";
-import { importModularAction } from "./actions/importModularAction";
-import { validateAction } from "./actions";
-import { transformToGufoAction } from "./actions/gufoGenerateAction";
+import { TontoLanguageMetaData } from "../language-server/index.js";
+import { generateAction } from "./actions/generateAction.js";
+import { importAction } from "./actions/importAction.js";
+import { importModularAction } from "./actions/importModularAction.js";
+import { validateAction } from "./actions/index.js";
+import { transformToGufoAction } from "./actions/gufoGenerateAction.js";
 
 export default function (): void {
   const program = new Command();
@@ -62,6 +62,6 @@ export default function (): void {
   program.parseAsync(process.argv);
 }
 
-export * from "./actions";
-export * from "./utils/readManifest";
-export * from "./model/TontoManifest";
+export * from "./actions/index.js";
+export * from "./utils/readManifest.js";
+export * from "./model/TontoManifest.js";

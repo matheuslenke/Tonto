@@ -2,7 +2,7 @@ import { CodeActionKind, Diagnostic } from "vscode-languageserver";
 import { CodeActionParams } from "vscode-languageserver-protocol";
 import { Command, CodeAction } from "vscode-languageserver-types";
 import { LangiumDocument, MaybePromise } from "langium";
-import { CodeActionProvider } from "langium/lib/lsp/code-action";
+import { CodeActionProvider } from "langium";
 
 export class TontoActionProvider implements CodeActionProvider {
   getCodeActions(document: LangiumDocument, params: CodeActionParams): MaybePromise<Array<Command | CodeAction>> {

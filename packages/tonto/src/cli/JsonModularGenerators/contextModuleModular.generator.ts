@@ -5,15 +5,15 @@ import {
   ContextModule,
   ElementRelation,
   GeneralizationSet,
-} from "../../language-server/generated/ast";
-import { classElementGenerator } from "../JsonGenerators/class.generator";
-import { customDataTypeAttributesGenerator, customDataTypeGenerator } from "../JsonGenerators/datatype.generator";
-import { enumGenerator } from "../JsonGenerators/enum.generator";
-import { generalizationSetGenerator } from "../JsonGenerators/genset.generator";
-import { generateInstantiations } from "../JsonGenerators/instantiation.generator";
-import { relationGenerator } from "../JsonGenerators/relation.generator";
-import { generateDataTypeSpecializations, generateSpecializations } from "../JsonGenerators/specialization.generator";
-import { attributeGenerator } from "../JsonGenerators/attribute.generator";
+} from "../../language-server/generated/ast.js";
+import { classElementGenerator } from "../JsonGenerators/class.generator.js";
+import { customDataTypeAttributesGenerator, customDataTypeGenerator } from "../JsonGenerators/datatype.generator.js";
+import { enumGenerator } from "../JsonGenerators/enum.generator.js";
+import { generalizationSetGenerator } from "../JsonGenerators/genset.generator.js";
+import { generateInstantiations } from "../JsonGenerators/instantiation.generator.js";
+import { relationGenerator } from "../JsonGenerators/relation.generator.js";
+import { generateDataTypeSpecializations, generateSpecializations } from "../JsonGenerators/specialization.generator.js";
+import { attributeGenerator } from "../JsonGenerators/attribute.generator.js";
 
 export interface GeneratedContextModuleData {
   classes: Class[];

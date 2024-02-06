@@ -1,7 +1,7 @@
-import { ErrorMessages } from "./../models/ErrorMessages";
+import { ErrorMessages } from "./../models/ErrorMessages.js";
 import { ValidationAcceptor } from "langium";
-import { ClassDeclaration, GeneralizationSet } from "../generated/ast";
-import { isUltimateSortalOntoCategory } from "../models/OntologicalCategory";
+import { ClassDeclaration, GeneralizationSet } from "../generated/ast.js";
+import { isUltimateSortalOntoCategory } from "../models/OntologicalCategory.js";
 
 const validateSortalSpecializesUniqueUltimateSortalRecursive = (
   actualElement: ClassDeclaration,

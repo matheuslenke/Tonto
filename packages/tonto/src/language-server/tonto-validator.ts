@@ -1,6 +1,6 @@
 import { ValidationChecks, ValidationRegistry } from "langium";
-import { TontoAstType } from "./generated/ast";
-import type { TontoServices } from "./tonto-module";
+import { TontoAstType } from "./generated/ast.js";
+import type { TontoServices } from "./tonto-module.js";
 
 /**
  * Registry for validation checks.

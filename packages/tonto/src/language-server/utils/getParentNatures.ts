@@ -1,8 +1,8 @@
-import { ClassDeclaration, OntologicalNature as ASTNature, GeneralizationSet } from "../generated/ast";
+import { ClassDeclaration, OntologicalNature as ASTNature, GeneralizationSet } from "../generated/ast.js";
 import { OntologicalNature } from "ontouml-js";
-import { tontoNatureUtils } from "../models/Natures";
-import { isUltimateSortalOntoCategory } from "../models/OntologicalCategory";
-import { getGensetsWhereSpecific } from "./genSetsWhereSpecific";
+import { tontoNatureUtils } from "../models/Natures.js";
+import { isUltimateSortalOntoCategory } from "../models/OntologicalCategory.js";
+import { getGensetsWhereSpecific } from "./genSetsWhereSpecific.js";
 
 const getParentNatures = (
   actualElement: ClassDeclaration | GeneralizationSet,

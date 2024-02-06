@@ -1,7 +1,7 @@
 import { CompositeGeneratorNode, NL } from "langium";
 import { Property } from "ontouml-js";
-import { formatForId } from "../utils/replaceWhitespace";
-import { constructCardinality } from "./cardinality.constructor";
+import { formatForId } from "../utils/replaceWhitespace.js";
+import { constructCardinality } from "./cardinality.constructor.js";
 
 export function constructAttributes(attributes: Property[], fileNode: CompositeGeneratorNode) {
   attributes.forEach((attribute) => {

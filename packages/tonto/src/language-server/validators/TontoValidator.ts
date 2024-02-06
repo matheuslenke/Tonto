@@ -1,8 +1,8 @@
-import { ClassDeclarationValidator } from "./ClassDeclarationValidator";
-import { ComplexDataTypeValidator } from "./ComplexDataTypeValidator";
-import { ContextModuleValidator } from "./ContextModuleValidator";
-import { GeneralizationValidator } from "./GeneralizationValidator";
-import { ModelValidator } from "./ModelValidator";
+import { ClassDeclarationValidator } from "./ClassDeclarationValidator.js";
+import { ComplexDataTypeValidator } from "./ComplexDataTypeValidator.js";
+import { ContextModuleValidator } from "./ContextModuleValidator.js";
+import { GeneralizationValidator } from "./GeneralizationValidator.js";
+import { ModelValidator } from "./ModelValidator.js";
 
 export class TontoValidator {
   ContextModuleValidator = new ContextModuleValidator();

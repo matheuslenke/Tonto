@@ -1,11 +1,11 @@
 /* eslint-disable max-len */
 import { ValidationAcceptor } from "langium";
-import { ClassDeclaration } from "../generated/ast";
+import { ClassDeclaration } from "../generated/ast.js";
 import {
   OntologicalCategoryEnum,
   getOntologicalCategory,
   isUltimateSortalOntoCategory,
-} from "../models/OntologicalCategory";
+} from "../models/OntologicalCategory.js";
 import {
   allowedStereotypeRestrictedToMatches,
   hasNonSortalStereotype,
@@ -13,12 +13,12 @@ import {
   isAntiRigidStereotype,
   isRigidStereotype,
   isSemiRigidStereotype,
-} from "../models/StereotypeUtils";
-import { checkUltimateSortalSpecializesUltimateSortalRecursive } from "../utils/CheckUltimateSortalSpecializesUltimateSortalRecursive";
-import { checkNatureCompatibleRestrictedTo } from "../utils/checkNatureCompatibleRestrictedTo";
-import { toQualifiedName } from "../references/tonto-name-provider";
-import { tontoNatureUtils } from "../models/Natures";
-import { formPhrase } from "../utils/formPhrase";
+} from "../models/StereotypeUtils.js";
+import { checkUltimateSortalSpecializesUltimateSortalRecursive } from "../utils/CheckUltimateSortalSpecializesUltimateSortalRecursive.js";
+import { checkNatureCompatibleRestrictedTo } from "../utils/checkNatureCompatibleRestrictedTo.js";
+import { toQualifiedName } from "../references/tonto-name-provider.js";
+import { tontoNatureUtils } from "../models/Natures.js";
+import { formPhrase } from "../utils/formPhrase.js";
 
 export class ClassDeclarationValidator {
   /**

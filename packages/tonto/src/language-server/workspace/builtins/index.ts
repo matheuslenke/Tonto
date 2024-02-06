@@ -1,5 +1,5 @@
-import { BuiltInLib } from "../../../cli/model/BuiltInLib";
-import { basicDataTypes } from "./basicDataTypes";
+import { BuiltInLib } from "../../../cli/model/BuiltInLib.js";
+import { basicDataTypes } from "./basicDataTypes.js";
 
 const builtInLibs: BuiltInLib[] = [
   {

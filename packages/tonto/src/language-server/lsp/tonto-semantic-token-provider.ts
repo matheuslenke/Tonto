@@ -14,7 +14,7 @@ import {
   isRelationMetaAttributes,
   OntologicalCategory,
   RelationMetaAttributes,
-} from "../generated/ast";
+} from "../generated/ast.js";
 import {
   Attribute,
   ClassDeclaration,
@@ -23,7 +23,7 @@ import {
   EnumElement,
   isRelationMetaAttribute,
   RelationMetaAttribute,
-} from "./../generated/ast";
+} from "./../generated/ast.js";
 
 /*
  * This SemanticTokenProvider extension is made so we can create our own SemanticToken

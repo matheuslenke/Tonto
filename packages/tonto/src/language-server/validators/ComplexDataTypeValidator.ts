@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { ValidationAcceptor } from "langium";
-import { DataType } from "../generated/ast";
-import { formPhrase } from "../utils/formPhrase";
+import { DataType } from "../generated/ast.js";
+import { formPhrase } from "../utils/formPhrase.js";
 
 export class ComplexDataTypeValidator {
   /**

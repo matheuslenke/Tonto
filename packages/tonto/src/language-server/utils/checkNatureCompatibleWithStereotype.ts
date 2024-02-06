@@ -1,4 +1,4 @@
-import { NonSortal, OntologicalNature, Sortal, UltimateSortal } from "../generated/ast";
+import { NonSortal, OntologicalNature, Sortal, UltimateSortal } from "../generated/ast.js";
 
 function checkNatureCompatibleWithStereotype(
   nature: OntologicalNature,

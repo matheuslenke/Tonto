@@ -1,7 +1,7 @@
-import { ErrorMessages } from "./../models/ErrorMessages";
+import { ErrorMessages } from "./../models/ErrorMessages.js";
 import { ValidationAcceptor } from "langium";
-import { ClassDeclaration, GeneralizationSet } from "../generated/ast";
-import { getGensetsWhereSpecific } from "./genSetsWhereSpecific";
+import { ClassDeclaration, GeneralizationSet } from "../generated/ast.js";
+import { getGensetsWhereSpecific } from "./genSetsWhereSpecific.js";
 
 const checkCircularSpecializationRecursive = (
   actualElement: ClassDeclaration,

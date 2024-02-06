@@ -1,19 +1,19 @@
 import { ValidationAcceptor } from "langium";
-import { ClassDeclaration, ContextModule, ElementRelation, GeneralizationSet } from "../generated/ast";
-import { checkCircularSpecializationRecursiveWithGenset } from "../utils/CheckCircularSpecializationRecursive";
-import { TontoQualifiedNameProvider } from "../references/tonto-name-provider";
+import { ClassDeclaration, ContextModule, ElementRelation, GeneralizationSet } from "../generated/ast.js";
+import { checkCircularSpecializationRecursiveWithGenset } from "../utils/CheckCircularSpecializationRecursive.js";
+import { TontoQualifiedNameProvider } from "../references/tonto-name-provider.js";
 import {
   isBaseSortalOntoCategory,
   isSortalOntoCategory,
   isUltimateSortalOntoCategory,
-} from "../models/OntologicalCategory";
-import { checkSortalSpecializesUniqueUltimateSortalRecursive } from "../utils/CheckSortalSpecializesUniqueUltimateSortalRecursive";
-import { ErrorMessages } from "../models/ErrorMessages";
-import { getParentNatures } from "../utils/getParentNatures";
-import { tontoNatureUtils } from "../models/Natures";
-import { formPhrase } from "../utils/formPhrase";
+} from "../models/OntologicalCategory.js";
+import { checkSortalSpecializesUniqueUltimateSortalRecursive } from "../utils/CheckSortalSpecializesUniqueUltimateSortalRecursive.js";
+import { ErrorMessages } from "../models/ErrorMessages.js";
+import { getParentNatures } from "../utils/getParentNatures.js";
+import { tontoNatureUtils } from "../models/Natures.js";
+import { formPhrase } from "../utils/formPhrase.js";
 import { OntologicalNature } from "ontouml-js";
-import { compareArrays } from "../utils/compareArrays";
+import { compareArrays } from "../utils/compareArrays.js";
 
 export class ContextModuleValidator {
   checkContextModuleStartsWithCapital(contextModule: ContextModule, accept: ValidationAcceptor): void {

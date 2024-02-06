@@ -1,7 +1,7 @@
 import { CompositeGeneratorNode, Generated, NL, expandToNode, joinToNode } from "langium";
 import { Class, OntoumlElement, OntoumlType } from "ontouml-js";
-import { constructClassElement } from "../TontoConstructors/classElement.constructor";
-import { formatForId } from "../utils/replaceWhitespace";
+import { constructClassElement } from "../TontoConstructors/classElement.constructor.js";
+import { formatForId } from "../utils/replaceWhitespace.js";
 
 export function createTontoModuleModular(element: OntoumlElement, fileNode: CompositeGeneratorNode): Generated {
   // return generateTonto(element);

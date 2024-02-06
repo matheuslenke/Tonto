@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs";
-import { TontoManifest, createDefaultTontoManifest } from "../model/TontoManifest";
+import { TontoManifest, createDefaultTontoManifest } from "../model/TontoManifest.js";
 
 export function readTontoManifest(dirName: string): TontoManifest | undefined {
   let manifest: TontoManifest;

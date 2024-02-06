@@ -2,9 +2,9 @@ import fs from "fs";
 import { CompositeGeneratorNode } from "langium";
 import { MultilingualText, Project } from "ontouml-js";
 import path from "path";
-import { Model } from "../language-server";
-import { extractDestinationAndName } from "./cli-util";
-import { contextModuleGenerator } from "./JsonGenerators/contextModule.generator";
+import { Model } from "../language-server/index.js";
+import { extractDestinationAndName } from "./cli-util.js";
+import { contextModuleGenerator } from "./JsonGenerators/contextModule.generator.js";
 
 export function generateJSONFile(model: Model, filePath: string, destination: string | undefined): string {
   const data = extractDestinationAndName(filePath, destination);

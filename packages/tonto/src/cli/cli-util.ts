@@ -2,7 +2,7 @@ import path from "path";
 import fs from "fs";
 import { AstNode, LangiumDocument, LangiumDocuments, LangiumServices } from "langium";
 import { URI } from "vscode-uri";
-import { BuiltInLib } from "./model/BuiltInLib";
+import { BuiltInLib } from "./model/BuiltInLib.js";
 import chalk from "chalk";
 
 export async function extractAllDocuments(
@@ -25,7 +25,7 @@ export async function extractAllDocuments(
   }
 
   await services.shared.workspace.DocumentBuilder.build(documents, {
-    validationChecks,
+    validation: true
   });
 
   let hasValidationError = false;
@@ -69,7 +69,7 @@ export async function extractDocument(fileName: string, services: LangiumService
 
   const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.file(path.resolve(fileName)));
   await services.shared.workspace.DocumentBuilder.build([document], {
-    validationChecks: "all",
+    validation: true
   });
 
   const validationErrors = (document.diagnostics ?? []).filter((e) => e.severity === 1);

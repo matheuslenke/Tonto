@@ -1,14 +1,14 @@
-import { extractAllAstNodes, extractAstNode } from "../cli-util";
-import { generateJSONFile } from "../jsonGenerator";
+import { extractAllAstNodes, extractAstNode } from "../cli-util.js";
+import { generateJSONFile } from "../jsonGenerator.js";
 import { NodeFileSystem } from "langium/node";
 import chalk from "chalk";
 import { glob } from "glob";
 import path from "path";
-import { generateJSONFileModular } from "../JsonModularGenerators/jsonModular.generator";
-import { TontoManifest } from "../model/TontoManifest";
-import { builtInLibs } from "../../language-server/workspace/builtins";
-import { createTontoServices, Model, TontoServices } from "../../language-server";
-import { readOrCreateDefaultTontoManifest } from "../utils/readManifest";
+import { generateJSONFileModular } from "../JsonModularGenerators/jsonModular.generator.js";
+import { TontoManifest } from "../model/TontoManifest.js";
+import { builtInLibs } from "../../language-server/workspace/builtins/index.js";
+import { createTontoServices, Model, TontoServices } from "../../language-server/index.js";
+import { readOrCreateDefaultTontoManifest } from "../utils/readManifest.js";
 
 export type GenerateOptions = {
   destination?: string;

@@ -1,14 +1,14 @@
 /* eslint-disable max-len */
 import { ValidationAcceptor } from "langium";
-import { ClassDeclaration, GeneralizationSet } from "../generated/ast";
-import { ErrorMessages } from "../models/ErrorMessages";
+import { ClassDeclaration, GeneralizationSet } from "../generated/ast.js";
+import { ErrorMessages } from "../models/ErrorMessages.js";
 import {
   hasNonSortalStereotype,
   hasSortalStereotype,
   isAntiRigidStereotype,
   isRigidStereotype,
   isSemiRigidStereotype,
-} from "../models/StereotypeUtils";
+} from "../models/StereotypeUtils.js";
 
 export class GeneralizationValidator {
   /**

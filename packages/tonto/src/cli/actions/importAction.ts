@@ -1,6 +1,6 @@
 import { readFile } from "fs/promises";
 import { OntoumlElement, serializationUtils } from "ontouml-js";
-import { generateTontoFile } from "../tontoGenerator";
+import { generateTontoFile } from "../tontoGenerator.js";
 
 interface JsonElement {
   model?: any

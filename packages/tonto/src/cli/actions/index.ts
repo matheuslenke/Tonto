@@ -1,3 +1,3 @@
-export * from "./generateAction";
-export * from "./importModularAction";
-export * from "./validateAction";
+export * from "./generateAction.js";
+export * from "./importModularAction.js";
+export * from "./validateAction.js";

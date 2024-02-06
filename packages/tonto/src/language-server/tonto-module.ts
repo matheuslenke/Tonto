@@ -9,16 +9,16 @@ import {
   PartialLangiumServices,
   PartialLangiumSharedServices,
 } from "langium";
-import { TontoGeneratedModule, TontoGeneratedSharedModule } from "./generated/module";
-import { TontoActionProvider } from "./lsp/tonto-code-actions";
-import { TontoSemanticTokenProvider } from "./lsp/tonto-semantic-token-provider";
-import { TontoFormatter } from "./tonto-formatter";
-import { TontoValidationRegistry } from "./tonto-validator";
-import { TontoValidator } from "./validators/TontoValidator";
-import { TontoCompletionProvider } from "./lsp/tonto-completion-provider";
-import { TontoQualifiedNameProvider } from "./references/tonto-name-provider";
-import { TontoScopeComputation } from "./references/tonto-scope-computation";
-import { TontoScopeProvider } from "./references/tonto-scope-provider";
+import { TontoGeneratedModule, TontoGeneratedSharedModule } from "./generated/module.js";
+import { TontoActionProvider } from "./lsp/tonto-code-actions.js";
+import { TontoSemanticTokenProvider } from "./lsp/tonto-semantic-token-provider.js";
+import { TontoFormatter } from "./tonto-formatter.js";
+import { TontoValidationRegistry } from "./tonto-validator.js";
+import { TontoValidator } from "./validators/TontoValidator.js";
+import { TontoCompletionProvider } from "./lsp/tonto-completion-provider.js";
+import { TontoQualifiedNameProvider } from "./references/tonto-name-provider.js";
+import { TontoScopeComputation } from "./references/tonto-scope-computation.js";
+import { TontoScopeProvider } from "./references/tonto-scope-provider.js";
 
 /**
  * Declaration of custom services - add your own service classes here.

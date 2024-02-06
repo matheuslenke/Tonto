@@ -2,10 +2,10 @@ import fs from "fs";
 import { CompositeGeneratorNode, toString } from "langium";
 import { OntoumlElement, OntoumlType, Package, Project } from "ontouml-js";
 import path from "path";
-import { TontoManifest, toJson } from "../model/TontoManifest";
-import { createTontoModuleModular } from "./contextModuleModular.constructor";
-import { createTontoImports } from "./importModular.constructor";
-import { formatForId, replaceWhitespace } from "../utils/replaceWhitespace";
+import { TontoManifest, toJson } from "../model/TontoManifest.js";
+import { createTontoModuleModular } from "./contextModuleModular.constructor.js";
+import { createTontoImports } from "./importModular.constructor.js";
+import { formatForId, replaceWhitespace } from "../utils/replaceWhitespace.js";
 
 export function generateTontoFileModular(project: Project, filePath: string, destination: string | undefined): string {
   const data = customExtractDestinationAndName(filePath, destination);

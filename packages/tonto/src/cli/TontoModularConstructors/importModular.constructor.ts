@@ -1,6 +1,6 @@
 import { CompositeGeneratorNode, NL } from "langium";
 import { Class, Generalization, OntoumlElement, OntoumlType, Package, Property, Relation } from "ontouml-js";
-import { formatForId } from "../utils/replaceWhitespace";
+import { formatForId } from "../utils/replaceWhitespace.js";
 
 export function createTontoImports(actualPackage: Package, fileNode: CompositeGeneratorNode) {
   // Getting containers from relations
