@@ -6,6 +6,7 @@
     "version": "0.2.11",
     "license": "MIT",
     "icon": "data/images/TontoIcon.png",
+    "type": "module",
     "repository": {
         "type": "git",
         "url": "https://github.com/matheuslenke/Tonto",
@@ -84,7 +85,7 @@
         "node.js",
         "node.d.ts"
     ],
-    "main": "./out/extension.js",
+    "exports": "./out/extension.js",
     "scripts": {
         "copy:schema": "shx cp ../tonto/tonto-manifest-schema.json ./data",
         "prepare": "npm run copy:schema",
@@ -94,8 +95,8 @@
         "clean": "rimraf out",
         "lint": "eslint src --ext ts",
         "lint:fix": "eslint src --ext ts --fix",
-        "build": "node esbuild.js && tsc",
-        "watch": "node esbuild.js --watch",
+        "build": "node ./esbuild.mjs",
+        "watch": "node ./esbuild.mjs --watch",
         "coverage": "vitest run --coverage",
         "langium:generate": "langium generate",
         "langium:watch": "langium generate --watch",
@@ -104,15 +105,15 @@
     "dependencies": {
         "chalk": "^4.1.0",
         "commander": "^10.0.1",
-        "langium": "^1.2.0",
+        "langium": "^2.1.0",
         "node-fetch-native": "^1.0.1",
         "rimraf": "^4.1.2",
+        "tonto-cli": "~0.2.7",
+        "tonto-package-manager": "~0.2.9",
         "vscode-languageclient": "^8.0.2",
         "vscode-languageserver": "^8.0.2",
         "vscode-languageserver-types": "^3.17.3",
-        "vscode-uri": "^3.0.7",
-        "tonto-cli": "~0.2.7",
-        "tonto-package-manager": "~0.2.9"
+        "vscode-uri": "^3.0.7"
     },
     "devDependencies": {
         "@types/jest": "^29.2.3",
@@ -123,7 +124,7 @@
         "@typescript-eslint/parser": "^5.51.0",
         "@vitest/coverage-c8": "^0.23.2",
         "@vitest/ui": "^0.23.4",
-        "esbuild": "^0.16.9",
+        "esbuild": "^0.20.0",
         "eslint": "^8.32.0",
         "eslint-config-prettier": "^8.8.0",
         "langium-cli": "^1.2.0",

@@ -10,8 +10,10 @@
         "url": "https://github.com/matheuslenke/Tonto"
     },
     "engines": {
-        "npm": ">= 7.7.0"
+        "npm": ">= 7.7.0",
+        "node": ">=16"
     },
+    "type": "module",
     "scripts": {
         "clean": "rimraf lib node_modules",
         "build": "tsc -b tsconfig.build.json && npm run build --workspaces",
@@ -44,13 +46,12 @@
         "vite": "^4.3.8",
         "vitest": "^0.31.1"
     },
-    "volta": {
-        "node": "18.14.0",
-        "npm": "9.3.1"
-    },
     "workspaces": [
         "packages/tonto",
         "packages/tonto-vscode",
         "packages/tonto-package-manager"
-    ]
+    ],
+    "dependencies": {
+        "langium": "^2.1.0"
+    }
 }
