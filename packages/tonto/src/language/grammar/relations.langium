@@ -21,25 +21,25 @@ fragment RelationData:
 	firstCardinality=Cardinality?
 	RelationName
 	secondCardinality=Cardinality?
-	secondEndMetaAttributes=RelationMetaAttributes?
-
 	secondEnd=[DataTypeOrClass:QualifiedName]
+	
+	secondEndMetaAttributes=RelationMetaAttributes?
 	('specializes' specializeRelation=[ElementRelation:QualifiedName])?
 	(hasInverse='inverseOf' inverseEnd=[ElementRelation:QualifiedName])?
 ;
 
 fragment RelationName:
 	(RelationConnectors (name=QualifiedName '--')?) 
-	|
-	(('--' name=QualifiedName)? InvertedRelationConnectors)
+	// |
+	// (('--' name=QualifiedName)? InvertedRelationConnectors)
 ;
 
 fragment RelationConnectors:
 	(isAssociation?='--' | isAggregation?='<>--' | isComposition?='<o>--')
 ;
-fragment InvertedRelationConnectors:
-	(isAssociation?='--' | isAggregationInverted?='--<>' | isCompositionInverted?='--<o>')
-;
+// fragment InvertedRelationConnectors:
+// 	(isAssociation?='--' | isAggregationInverted?='--<>' | isCompositionInverted?='--<o>')
+// ;
 
 RelationMetaAttributes:
 	'('

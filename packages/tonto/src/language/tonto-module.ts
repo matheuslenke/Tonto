@@ -15,7 +15,7 @@ import { TontoSemanticTokenProvider } from "./lsp/tonto-semantic-token-provider.
 import { TontoFormatter } from "./tonto-formatter.js";
 import { TontoValidationRegistry } from "./tonto-validator.js";
 import { TontoValidator } from "./validators/TontoValidator.js";
-import { TontoCompletionProvider } from "./lsp/tonto-completion-provider.js";
+// import { TontoCompletionProvider } from "./lsp/tonto-completion-provider.js";
 import { TontoQualifiedNameProvider } from "./references/tonto-name-provider.js";
 import { TontoScopeComputation } from "./references/tonto-scope-computation.js";
 import { TontoScopeProvider } from "./references/tonto-scope-provider.js";
@@ -58,7 +58,7 @@ export const TontoModule: Module<TontoServices, PartialLangiumServices & TontoAd
     CodeActionProvider: () => new TontoActionProvider(),
     Formatter: () => new TontoFormatter(),
     SemanticTokenProvider: (services) => new TontoSemanticTokenProvider(services),
-    CompletionProvider: (services) => new TontoCompletionProvider(services),
+    // CompletionProvider: (services) => new TontoCompletionProvider(services),
   },
 };
 

@@ -202,10 +202,8 @@ export interface ElementRelation extends AstNode {
     hasInverse?: 'inverseOf'
     inverseEnd?: Reference<ElementRelation>
     isAggregation: boolean
-    isAggregationInverted: boolean
     isAssociation: boolean
     isComposition: boolean
-    isCompositionInverted: boolean
     name?: QualifiedName
     relationType?: RelationStereotype
     secondCardinality?: Cardinality
@@ -455,10 +453,8 @@ export class TontoAstReflection extends AbstractAstReflection {
                     name: 'ElementRelation',
                     mandatory: [
                         { name: 'isAggregation', type: 'boolean' },
-                        { name: 'isAggregationInverted', type: 'boolean' },
                         { name: 'isAssociation', type: 'boolean' },
-                        { name: 'isComposition', type: 'boolean' },
-                        { name: 'isCompositionInverted', type: 'boolean' }
+                        { name: 'isComposition', type: 'boolean' }
                     ]
                 };
             }

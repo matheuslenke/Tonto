@@ -94,7 +94,7 @@
             "request": "launch",
             "args": [
                 // "${workspaceFolder}/../tonto-example-models/Library",
-                "${workspaceFolder}/examples/",
+                "${workspaceFolder}/examples/University",
                 "--extensionDevelopmentPath=${workspaceFolder}/packages/tonto-vscode"
             ],
             "outFiles": [

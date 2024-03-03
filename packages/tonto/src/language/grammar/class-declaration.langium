@@ -21,8 +21,7 @@ ClassDeclarationRule returns ClassDeclaration:
 		(',' specializationEndurants+=[ClassDeclaration:QualifiedName])?
 		)? 
 		('{'
-			(attributes+=Attribute |
-			references+=InternalRelation)*
+			(attributes+=Attribute | references+=InternalRelation)*
     '}')?
 ;
 

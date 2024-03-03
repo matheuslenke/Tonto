@@ -63,13 +63,15 @@ export function relationGenerator(
       } else if (relationItem.isComposition) {
         relation.getSourceEnd().aggregationKind = AggregationKind.COMPOSITE;
         relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
-      } else if (relationItem.isCompositionInverted) {
-        relation.getSourceEnd().aggregationKind = AggregationKind.NONE;
-        relation.getTargetEnd().aggregationKind = AggregationKind.COMPOSITE;
-      } else if (relationItem.isAggregationInverted) {
-        relation.getSourceEnd().aggregationKind = AggregationKind.NONE;
-        relation.getTargetEnd().aggregationKind = AggregationKind.SHARED;
-      } else if (relationItem.isAssociation) {
+      } 
+      // else if (relationItem.isCompositionInverted) {
+      //   relation.getSourceEnd().aggregationKind = AggregationKind.NONE;
+      //   relation.getTargetEnd().aggregationKind = AggregationKind.COMPOSITE;
+      // } else if (relationItem.isAggregationInverted) {
+      //   relation.getSourceEnd().aggregationKind = AggregationKind.NONE;
+      //   relation.getTargetEnd().aggregationKind = AggregationKind.SHARED;
+      // } 
+      else if (relationItem.isAssociation) {
         relation.getSourceEnd().aggregationKind = AggregationKind.NONE;
         relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
       }

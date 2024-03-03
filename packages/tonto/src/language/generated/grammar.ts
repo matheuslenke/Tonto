@@ -236,14 +236,14 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@37"
+              "$ref": "#/rules@36"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@38"
+              "$ref": "#/rules@37"
             },
             "arguments": []
           },
@@ -1227,10 +1227,6 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
         "$type": "Group",
         "elements": [
           {
-            "$type": "Keyword",
-            "value": "attr"
-          },
-          {
             "$type": "Assignment",
             "feature": "name",
             "operator": "=",
@@ -1462,7 +1458,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@36"
+                    "$ref": "#/rules@35"
                   },
                   "arguments": []
                 }
@@ -1510,7 +1506,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@36"
+                    "$ref": "#/rules@35"
                   },
                   "arguments": []
                 }
@@ -1571,7 +1567,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@34"
+                "$ref": "#/rules@33"
               },
               "arguments": []
             },
@@ -1612,19 +1608,6 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
           },
           {
             "$type": "Assignment",
-            "feature": "secondEndMetaAttributes",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$ref": "#/rules@34"
-              },
-              "arguments": []
-            },
-            "cardinality": "?"
-          },
-          {
-            "$type": "Assignment",
             "feature": "secondEnd",
             "operator": "=",
             "terminal": {
@@ -1641,6 +1624,19 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
               },
               "deprecatedSyntax": false
             }
+          },
+          {
+            "$type": "Assignment",
+            "feature": "secondEndMetaAttributes",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@33"
+              },
+              "arguments": []
+            },
+            "cardinality": "?"
           },
           {
             "$type": "Group",
@@ -1718,75 +1714,36 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
       "name": "RelationName",
       "fragment": true,
       "definition": {
-        "$type": "Alternatives",
+        "$type": "Group",
         "elements": [
           {
-            "$type": "Group",
-            "elements": [
-              {
-                "$type": "RuleCall",
-                "rule": {
-                  "$ref": "#/rules@32"
-                },
-                "arguments": []
-              },
-              {
-                "$type": "Group",
-                "elements": [
-                  {
-                    "$type": "Assignment",
-                    "feature": "name",
-                    "operator": "=",
-                    "terminal": {
-                      "$type": "RuleCall",
-                      "rule": {
-                        "$ref": "#/rules@11"
-                      },
-                      "arguments": []
-                    }
-                  },
-                  {
-                    "$type": "Keyword",
-                    "value": "--"
-                  }
-                ],
-                "cardinality": "?"
-              }
-            ]
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@32"
+            },
+            "arguments": []
           },
           {
             "$type": "Group",
             "elements": [
               {
-                "$type": "Group",
-                "elements": [
-                  {
-                    "$type": "Keyword",
-                    "value": "--"
+                "$type": "Assignment",
+                "feature": "name",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@11"
                   },
-                  {
-                    "$type": "Assignment",
-                    "feature": "name",
-                    "operator": "=",
-                    "terminal": {
-                      "$type": "RuleCall",
-                      "rule": {
-                        "$ref": "#/rules@11"
-                      },
-                      "arguments": []
-                    }
-                  }
-                ],
-                "cardinality": "?"
+                  "arguments": []
+                }
               },
               {
-                "$type": "RuleCall",
-                "rule": {
-                  "$ref": "#/rules@33"
-                },
-                "arguments": []
+                "$type": "Keyword",
+                "value": "--"
               }
-            ]
+            ],
+            "cardinality": "?"
           }
         ]
       },
@@ -1840,48 +1797,6 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
     },
     {
       "$type": "ParserRule",
-      "name": "InvertedRelationConnectors",
-      "fragment": true,
-      "definition": {
-        "$type": "Alternatives",
-        "elements": [
-          {
-            "$type": "Assignment",
-            "feature": "isAssociation",
-            "operator": "?=",
-            "terminal": {
-              "$type": "Keyword",
-              "value": "--"
-            }
-          },
-          {
-            "$type": "Assignment",
-            "feature": "isAggregationInverted",
-            "operator": "?=",
-            "terminal": {
-              "$type": "Keyword",
-              "value": "--<>"
-            }
-          },
-          {
-            "$type": "Assignment",
-            "feature": "isCompositionInverted",
-            "operator": "?=",
-            "terminal": {
-              "$type": "Keyword",
-              "value": "--<o>"
-            }
-          }
-        ]
-      },
-      "definesHiddenTokens": false,
-      "entry": false,
-      "hiddenTokens": [],
-      "parameters": [],
-      "wildcard": false
-    },
-    {
-      "$type": "ParserRule",
       "name": "RelationMetaAttributes",
       "definition": {
         "$type": "Group",
@@ -1904,7 +1819,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@35"
+                    "$ref": "#/rules@34"
                   },
                   "arguments": []
                 }
@@ -1923,7 +1838,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@35"
+                        "$ref": "#/rules@34"
                       },
                       "arguments": []
                     }
