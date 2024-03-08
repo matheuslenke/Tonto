@@ -1,5 +1,7 @@
-import { CompletionAcceptor } from "langium";
+
 // import { CompletionItemKind } from "vscode-languageserver";
+
+import { CompletionAcceptor } from "langium/lsp";
 
 function completeForCardinality(acceptor: CompletionAcceptor) {
   // acceptor({

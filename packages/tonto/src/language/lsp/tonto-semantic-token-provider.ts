@@ -1,8 +1,17 @@
-import { AbstractSemanticTokenProvider, AstNode, SemanticTokenAcceptor } from "langium";
+import { AstNode } from "langium";
+import { AbstractSemanticTokenProvider, SemanticTokenAcceptor } from "langium/lsp";
 import { SemanticTokenModifiers, SemanticTokenTypes } from "vscode-languageserver";
 import {
+  Attribute,
+  ClassDeclaration,
+  ContextModule,
   DataType,
+  ElementRelation,
+  EnumElement,
   GeneralizationSet,
+  OntologicalCategory,
+  RelationMetaAttribute,
+  RelationMetaAttributes,
   isAttribute,
   isClassDeclaration,
   isContextModule,
@@ -11,18 +20,8 @@ import {
   isEnumElement,
   isGeneralizationSet,
   isOntologicalCategory,
-  isRelationMetaAttributes,
-  OntologicalCategory,
-  RelationMetaAttributes,
-} from "../generated/ast.js";
-import {
-  Attribute,
-  ClassDeclaration,
-  ContextModule,
-  ElementRelation,
-  EnumElement,
   isRelationMetaAttribute,
-  RelationMetaAttribute,
+  isRelationMetaAttributes,
 } from "../generated/ast.js";
 
 /*

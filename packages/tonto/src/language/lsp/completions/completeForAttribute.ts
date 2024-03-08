@@ -1,7 +1,9 @@
-import { NextFeature, CompletionAcceptor } from "langium";
+
 // import { AbstractElement } from "langium/lib/grammar/generated/ast.js";
 // import { CompletionItemKind } from "vscode-languageserver";
 // import { InsertTextFormat } from "vscode-languageserver";
+
+import { CompletionAcceptor, NextFeature } from "langium/lsp";
 
 function completeForAttributeSnippets(next: NextFeature, acceptor: CompletionAcceptor) {
   // if (next.property === "name") {

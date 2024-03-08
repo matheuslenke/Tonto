@@ -1,4 +1,5 @@
-import { CompositeGeneratorNode } from "langium";
+
+import { CompositeGeneratorNode } from "langium/generate";
 import { Cardinality } from "ontouml-js";
 
 

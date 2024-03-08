@@ -2,7 +2,6 @@ import { AstNode, LangiumDocument } from "langium";
 import { Diagnostic } from "vscode-languageserver";
 import { URI } from "vscode-uri";
 import { TontoServices } from "../language/tonto-module.js";
-
 /**
  * @param services: The Tonto Services
  * @returns a LangiumDocument containing the input contents and it's parsing results

@@ -1,6 +1,8 @@
-import { NextFeature, CompletionAcceptor } from "langium";
+
 // import { CompletionItemKind } from "vscode-languageserver";
 // import { InsertTextFormat } from "vscode-languageserver";
+
+import { CompletionAcceptor, NextFeature } from "langium/lsp";
 
 function completeForGenSetSnippets(next: NextFeature, acceptor: CompletionAcceptor) {
   // acceptor({

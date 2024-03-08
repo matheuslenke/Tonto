@@ -1,21 +1,21 @@
 import {
-  createDefaultModule,
-  createDefaultSharedModule,
-  DefaultSharedModuleContext,
   inject,
-  LangiumServices,
-  LangiumSharedServices,
   Module,
-  PartialLangiumServices,
-  PartialLangiumSharedServices,
 } from "langium";
 import { TontoGeneratedModule, TontoGeneratedSharedModule } from "./generated/module.js";
 import { TontoActionProvider } from "./lsp/tonto-code-actions.js";
-import { TontoSemanticTokenProvider } from "./lsp/tonto-semantic-token-provider.js";
-import { TontoFormatter } from "./tonto-formatter.js";
 import { TontoValidationRegistry } from "./tonto-validator.js";
 import { TontoValidator } from "./validators/TontoValidator.js";
 // import { TontoCompletionProvider } from "./lsp/tonto-completion-provider.js";
+import {
+  createDefaultModule,
+  createDefaultSharedModule,
+  DefaultSharedModuleContext,
+  LangiumServices,
+  LangiumSharedServices,
+  PartialLangiumServices,
+  PartialLangiumSharedServices
+} from "langium/lsp";
 import { TontoQualifiedNameProvider } from "./references/tonto-name-provider.js";
 import { TontoScopeComputation } from "./references/tonto-scope-computation.js";
 import { TontoScopeProvider } from "./references/tonto-scope-provider.js";
@@ -56,8 +56,8 @@ export const TontoModule: Module<TontoServices, PartialLangiumServices & TontoAd
   },
   lsp: {
     CodeActionProvider: () => new TontoActionProvider(),
-    Formatter: () => new TontoFormatter(),
-    SemanticTokenProvider: (services) => new TontoSemanticTokenProvider(services),
+    // Formatter: () => new TontoFormatter(),
+    // SemanticTokenProvider: (services) => new TontoSemanticTokenProvider(services),
     // CompletionProvider: (services) => new TontoCompletionProvider(services),
   },
 };

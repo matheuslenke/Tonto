@@ -91,7 +91,7 @@
     "scripts": {
         "copy:schema": "shx cp ../tonto/tonto-manifest-schema.json ./data",
         "prepare": "npm run copy:schema",
-        "vscode:prepublish": "npm run clean && tsc --noEmit && npm run lint && node esbuild.js --minify",
+        "vscode:prepublish": "npm run clean && tsc --noEmit && npm run lint && node esbuild.mjs --minify",
         "package": "vsce package --no-dependencies",
         "publish": "vsce publish",
         "clean": "rimraf out",
@@ -107,7 +107,7 @@
     "dependencies": {
         "chalk": "^5.3.0",
         "commander": "^11.0.0",
-        "langium": "^2.1.0",
+        "langium": "^3.0.0",
         "node-fetch-native": "^1.0.1",
         "rimraf": "^4.1.2",
         "tonto-cli": "file:../tonto",
@@ -127,10 +127,7 @@
         "@vitest/coverage-c8": "^0.23.2",
         "@vitest/ui": "^0.23.4",
         "esbuild": "^0.20.0",
-        "eslint": "^8.32.0",
-        "eslint-config-prettier": "^8.8.0",
         "langium-cli": "^2.1.0",
-        "prettier": "^2.8.2",
         "shx": "^0.3.4",
         "typescript": "~4.9.5",
         "vite": "^4.0.2",

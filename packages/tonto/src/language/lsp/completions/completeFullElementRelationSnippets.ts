@@ -1,6 +1,8 @@
-import { CompletionAcceptor } from "langium";
+
 // import { CompletionItemKind } from "vscode-languageserver";
 // import { InsertTextFormat } from "vscode-languageserver-types";
+
+import { CompletionAcceptor } from "langium/lsp";
 
 function completeFullElementRelationSnippets(acceptor: CompletionAcceptor) {
   // acceptor({
@@ -128,6 +130,5 @@ function completeFullElementRelationSnippets(acceptor: CompletionAcceptor) {
 //   });
 // }
 
-export { completeFullElementRelationSnippets, 
-  // completeFullExternalElementRelationSnippets 
-};
+export { completeFullElementRelationSnippets };
+

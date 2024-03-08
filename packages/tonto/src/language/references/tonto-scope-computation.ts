@@ -1,22 +1,22 @@
 import {
   AstNode,
   AstNodeDescription,
+  AstUtils,
   DefaultScopeComputation,
   interruptAndCheck,
   LangiumDocument,
   MultiMap,
   PrecomputedScopes,
-  streamAllContents,
 } from "langium";
 import { CancellationToken } from "vscode-jsonrpc";
 import {
-  isElementRelation,
+  ContextModule,
   isClassDeclaration,
-  isDataType,
   isContextModule,
+  isDataType,
+  isElementRelation,
   isGeneralizationSet,
   Model,
-  ContextModule,
 } from "../generated/ast.js";
 import { TontoServices } from "../tonto-module.js";
 import { TontoQualifiedNameProvider } from "./tonto-name-provider.js";
@@ -41,7 +41,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
     cancelToken = CancellationToken.None
   ): Promise<AstNodeDescription[]> {
     const descr: AstNodeDescription[] = [];
-    for (const childNode of streamAllContents(document.parseResult.value)) {
+    for (const childNode of AstUtils.streamAllContents(document.parseResult.value)) {
       await interruptAndCheck(cancelToken);
 
       /**

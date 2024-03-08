@@ -1,10 +1,10 @@
+import { CompositeGeneratorNode } from "langium/generate";
 import * as fs from "node:fs";
-import { CompositeGeneratorNode } from "langium";
-import { MultilingualText, Project } from "ontouml-js";
 import * as path from "node:path";
+import { MultilingualText, Project } from "ontouml-js";
 import { Model } from "../language/index.js";
-import { extractDestinationAndName } from "./cli-util.js";
 import { contextModuleGenerator } from "./JsonGenerators/contextModule.generator.js";
+import { extractDestinationAndName } from "./cli-util.js";
 
 export function generateJSONFile(model: Model, filePath: string, destination: string | undefined): string {
   const data = extractDestinationAndName(filePath, destination);

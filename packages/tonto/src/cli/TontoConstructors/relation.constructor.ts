@@ -1,4 +1,5 @@
-import { CompositeGeneratorNode, NL } from "langium";
+
+import { CompositeGeneratorNode, NL } from "langium/generate";
 import { AggregationKind, Class, Generalization, Property, Relation } from "ontouml-js";
 import { notEmpty } from "../../utils/isEmpty.js";
 import { formatForId } from "../utils/replaceWhitespace.js";

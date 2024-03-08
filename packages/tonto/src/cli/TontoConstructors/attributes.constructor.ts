@@ -1,4 +1,4 @@
-import { CompositeGeneratorNode, NL } from "langium";
+import { CompositeGeneratorNode, NL } from "langium/generate";
 import { Property } from "ontouml-js";
 import { formatForId } from "../utils/replaceWhitespace.js";
 import { constructCardinality } from "./cardinality.constructor.js";

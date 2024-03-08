@@ -1,9 +1,10 @@
-import * as path from "node:path";
+import chalk from "chalk";
+import { AstNode, LangiumDocument, LangiumDocuments } from "langium";
+import { LangiumServices } from "langium/lsp";
 import * as fs from "node:fs";
-import { AstNode, LangiumDocument, LangiumDocuments, LangiumServices } from "langium";
+import * as path from "node:path";
 import { URI } from "vscode-uri";
 import { BuiltInLib } from "./model/BuiltInLib.js";
-import chalk from "chalk";
 
 export async function extractAllDocuments(
   fileNames: string[],
@@ -20,7 +21,7 @@ export async function extractAllDocuments(
   }
 
   for (const fileName of fileNames) {
-    const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.file(path.resolve(fileName)));
+    const document = await services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.file(path.resolve(fileName)));
     documents.push(document);
   }
 
@@ -67,7 +68,7 @@ export async function extractDocument(fileName: string, services: LangiumService
     process.exit(1);
   }
 
-  const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.file(path.resolve(fileName)));
+  const document = await services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.file(path.resolve(fileName)));
   await services.shared.workspace.DocumentBuilder.build([document], {
     validation: true
   });

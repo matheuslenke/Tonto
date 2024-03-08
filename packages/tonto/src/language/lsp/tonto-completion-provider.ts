@@ -1,6 +1,4 @@
-import {
-  DefaultCompletionProvider,
-} from "langium";
+import { DefaultCompletionProvider } from "langium/lsp";
 // import * as ast from "langium/lib/grammar/generated/ast.js";
 // import { completeForCardinality } from "./completions/completeForCardinality.js";
 // import { completeForElementRelation } from "./completions/completeForElementRelation.js";
