@@ -29,7 +29,7 @@ fragment RelationData:
 ;
 
 fragment RelationName:
-	(RelationConnectors (name=QualifiedName '--')?) 
+	(RelationConnectors ((name=QualifiedName | name=STRING) '--')?) 
 	// |
 	// (('--' name=QualifiedName)? InvertedRelationConnectors)
 ;
@@ -82,5 +82,6 @@ RelationStereotype returns string:
 	'formal' |
 	'manifestation' |
 	'constitution' |
-	ID
+	ID |
+	STRING
 ;

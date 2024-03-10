@@ -8,7 +8,7 @@ export function isReservedKeyword(keyword: string): boolean {
     "true", "try", "typeof", "var", "void", "while", "with", "as", "implements", "interface", 
     "let", "package", "private", "protected", "public", "static", "yield", "any", "boolean", 
     "constructor", "declare", "get", "module", "require", "number", "set", "string", "symbol", 
-    "type", "from", "of",  'material', 'derivation',
+    "type", "from", "of",  'material', 'derivation', "value",
 
     // Relation stereotypes
     'comparative',

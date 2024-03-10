@@ -30,7 +30,7 @@ export class TontoQualifiedNameProvider extends DefaultNameProvider {
    * @param name simple name
    * @returns qualified name separated by `.`
    */
-  override getName(node: AstNode): string | undefined {
+  getQualifiedName(node: AstNode): string | undefined {
     if (isElementRelation(node)) {
       if (!node.name) {
         return undefined;
@@ -57,5 +57,16 @@ export class TontoQualifiedNameProvider extends DefaultNameProvider {
       return `${parent.name}.${node.name}`;
     }
     return undefined;
+  }
+
+
+  override getName(node: AstNode): string | undefined {
+    if (isElementRelation(node) || isContextModule(node) || isClassDeclaration(node) || isAttribute(node) ||
+    isGeneralizationSet(node) ||
+    isDataType(node) ||
+    isEnumElement(node)) {
+      return node.name
+    }
+    return undefined
   }
 }

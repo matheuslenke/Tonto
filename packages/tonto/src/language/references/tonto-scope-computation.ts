@@ -131,7 +131,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
       }
       if (isClassDeclaration(element) || isDataType(element)) {
         if (element.name !== undefined) {
-          const qualifiedName = this.qualifiedNameProvider.getName(element);
+          const qualifiedName = this.qualifiedNameProvider.getQualifiedName(element);
           const name = this.qualifiedNameProvider.getName(element);
           const description = this.descriptions.createDescription(element, name, document);
           const descriptionQualified = this.descriptions.createDescription(element, qualifiedName, document);

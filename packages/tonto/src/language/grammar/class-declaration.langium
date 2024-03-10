@@ -14,7 +14,8 @@ interface ClassDeclaration {
 }
 
 ClassDeclarationRule returns ClassDeclaration:
-	classElementType=OntologicalCategory name=QualifiedName
+	classElementType=OntologicalCategory 
+	name=QualifiedName
 	ontologicalNatures=ElementOntologicalNature?
     ('(' 'instanceOf' instanceOf=[ClassDeclaration:QualifiedName] ')')?
     ('specializes' specializationEndurants+=[ClassDeclaration:QualifiedName]

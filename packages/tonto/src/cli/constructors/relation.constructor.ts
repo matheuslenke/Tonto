@@ -29,7 +29,7 @@ function constructRelation(relation: Relation, element: Class, fileNode: Composi
 
   // Stereotype
   if (relation.stereotype) {
-    fileNode.append(`@${relation.stereotype}`, NL);
+    fileNode.append(`@${formatForId(relation.stereotype)}`, NL);
   }
 
   // FirstEnd Name

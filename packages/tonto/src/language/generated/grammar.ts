@@ -1728,16 +1728,33 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
             "$type": "Group",
             "elements": [
               {
-                "$type": "Assignment",
-                "feature": "name",
-                "operator": "=",
-                "terminal": {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$ref": "#/rules@11"
+                "$type": "Alternatives",
+                "elements": [
+                  {
+                    "$type": "Assignment",
+                    "feature": "name",
+                    "operator": "=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@11"
+                      },
+                      "arguments": []
+                    }
                   },
-                  "arguments": []
-                }
+                  {
+                    "$type": "Assignment",
+                    "feature": "name",
+                    "operator": "=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@8"
+                      },
+                      "arguments": []
+                    }
+                  }
+                ]
               },
               {
                 "$type": "Keyword",
@@ -2093,6 +2110,13 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
             "$type": "RuleCall",
             "rule": {
               "$ref": "#/rules@6"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@8"
             },
             "arguments": []
           }

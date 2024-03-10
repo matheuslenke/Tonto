@@ -1,4 +1,3 @@
-import { randomInt } from "crypto";
 import { CompositeGeneratorNode, NL } from "langium/generate";
 import { Property } from "ontouml-js";
 import { isReservedKeyword } from "../../language/utils/isReservedKeyword.js";
@@ -7,14 +6,17 @@ import { constructCardinality } from "./cardinality.constructor.js";
 
 export function constructAttributes(attributes: Property[], fileNode: CompositeGeneratorNode) {
   attributes.forEach((attribute) => {
+    let name = attribute.getNameOrId()
+    if (isReservedKeyword(attribute.getNameOrId())) {
+      name = name + "_"
+      console.log(name)
+    }
+
     const propertyType = attribute.propertyType?.getName();
 
     if (propertyType) {
-      let name = attribute.getNameOrId()
-      if (isReservedKeyword(attribute.getNameOrId())) {
-        name = name + `${randomInt(1000)}`
-      }
-      fileNode.append(`${formatForId(attribute.getName())} : ${propertyType}`);
+
+      fileNode.append(`${formatForId(name)} : ${propertyType}`);
 
       if (attribute.cardinality) {
         constructCardinality(attribute.cardinality, fileNode);
@@ -30,7 +32,7 @@ export function constructAttributes(attributes: Property[], fileNode: CompositeG
 
       fileNode.append(NL);
     } else {
-      fileNode.append(`${formatForId(attribute.getName())}`, NL);
+      fileNode.append(`${formatForId(name)} : undefined`, NL);
     }
   });
 }

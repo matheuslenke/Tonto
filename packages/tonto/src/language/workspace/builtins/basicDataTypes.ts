@@ -13,4 +13,6 @@ datatype time
 
 datatype datetime
 
+datatype undefined
+
 `;
