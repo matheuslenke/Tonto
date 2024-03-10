@@ -1,13 +1,22 @@
 
-import { CompositeGeneratorNode, Generated, NL, expandToNode, joinToNode } from "langium/generate";
+import { CompositeGeneratorNode, NL } from "langium/generate";
 import { Class, OntoumlElement, OntoumlType } from "ontouml-js";
-import { constructClassElement } from "../TontoConstructors/classElement.constructor.js";
 import { formatForId } from "../utils/replaceWhitespace.js";
+import { constructClassElement } from "./classElement.constructor.js";
 
-export function createTontoModuleModular(element: OntoumlElement, fileNode: CompositeGeneratorNode): Generated {
+import { Generated, expandToNode, joinToNode } from "langium/generate";
+
+/**
+ * This function is the entry point for creating a Tonto Model based on an OntoUML
+ * element.
+ * @param element The parsed OntoUML Element from ontouml-js
+ * @param fileNode The node which the generated file is created
+ * @returns 
+ */
+export function createTontoPackage(packageItem: OntoumlElement, fileNode: CompositeGeneratorNode): Generated {
   // return generateTonto(element);
-  fileNode.append(`package ${formatForId(element.getNameOrId())}`, NL, NL);
-  element.getContents().forEach((content) => {
+  fileNode.append(`package ${formatForId(packageItem.getNameOrId())}`, NL, NL);
+  packageItem.getContents().forEach((content) => {
     if (content.type === OntoumlType.CLASS_TYPE) {
       const classItem = content as Class;
       constructClassElement(classItem, fileNode);

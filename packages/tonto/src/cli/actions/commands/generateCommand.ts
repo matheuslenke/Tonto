@@ -1,42 +1,18 @@
-import { extractAllAstNodes, extractAstNode } from "../cli-util.js";
-import { generateJSONFile } from "../jsonGenerator.js";
-import { NodeFileSystem } from "langium/node";
 import chalk from "chalk";
 import { glob } from "glob";
-import * as path from "node:path";
-import { generateJSONFileModular } from "../JsonModularGenerators/jsonModular.generator.js";
-import { TontoManifest } from "../model/TontoManifest.js";
-import { builtInLibs } from "../../language/workspace/builtins/index.js";
-import { createTontoServices, Model, TontoServices } from "../../language/index.js";
-import { readOrCreateDefaultTontoManifest } from "../utils/readManifest.js";
+import { NodeFileSystem } from "langium/node";
+import path from "path";
+import { Model, TontoServices, builtInLibs, createTontoServices } from "../../../language/index.js";
+import { extractAllAstNodes, extractAstNode } from "../../cli-util.js";
+import { generateJSONFileModular } from "../../generators/jsonModular.generator.js";
+import { generateJSONFile } from "../../jsonGenerator.js";
+import { TontoManifest } from "../../model/TontoManifest.js";
+import { readOrCreateDefaultTontoManifest } from "../../utils/readManifest.js";
 
-export type GenerateOptions = {
-  destination?: string;
-};
-
-export const generateSingleAction = async (fileName: string, opts: GenerateOptions): Promise<void> => {
-  generateCommand(fileName, opts);
-};
-
-export const generateAction = async (dir: string, _opts: GenerateOptions): Promise<void> => {
-  if (!dir) {
-    console.log(chalk.red("Directory not provided!"));
-    return;
-  }
-  try {
-    const generatedFile = await generateModularCommand(dir);
-    if (generatedFile) {
-      console.log(chalk.green(`JSON File generated successfully: ${generatedFile}`));
-    }
-  } catch (error) {
-    console.log(chalk.red(error));
-  }
-};
-
-export const generateCommand = async (fileName: string, opts: GenerateOptions): Promise<string | undefined> => {
+export const generateCommand = async (fileName: string, destination: string): Promise<string | undefined> => {
   const services = createTontoServices({ ...NodeFileSystem }).Tonto;
   const model = await extractAstNode<Model>(fileName, services);
-  const generatedFilePath = generateJSONFile(model, fileName, opts.destination);
+  const generatedFilePath = generateJSONFile(model, fileName, destination);
   return generatedFilePath;
 };
 

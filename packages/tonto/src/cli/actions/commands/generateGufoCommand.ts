@@ -1,47 +1,13 @@
-import chalk from "chalk";
 import { glob } from "glob";
 import { CompositeGeneratorNode } from "langium/generate";
 import { NodeFileSystem } from "langium/node";
 import * as fs from "node:fs";
-import * as path from "node:path";
-import { Model, createTontoServices } from "../../language/index.js";
-import { builtInLibs } from "../../language/workspace/builtins/index.js";
-import { GeneratorContext, parseProject } from "../JsonModularGenerators/jsonModular.generator.js";
-import { extractAllAstNodes } from "../cli-util.js";
-import { TontoManifest, createDefaultTontoManifest } from "../model/TontoManifest.js";
-import { ErrorGufoResultResponse, GufoResultResponse, TransformTontoToGufo } from "../requests/gufoTransform.js";
-import { readOrCreateDefaultTontoManifest } from "../utils/readManifest.js";
-
-export const transformToGufoAction = async (dirName: string): Promise<void> => {
-  if (!dirName) {
-    console.log(chalk.red("Directory not provided!"));
-    return;
-  }
-  console.log(chalk.bold("Transforming to gufo..."));
-
-  try {
-    const manifest = readOrCreateDefaultTontoManifest(dirName);
-    const response = await transformToGufoCommand(dirName);
-
-    if (isGufoResultResponse(response)) {
-      const resultResponse = response as GufoResultResponse;
-      if (!fs.existsSync(dirName)) {
-        fs.mkdirSync(dirName);
-      }
-      fs.writeFileSync(path.join(dirName, manifest.outFolder, "gufo.ttl"), resultResponse.result);
-      console.log(resultResponse.result);
-    } else {
-      const errorResponse = response as ErrorGufoResultResponse;
-      errorResponse.info.forEach((errorInfo) => {
-        console.log(chalk.bold.redBright(`[${errorInfo.severity}] ${errorInfo.title}:`));
-        console.log(chalk.red(errorInfo.description));
-      });
-    }
-    console.log(chalk.bold.green("Transformation to Gufo finished"));
-  } catch (error) {
-    console.log(chalk.red(error));
-  }
-};
+import path from "path";
+import { Model, builtInLibs } from "../../../language/index.js";
+import { createTontoServices } from "../../../language/tonto-module.js";
+import { extractAllAstNodes } from "../../cli-util.js";
+import { GeneratorContext, parseProject } from "../../generators/jsonModular.generator.js";
+import { ErrorGufoResultResponse, GufoResultResponse, TontoManifest, TransformTontoToGufo, createDefaultTontoManifest } from "../../main.js";
 
 export const transformToGufoCommand = async (
   dirName: string

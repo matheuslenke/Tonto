@@ -1,42 +1,17 @@
-import chalk from "chalk";
+
 import { glob } from "glob";
 import { CompositeGeneratorNode } from "langium/generate";
 import { NodeFileSystem } from "langium/node";
 import * as fs from "node:fs";
-import * as path from "node:path";
-import { Model, createTontoServices } from "../../language/index.js";
-import { builtInLibs } from "../../language/workspace/builtins/index.js";
-import { GeneratorContext, parseProject } from "../JsonModularGenerators/jsonModular.generator.js";
-import { extractAllAstNodes } from "../cli-util.js";
-import { TontoManifest, createDefaultTontoManifest } from "../model/TontoManifest.js";
-import { ErrorResultResponse, ResultResponse, validateTontoFile } from "../requests/ontoumljsValidator.js";
+import path from "node:path";
+import { Model, builtInLibs, createTontoServices } from "../../../index.js";
+import { extractAllAstNodes } from "../../cli-util.js";
+import { GeneratorContext, parseProject } from "../../generators/jsonModular.generator.js";
+import { ErrorResultResponse, ResultResponse, TontoManifest, createDefaultTontoManifest, validateTontoFile } from "../../main.js";
 
-export const validateAction = async (dirName: string): Promise<void> => {
-  if (!dirName) {
-    console.log(chalk.red("Directory not provided!"));
-    return;
-  }
-  console.log(chalk.bold("Validating..."));
-
-  try {
-    const response = await validateCommand(dirName);
-
-    // If it is ResultResponse[]
-    if (Array.isArray(response)) {
-      const resultResponses = response as ResultResponse[];
-      resultResponses.forEach((resultResponse) => {
-        console.log(chalk.bold.redBright(`[${resultResponse.severity}] ${resultResponse.title}:`));
-        console.log(chalk.red(resultResponse.description));
-      });
-    } else {
-      const error = response as ErrorResultResponse;
-      console.log(chalk.bold.red(error.message));
-    }
-    console.log(chalk.bold.green("Validation finished"));
-  } catch (error) {
-    console.log(chalk.red(error));
-  }
-};
+export type ValidateResultResponse = {
+  
+}
 
 export const validateCommand = async (dirName: string): Promise<ResultResponse[] | ErrorResultResponse> => {
   const services = createTontoServices({ ...NodeFileSystem }).Tonto;

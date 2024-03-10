@@ -1,19 +1,19 @@
 import { Class, Package, Relation } from "ontouml-js";
 import {
   ClassDeclaration,
-  DataType,
   ContextModule,
+  DataType,
   ElementRelation,
   GeneralizationSet,
 } from "../../language/generated/ast.js";
-import { classElementGenerator } from "../JsonGenerators/class.generator.js";
-import { customDataTypeAttributesGenerator, customDataTypeGenerator } from "../JsonGenerators/datatype.generator.js";
-import { enumGenerator } from "../JsonGenerators/enum.generator.js";
-import { generalizationSetGenerator } from "../JsonGenerators/genset.generator.js";
-import { generateInstantiations } from "../JsonGenerators/instantiation.generator.js";
-import { relationGenerator } from "../JsonGenerators/relation.generator.js";
-import { generateDataTypeSpecializations, generateSpecializations } from "../JsonGenerators/specialization.generator.js";
-import { attributeGenerator } from "../JsonGenerators/attribute.generator.js";
+import { attributeGenerator } from "./attribute.generator.js";
+import { classElementGenerator } from "./class.generator.js";
+import { customDataTypeAttributesGenerator, customDataTypeGenerator } from "./datatype.generator.js";
+import { enumGenerator } from "./enum.generator.js";
+import { generalizationSetGenerator } from "./genset.generator.js";
+import { generateInstantiations } from "./instantiation.generator.js";
+import { relationGenerator } from "./relation.generator.js";
+import { generateDataTypeSpecializations, generateSpecializations } from "./specialization.generator.js";
 
 export interface GeneratedContextModuleData {
   classes: Class[];

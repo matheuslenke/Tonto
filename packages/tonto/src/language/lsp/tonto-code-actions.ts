@@ -1,3 +1,4 @@
+
 import { LangiumDocument, MaybePromise } from "langium";
 import { CodeActionProvider } from "langium/lsp";
 import { CodeActionKind, Diagnostic } from "vscode-languageserver";

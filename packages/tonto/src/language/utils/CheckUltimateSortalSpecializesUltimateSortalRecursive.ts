@@ -1,6 +1,6 @@
-import { ErrorMessages } from "../models/ErrorMessages.js";
 import { ValidationAcceptor } from "langium";
 import { ClassDeclaration } from "../generated/ast.js";
+import { ErrorMessages } from "../models/ErrorMessages.js";
 import { OntologicalCategoryEnum } from "../models/OntologicalCategory.js";
 
 const checkUltimateSortalSpecializesUltimateSortalRecursive = (

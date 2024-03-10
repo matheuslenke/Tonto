@@ -1,13 +1,12 @@
-import {
-  AstNodeDescription,
-  DefaultScopeProvider, MapScope, ReferenceInfo, Scope, ScopeOptions, StreamScope, stream
-} from "langium";
+import { AstNodeDescription, DefaultScopeProvider, MapScope, ReferenceInfo, Scope, ScopeOptions, StreamScope, stream } from "langium";
+
 
 /**
  * Special scope provider that matches symbol names regardless of lowercase or uppercase.
  */
 export class TontoScopeProvider extends DefaultScopeProvider {
 
+  
 
   protected override createScope(elements: Iterable<AstNodeDescription>, outerScope?: Scope | undefined, options?: ScopeOptions | undefined): Scope {
     const scopes = new StreamScope(stream(elements), outerScope, {...options, caseInsensitive: true});

@@ -27,20 +27,17 @@ const plugins = [{
 }];
 
 const ctx = await esbuild.context({
-    // Entry points for the vscode extension and the language server
-    entryPoints: ["src/extension/main.ts", "src/language/main.ts"],
-    outdir: "out",
-    bundle: true,
-    target: "ES2017",
-    // VSCode's extension host is still using cjs, so we need to transform the code
-    format: "cjs",
-    // To prevent confusing node, we explicitly use the `.cjs` extension
+    entryPoints: ['src/language/main.ts', 'src/extension/main.ts'],
+    outdir: 'out',
     outExtension: {
-        ".js": ".cjs"
+        '.js': '.cjs'
     },
-    loader: { ".ts": "ts" },
-    external: ["vscode"],
-    platform: "node",
+    bundle: true,
+    target: "ES2022",
+    format: 'cjs',
+    loader: { '.ts': 'ts' },
+    external: ['vscode'],
+    platform: 'node',
     sourcemap: !minify,
     minify,
     plugins

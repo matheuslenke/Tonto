@@ -1,6 +1,6 @@
-import { ErrorMessages } from "../models/ErrorMessages.js";
 import { ValidationAcceptor } from "langium";
-import { ClassDeclaration, GeneralizationSet } from "../generated/ast.js";
+import { ClassDeclaration, ClassDeclarationOrRelation, GeneralizationSet } from "../generated/ast.js";
+import { ErrorMessages } from "../models/ErrorMessages.js";
 import { isUltimateSortalOntoCategory } from "../models/OntologicalCategory.js";
 
 const validateSortalSpecializesUniqueUltimateSortalRecursive = (
@@ -66,10 +66,11 @@ const checkSortalSpecializesUniqueUltimateSortalRecursive = (
     /**
      * If the element is a GeneralizationSet, then we need to check the general element and go up from there
      */
-    const generalItem = actualElement.generalItem.ref;
+    let generalItem: ClassDeclarationOrRelation | undefined = actualElement.generalItem.ref;
     if (!generalItem || generalItem.$type !== "ClassDeclaration") {
       return totalUltimateSortalSpecialized;
     }
+    
     if (isUltimateSortalOntoCategory(generalItem.classElementType?.ontologicalCategory)) {
       totalUltimateSortalSpecialized += 1;
     }

@@ -1,3 +1,5 @@
+
+
 import { AstNode } from "langium";
 import { AbstractSemanticTokenProvider, SemanticTokenAcceptor } from "langium/lsp";
 import { SemanticTokenModifiers, SemanticTokenTypes } from "vscode-languageserver";

@@ -1,14 +1,15 @@
+
 import { AstNode, DefaultNameProvider } from "langium";
 import {
-  ContextModule,
   ClassDeclaration,
-  isContextModule,
-  isClassDeclaration,
-  isElementRelation,
+  ContextModule,
   isAttribute,
-  isGeneralizationSet,
+  isClassDeclaration,
+  isContextModule,
   isDataType,
+  isElementRelation,
   isEnumElement,
+  isGeneralizationSet,
 } from "../generated/ast.js";
 
 export function toQualifiedName(pack: ContextModule | ClassDeclaration, childName: string): string {
@@ -22,13 +23,14 @@ export function toQualifiedName(pack: ContextModule | ClassDeclaration, childNam
 }
 
 export class TontoQualifiedNameProvider extends DefaultNameProvider {
+  
   /**
    * @param qualifier if the qualifier is a `string`, simple string concatenation is done: `qualifier.name`.
    *      if the qualifier is a `Package` fully qualified name is created: `package1.package2.name`.
    * @param name simple name
    * @returns qualified name separated by `.`
    */
-  getQualifiedName(node: AstNode): string | undefined {
+  override getName(node: AstNode): string | undefined {
     if (isElementRelation(node)) {
       if (!node.name) {
         return undefined;

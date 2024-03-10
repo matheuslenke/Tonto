@@ -1,3 +1,4 @@
+
 import { ValidationAcceptor } from "langium";
 import { Model } from "../generated/ast.js";
 

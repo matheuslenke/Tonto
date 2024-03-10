@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 import { ValidationAcceptor } from "langium";
 import { ClassDeclaration } from "../generated/ast.js";
+import { tontoNatureUtils } from "../models/Natures.js";
 import {
   OntologicalCategoryEnum,
   getOntologicalCategory,
@@ -14,10 +15,9 @@ import {
   isRigidStereotype,
   isSemiRigidStereotype,
 } from "../models/StereotypeUtils.js";
+import { toQualifiedName } from "../references/tonto-name-provider.js";
 import { checkUltimateSortalSpecializesUltimateSortalRecursive } from "../utils/CheckUltimateSortalSpecializesUltimateSortalRecursive.js";
 import { checkNatureCompatibleRestrictedTo } from "../utils/checkNatureCompatibleRestrictedTo.js";
-import { toQualifiedName } from "../references/tonto-name-provider.js";
-import { tontoNatureUtils } from "../models/Natures.js";
 import { formPhrase } from "../utils/formPhrase.js";
 
 export class ClassDeclarationValidator {
@@ -178,7 +178,7 @@ export class ClassDeclarationValidator {
           }
         }
         if (hasCompatibleNatures === false) {
-          let naturesList = natures.reduce((nature, lastString) => {
+          let naturesList: string = natures.reduce((nature: string, lastString: string) => {
             return `${lastString}, ${nature}`;
           }, "");
           naturesList = naturesList.slice(0, naturesList.length - 2);

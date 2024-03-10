@@ -8,9 +8,10 @@
     "sourceMap": true,
     "declaration": true,
     "baseUrl": "src/",
-    "esModuleInterop": true,
-    "module": "node16",
-    "moduleResolution": "node16",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/language/*": ["./src/language/*"]
+    },
   },
   "include": ["src"],
   "exclude": ["lib", "node_modules"]

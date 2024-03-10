@@ -3,8 +3,8 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { MultilingualText, Project } from "ontouml-js";
 import { Model } from "../language/index.js";
-import { contextModuleGenerator } from "./JsonGenerators/contextModule.generator.js";
 import { extractDestinationAndName } from "./cli-util.js";
+import { contextModuleGenerator } from "./generators/contextModule.generator.js";
 
 export function generateJSONFile(model: Model, filePath: string, destination: string | undefined): string {
   const data = extractDestinationAndName(filePath, destination);
@@ -19,7 +19,7 @@ export function generateJSONFile(model: Model, filePath: string, destination: st
   return generate(ctx);
 }
 
-interface GeneratorContext {
+export interface GeneratorContext {
   model: Model
   name: string
   fileName: string

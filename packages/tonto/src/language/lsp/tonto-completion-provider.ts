@@ -1,5 +1,5 @@
 import { DefaultCompletionProvider } from "langium/lsp";
-// import * as ast from "langium/lib/grammar/generated/ast.js";
+// import * as ast from "langium/grammar/generated/ast.js";
 // import { completeForCardinality } from "./completions/completeForCardinality.js";
 // import { completeForElementRelation } from "./completions/completeForElementRelation.js";
 // import { completeForEnumSnippets } from "./completions/completeForEnumSnippets.js";
@@ -10,7 +10,7 @@ import { DefaultCompletionProvider } from "langium/lsp";
 //   completeFullExternalElementRelationSnippets,
 // } from "./completions/completeFullElementRelationSnippets.js";
 // import { completeForGenSetSnippets } from "./completions/completeForGenSet.js";
-// import { isParserRule } from "langium/lib/grammar/generated/ast.js";
+// import { isParserRule } from "langium/grammar/generated/ast.js";
 
 export class TontoCompletionProvider extends DefaultCompletionProvider {
   // protected override async completionForRule(

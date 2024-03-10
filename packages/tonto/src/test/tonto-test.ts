@@ -1,3 +1,4 @@
+
 import { AstNode, LangiumDocument } from "langium";
 import { Diagnostic } from "vscode-languageserver";
 import { URI } from "vscode-uri";

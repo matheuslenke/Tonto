@@ -1,13 +1,10 @@
 import { Command } from "commander";
 import { TontoLanguageMetaData } from "../language/index.js";
-import { generateAction } from "./actions/generateAction.js";
-import { transformToGufoAction } from "./actions/gufoGenerateAction.js";
-import { importAction } from "./actions/importAction.js";
-import { importModularAction } from "./actions/importModularAction.js";
-import { validateAction } from "./actions/index.js";
+import { TontoActions } from "./main.js";
 
 export default function (): void {
   const program = new Command();
+  const actions = new TontoActions();
 
   program
     .name("tonto-cli")
@@ -21,7 +18,7 @@ export default function (): void {
     .argument("<dir>", "Directory of the actual project")
     .option("-d, --destination <dir>", "Destination directory of generating")
     .description("Generate JSON from your project")
-    .action(generateAction);
+    .action(actions.generateAction);
 
   program
     .command("generateSingle")
@@ -30,33 +27,34 @@ export default function (): void {
       `Generate on single file projects providing source file (possible file extensions: ${fileExtensions})`
     )
     .option("-d", "--d <destination>", "Destination of generated JSON file")
-    .action(generateAction)
+    .action(actions.generateAction)
     .description("Generate JSON from your project or a single file");
 
   program
     .command("import")
     .argument("<file>", "source file (possible file extensions: json)")
+    .option("-d, --destination <dir>", "destination directory of generating")
     .description("generates a tonto file from a JSON file")
-    .action(importModularAction);
+    .action(actions.importAction);
 
   program
     .command("importSingle")
     .argument("<file>", "source file (possible file extensions: json)")
     .option("-d, --destination <dir>", "destination directory of generating")
     .description("generates a tonto file from a JSON file")
-    .action(importAction);
+    .action(actions.importAction);
 
   program
     .command("validate")
     .argument("<dir>", "Directory of the actual project")
     .description("Validate your Tonto project with the ontouml-js API")
-    .action(validateAction);
+    .action(actions.validateAction);
 
   program
     .command("transform")
     .argument("<dir>", "Directory of the actual project")
     .description("Transform you Tonto project to gufo with the ontouml-js API")
-    .action(transformToGufoAction);
+    .action(actions.transformToGufoAction);
 
   program.parseAsync(process.argv);
 }

@@ -2,12 +2,12 @@ import * as fs from "fs";
 import { CompositeGeneratorNode, toString } from "langium/generate";
 import { OntoumlElement, OntoumlType, Package, Project } from "ontouml-js";
 import * as path from "path";
-import { TontoManifest, toJson } from "../model/TontoManifest.js";
 import { formatForId, replaceWhitespace } from "../utils/replaceWhitespace.js";
-import { createTontoModuleModular } from "./contextModuleModular.constructor.js";
 import { createTontoImports } from "./importModular.constructor.js";
+import { createTontoManifest, customExtractDestinationAndName } from "./manifest.constructor.js";
+import { createTontoPackage } from "./package.constructor.js";
 
-export function generateTontoFileModular(project: Project, filePath: string, destination: string | undefined): string {
+export function generateTontoFile(project: Project, filePath: string, destination: string | undefined): string {
   const data = customExtractDestinationAndName(filePath, destination);
   const ctx = <GeneratorContext>{
     project,
@@ -30,7 +30,7 @@ function generate(ctx: GeneratorContext): string {
     fs.mkdirSync(ctx.destinationFolder, { recursive: true });
   }
   // Create manifest file
-  createTontoManifest(ctx);
+  createTontoManifest(ctx.project, ctx.destinationFolder);
 
   const modelPath = path.join(ctx.destinationFolder, ctx.project.model?.getNameOrId());
 
@@ -40,13 +40,13 @@ function generate(ctx: GeneratorContext): string {
 
   ctx.project.model.getContents().forEach((ontoumlElement) => {
     const fileNode = new CompositeGeneratorNode();
-    generateModule(modelPath, ontoumlElement, fileNode);
+    generateModel(modelPath, ontoumlElement, fileNode);
   });
 
   return modelPath;
 }
 
-function generateModule(
+function generateModel(
   actualDestinationFolder: string,
   ontoumlElement: OntoumlElement,
   fileNode: CompositeGeneratorNode
@@ -55,7 +55,7 @@ function generateModule(
    * If it is a Project, we just enter the "Model" Package
    */
   if (ontoumlElement.type === OntoumlType.PROJECT_TYPE) {
-    generateModule(actualDestinationFolder, ontoumlElement, new CompositeGeneratorNode());
+    generateModel(actualDestinationFolder, ontoumlElement, new CompositeGeneratorNode());
   }
   /**
    * If it is a package, we need to generate again recursively
@@ -68,19 +68,16 @@ function generateModule(
     if (!fs.existsSync(packagePath)) {
       newPath = fs.mkdirSync(packagePath, { recursive: true }) ?? packagePath;
     }
-    /**
-     * First, we need to generate all imports for this module
-     */
+    // First, we need to generate all imports for this module
     createTontoImports(packageElement, fileNode);
-    /**
-     * Then, we create the elements of this package
-     */
-    createTontoModuleModular(packageElement, fileNode);
+    
+    // Then, we create the elements of this package
+    createTontoPackage(packageElement, fileNode);
 
     // Lastly, we call it again to create other packages inside it recursively
     for (const child of packageElement.getContents()) {
       if (child.type === OntoumlType.PACKAGE_TYPE || child.type === OntoumlType.PROJECT_TYPE) {
-        generateModule(replaceWhitespace(newPath), child, new CompositeGeneratorNode());
+        generateModel(replaceWhitespace(newPath), child, new CompositeGeneratorNode());
       }
     }
     const generatedFilePath = path.join(newPath, formatForId(packageElement.getName())) + ".tonto";
@@ -88,31 +85,4 @@ function generateModule(
   }
 }
 
-function createTontoManifest(ctx: GeneratorContext) {
-  const manifest: TontoManifest = {
-    projectName: formatForId(ctx.project.getNameOrId()),
-    version: "1.0",
-    displayName: ctx.project.getNameOrId(),
-    license: "",
-    publisher: "",
-    dependencies: {},
-    outFolder: "",
-    authors: [],
-  };
-  const jsonString = toJson(manifest);
-  const manifestPath = path.join(ctx.destinationFolder, "tonto.json");
-  fs.writeFileSync(manifestPath, jsonString);
-}
 
-interface FilePathData {
-  destination: string
-  name: string
-}
-
-export function customExtractDestinationAndName(filePath: string, destination: string | undefined): FilePathData {
-  filePath = filePath.replace(/\.json/, "");
-  return {
-    destination: destination ?? path.join(path.dirname(filePath), "generated"),
-    name: path.basename(filePath),
-  };
-}

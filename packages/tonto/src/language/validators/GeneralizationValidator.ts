@@ -1,4 +1,5 @@
 /* eslint-disable max-len */
+
 import { ValidationAcceptor } from "langium";
 import { ClassDeclaration, GeneralizationSet } from "../generated/ast.js";
 import { ErrorMessages } from "../models/ErrorMessages.js";

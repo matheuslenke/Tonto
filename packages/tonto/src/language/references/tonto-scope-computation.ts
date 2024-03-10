@@ -1,13 +1,5 @@
-import {
-  AstNode,
-  AstNodeDescription,
-  AstUtils,
-  DefaultScopeComputation,
-  interruptAndCheck,
-  LangiumDocument,
-  MultiMap,
-  PrecomputedScopes,
-} from "langium";
+
+import { AstNode, AstNodeDescription, AstUtils, DefaultScopeComputation, interruptAndCheck, LangiumDocument, MultiMap, PrecomputedScopes } from "langium";
 import { CancellationToken } from "vscode-jsonrpc";
 import {
   ContextModule,
@@ -53,7 +45,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
         let name: string | undefined;
 
         if (isClassDeclaration(childNode.$container)) {
-          name = this.qualifiedNameProvider.getQualifiedName(childNode);
+          name = this.qualifiedNameProvider.getName(childNode);
         } else {
           name = childNode.name;
         }
@@ -70,7 +62,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
           descr.push(this.descriptions.createDescription(childNode, childNode.name, document));
         } else if (isContextModule(childNode) && !childNode.isGlobal) {
           if (childNode.name !== undefined) {
-            const fullyQualifiedName = this.qualifiedNameProvider.getQualifiedName(childNode);
+            const fullyQualifiedName = this.qualifiedNameProvider.getName(childNode);
 
             descr.push(this.descriptions.createDescription(childNode, fullyQualifiedName, document));
           }
@@ -128,8 +120,8 @@ export class TontoScopeComputation extends DefaultScopeComputation {
     for (const element of container.declarations) {
       await interruptAndCheck(cancelToken);
       if (isElementRelation(element)) {
-        const qualifiedName = this.qualifiedNameProvider.getQualifiedName(element);
-        const name = this.qualifiedNameProvider.getQualifiedName(element);
+        const qualifiedName = this.qualifiedNameProvider.getName(element);
+        const name = this.qualifiedNameProvider.getName(element);
         if (name) {
           const description = this.descriptions.createDescription(element, name, document);
           const descriptionQualified = this.descriptions.createDescription(element, qualifiedName, document);
@@ -139,7 +131,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
       }
       if (isClassDeclaration(element) || isDataType(element)) {
         if (element.name !== undefined) {
-          const qualifiedName = this.qualifiedNameProvider.getQualifiedName(element);
+          const qualifiedName = this.qualifiedNameProvider.getName(element);
           const name = this.qualifiedNameProvider.getName(element);
           const description = this.descriptions.createDescription(element, name, document);
           const descriptionQualified = this.descriptions.createDescription(element, qualifiedName, document);
@@ -148,7 +140,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
           if (isClassDeclaration(element) && element.references.length > 0) {
             for (const internalElement of element.references) {
               if (isElementRelation(internalElement)) {
-                const name = this.qualifiedNameProvider.getQualifiedName(internalElement);
+                const name = this.qualifiedNameProvider.getName(internalElement);
                 if (name) {
                   const internalDescription = this.descriptions.createDescription(internalElement, name, document);
                   localDescriptions.push(internalDescription);

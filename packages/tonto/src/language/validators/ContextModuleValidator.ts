@@ -1,19 +1,20 @@
+
 import { ValidationAcceptor } from "langium";
+import { OntologicalNature } from "ontouml-js";
 import { ClassDeclaration, ContextModule, ElementRelation, GeneralizationSet } from "../generated/ast.js";
-import { checkCircularSpecializationRecursiveWithGenset } from "../utils/CheckCircularSpecializationRecursive.js";
-import { TontoQualifiedNameProvider } from "../references/tonto-name-provider.js";
+import { ErrorMessages } from "../models/ErrorMessages.js";
+import { tontoNatureUtils } from "../models/Natures.js";
 import {
   isBaseSortalOntoCategory,
   isSortalOntoCategory,
   isUltimateSortalOntoCategory,
 } from "../models/OntologicalCategory.js";
+import { TontoQualifiedNameProvider } from "../references/tonto-name-provider.js";
+import { checkCircularSpecializationRecursiveWithGenset } from "../utils/CheckCircularSpecializationRecursive.js";
 import { checkSortalSpecializesUniqueUltimateSortalRecursive } from "../utils/CheckSortalSpecializesUniqueUltimateSortalRecursive.js";
-import { ErrorMessages } from "../models/ErrorMessages.js";
-import { getParentNatures } from "../utils/getParentNatures.js";
-import { tontoNatureUtils } from "../models/Natures.js";
-import { formPhrase } from "../utils/formPhrase.js";
-import { OntologicalNature } from "ontouml-js";
 import { compareArrays } from "../utils/compareArrays.js";
+import { formPhrase } from "../utils/formPhrase.js";
+import { getParentNatures } from "../utils/getParentNatures.js";
 
 export class ContextModuleValidator {
   checkContextModuleStartsWithCapital(contextModule: ContextModule, accept: ValidationAcceptor): void {
@@ -57,7 +58,7 @@ export class ContextModuleValidator {
     contextModule.declarations.forEach((declaration) => {
       if (declaration.$type === "ElementRelation") {
         const elementRelation = declaration as ElementRelation;
-        const nameExists = names.find((name) => name === nameProvider.getQualifiedName(elementRelation));
+        const nameExists = names.find((name) => name === nameProvider.getName(elementRelation));
         const refName = elementRelation.name;
 
         if (nameExists) {
@@ -66,7 +67,7 @@ export class ContextModuleValidator {
             property: "name",
           });
         } else if (refName !== undefined) {
-          const qualifiedName = nameProvider.getQualifiedName(elementRelation);
+          const qualifiedName = nameProvider.getName(elementRelation);
           if (qualifiedName) {
             names.push(qualifiedName);
           }
@@ -74,8 +75,8 @@ export class ContextModuleValidator {
       } else if (declaration.$type === "ClassDeclaration") {
         const classElement = declaration as ClassDeclaration;
         classElement.references.forEach((elementRelation) => {
-          const nameExists = names.find((name) => name === nameProvider.getQualifiedName(elementRelation));
-          const refName = nameProvider.getQualifiedName(elementRelation);
+          const nameExists = names.find((name) => name === nameProvider.getName(elementRelation));
+          const refName = nameProvider.getName(elementRelation);
 
           if (nameExists) {
             accept("error", "Duplicated Reference declaration", {
@@ -83,7 +84,7 @@ export class ContextModuleValidator {
               property: "name",
             });
           } else if (refName !== undefined) {
-            const qualifiedName = nameProvider.getQualifiedName(elementRelation);
+            const qualifiedName = nameProvider.getName(elementRelation);
             if (qualifiedName) {
               names.push(qualifiedName);
             }

@@ -1,3 +1,4 @@
+
 import { AstNode } from "langium";
 import { AbstractFormatter, Formatting } from "langium/lsp";
 import * as ast from "./generated/ast.js";

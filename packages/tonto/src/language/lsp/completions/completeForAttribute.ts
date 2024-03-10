@@ -1,5 +1,5 @@
 
-// import { AbstractElement } from "langium/lib/grammar/generated/ast.js";
+// import { AbstractElement } from "langium/grammar/generated/ast.js";
 // import { CompletionItemKind } from "vscode-languageserver";
 // import { InsertTextFormat } from "vscode-languageserver";
 

@@ -1,24 +1,14 @@
-import {
-  inject,
-  Module,
-} from "langium";
-import { TontoGeneratedModule, TontoGeneratedSharedModule } from "./generated/module.js";
-import { TontoActionProvider } from "./lsp/tonto-code-actions.js";
-import { TontoValidationRegistry } from "./tonto-validator.js";
-import { TontoValidator } from "./validators/TontoValidator.js";
-// import { TontoCompletionProvider } from "./lsp/tonto-completion-provider.js";
-import {
-  createDefaultModule,
-  createDefaultSharedModule,
-  DefaultSharedModuleContext,
-  LangiumServices,
-  LangiumSharedServices,
-  PartialLangiumServices,
-  PartialLangiumSharedServices
-} from "langium/lsp";
-import { TontoQualifiedNameProvider } from "./references/tonto-name-provider.js";
-import { TontoScopeComputation } from "./references/tonto-scope-computation.js";
-import { TontoScopeProvider } from "./references/tonto-scope-provider.js";
+import { Module, inject } from "langium"
+import { DefaultSharedModuleContext, LangiumServices, LangiumSharedServices, PartialLangiumServices, PartialLangiumSharedServices, createDefaultModule, createDefaultSharedModule } from "langium/lsp"
+import { TontoGeneratedModule, TontoGeneratedSharedModule } from "./index.js"
+import { TontoActionProvider } from "./lsp/tonto-code-actions.js"
+import { TontoQualifiedNameProvider } from "./references/tonto-name-provider.js"
+import { TontoScopeComputation } from "./references/tonto-scope-computation.js"
+import { TontoScopeProvider } from "./references/tonto-scope-provider.js"
+import { TontoValidationRegistry } from "./tonto-validator.js"
+import { TontoValidator } from "./validators/TontoValidator.js"
+
+
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -45,13 +35,13 @@ export type TontoServices = LangiumServices & TontoAddedServices
  */
 export const TontoModule: Module<TontoServices, PartialLangiumServices & TontoAddedServices> = {
   references: {
-    ScopeComputation: (services) => new TontoScopeComputation(services),
+    ScopeComputation: (services: TontoServices) => new TontoScopeComputation(services),
     QualifiedNameProvider: () => new TontoQualifiedNameProvider(),
     NameProvider: () => new TontoQualifiedNameProvider(),
-    ScopeProvider: (services) => new TontoScopeProvider(services),
+    ScopeProvider: (services: TontoServices) => new TontoScopeProvider(services),
   },
   validation: {
-    ValidationRegistry: (services) => new TontoValidationRegistry(services),
+    ValidationRegistry: (services: TontoServices) => new TontoValidationRegistry(services),
     TontoValidator: () => new TontoValidator(),
   },
   lsp: {

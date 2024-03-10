@@ -3,7 +3,7 @@
     "private": true,
     "engineStrict": true,
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.2.10",
+    "version": "0.2.11",
     "license": "MIT",
     "repository": {
         "type": "git",
@@ -51,6 +51,6 @@
         "packages/tonto-package-manager"
     ],
     "dependencies": {
-        "langium": "^2.1.0"
+        "langium": "^3.0.0"
     }
 }
