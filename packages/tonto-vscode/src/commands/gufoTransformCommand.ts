@@ -1,15 +1,15 @@
-import * as vscode from "vscode";
-import { CommandIds } from "./commandIds.js";
-import {
-  ResultResponse,
-  ErrorResultResponse,
-  isGufoResultResponse,
-  transformToGufoCommand,
-  GufoResultResponse, 
-  readOrCreateDefaultTontoManifest
-} from "tonto-cli";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import {
+  ErrorResultResponse,
+  GufoResultResponse,
+  ResultResponse,
+  isGufoResultResponse,
+  readOrCreateDefaultTontoManifest,
+  transformToGufoCommand
+} from "tonto-cli";
+import * as vscode from "vscode";
+import { CommandIds } from "./commandIds.js";
 
 function createTransformToGufoSatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
   context.subscriptions.push(

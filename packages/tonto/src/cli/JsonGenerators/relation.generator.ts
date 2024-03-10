@@ -1,13 +1,12 @@
+import chalk from "chalk";
 import { AggregationKind, Class, Package, Property, Relation, RelationStereotype } from "ontouml-js";
 import {
   ClassDeclaration,
   ElementRelation,
-  RelationStereotype as MRelationStereotype,
-  RelationMetaAttributes,
+  RelationMetaAttributes
 } from "../../language/generated/ast.js";
-import chalk from "chalk";
-import { setPropertyCardinality } from "./cardinality.generator.js";
 import { RelationTypes } from "../../language/models/RelationType.js";
+import { setPropertyCardinality } from "./cardinality.generator.js";
 
 export function relationGenerator(
   relationItem: ElementRelation,
@@ -105,7 +104,7 @@ export function relationGeneralizationGenerator(model: Package, sourceRelation: 
   model.createGeneralization(sourceRelation, targetRelation);
 }
 
-function getStereotype(relationType: MRelationStereotype | undefined): RelationStereotype | undefined {
+function getStereotype(relationType: string | undefined): RelationStereotype | undefined {
   switch (relationType) {
     case "bringsAbout":
       return RelationStereotype.BRINGS_ABOUT;

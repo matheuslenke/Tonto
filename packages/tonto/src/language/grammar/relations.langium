@@ -81,5 +81,6 @@ RelationStereotype returns string:
 	'value' |
 	'formal' |
 	'manifestation' |
-	'constitution'
+	'constitution' |
+	ID
 ;

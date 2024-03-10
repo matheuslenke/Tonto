@@ -81,16 +81,16 @@ function constructRelation(relation: Relation, element: Class, fileNode: Composi
 
   // Second Name
   const secondEndName = formatForId(targetProperty.getName());
-  // SecondEnd Meta Attributes
-  constructEndMetaAttributes(secondEndName, targetProperty, fileNode);
-
+  
   let targetClassName = targetClass.getName();
   if (targetName !== sourceName) {
     targetClassName = `${targetClassPackage.getName()}.${targetClass.getName()}`;
   }
-
+  
   fileNode.append(" ", formatForId(targetClassName));
-
+  // SecondEnd Meta Attributes
+  constructEndMetaAttributes(secondEndName, targetProperty, fileNode);
+  
   constructRelationSpecializations(generalizations, fileNode);
   fileNode.append(NL);
 }

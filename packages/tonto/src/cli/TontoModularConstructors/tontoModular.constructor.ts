@@ -1,5 +1,5 @@
 import * as fs from "fs";
-import { CompositeGeneratorNode } from "langium/generate";
+import { CompositeGeneratorNode, toString } from "langium/generate";
 import { OntoumlElement, OntoumlType, Package, Project } from "ontouml-js";
 import * as path from "path";
 import { TontoManifest, toJson } from "../model/TontoManifest.js";
@@ -84,7 +84,7 @@ function generateModule(
       }
     }
     const generatedFilePath = path.join(newPath, formatForId(packageElement.getName())) + ".tonto";
-    fs.writeFileSync(generatedFilePath, path.toString());
+    fs.writeFileSync(generatedFilePath, toString(fileNode));
   }
 }
 

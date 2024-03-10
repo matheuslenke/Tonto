@@ -94,7 +94,7 @@
             "request": "launch",
             "args": [
                 // "${workspaceFolder}/../tonto-example-models/Library",
-                "${workspaceFolder}/examples/University",
+                "${workspaceFolder}/../tonto-catalog/models/abel2015petroleum-system",
                 "--extensionDevelopmentPath=${workspaceFolder}/packages/tonto-vscode"
             ],
             "outFiles": [

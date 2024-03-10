@@ -88,7 +88,7 @@ async function createTpmInstallCommand() {
   }
 }
 
-async function tpmInstall(directoryUri: vscode.Uri) {
+async function tpmInstall(_: vscode.Uri) {
   await vscode.window.withProgress(
     {
       location: vscode.ProgressLocation.Notification,
