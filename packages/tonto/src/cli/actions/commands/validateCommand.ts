@@ -9,10 +9,6 @@ import { extractAllAstNodes } from "../../cli-util.js";
 import { GeneratorContext, parseProject } from "../../generators/jsonModular.generator.js";
 import { ErrorResultResponse, ResultResponse, TontoManifest, createDefaultTontoManifest, validateTontoFile } from "../../main.js";
 
-export type ValidateResultResponse = {
-  
-}
-
 export const validateCommand = async (dirName: string): Promise<ResultResponse[] | ErrorResultResponse> => {
   const services = createTontoServices({ ...NodeFileSystem }).Tonto;
 

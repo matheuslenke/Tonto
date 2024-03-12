@@ -6,10 +6,10 @@ import { constructCardinality } from "./cardinality.constructor.js";
 
 export function constructAttributes(attributes: Property[], fileNode: CompositeGeneratorNode) {
   attributes.forEach((attribute) => {
-    let name = attribute.getNameOrId()
+    let name = attribute.getNameOrId();
     if (isReservedKeyword(attribute.getNameOrId())) {
-      name = name + "_"
-      console.log(name)
+      name = name + "_";
+      console.log(name);
     }
 
     const propertyType = attribute.propertyType?.getName();

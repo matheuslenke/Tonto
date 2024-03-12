@@ -10,7 +10,7 @@ export class TontoScopeProvider extends DefaultScopeProvider {
 
   protected override createScope(elements: Iterable<AstNodeDescription>, outerScope?: Scope | undefined, options?: ScopeOptions | undefined): Scope {
     const scopes = new StreamScope(stream(elements), outerScope, {...options, caseInsensitive: true});
-    return scopes
+    return scopes;
     // try {
     //   const scopes: Array<Stream<AstNodeDescription>> = [];
     //   const referenceType = this.reflection.getReferenceType(context);
@@ -40,6 +40,6 @@ export class TontoScopeProvider extends DefaultScopeProvider {
   }
 
   protected override getGlobalScope(referenceType: string, _context: ReferenceInfo): Scope {
-      return this.globalScopeCache.get(referenceType, () => new MapScope(this.indexManager.allElements(referenceType), undefined, {caseInsensitive: true}));
+    return this.globalScopeCache.get(referenceType, () => new MapScope(this.indexManager.allElements(referenceType), undefined, {caseInsensitive: true}));
   }
 }

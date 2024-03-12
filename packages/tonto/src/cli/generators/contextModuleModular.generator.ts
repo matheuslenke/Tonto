@@ -35,24 +35,24 @@ export function contextModuleGenerateClasses(
 
   contextModule.declarations.forEach((declaration) => {
     switch (declaration.$type) {
-      case "ClassDeclaration": {
-        const classElement = declaration as ClassDeclaration;
-        const newClass = classElementGenerator(classElement, packageItem);
-        returnData.classes.push(newClass);
-        break;
-      }
+    case "ClassDeclaration": {
+      const classElement = declaration as ClassDeclaration;
+      const newClass = classElementGenerator(classElement, packageItem);
+      returnData.classes.push(newClass);
+      break;
+    }
 
-      case "DataType": {
-        const dataType = declaration as DataType;
-        if (dataType.isEnum) {
-          const newEnum = enumGenerator(dataType, packageItem);
-          returnData.dataTypes.push(newEnum);
-        } else {
-          const newDataType = customDataTypeGenerator(dataType, packageItem);
-          returnData.dataTypes.push(newDataType);
-        }
-        break;
+    case "DataType": {
+      const dataType = declaration as DataType;
+      if (dataType.isEnum) {
+        const newEnum = enumGenerator(dataType, packageItem);
+        returnData.dataTypes.push(newEnum);
+      } else {
+        const newDataType = customDataTypeGenerator(dataType, packageItem);
+        returnData.dataTypes.push(newDataType);
       }
+      break;
+    }
     }
   });
 
@@ -108,13 +108,13 @@ function generateGenSets(contextModule: ContextModule, classes: Class[], package
 function generateClassDeclarationAttributes(contextModule: ContextModule, classes: Class[], dataTypes: Class[]): void {
   contextModule.declarations.forEach((declaration) => {
     switch (declaration.$type) {
-      case "ClassDeclaration": {
-        const classDeclaration = declaration as ClassDeclaration;
-        const createdClass = classes.find((item) => item.getName() === classDeclaration.name);
-        if (createdClass) {
-          attributeGenerator(classDeclaration, createdClass, dataTypes);
-        }
+    case "ClassDeclaration": {
+      const classDeclaration = declaration as ClassDeclaration;
+      const createdClass = classes.find((item) => item.getName() === classDeclaration.name);
+      if (createdClass) {
+        attributeGenerator(classDeclaration, createdClass, dataTypes);
       }
+    }
     }
   });
 }
@@ -123,13 +123,13 @@ function generateExternalRelations(contextModule: ContextModule, classes: Class[
   const relations: Relation[] = [];
   contextModule.declarations.forEach((declaration) => {
     switch (declaration.$type) {
-      case "ElementRelation": {
-        const elementRelation = declaration as ElementRelation;
-        const createdRelation = relationGenerator(elementRelation, packageItem, classes);
-        if (createdRelation) {
-          relations.push(createdRelation);
-        }
+    case "ElementRelation": {
+      const elementRelation = declaration as ElementRelation;
+      const createdRelation = relationGenerator(elementRelation, packageItem, classes);
+      if (createdRelation) {
+        relations.push(createdRelation);
       }
+    }
     }
   });
   return relations;

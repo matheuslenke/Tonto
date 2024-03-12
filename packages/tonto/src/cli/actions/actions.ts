@@ -30,7 +30,7 @@ export class TontoActions {
     } else {
       console.log("Error generating .tonto");
     }
-  };
+  }
 
   async generateAction(opts: GenerateOptions): Promise<void> {
     if (opts.dir) {
@@ -47,8 +47,8 @@ export class TontoActions {
     //   generateCommand(opts.fileName, opts.destination ?? "generated");
     // }
   
-    console.error(chalk.red("Neither file or directory provided."))
-  };
+    console.error(chalk.red("Neither file or directory provided."));
+  }
 
   async transformToGufoAction(dirName: string): Promise<void> {
     if (!dirName) {
@@ -79,7 +79,7 @@ export class TontoActions {
     } catch (error) {
       console.log(chalk.red(error));
     }
-  };
+  }
 
   async validateAction(dirName: string): Promise<void> {
     if (!dirName) {
@@ -106,5 +106,5 @@ export class TontoActions {
     } catch (error) {
       console.log(chalk.red(error));
     }
-  };
+  }
 }

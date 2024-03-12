@@ -19,10 +19,10 @@ export class TontoActionProvider implements CodeActionProvider {
 
   private createCodeAction(diagnostic: Diagnostic, document: LangiumDocument): CodeAction | undefined {
     switch (diagnostic.code) {
-      case "name_lowercase":
-        return this.makeUpperCase(diagnostic, document);
-      default:
-        return undefined;
+    case "name_lowercase":
+      return this.makeUpperCase(diagnostic, document);
+    default:
+      return undefined;
     }
   }
 

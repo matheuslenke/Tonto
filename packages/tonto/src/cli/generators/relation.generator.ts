@@ -106,47 +106,47 @@ export function relationGeneralizationGenerator(model: Package, sourceRelation: 
 
 function getStereotype(relationType: string | undefined): RelationStereotype | undefined {
   switch (relationType) {
-    case "bringsAbout":
-      return RelationStereotype.BRINGS_ABOUT;
-    case "characterization":
-      return RelationStereotype.CHARACTERIZATION;
-    case "comparative":
-      return RelationStereotype.COMPARATIVE;
-    case "componentOf":
-      return RelationStereotype.COMPONENT_OF;
-    case "creation":
-      return RelationStereotype.CREATION;
-    case "derivation":
-      return RelationStereotype.DERIVATION;
-    case "externalDependence":
-      return RelationStereotype.EXTERNAL_DEPENDENCE;
-    case "historicalDependence":
-      return RelationStereotype.HISTORICAL_DEPENDENCE;
-    case "instantiation":
-      return RelationStereotype.INSTANTIATION;
-    case "manifestation":
-      return RelationStereotype.MANIFESTATION;
-    case "material":
-      return RelationStereotype.MATERIAL;
-    case "mediation":
-      return RelationStereotype.MEDIATION;
-    case "memberOf":
-      return RelationStereotype.MEMBER_OF;
-    case "participation":
-      return RelationStereotype.PARTICIPATION;
-    case "participational":
-      return RelationStereotype.PARTICIPATIONAL;
-    case "subCollectionOf":
-      return RelationStereotype.SUBCOLLECTION_OF;
-    case "subQuantityOf":
-      return RelationStereotype.SUBQUANTITY_OF;
-    case "termination":
-      return RelationStereotype.TERMINATION;
-    case "triggers":
-      return RelationStereotype.TRIGGERS;
-    default:
-      // Qual seria o default?
-      return undefined;
+  case "bringsAbout":
+    return RelationStereotype.BRINGS_ABOUT;
+  case "characterization":
+    return RelationStereotype.CHARACTERIZATION;
+  case "comparative":
+    return RelationStereotype.COMPARATIVE;
+  case "componentOf":
+    return RelationStereotype.COMPONENT_OF;
+  case "creation":
+    return RelationStereotype.CREATION;
+  case "derivation":
+    return RelationStereotype.DERIVATION;
+  case "externalDependence":
+    return RelationStereotype.EXTERNAL_DEPENDENCE;
+  case "historicalDependence":
+    return RelationStereotype.HISTORICAL_DEPENDENCE;
+  case "instantiation":
+    return RelationStereotype.INSTANTIATION;
+  case "manifestation":
+    return RelationStereotype.MANIFESTATION;
+  case "material":
+    return RelationStereotype.MATERIAL;
+  case "mediation":
+    return RelationStereotype.MEDIATION;
+  case "memberOf":
+    return RelationStereotype.MEMBER_OF;
+  case "participation":
+    return RelationStereotype.PARTICIPATION;
+  case "participational":
+    return RelationStereotype.PARTICIPATIONAL;
+  case "subCollectionOf":
+    return RelationStereotype.SUBCOLLECTION_OF;
+  case "subQuantityOf":
+    return RelationStereotype.SUBQUANTITY_OF;
+  case "termination":
+    return RelationStereotype.TERMINATION;
+  case "triggers":
+    return RelationStereotype.TRIGGERS;
+  default:
+    // Qual seria o default?
+    return undefined;
   }
 }
 

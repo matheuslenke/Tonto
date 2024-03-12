@@ -27,17 +27,17 @@ const plugins = [{
 }];
 
 const ctx = await esbuild.context({
-    entryPoints: ['src/language/main.ts', 'src/extension/main.ts'],
-    outdir: 'out',
+    entryPoints: ["src/language/main.ts", "src/extension/main.ts"],
+    outdir: "out",
     outExtension: {
-        '.js': '.cjs'
+        ".js": ".cjs"
     },
     bundle: true,
-    target: "ES2022",
-    format: 'cjs',
-    loader: { '.ts': 'ts' },
-    external: ['vscode'],
-    platform: 'node',
+    target: "ES2017",
+    format: "cjs",
+    loader: { ".ts": "ts" },
+    external: ["vscode"],
+    platform: "node",
     sourcemap: !minify,
     minify,
     plugins

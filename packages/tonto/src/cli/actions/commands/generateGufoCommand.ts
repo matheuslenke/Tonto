@@ -58,7 +58,7 @@ export const transformToGufoCommand = async (
   }
 };
 
-export function isGufoResultResponse(value: any): value is GufoResultResponse | ErrorGufoResultResponse {
+export function isGufoResultResponse(value: unknown): value is GufoResultResponse | ErrorGufoResultResponse {
   if (typeof value === "object" && value !== null) {
     if ("result" in value) {
       return typeof value.result === "string";

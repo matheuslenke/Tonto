@@ -1,8 +1,7 @@
-import * as vscode from "vscode";
 import { basicDataTypes } from "tonto-cli";
+import * as vscode from "vscode";
 
-export class TontoLibraryFileSystemProvider
-  implements vscode.FileSystemProvider {
+export class TontoLibraryFileSystemProvider implements vscode.FileSystemProvider {
   context: vscode.ExtensionContext;
   basicDataTypes: string;
 

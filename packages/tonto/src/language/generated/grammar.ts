@@ -3,8 +3,8 @@
  * DO NOT EDIT MANUALLY!
  ******************************************************************************/
 
-import type { Grammar } from 'langium';
-import { loadGrammarFromJson } from 'langium';
+import type { Grammar } from "langium";
+import { loadGrammarFromJson } from "langium";
 
 let loadedTontoGrammar: Grammar | undefined;
 export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGrammar = loadGrammarFromJson(`{

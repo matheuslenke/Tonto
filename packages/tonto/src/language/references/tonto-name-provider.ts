@@ -65,8 +65,8 @@ export class TontoQualifiedNameProvider extends DefaultNameProvider {
     isGeneralizationSet(node) ||
     isDataType(node) ||
     isEnumElement(node)) {
-      return node.name
+      return node.name;
     }
-    return undefined
+    return undefined;
   }
 }

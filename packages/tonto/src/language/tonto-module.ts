@@ -1,12 +1,12 @@
-import { Module, inject } from "langium"
-import { DefaultSharedModuleContext, LangiumServices, LangiumSharedServices, PartialLangiumServices, PartialLangiumSharedServices, createDefaultModule, createDefaultSharedModule } from "langium/lsp"
-import { TontoGeneratedModule, TontoGeneratedSharedModule } from "./index.js"
-import { TontoActionProvider } from "./lsp/tonto-code-actions.js"
-import { TontoQualifiedNameProvider } from "./references/tonto-name-provider.js"
-import { TontoScopeComputation } from "./references/tonto-scope-computation.js"
-import { TontoScopeProvider } from "./references/tonto-scope-provider.js"
-import { TontoValidationRegistry } from "./tonto-validator.js"
-import { TontoValidator } from "./validators/TontoValidator.js"
+import { Module, inject } from "langium";
+import { DefaultSharedModuleContext, LangiumServices, LangiumSharedServices, PartialLangiumServices, PartialLangiumSharedServices, createDefaultModule, createDefaultSharedModule } from "langium/lsp";
+import { TontoGeneratedModule, TontoGeneratedSharedModule } from "./index.js";
+import { TontoActionProvider } from "./lsp/tonto-code-actions.js";
+import { TontoQualifiedNameProvider } from "./references/tonto-name-provider.js";
+import { TontoScopeComputation } from "./references/tonto-scope-computation.js";
+import { TontoScopeProvider } from "./references/tonto-scope-provider.js";
+import { TontoValidationRegistry } from "./tonto-validator.js";
+import { TontoValidator } from "./validators/TontoValidator.js";
 
 
 

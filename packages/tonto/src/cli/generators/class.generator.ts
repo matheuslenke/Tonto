@@ -18,111 +18,111 @@ export function classElementGenerator(classElement: ClassDeclaration, packageIte
       firstNature = natures[0];
     }
     switch (stereotype) {
-      /**
+    /**
        * Non sortals
        */
-      case "category": {
-        return packageItem.createCategory(classElement.name, natures);
-      }
-      case "mixin": {
-        return packageItem.createMixin(classElement.name, natures);
-      }
-      case "phaseMixin": {
-        return packageItem.createPhaseMixin(classElement.name, natures);
-      }
-      case "roleMixin": {
-        return packageItem.createRoleMixin(classElement.name, natures);
-      }
-      case "historicalRoleMixin": {
-        return packageItem.createRoleMixin(classElement.name, natures);
-      }
-      /**
+    case "category": {
+      return packageItem.createCategory(classElement.name, natures);
+    }
+    case "mixin": {
+      return packageItem.createMixin(classElement.name, natures);
+    }
+    case "phaseMixin": {
+      return packageItem.createPhaseMixin(classElement.name, natures);
+    }
+    case "roleMixin": {
+      return packageItem.createRoleMixin(classElement.name, natures);
+    }
+    case "historicalRoleMixin": {
+      return packageItem.createRoleMixin(classElement.name, natures);
+    }
+    /**
        * Non Endurants
        */
-      case "event": {
-        return packageItem.createEvent(classElement.name);
-      }
-      case "situation": {
-        return packageItem.createSituation(classElement.name);
-      }
-      /**
+    case "event": {
+      return packageItem.createEvent(classElement.name);
+    }
+    case "situation": {
+      return packageItem.createSituation(classElement.name);
+    }
+    /**
        * Ultimate Sortals
        */
-      case "kind": {
-        return packageItem.createKind(classElement.name);
-      }
-      case "collective": {
-        return packageItem.createCollective(classElement.name);
-      }
-      case "quantity": {
-        return packageItem.createQuantity(classElement.name);
-      }
-      case "quality": {
-        return packageItem.createQuality(classElement.name);
-      }
-      case "mode": {
-        return packageItem.createClass(classElement.name, ClassStereotype.MODE, natures);
-      }
-      case "intrinsicMode": {
-        return packageItem.createIntrinsicMode(classElement.name);
-      }
-      case "extrinsicMode": {
-        return packageItem.createExtrinsicMode(classElement.name);
-      }
+    case "kind": {
+      return packageItem.createKind(classElement.name);
+    }
+    case "collective": {
+      return packageItem.createCollective(classElement.name);
+    }
+    case "quantity": {
+      return packageItem.createQuantity(classElement.name);
+    }
+    case "quality": {
+      return packageItem.createQuality(classElement.name);
+    }
+    case "mode": {
+      return packageItem.createClass(classElement.name, ClassStereotype.MODE, natures);
+    }
+    case "intrinsicMode": {
+      return packageItem.createIntrinsicMode(classElement.name);
+    }
+    case "extrinsicMode": {
+      return packageItem.createExtrinsicMode(classElement.name);
+    }
 
-      /**
+    /**
        * Base Sortals
        */
-      case "subkind": {
-        const subkind = packageItem.createSubkind(classElement.name, firstNature);
-        if (!firstNature) {
-          subkind.restrictedTo = [];
-        }
-        return subkind;
+    case "subkind": {
+      const subkind = packageItem.createSubkind(classElement.name, firstNature);
+      if (!firstNature) {
+        subkind.restrictedTo = [];
       }
-      case "phase": {
-        const phase = packageItem.createPhase(classElement.name, firstNature);
-        if (!firstNature) {
-          phase.restrictedTo = [];
-        }
-        return phase;
+      return subkind;
+    }
+    case "phase": {
+      const phase = packageItem.createPhase(classElement.name, firstNature);
+      if (!firstNature) {
+        phase.restrictedTo = [];
       }
-      case "role": {
-        const role = packageItem.createRole(classElement.name, firstNature);
-        if (!firstNature) {
-          role.restrictedTo = [];
-        }
-        return role;
+      return phase;
+    }
+    case "role": {
+      const role = packageItem.createRole(classElement.name, firstNature);
+      if (!firstNature) {
+        role.restrictedTo = [];
       }
-      case "historicalRole": {
-        if (firstNature) {
-          return packageItem.createHistoricalRole(classElement.name, { restrictedTo: [firstNature] });
-        } else {
-          const historicalRole = packageItem.createHistoricalRole(classElement.name);
-          historicalRole.restrictedTo = [];
-          return historicalRole;
-        }
+      return role;
+    }
+    case "historicalRole": {
+      if (firstNature) {
+        return packageItem.createHistoricalRole(classElement.name, { restrictedTo: [firstNature] });
+      } else {
+        const historicalRole = packageItem.createHistoricalRole(classElement.name);
+        historicalRole.restrictedTo = [];
+        return historicalRole;
       }
-      case "relator": {
-        return packageItem.createRelator(classElement.name);
-      }
-      case "type": {
-        return packageItem.createType(classElement.name);
-      }
-      case "powertype": {
-        const powerType = packageItem.createType(classElement.name);
-        powerType.isPowertype = true;
-        return powerType;
-      }
-      /**
+    }
+    case "relator": {
+      return packageItem.createRelator(classElement.name);
+    }
+    case "type": {
+      return packageItem.createType(classElement.name);
+    }
+    case "powertype": {
+      const powerType = packageItem.createType(classElement.name);
+      powerType.isPowertype = true;
+      return powerType;
+    }
+    /**
        * Undefined stereotype
        */
-      case "class": {
-        if (classElement.ontologicalNatures?.natures.includes("abstract-individuals")) {
-          return packageItem.createAbstract(classElement.name, { stereotype: ClassStereotype.ABSTRACT });
-        }
-        return packageItem.createClass(classElement.name, undefined, natures);
+    case "class": {
+      if (classElement.ontologicalNatures?.natures.includes("abstract-individuals")) {
+        return packageItem.createAbstract(classElement.name, { stereotype: ClassStereotype.ABSTRACT });
       }
+      return packageItem.createClass(classElement.name, undefined, natures);
+    }
     }
   }
   return packageItem.createClass(classElement.name);
