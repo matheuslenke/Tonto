@@ -41,7 +41,9 @@
             "type": "node",
             "args": [
                 "validate",
-                "${workspaceFolder}/examples/fixingErrors"
+                "${workspaceFolder}/examples/library",
+                "--local",
+                ">> errors.txt"
             ]
         },
         {
