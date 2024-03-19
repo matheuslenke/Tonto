@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import { CompositeGeneratorNode, toString } from "langium/generate";
-import { MultilingualText, OntoumlElement, OntoumlType, Package, Project } from "ontouml-js";
+import { OntoumlElement, OntoumlType, Package, Project } from "ontouml-js";
 import * as path from "path";
 import { formatForId, replaceWhitespace } from "../utils/replaceWhitespace.js";
 import { createTontoImports } from "./importModular.constructor.js";
@@ -32,7 +32,7 @@ function generate(ctx: GeneratorContext): string {
   // Create manifest file
   createTontoManifest(ctx.project, ctx.destinationFolder);
 
-  const modelPath = path.join(ctx.destinationFolder, ctx.project.model?.getNameOrId());
+  const modelPath = path.join(ctx.destinationFolder, formatForId(ctx.project.model?.getNameOrId()));
 
   if (!fs.existsSync(modelPath)) {
     fs.mkdirSync(modelPath);
@@ -44,7 +44,7 @@ function generate(ctx: GeneratorContext): string {
     generateModel(modelPath, ontoumlElement, new CompositeGeneratorNode());
   });
 
-  generateProject(modelPath, ctx.project, new CompositeGeneratorNode());
+  // generateProject(modelPath, ctx.project, new CompositeGeneratorNode());
 
   return modelPath;
 }
@@ -64,7 +64,6 @@ function generateModel(
   /**
   * If it is a package, we need to generate again recursively
   */
-  console.log(ontoumlElement.getName());
   generatePackage(actualDestinationFolder, ontoumlElement, fileNode);
 }
 
@@ -72,7 +71,7 @@ function generatePackage(dir: string, ontoumlElement: OntoumlElement, fileNode: 
   if (ontoumlElement.type === OntoumlType.PACKAGE_TYPE) {
     const packageElement = ontoumlElement as Package;
     // Create directory for this package
-    const packagePath = path.join(dir, packageElement.getName());
+    const packagePath = path.join(dir, formatForId(packageElement.getName()));
     let newPath: string = packagePath;
     if (!fs.existsSync(packagePath)) {
       newPath = fs.mkdirSync(packagePath, { recursive: true }) ?? packagePath;
@@ -94,25 +93,31 @@ function generatePackage(dir: string, ontoumlElement: OntoumlElement, fileNode: 
   }
 }
 
-function generateProject(dir: string, project: Project, fileNode: CompositeGeneratorNode) {
-  const rootPackageElements = project.model.getContents().filter(
-    item => item.type !== OntoumlType.PACKAGE_TYPE
-  );
+// function generateProject(dir: string, project: Project, fileNode: CompositeGeneratorNode) {
+//   const rootPackageElements = project.model.getContents().filter(
+//     item => item.type === OntoumlType.CLASS_TYPE ||
+//       item.type === OntoumlType.GENERALIZATION_SET_TYPE ||
+//       item.type === OntoumlType.RELATION_TYPE
+//   );
 
-  // Create the package
+//   // Create directory for this package
+//   const packagePath = path.join(dir, formatForId(project.getNameOrId()));
+//   if (!fs.existsSync(packagePath)) {
+//     fs.mkdirSync(packagePath, { recursive: true }) ?? packagePath;
+//   }
 
-  const packagePath = path.join(dir, project.getNameOrId());
+//   // Create the package
+//   const packageItem = new Package({
+//     name: new MultilingualText(formatForId(project.getNameOrId())),
+//     id: project.getNameOrId(),
+//     contents: rootPackageElements as ModelElement[]
+//   });
 
-  const packageItem = new Package({
-    name: new MultilingualText(project.getName()),
-    id: project.getNameOrId()
-  });
+//   createTontoImports(packageItem, fileNode);
 
-  createTontoImports(packageItem, fileNode);
+//   createTontoPackage(packageItem, fileNode);
 
-  createTontoPackage(packageItem, fileNode);
-
-  const generatedFilePath = path.join(packagePath, formatForId(packageItem.getNameOrId())) + ".tonto";
-  fs.writeFileSync(generatedFilePath, toString(fileNode));
-}
+//   const generatedFilePath = path.join(packagePath, formatForId(packageItem.getNameOrId())) + ".tonto";
+//   fs.writeFileSync(generatedFilePath, toString(fileNode));
+// }
 

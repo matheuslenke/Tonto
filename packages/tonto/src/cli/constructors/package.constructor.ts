@@ -1,10 +1,11 @@
 
 import { CompositeGeneratorNode, NL } from "langium/generate";
-import { Class, OntoumlElement, OntoumlType } from "ontouml-js";
+import { Class, GeneralizationSet, OntoumlElement, OntoumlType } from "ontouml-js";
 import { formatForId } from "../utils/replaceWhitespace.js";
 import { constructClassElement } from "./classElement.constructor.js";
 
 import { Generated, expandToNode, joinToNode } from "langium/generate";
+import { constructGenSet } from "./genset.constructor.js";
 
 /**
  * This function is the entry point for creating a Tonto Model based on an OntoUML
@@ -20,6 +21,10 @@ export function createTontoPackage(packageItem: OntoumlElement, fileNode: Compos
     if (content.type === OntoumlType.CLASS_TYPE) {
       const classItem = content as Class;
       constructClassElement(classItem, fileNode);
+    }
+    if (content.type === OntoumlType.GENERALIZATION_SET_TYPE) {
+      const genSet = content as GeneralizationSet;
+      constructGenSet(genSet, fileNode);
     }
   });
   fileNode.append(NL);

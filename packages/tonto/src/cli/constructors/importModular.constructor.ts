@@ -57,6 +57,7 @@ function getContainersFromSpecializations(actualPackage: Package): Package[] {
     .filter((item) => !!item)
     .flatMap((item) => item.container as Package)
     .filter((item: Package) => !!item);
+
   return generalizationContainers;
 }
 

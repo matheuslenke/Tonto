@@ -15,7 +15,7 @@ export const validateCommand = async (dirName: string): Promise<ResultResponse[]
   let manifest: TontoManifest | undefined;
 
   const folderAbsolutePath = path.resolve(dirName);
-  console.log(folderAbsolutePath);
+
   if (!fs.existsSync(path.join(folderAbsolutePath, "tonto.json"))) {
     manifest = createDefaultTontoManifest();
   } else {

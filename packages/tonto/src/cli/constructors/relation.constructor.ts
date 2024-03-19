@@ -23,10 +23,6 @@ function constructRelation(relation: Relation, element: Class, fileNode: Composi
   const sourceName = sourceClassPackage.getName();
   const targetClassPackage = targetClass.getModelOrRootPackage();
   const targetName = targetClassPackage.getName();
-  if (element.getName() === "Collection") {
-    console.log("foi");
-  }
-
   // Stereotype
   if (relation.stereotype) {
     fileNode.append(`@${formatForId(relation.stereotype)}`, NL);
@@ -81,16 +77,16 @@ function constructRelation(relation: Relation, element: Class, fileNode: Composi
 
   // Second Name
   const secondEndName = formatForId(targetProperty.getName());
-  
+
   let targetClassName = targetClass.getName();
   if (targetName !== sourceName) {
     targetClassName = `${targetClassPackage.getName()}.${targetClass.getName()}`;
   }
-  
+
   fileNode.append(" ", formatForId(targetClassName));
   // SecondEnd Meta Attributes
   constructEndMetaAttributes(secondEndName, targetProperty, fileNode);
-  
+
   constructRelationSpecializations(generalizations, fileNode);
   fileNode.append(NL);
 }

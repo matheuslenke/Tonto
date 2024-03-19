@@ -3,6 +3,7 @@ import { AstNode, LangiumDocument, LangiumDocuments } from "langium";
 import { LangiumServices } from "langium/lsp";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { Diagnostic } from "vscode-languageserver-types";
 import { URI } from "vscode-uri";
 import { BuiltInLib } from "./model/BuiltInLib.js";
 
@@ -29,7 +30,6 @@ export async function extractAllDocuments(
     validation: validationChecks
   });
 
-  let hasValidationError = false;
   for (const document of documents) {
     const validationErrors = (document.diagnostics ?? []).filter((e) => e.severity === 1);
     if (validationErrors.length > 0) {
@@ -43,11 +43,7 @@ export async function extractAllDocuments(
           )
         );
       }
-      hasValidationError = true;
     }
-  }
-  if (hasValidationError) {
-    process.exit(1);
   }
   return services.shared.workspace.LangiumDocuments;
 }
@@ -89,6 +85,22 @@ export async function extractDocument(fileName: string, services: LangiumService
   }
 
   return document;
+}
+
+export async function extractAllValidationErrors(
+  fileNames: string[],
+  services: LangiumServices,
+  builtInLibs: BuiltInLib[]): Promise<Diagnostic[]> {
+  try {
+    const docs = await extractAllDocuments(fileNames, services, builtInLibs, true);
+    const errors: Diagnostic[] = docs.all.flatMap(doc => doc.diagnostics)
+      .toArray()
+      .filter((item): item is Diagnostic => item !== undefined);
+    return errors;
+  } catch (error) {
+    return [];
+  }
+  return [];
 }
 
 export async function extractAllAstNodes<T extends AstNode>(

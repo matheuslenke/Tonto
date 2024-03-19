@@ -47,6 +47,7 @@ export default function (): void {
   program
     .command("validate")
     .argument("<dir>", "Directory of the actual project")
+    .option("--local", "Running Local Tonto Checks, or running API checks")
     .description("Validate your Tonto project with the ontouml-js API")
     .action(actions.validateAction);
 

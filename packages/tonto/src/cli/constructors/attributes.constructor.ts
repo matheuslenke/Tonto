@@ -9,7 +9,6 @@ export function constructAttributes(attributes: Property[], fileNode: CompositeG
     let name = attribute.getNameOrId();
     if (isReservedKeyword(attribute.getNameOrId())) {
       name = name + "_";
-      console.log(name);
     }
 
     const propertyType = attribute.propertyType?.getName();

@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import * as fs from "node:fs";
 import path from "path";
+import { DiagnosticSeverity } from "vscode-languageserver-types";
 import { ErrorGufoResultResponse, GufoResultResponse } from "../requests/gufoTransform.js";
 import { ErrorResultResponse, ResultResponse } from "../requests/ontoumljsValidator.js";
 import { readOrCreateDefaultTontoManifest } from "../utils/readManifest.js";
@@ -8,11 +9,16 @@ import { generateModularCommand } from "./commands/generateCommand.js";
 import { isGufoResultResponse, transformToGufoCommand } from "./commands/generateGufoCommand.js";
 import { ImportOptions, importCommand } from "./commands/importCommand.js";
 import { validateCommand } from "./commands/validateCommand.js";
+import { validateCommandLocal } from "./commands/validateLocalCommand.js";
 
 export type GenerateOptions = {
   destination?: string;
   dir?: string;
 };
+
+export type ValidateOptions = {
+  local: boolean;
+}
 
 export class TontoActions {
   /**
@@ -43,10 +49,7 @@ export class TontoActions {
         console.log(chalk.red(error));
       }
     }
-    //  else if (opts.fileName) {
-    //   generateCommand(opts.fileName, opts.destination ?? "generated");
-    // }
-  
+
     console.error(chalk.red("Neither file or directory provided."));
   }
 
@@ -56,11 +59,11 @@ export class TontoActions {
       return;
     }
     console.log(chalk.bold("Transforming to gufo..."));
-  
+
     try {
       const manifest = readOrCreateDefaultTontoManifest(dirName);
       const response = await transformToGufoCommand(dirName);
-  
+
       if (isGufoResultResponse(response)) {
         const resultResponse = response as GufoResultResponse;
         if (!fs.existsSync(dirName)) {
@@ -81,16 +84,26 @@ export class TontoActions {
     }
   }
 
-  async validateAction(dirName: string): Promise<void> {
+  async validateAction(dirName: string, opts: ValidateOptions): Promise<void> {
     if (!dirName) {
       console.log(chalk.red("Directory not provided!"));
       return;
     }
     console.log(chalk.bold("Validating..."));
-  
+
+    if (opts.local) {
+      const diagnostics = await validateCommandLocal(dirName);
+      const totalValidationErrors: number = diagnostics?.filter(item => item.severity === DiagnosticSeverity.Error).length ?? -1;
+      console.log(chalk.bold("- Total of errors:"), totalValidationErrors);
+      // console.log(chalk.bold("# Validation Results:"));
+      // diagnostics?.forEach(diagnostic => {
+      //   console.log(chalk.bold(`[${diagnostic.source}][${diagnostic.tags}]`), chalk.red(diagnostic.message));
+      // });
+    }
+
     try {
       const response = await validateCommand(dirName);
-  
+
       // If it is ResultResponse[]
       if (Array.isArray(response)) {
         const resultResponses = response as ResultResponse[];
