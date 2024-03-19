@@ -1,0 +1,15 @@
+package PersonAndOrganizationDatatypes
+
+datatype int specializes number
+
+datatype Address {
+  country: string
+  city: string
+  postalCode: string
+  street: string
+  streetNumber: int
+}
+
+enum EyeColor { Blue, Green, Brown, Black }
+
+

@@ -21,7 +21,7 @@ fragment RelationData:
 	firstCardinality=Cardinality?
 	RelationName
 	secondCardinality=Cardinality?
-	secondEnd=[DataTypeOrClassOrRelation:ID]
+	secondEnd=[DataTypeOrClassOrRelation:QualifiedName]
 	
 	secondEndMetaAttributes=RelationMetaAttributes?
 	('specializes' specializeRelation=[ElementRelation:QualifiedName])?

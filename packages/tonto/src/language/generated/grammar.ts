@@ -1619,7 +1619,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@6"
+                  "$ref": "#/rules@11"
                 },
                 "arguments": []
               },

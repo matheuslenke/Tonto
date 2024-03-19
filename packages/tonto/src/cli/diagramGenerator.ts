@@ -1,6 +1,6 @@
-import { MultilingualText, Project, Package, Generalization, GeneralizationSet, Class, Relation } from "ontouml-js";
-import { Model } from "../language-server";
-import { contextModuleGenerator } from "./JsonGenerators/contextModule.generator";
+import { Class, Generalization, GeneralizationSet, MultilingualText, Package, Project, Relation } from "ontouml-js";
+import { contextModuleGenerator } from "../cli/generators/contextModule.generator.js";
+import { Model } from "../language/index.js";
 
 interface GeneratorContext {
   model: Model;
@@ -17,34 +17,34 @@ export interface diagramContent {
 
 export function extractContent(model: Model, name: string | undefined): diagramContent {
   const ctx = <GeneratorContext>{
-      model,
-      name,
-    };
-    return generate(ctx);
+    model,
+    name,
+  };
+  return generate(ctx);
 }
 
 function generate(ctx: GeneratorContext): diagramContent {
   // Every OntoUML element can be created from a constructor that can receive a partial object
   // as references for its creation
   const project = parseProject(ctx);
-  let packs = project.getAllPackages();
+  const packs = project.getAllPackages();
   packs.shift();
 
-  let content: diagramContent = {
+  const content: diagramContent = {
     packages: packs[0],
     class: packs[0].getAllClasses(),
     specializations: packs[0].getAllGeneralizations(),
     specializationSets: packs[0].getAllGeneralizationSets(),
     relations: packs[0].getAllRelations()
-  }
+  };
 
-    content.specializationSets.forEach((genSet) => {
-      genSet.generalizations.forEach((genSetGen) => {
-        
-        let index = content.specializations.findIndex((gen) => { return gen ===  genSetGen});
-        if(index >= 0) content.specializations.splice(index, 1);
-      });
+  content.specializationSets.forEach((genSet) => {
+    genSet.generalizations.forEach((genSetGen) => {
+
+      const index = content.specializations.findIndex((gen) => { return gen === genSetGen; });
+      if (index >= 0) content.specializations.splice(index, 1);
     });
+  });
   return content;
 }
 

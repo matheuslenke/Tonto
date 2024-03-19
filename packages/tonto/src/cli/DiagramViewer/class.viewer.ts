@@ -1,28 +1,28 @@
 import { Class } from "ontouml-js";
-import { Configuration } from "../../utils/extensionConfig";
+import { Configuration } from "../../utils/extensionConfig.js";
 
 export function classViewer(
-    model: Class,
-    config: Configuration
+  model: Class,
+  config: Configuration
 ): string {
-    let nomnomlCode = "";
+  let nomnomlCode = "";
 
-    nomnomlCode += `[«${model.stereotype}» ${(model.getName("en") || "")} `;
+  nomnomlCode += `[«${model.stereotype}» ${(model.getName("en") || "")} `;
 
-    if(config.Entity.Attributes && model.hasAttributes()){
-        nomnomlCode += `| `
-        
-        model.getOwnAttributes().forEach((property, index) => {
-            nomnomlCode += `${property.getName("en") || ""}: ${(property.propertyType.getName("en") || "")}; `
-        })
-    }
-    if(model.hasLiterals()){
-        nomnomlCode += `| `
-        
-        model.getOwnLiterals().forEach((literal) => {
-            nomnomlCode += `${literal.getName("en") || ""}; `
-        })
-    }
-    nomnomlCode += ']\n';
-return nomnomlCode;
+  if (config.Entity.Attributes && model.hasAttributes()) {
+    nomnomlCode += "| ";
+
+    model.getOwnAttributes().forEach((property, index) => {
+      nomnomlCode += `${property.getName("en") || ""}: ${(property.propertyType.getName("en") || "")}; `;
+    });
+  }
+  if (model.hasLiterals()) {
+    nomnomlCode += "| ";
+
+    model.getOwnLiterals().forEach((literal) => {
+      nomnomlCode += `${literal.getName("en") || ""}; `;
+    });
+  }
+  nomnomlCode += "]\n";
+  return nomnomlCode;
 }
