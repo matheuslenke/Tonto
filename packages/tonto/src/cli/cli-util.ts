@@ -1,15 +1,17 @@
-import path from "path";
-import fs from "fs";
-import { AstNode, LangiumDocument, LangiumDocuments, LangiumServices } from "langium";
-import { URI } from "vscode-uri";
-import { BuiltInLib } from "./model/BuiltInLib";
 import chalk from "chalk";
+import { AstNode, LangiumDocument, LangiumDocuments } from "langium";
+import { LangiumServices } from "langium/lsp";
+import * as fs from "node:fs";
+import * as path from "node:path";
+import { Diagnostic } from "vscode-languageserver-types";
+import { URI } from "vscode-uri";
+import { BuiltInLib } from "./model/BuiltInLib.js";
 
 export async function extractAllDocuments(
   fileNames: string[],
   services: LangiumServices,
   builtInLibs: BuiltInLib[],
-  validationChecks: "all" | "none"
+  validationChecks: boolean
 ): Promise<LangiumDocuments> {
   const documents: Array<LangiumDocument<AstNode>> = [];
 
@@ -20,15 +22,14 @@ export async function extractAllDocuments(
   }
 
   for (const fileName of fileNames) {
-    const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.file(path.resolve(fileName)));
+    const document = await services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.file(path.resolve(fileName)));
     documents.push(document);
   }
 
   await services.shared.workspace.DocumentBuilder.build(documents, {
-    validationChecks,
+    validation: validationChecks
   });
 
-  let hasValidationError = false;
   for (const document of documents) {
     const validationErrors = (document.diagnostics ?? []).filter((e) => e.severity === 1);
     if (validationErrors.length > 0) {
@@ -42,11 +43,7 @@ export async function extractAllDocuments(
           )
         );
       }
-      hasValidationError = true;
     }
-  }
-  if (hasValidationError) {
-    process.exit(1);
   }
   return services.shared.workspace.LangiumDocuments;
 }
@@ -67,9 +64,9 @@ export async function extractDocument(fileName: string, services: LangiumService
     process.exit(1);
   }
 
-  const document = services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.file(path.resolve(fileName)));
+  const document = await services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.file(path.resolve(fileName)));
   await services.shared.workspace.DocumentBuilder.build([document], {
-    validationChecks: "all",
+    validation: true
   });
 
   const validationErrors = (document.diagnostics ?? []).filter((e) => e.severity === 1);
@@ -90,11 +87,27 @@ export async function extractDocument(fileName: string, services: LangiumService
   return document;
 }
 
+export async function extractAllValidationErrors(
+  fileNames: string[],
+  services: LangiumServices,
+  builtInLibs: BuiltInLib[]): Promise<Diagnostic[]> {
+  try {
+    const docs = await extractAllDocuments(fileNames, services, builtInLibs, true);
+    const errors: Diagnostic[] = docs.all.flatMap(doc => doc.diagnostics)
+      .toArray()
+      .filter((item): item is Diagnostic => item !== undefined);
+    return errors;
+  } catch (error) {
+    return [];
+  }
+  return [];
+}
+
 export async function extractAllAstNodes<T extends AstNode>(
   fileNames: string[],
   services: LangiumServices,
   builtInLibs: BuiltInLib[],
-  validationChecks: "all" | "none"
+  validationChecks: boolean
 ): Promise<T[]> {
   const docs = await extractAllDocuments(fileNames, services, builtInLibs, validationChecks);
   const nodes: T[] = docs.all.flatMap((doc) => doc.parseResult?.value as T).toArray();

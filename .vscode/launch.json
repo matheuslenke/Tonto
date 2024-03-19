@@ -41,7 +41,9 @@
             "type": "node",
             "args": [
                 "validate",
-                "${workspaceFolder}/examples/fixingErrors"
+                "${workspaceFolder}/examples/library",
+                "--local",
+                ">> errors.txt"
             ]
         },
         {
@@ -94,9 +96,12 @@
             "request": "launch",
             "args": [
                 // "${workspaceFolder}/../tonto-example-models/Library",
-                "${workspaceFolder}/examples/",
+                "${workspaceFolder}/../tonto-catalog/models/abel2015petroleum-system",
                 "--extensionDevelopmentPath=${workspaceFolder}/packages/tonto-vscode"
             ],
+            "outFiles": [
+                "${workspaceFolder}/{packages,examples}/*/{lib,out}/**/*.js"
+            ]
             // "env": {
             //     "DEBUG_BREAK": "true"
             // }

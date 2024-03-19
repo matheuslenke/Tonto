@@ -6,7 +6,7 @@
     "types": ["node"],
     "noEmit": false,
     "sourceMap": true,
-    "declaration": true
+    "declaration": true,
   },
   "references": [{ "path": "../tonto" }],
   "include": ["src/**/*.ts"],

@@ -1,3 +1,4 @@
 #!/usr/bin/env node
 
-require("../lib/cli").default();
+import main from "../lib/cli/main.js";
+main();

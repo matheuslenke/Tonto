@@ -1,8 +1,7 @@
-import { validateCommand } from "tonto-cli/src/cli/actions";
+import { validateCommand, ResultResponse, ErrorResultResponse } from "tonto-cli";
 import * as vscode from "vscode";
-import { CommandIds } from "./commandIds";
+import { CommandIds } from "./commandIds.js";
 import chalk from "chalk";
-import { ResultResponse, ErrorResultResponse } from "tonto-cli/src/cli/requests/ontoumljsValidator";
 
 function createValidationSatusBarItem(
   context: vscode.ExtensionContext,

@@ -6,8 +6,13 @@
     "types": ["jest", "node"],
     "noEmit": false,
     "sourceMap": true,
-    "declaration": true
+    "declaration": true,
+    "baseUrl": "src/",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/language/*": ["./src/language/*"]
+    },
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src"],
   "exclude": ["lib", "node_modules"]
 }

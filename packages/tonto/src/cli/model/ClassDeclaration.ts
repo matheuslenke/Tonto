@@ -3,7 +3,7 @@
  */
 
 // import { CompositeGeneratorNode, Generated } from "langium";
-import { OntologicalCategoryEnum } from "../../language-server/models/OntologicalCategory";
+import { OntologicalCategoryEnum } from "../../language/models/OntologicalCategory.js";
 
 export class ClassDeclaration {
   name: string;

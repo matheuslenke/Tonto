@@ -30,6 +30,10 @@ interface ErrorInfo {
   schemaPath?: string
 }
 
+interface JsonResult {
+  result: ResultResponse[];
+}
+
 export async function validateTontoFile(project: Project): Promise<ResultResponse[] | ErrorResultResponse> {
   const body = {
     project,
@@ -42,12 +46,13 @@ export async function validateTontoFile(project: Project): Promise<ResultRespons
       body: JSON.stringify(body),
       headers: { "Content-Type": "application/json" },
     });
-    const json = await response.json();
-    const resultResponse = json.result as ResultResponse[];
+    const json: JsonResult | ErrorResultResponse = await response.json() as JsonResult;
+    const resultResponse = json.result;
     if (resultResponse) {
       return resultResponse;
     } else {
-      return json as ErrorResultResponse;
+      // TODO: Fix ErrorResult
+      return {} as ErrorResultResponse;
     }
   } catch (error) {
     console.log(error);

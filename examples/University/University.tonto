@@ -19,6 +19,9 @@ kind Department {
 collective Staff
 subkind JuniorStaff specializes Staff
 
+kind teste {
+  
+}
 
 kind Room
 subkind Classroom specializes Room

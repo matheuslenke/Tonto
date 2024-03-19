@@ -2,11 +2,12 @@
     "projectName": "Tonto",
     "languages": [{
         "id": "tonto",
-        "grammar": "src/language-server/tonto.langium",
+        "grammar": "src/language/tonto.langium",
         "fileExtensions": [".tonto"],
+        "caseInsensitive": false,
         "textMate": {
             "out": "syntaxes/tonto.tmLanguage.json"
         }
         }],
-    "out": "src/language-server/generated"
+    "out": "src/language/generated"
 }

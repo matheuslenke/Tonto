@@ -3,7 +3,7 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "out",
-    "sourceMap": true
+    "sourceMap": true,
   },
   "references": [
     {
