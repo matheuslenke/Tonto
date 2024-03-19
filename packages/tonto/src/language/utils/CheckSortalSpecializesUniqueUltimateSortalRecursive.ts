@@ -39,7 +39,7 @@ const checkSortalSpecializesUniqueUltimateSortalRecursive = (
     actualElement.specializationEndurants.forEach((specializationItem) => {
       const specItem = specializationItem.ref;
       if (specItem) {
-        const specCategory = specItem.classElementType?.ontologicalCategory;
+        const specCategory = specItem?.classElementType?.ontologicalCategory;
         if (isUltimateSortalOntoCategory(specCategory)) {
           totalUltimateSortalSpecialized += 1;
         }
@@ -70,15 +70,15 @@ const checkSortalSpecializesUniqueUltimateSortalRecursive = (
     if (!generalItem || generalItem.$type !== "ClassDeclaration") {
       return totalUltimateSortalSpecialized;
     }
-    
-    if (isUltimateSortalOntoCategory(generalItem.classElementType?.ontologicalCategory)) {
+
+    if (isUltimateSortalOntoCategory(generalItem?.classElementType?.ontologicalCategory)) {
       totalUltimateSortalSpecialized += 1;
     }
 
     generalItem.specializationEndurants.forEach((specializationItem) => {
       const specItem = specializationItem.ref;
       if (specItem) {
-        if (isUltimateSortalOntoCategory(specItem.classElementType?.ontologicalCategory)) {
+        if (isUltimateSortalOntoCategory(specItem?.classElementType?.ontologicalCategory)) {
           totalUltimateSortalSpecialized += 1;
         }
         totalUltimateSortalSpecialized = checkSortalSpecializesUniqueUltimateSortalRecursive(

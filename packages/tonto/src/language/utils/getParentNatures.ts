@@ -1,5 +1,5 @@
-import { ClassDeclaration, OntologicalNature as ASTNature, GeneralizationSet } from "../generated/ast.js";
 import { OntologicalNature } from "ontouml-js";
+import { OntologicalNature as ASTNature, ClassDeclaration, GeneralizationSet } from "../generated/ast.js";
 import { tontoNatureUtils } from "../models/Natures.js";
 import { isUltimateSortalOntoCategory } from "../models/OntologicalCategory.js";
 import { getGensetsWhereSpecific } from "./genSetsWhereSpecific.js";
@@ -25,7 +25,7 @@ const getParentNatures = (
         return;
       }
       let specElementNatures: OntologicalNature[] = [];
-      if (isUltimateSortalOntoCategory(specItem.classElementType.ontologicalCategory)) {
+      if (isUltimateSortalOntoCategory(specItem?.classElementType.ontologicalCategory)) {
         const sortalNature = tontoNatureUtils.getNatureFromUltimateSortal(specItem);
         if (sortalNature) {
           specElementNatures = [sortalNature];
@@ -41,7 +41,7 @@ const getParentNatures = (
     });
 
     let currentElementNatures: OntologicalNature[] = [];
-    if (isUltimateSortalOntoCategory(actualElement.classElementType.ontologicalCategory)) {
+    if (isUltimateSortalOntoCategory(actualElement?.classElementType.ontologicalCategory)) {
       const sortalNature = tontoNatureUtils.getNatureFromUltimateSortal(actualElement);
       if (sortalNature) {
         currentElementNatures = [sortalNature];

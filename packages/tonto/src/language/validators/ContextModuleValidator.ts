@@ -58,7 +58,7 @@ export class ContextModuleValidator {
     contextModule.declarations.forEach((declaration) => {
       if (declaration.$type === "ElementRelation") {
         const elementRelation = declaration as ElementRelation;
-        const nameExists = names.find((name) => name === nameProvider.getName(elementRelation));
+        const nameExists = names.find((name) => name === nameProvider.getQualifiedName(elementRelation));
         const refName = elementRelation.name;
 
         if (nameExists) {
@@ -76,7 +76,7 @@ export class ContextModuleValidator {
         const classElement = declaration as ClassDeclaration;
         classElement.references.forEach((elementRelation) => {
           const nameExists = names.find((name) => name === nameProvider.getName(elementRelation));
-          const refName = nameProvider.getName(elementRelation);
+          const refName = nameProvider.getQualifiedName(elementRelation);
 
           if (nameExists) {
             accept("error", "Duplicated Reference declaration", {
