@@ -1,0 +1,33 @@
+package University
+
+datatype Address
+datatype string
+
+kind Department {
+    name: string
+}
+
+kind Room
+subkind Classroom specializes Room
+
+category Organization
+
+kind University specializes Organization {
+    address: Address
+    name: string
+    
+    @componentOf
+    [1..1] <o>-- [1..*] Department
+    @componentOf
+    [1] <>-- has --[1..*] Classroom
+}
+
+roleMixin Employer
+role UniversityEmployer specializes University, Employer
+
+collective Staff
+subkind JuniorStaffa specializes Staff
+subkind SeniorStaff specializes Staff
+
+relation Department [1] <>-- [1] SeniorStaff
+relation Department [1] <>-- [1] JuniorStaffa

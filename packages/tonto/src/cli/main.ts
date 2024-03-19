@@ -1,6 +1,7 @@
 import { Command } from "commander";
 import { TontoLanguageMetaData } from "../language/index.js";
 import { TontoActions } from "./main.js";
+// import { viewAction } from "./actions/viewAction";
 
 export default function (): void {
   const program = new Command();
@@ -43,6 +44,12 @@ export default function (): void {
     .option("-d, --destination <dir>", "destination directory of generating")
     .description("generates a tonto file from a JSON file")
     .action(actions.importAction);
+
+  // program
+  //   .command("viewDiagram")
+  //   .argument("<file>", "source file (possible file extensions: tonto)")
+  //   .description("generates a diagram from a tonto file")
+  //   .action(viewAction);
 
   program
     .command("validate")

@@ -43,6 +43,11 @@
         ],
         "commands": [
             {
+                "command": "tonto.openSettings",
+                "title": "Open extension settings",
+                "category": "Tonto"
+            },
+            {
                 "command": "tonto.generateTonto",
                 "title": "Generate Tonto project from JSON",
                 "category": "Tonto"
@@ -50,6 +55,11 @@
             {
                 "command": "tonto.generateJSON",
                 "title": "Generate JSON from Tonto project",
+                "category": "Tonto"
+            },
+            {
+                "command": "tonto.generateDiagram",
+                "title": "Generate Diagram from Tonto file",
                 "category": "Tonto"
             },
             {
@@ -68,6 +78,47 @@
                 "category": "TPM"
             }
         ],
+        "configuration": {
+            "type": "object",
+            "title": "Tonto",
+            "properties": {
+                "Diagram.Entity.Attributes": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show the attributes of the entities."
+                },
+                "Diagram.Relation.Cardinality": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show the Cardinalities of the relationships."
+                },
+                "Diagram.Relation.Stereotype": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show the Stereotype of the relationships."
+                },
+                "Diagram.Relation.Name": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Show the Name of the relationships."
+                },
+                "Diagram.Relation.EndNames": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show the End Names of the relationships."
+                },
+                "Diagram.Datatype": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show Datatypes."
+                },
+                "Diagram.Enumeration": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Show Enumerations."
+                }
+            }
+        },
         "jsonValidation": [
             {
                 "fileMatch": "tonto.json",
@@ -127,6 +178,9 @@
         "@vitest/ui": "^0.23.4",
         "esbuild": "^0.20.1",
         "langium-cli": "^2.1.0",
+        "eslint": "^8.32.0",
+        "eslint-config-prettier": "^8.8.0",
+        "prettier": "^2.8.2",
         "shx": "^0.3.4",
         "typescript": "~4.9.5",
         "vite": "^4.0.2",

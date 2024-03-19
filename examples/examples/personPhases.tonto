@@ -1,0 +1,25 @@
+package PersonPhases
+
+datatype number
+datatype string
+datatype boolean
+
+kind Person {
+    years: number
+    name: string
+}
+
+role UniversityStudant specializes Person
+role FormerStudent specializes UniversityStudant
+role ActiveStudent specializes UniversityStudant
+
+phase Child
+phase Teenager
+phase Adult { occupation: string }
+phase Elderly { retired: boolean }
+
+// 
+disjoint complete genset PhasesOfPerson {
+    general Person
+    specifics Child, Teenager, Adult, Elderly
+}
