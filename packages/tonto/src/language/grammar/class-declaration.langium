@@ -27,3 +27,4 @@ ClassDeclarationRule returns ClassDeclaration:
 ;
 
 type DataTypeOrClass = DataType | ClassDeclaration;
+type DataTypeOrClassOrRelation = DataType | ClassDeclaration | ElementRelation;

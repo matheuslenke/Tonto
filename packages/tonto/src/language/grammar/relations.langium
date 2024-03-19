@@ -21,7 +21,7 @@ fragment RelationData:
 	firstCardinality=Cardinality?
 	RelationName
 	secondCardinality=Cardinality?
-	secondEnd=[DataTypeOrClass:QualifiedName]
+	secondEnd=[DataTypeOrClassOrRelation:ID]
 	
 	secondEndMetaAttributes=RelationMetaAttributes?
 	('specializes' specializeRelation=[ElementRelation:QualifiedName])?
@@ -29,17 +29,17 @@ fragment RelationData:
 ;
 
 fragment RelationName:
-	(RelationConnectors ((name=QualifiedName | name=STRING) '--')?) 
-	// |
-	// (('--' name=QualifiedName)? InvertedRelationConnectors)
+	(RelationType ((name=QualifiedName | name=STRING) '--')?) |
+	(('--' name=QualifiedName | name=STRING)? RelationInvertedType)?
 ;
 
-fragment RelationConnectors:
-	(isAssociation?='--' | isAggregation?='<>--' | isComposition?='<o>--')
+fragment RelationType:
+ (isAssociation?='--' | isAggregation?='<>--' | isComposition?='<o>--')
 ;
-// fragment InvertedRelationConnectors:
-// 	(isAssociation?='--' | isAggregationInverted?='--<>' | isCompositionInverted?='--<o>')
-// ;
+
+fragment RelationInvertedType:
+	isAggregationInverted?='--<>' | isCompositionInverted?='--<o>'
+;
 
 RelationMetaAttributes:
 	'('
