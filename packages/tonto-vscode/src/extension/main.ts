@@ -2,7 +2,7 @@ import * as path from "path";
 import * as vscode from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from "vscode-languageclient/node.js";
 import { createConfigurationCommands } from "../commands/ConfigurationCommands.js";
-import { createGenerateDiagramStatusBarItem } from "../commands/DiagramGenerationCommands";
+import { createGenerateDiagramStatusBarItem } from "../commands/DiagramGenerationCommands.js";
 import { createGenerateJsonStatusBarItem } from "../commands/JsonGenerationCommands.js";
 import { createTontoGenerationStatusBarItem } from "../commands/TontoGenerationCommand.js";
 import { createTpmInstallCommands } from "../commands/TpmInstallCommand.js";
