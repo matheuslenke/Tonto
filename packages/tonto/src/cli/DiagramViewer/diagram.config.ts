@@ -27,5 +27,5 @@ export const setHTML = (nomnomlContent: string, domToImgUri: Uri, jsUri: Uri, cs
     <script src="${jsUri}"></script>
 </body>
 </html>
-`
-}
+`;
+};

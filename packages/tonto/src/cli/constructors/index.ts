@@ -8,89 +8,89 @@ import { createTontoManifest, customExtractDestinationAndName } from "./manifest
 import { createTontoPackage } from "./package.constructor.js";
 
 export function generateTontoFile(project: Project, filePath: string, destination: string | undefined): string {
-  const data = customExtractDestinationAndName(filePath, destination);
-  const ctx = <GeneratorContext>{
-    project,
-    name: data.name,
-    destinationFolder: data.destination,
-    fileNode: new CompositeGeneratorNode(),
-  };
-  return generate(ctx);
+    const data = customExtractDestinationAndName(filePath, destination);
+    const ctx = <GeneratorContext>{
+        project,
+        name: data.name,
+        destinationFolder: data.destination,
+        fileNode: new CompositeGeneratorNode(),
+    };
+    return generate(ctx);
 }
 
 interface GeneratorContext {
-  project: Project
-  name: string
-  destinationFolder: string
-  fileNode: CompositeGeneratorNode
+    project: Project
+    name: string
+    destinationFolder: string
+    fileNode: CompositeGeneratorNode
 }
 
 function generate(ctx: GeneratorContext): string {
-  if (!fs.existsSync(ctx.destinationFolder)) {
-    fs.mkdirSync(ctx.destinationFolder, { recursive: true });
-  }
-  // Create manifest file
-  createTontoManifest(ctx.project, ctx.destinationFolder);
+    if (!fs.existsSync(ctx.destinationFolder)) {
+        fs.mkdirSync(ctx.destinationFolder, { recursive: true });
+    }
+    // Create manifest file
+    createTontoManifest(ctx.project, ctx.destinationFolder);
 
-  const modelPath = path.join(ctx.destinationFolder, formatForId(ctx.project.model?.getNameOrId()));
+    const modelPath = path.join(ctx.destinationFolder, formatForId(ctx.project.model?.getNameOrId()));
 
-  if (!fs.existsSync(modelPath)) {
-    fs.mkdirSync(modelPath);
-  }
+    if (!fs.existsSync(modelPath)) {
+        fs.mkdirSync(modelPath);
+    }
 
-  const packages = ctx.project.model.getAllPackages();
+    const packages = ctx.project.model.getAllPackages();
 
-  packages.forEach((ontoumlElement) => {
-    generateModel(modelPath, ontoumlElement, new CompositeGeneratorNode());
-  });
+    packages.forEach((ontoumlElement) => {
+        generateModel(modelPath, ontoumlElement, new CompositeGeneratorNode());
+    });
 
-  // generateProject(modelPath, ctx.project, new CompositeGeneratorNode());
+    // generateProject(modelPath, ctx.project, new CompositeGeneratorNode());
 
-  return modelPath;
+    return modelPath;
 }
 
 function generateModel(
-  actualDestinationFolder: string,
-  ontoumlElement: OntoumlElement,
-  fileNode: CompositeGeneratorNode
+    actualDestinationFolder: string,
+    ontoumlElement: OntoumlElement,
+    fileNode: CompositeGeneratorNode
 ) {
-  /**
+    /**
   * If it is a Project, we generate a Package with its elements, and then just 
   * enter the "Model" Package
   */
-  if (ontoumlElement.type === OntoumlType.PROJECT_TYPE) {
-    generateModel(actualDestinationFolder, ontoumlElement, new CompositeGeneratorNode());
-  }
-  /**
+    if (ontoumlElement.type === OntoumlType.PROJECT_TYPE) {
+        generateModel(actualDestinationFolder, ontoumlElement, new CompositeGeneratorNode());
+    }
+    /**
   * If it is a package, we need to generate again recursively
   */
-  generatePackage(actualDestinationFolder, ontoumlElement, fileNode);
+    generatePackage(actualDestinationFolder, ontoumlElement, fileNode);
 }
 
 function generatePackage(dir: string, ontoumlElement: OntoumlElement, fileNode: CompositeGeneratorNode) {
-  if (ontoumlElement.type === OntoumlType.PACKAGE_TYPE) {
-    const packageElement = ontoumlElement as Package;
-    // Create directory for this package
-    const packagePath = path.join(dir, formatForId(packageElement.getName()));
-    let newPath: string = packagePath;
-    if (!fs.existsSync(packagePath)) {
-      newPath = fs.mkdirSync(packagePath, { recursive: true }) ?? packagePath;
-    }
-    // First, we need to generate all imports for this module
-    createTontoImports(packageElement, fileNode);
+    if (ontoumlElement.type === OntoumlType.PACKAGE_TYPE) {
+        const packageElement = ontoumlElement as Package;
+        // Create directory for this package
+        const packagePath = path.join(dir, formatForId(packageElement.getName()));
+        let newPath: string = packagePath;
+        if (!fs.existsSync(packagePath)) {
+            newPath = fs.mkdirSync(packagePath, { recursive: true }) ?? packagePath;
+        }
+        // First, we need to generate all imports for this module
+        createTontoImports(packageElement, fileNode);
 
-    // Then, we create the elements of this package
-    createTontoPackage(packageElement, fileNode);
+        // Then, we create the elements of this package
+        createTontoPackage(packageElement, fileNode);
 
-    // Lastly, we call it again to create other packages inside it recursively
-    for (const child of packageElement.getContents()) {
-      if (child.type === OntoumlType.PACKAGE_TYPE || child.type === OntoumlType.PROJECT_TYPE) {
-        generateModel(replaceWhitespace(newPath), child, new CompositeGeneratorNode());
-      }
+        // Lastly, we call it again to create other packages inside it recursively
+        for (const child of packageElement.getContents()) {
+            if (child.type === OntoumlType.PACKAGE_TYPE || child.type === OntoumlType.PROJECT_TYPE) {
+                generateModel(replaceWhitespace(newPath), child, new CompositeGeneratorNode());
+            }
+        }
+        const generatedFilePath = path.join(newPath, formatForId(packageElement.getName())) + ".tonto";
+        fs.writeFileSync(generatedFilePath, toString(fileNode));
     }
-    const generatedFilePath = path.join(newPath, formatForId(packageElement.getName())) + ".tonto";
-    fs.writeFileSync(generatedFilePath, toString(fileNode));
-  }
 }
 
 // function generateProject(dir: string, project: Project, fileNode: CompositeGeneratorNode) {

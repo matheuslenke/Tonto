@@ -3,10 +3,10 @@ import { ValidationAcceptor } from "langium";
 import { Model } from "../generated/ast.js";
 
 export class ModelValidator {
-  /*
+    /*
    * Checks if for the same file it has a duplicated module name
    */
-  checkDuplicatedContextModuleNames(_model: Model, _accept: ValidationAcceptor): void {
+    checkDuplicatedContextModuleNames(_model: Model, _accept: ValidationAcceptor): void {
     // const modules = model.modules;
     // const names: string[] = [];
     // modules.forEach((module) => {
@@ -23,5 +23,5 @@ export class ModelValidator {
     //     }
     //   }
     // });
-  }
+    }
 }

@@ -164,6 +164,7 @@
         "rimraf": "^4.1.2",
         "tonto-cli": "0.2.12",
         "tonto-package-manager": "~0.2.9",
+        "uuid": "^9.0.1",
         "vscode-languageclient": "^9.0.1",
         "vscode-languageserver": "^9.0.1",
         "vscode-languageserver-types": "^3.17.3",

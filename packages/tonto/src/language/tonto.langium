@@ -35,7 +35,7 @@ Import:
 // <--- Declarations --->
 
 Declaration:
-	ClassDeclarationRule | AuxiliaryDeclaration
+	ClassDeclaration | AuxiliaryDeclaration
 ;
 
 AuxiliaryDeclaration:

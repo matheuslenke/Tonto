@@ -12,16 +12,19 @@ InternalRelation infers ElementRelation:
 
 ExternalRelation infers ElementRelation:
 	('@'relationType=RelationStereotype)?
-	'relation' firstEnd=[ClassDeclaration:QualifiedName]
+	'relation' firstEnd=[DataTypeOrClassOrRelation:QualifiedName]
 	RelationData
 ;
 
+type DataTypeOrClassOrRelation = DataType | ClassDeclaration | ElementRelation;
+
 fragment RelationData:
 	firstEndMetaAttributes=RelationMetaAttributes?
-	firstCardinality=Cardinality?
-	RelationName
-	secondCardinality=Cardinality?
-	secondEnd=[DataTypeOrClassOrRelation:ID]
+    firstCardinality=Cardinality?
+    RelationName 
+    secondCardinality=Cardinality?
+
+	secondEnd=[DataTypeOrClassOrRelation:QualifiedName]
 	
 	secondEndMetaAttributes=RelationMetaAttributes?
 	('specializes' specializeRelation=[ElementRelation:QualifiedName])?
@@ -29,8 +32,8 @@ fragment RelationData:
 ;
 
 fragment RelationName:
-	(RelationType ((name=QualifiedName | name=STRING) '--')?) |
-	(('--' name=QualifiedName | name=STRING)? RelationInvertedType)?
+	(RelationType (name=QualifiedName '--')?) |
+	(('--' name=QualifiedName)? RelationInvertedType)?
 ;
 
 fragment RelationType:

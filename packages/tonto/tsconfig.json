@@ -8,6 +8,7 @@
     "sourceMap": true,
     "declaration": true,
     "baseUrl": "src/",
+    "strict": true,
     "paths": {
       "@/*": ["./src/*"],
       "@/language/*": ["./src/language/*"]

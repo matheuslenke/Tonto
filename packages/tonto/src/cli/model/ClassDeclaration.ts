@@ -6,29 +6,29 @@
 import { OntologicalCategoryEnum } from "../../language/models/OntologicalCategory.js";
 
 export class ClassDeclaration {
-  name: string;
-  ontologicalCategory: OntologicalCategoryEnum;
-  ontologicalNatures: string;
-  instanceOf?: ClassDeclaration;
-  specializationItems: ClassDeclaration[];
-  attributes: string;
-  relations: string;
+    name: string;
+    ontologicalCategory: OntologicalCategoryEnum;
+    ontologicalNatures: string;
+    instanceOf?: ClassDeclaration;
+    specializationItems: ClassDeclaration[];
+    attributes: string;
+    relations: string;
 
-  constructor(
-    name: string,
-    ontologicalCategory: OntologicalCategoryEnum,
-    ontologicalNatures: string,
-    specializationItems: ClassDeclaration[],
-    attributes: string,
-    relations: string,
-    instanceOf?: ClassDeclaration
-  ) {
-    this.name = name;
-    this.ontologicalCategory = ontologicalCategory;
-    this.ontologicalNatures = ontologicalNatures;
-    this.specializationItems = specializationItems;
-    this.instanceOf = instanceOf;
-    this.attributes = attributes;
-    this.relations = relations;
-  }
+    constructor(
+        name: string,
+        ontologicalCategory: OntologicalCategoryEnum,
+        ontologicalNatures: string,
+        specializationItems: ClassDeclaration[],
+        attributes: string,
+        relations: string,
+        instanceOf?: ClassDeclaration
+    ) {
+        this.name = name;
+        this.ontologicalCategory = ontologicalCategory;
+        this.ontologicalNatures = ontologicalNatures;
+        this.specializationItems = specializationItems;
+        this.instanceOf = instanceOf;
+        this.attributes = attributes;
+        this.relations = relations;
+    }
 }

@@ -118,7 +118,7 @@ export interface Attribute extends AstNode {
     isConst: boolean;
     isDerived: boolean;
     isOrdered: boolean;
-    name: string;
+    name: QualifiedName;
 }
 
 export const Attribute = 'Attribute';
@@ -146,7 +146,7 @@ export interface ClassDeclaration extends AstNode {
     attributes: Array<Attribute>;
     classElementType: OntologicalCategory;
     instanceOf?: Reference<ClassDeclaration>;
-    name: string;
+    name: QualifiedName;
     ontologicalNatures?: ElementOntologicalNature;
     references: Array<ElementRelation>;
     specializationEndurants: Array<Reference<ClassDeclaration>>;
@@ -178,7 +178,7 @@ export interface DataType extends AstNode {
     attributes: Array<Attribute>;
     elements: Array<EnumElement>;
     isEnum: boolean;
-    name: string;
+    name: QualifiedName;
     ontologicalNature?: ElementOntologicalNature;
     specializationEndurants: Array<Reference<DataTypeOrClass>>;
 }
@@ -205,7 +205,7 @@ export interface ElementRelation extends AstNode {
     readonly $container: ClassDeclaration | ContextModule;
     readonly $type: 'ElementRelation';
     firstCardinality?: Cardinality;
-    firstEnd?: Reference<ClassDeclaration>;
+    firstEnd?: Reference<DataTypeOrClassOrRelation>;
     firstEndMetaAttributes?: RelationMetaAttributes;
     hasInverse?: 'inverseOf';
     inverseEnd?: Reference<ElementRelation>;
@@ -214,7 +214,7 @@ export interface ElementRelation extends AstNode {
     isAssociation: boolean;
     isComposition: boolean;
     isCompositionInverted: boolean;
-    name?: QualifiedName | string;
+    name?: QualifiedName;
     relationType?: RelationStereotype;
     secondCardinality?: Cardinality;
     secondEnd: Reference<DataTypeOrClassOrRelation>;
@@ -381,21 +381,21 @@ export class TontoAstReflection extends AbstractAstReflection {
                 return DataType;
             }
             case 'ClassDeclaration:instanceOf':
-            case 'ClassDeclaration:specializationEndurants':
-            case 'ElementRelation:firstEnd': {
+            case 'ClassDeclaration:specializationEndurants': {
                 return ClassDeclaration;
             }
             case 'DataType:specializationEndurants': {
                 return DataTypeOrClass;
+            }
+            case 'ElementRelation:firstEnd':
+            case 'ElementRelation:secondEnd': {
+                return DataTypeOrClassOrRelation;
             }
             case 'ElementRelation:inverseEnd':
             case 'ElementRelation:specializeRelation':
             case 'RelationMetaAttribute:redefinesRelation':
             case 'RelationMetaAttribute:subsetRelation': {
                 return ElementRelation;
-            }
-            case 'ElementRelation:secondEnd': {
-                return DataTypeOrClassOrRelation;
             }
             case 'GeneralizationSet:categorizerItems':
             case 'GeneralizationSet:generalItem':

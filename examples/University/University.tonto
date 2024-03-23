@@ -23,22 +23,18 @@ kind teste {
   
 }
 
-kind Room
-subkind Classroom specializes Room
-
-// collective Staff {
-//   [1] <o>-- hasMember -- [0..*] Employee
-// }
-
-subkind SeniorStaff specializes Staff
-
-roleMixin Employer
-
-role UniversityEmployer specializes Employer, University
-
-relator EmploymentContract {
-  @mediation
-  [1..*] -- [1] Employee
-  @mediation
-  [1..*] -- [1] Employer
+collective SeniorStaff {
+  @subCollectionOf [1] --<o> [1] Staff
+  @memberOf [1..*] <>-- professors -- [2..*] Professor ({subsets members})
 }
+roleMixin Employer specializes Organization
+relator EmploymentContract {
+ @mediation [1..*] -- [1] Employee
+ @mediation [1..*] -- [1] Employer
+}
+
+relator PhDEnrollment {
+  @mediation [*] -- [1] University
+  @mediation [1..*] -- [1] Persons.PhDCandidate
+}
+

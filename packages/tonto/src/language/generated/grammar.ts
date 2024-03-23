@@ -732,10 +732,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
     },
     {
       "$type": "ParserRule",
-      "name": "ClassDeclarationRule",
-      "returnType": {
-        "$ref": "#/interfaces@0"
-      },
+      "name": "ClassDeclaration",
       "definition": {
         "$type": "Group",
         "elements": [
@@ -794,7 +791,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
                 "terminal": {
                   "$type": "CrossReference",
                   "type": {
-                    "$ref": "#/interfaces@0"
+                    "$ref": "#/rules@21"
                   },
                   "terminal": {
                     "$type": "RuleCall",
@@ -827,7 +824,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
                 "terminal": {
                   "$type": "CrossReference",
                   "type": {
-                    "$ref": "#/interfaces@0"
+                    "$ref": "#/rules@21"
                   },
                   "terminal": {
                     "$type": "RuleCall",
@@ -853,7 +850,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
                     "terminal": {
                       "$type": "CrossReference",
                       "type": {
-                        "$ref": "#/interfaces@0"
+                        "$ref": "#/rules@21"
                       },
                       "terminal": {
                         "$type": "RuleCall",
@@ -866,7 +863,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
                     }
                   }
                 ],
-                "cardinality": "?"
+                "cardinality": "*"
               }
             ],
             "cardinality": "?"
@@ -941,7 +938,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@6"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -1079,7 +1076,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@6"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -1143,31 +1140,15 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
             "cardinality": "?"
           },
           {
-            "$type": "Keyword",
-            "value": "{"
-          },
-          {
             "$type": "Group",
             "elements": [
               {
-                "$type": "Assignment",
-                "feature": "elements",
-                "operator": "+=",
-                "terminal": {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$ref": "#/rules@24"
-                  },
-                  "arguments": []
-                }
+                "$type": "Keyword",
+                "value": "{"
               },
               {
                 "$type": "Group",
                 "elements": [
-                  {
-                    "$type": "Keyword",
-                    "value": ","
-                  },
                   {
                     "$type": "Assignment",
                     "feature": "elements",
@@ -1179,16 +1160,38 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
                       },
                       "arguments": []
                     }
+                  },
+                  {
+                    "$type": "Group",
+                    "elements": [
+                      {
+                        "$type": "Keyword",
+                        "value": ","
+                      },
+                      {
+                        "$type": "Assignment",
+                        "feature": "elements",
+                        "operator": "+=",
+                        "terminal": {
+                          "$type": "RuleCall",
+                          "rule": {
+                            "$ref": "#/rules@24"
+                          },
+                          "arguments": []
+                        }
+                      }
+                    ],
+                    "cardinality": "*"
                   }
                 ],
-                "cardinality": "*"
+                "cardinality": "?"
+              },
+              {
+                "$type": "Keyword",
+                "value": "}"
               }
             ],
             "cardinality": "?"
-          },
-          {
-            "$type": "Keyword",
-            "value": "}"
           }
         ]
       },
@@ -1234,7 +1237,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@6"
+                "$ref": "#/rules@11"
               },
               "arguments": []
             }
@@ -1526,7 +1529,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
             "terminal": {
               "$type": "CrossReference",
               "type": {
-                "$ref": "#/interfaces@0"
+                "$ref": "#/types@1"
               },
               "terminal": {
                 "$type": "RuleCall",
@@ -1731,33 +1734,16 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
                 "$type": "Group",
                 "elements": [
                   {
-                    "$type": "Alternatives",
-                    "elements": [
-                      {
-                        "$type": "Assignment",
-                        "feature": "name",
-                        "operator": "=",
-                        "terminal": {
-                          "$type": "RuleCall",
-                          "rule": {
-                            "$ref": "#/rules@11"
-                          },
-                          "arguments": []
-                        }
+                    "$type": "Assignment",
+                    "feature": "name",
+                    "operator": "=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@11"
                       },
-                      {
-                        "$type": "Assignment",
-                        "feature": "name",
-                        "operator": "=",
-                        "terminal": {
-                          "$type": "RuleCall",
-                          "rule": {
-                            "$ref": "#/rules@8"
-                          },
-                          "arguments": []
-                        }
-                      }
-                    ]
+                      "arguments": []
+                    }
                   },
                   {
                     "$type": "Keyword",
@@ -1772,28 +1758,11 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
             "$type": "Group",
             "elements": [
               {
-                "$type": "Alternatives",
+                "$type": "Group",
                 "elements": [
                   {
-                    "$type": "Group",
-                    "elements": [
-                      {
-                        "$type": "Keyword",
-                        "value": "--"
-                      },
-                      {
-                        "$type": "Assignment",
-                        "feature": "name",
-                        "operator": "=",
-                        "terminal": {
-                          "$type": "RuleCall",
-                          "rule": {
-                            "$ref": "#/rules@11"
-                          },
-                          "arguments": []
-                        }
-                      }
-                    ]
+                    "$type": "Keyword",
+                    "value": "--"
                   },
                   {
                     "$type": "Assignment",
@@ -1802,7 +1771,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@8"
+                        "$ref": "#/rules@11"
                       },
                       "arguments": []
                     }
@@ -2223,7 +2192,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
       "$type": "ParserRule",
       "name": "GeneralizationSetImpl",
       "returnType": {
-        "$ref": "#/interfaces@1"
+        "$ref": "#/interfaces@0"
       },
       "definition": {
         "$type": "Group",
@@ -2394,7 +2363,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
       "$type": "ParserRule",
       "name": "GeneralizationSetShort",
       "returnType": {
-        "$ref": "#/interfaces@1"
+        "$ref": "#/interfaces@0"
       },
       "definition": {
         "$type": "Group",
@@ -2525,103 +2494,6 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
   "interfaces": [
     {
       "$type": "Interface",
-      "name": "ClassDeclaration",
-      "attributes": [
-        {
-          "$type": "TypeAttribute",
-          "name": "classElementType",
-          "type": {
-            "$type": "SimpleType",
-            "typeRef": {
-              "$ref": "#/rules@12"
-            }
-          },
-          "isOptional": false
-        },
-        {
-          "$type": "TypeAttribute",
-          "name": "name",
-          "type": {
-            "$type": "SimpleType",
-            "primitiveType": "string"
-          },
-          "isOptional": false
-        },
-        {
-          "$type": "TypeAttribute",
-          "name": "ontologicalNatures",
-          "isOptional": true,
-          "type": {
-            "$type": "SimpleType",
-            "typeRef": {
-              "$ref": "#/rules@19"
-            }
-          }
-        },
-        {
-          "$type": "TypeAttribute",
-          "name": "instanceOf",
-          "isOptional": true,
-          "type": {
-            "$type": "ReferenceType",
-            "referenceType": {
-              "$type": "SimpleType",
-              "typeRef": {
-                "$ref": "#/interfaces@0"
-              }
-            }
-          }
-        },
-        {
-          "$type": "TypeAttribute",
-          "name": "specializationEndurants",
-          "type": {
-            "$type": "ArrayType",
-            "elementType": {
-              "$type": "ReferenceType",
-              "referenceType": {
-                "$type": "SimpleType",
-                "typeRef": {
-                  "$ref": "#/interfaces@0"
-                }
-              }
-            }
-          },
-          "isOptional": false
-        },
-        {
-          "$type": "TypeAttribute",
-          "name": "attributes",
-          "type": {
-            "$type": "ArrayType",
-            "elementType": {
-              "$type": "SimpleType",
-              "typeRef": {
-                "$ref": "#/rules@25"
-              }
-            }
-          },
-          "isOptional": false
-        },
-        {
-          "$type": "TypeAttribute",
-          "name": "references",
-          "type": {
-            "$type": "ArrayType",
-            "elementType": {
-              "$type": "SimpleType",
-              "typeRef": {
-                "$ref": "#/rules@27"
-              }
-            }
-          },
-          "isOptional": false
-        }
-      ],
-      "superTypes": []
-    },
-    {
-      "$type": "Interface",
       "name": "GeneralizationSet",
       "attributes": [
         {
@@ -2719,7 +2591,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
           {
             "$type": "SimpleType",
             "typeRef": {
-              "$ref": "#/interfaces@0"
+              "$ref": "#/rules@21"
             }
           }
         ]
@@ -2740,7 +2612,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
           {
             "$type": "SimpleType",
             "typeRef": {
-              "$ref": "#/interfaces@0"
+              "$ref": "#/rules@21"
             }
           },
           {
@@ -2761,7 +2633,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
           {
             "$type": "SimpleType",
             "typeRef": {
-              "$ref": "#/interfaces@0"
+              "$ref": "#/rules@21"
             }
           },
           {
