@@ -1,0 +1,30 @@
+import PersonAndOrganizationDatatypes
+
+package Persons
+
+kind Person {
+  age: number { derived }
+  eyeColor: EyeColor [1..2]
+  birthDate: date { const }
+  firstName: string
+  preferredNames: string [1..*] { ordered }
+}
+
+type PersonTypeByAge
+
+phase Child
+phase Teenager
+phase Adult
+
+disjoint complete genset PhasesOfPerson {
+  general Person
+  categorizer PersonTypeByAge
+  specifics Child, Teenager, Adult
+}
+
+role UniversityStudent specializes Person
+
+role Employee specializes Person
+role Professor specializes Employee
+
+role PhDCandidate specializes Person

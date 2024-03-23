@@ -1,40 +1,28 @@
-import CoreDatatypes
-import PersonPhases
+import PersonAndOrganizationDatatypes
+import Persons
 package University
 
 category Organization
 kind University specializes Organization {
   address: Address
-  @componentOf
-  [1] <>-- has -- [1..*] Department
-  @componentOf
-  [1] <>-- [0..*] Classroom
+  @componentOf [1] <o>-- has -- [2..*] Department
 }
 
-relation Department [1] <>-- [1] JuniorStaff
+relation Department [1] -- [1] Staff
 
 kind Department {
-  name: string
+  [1] -- constitutedBy -- [1] Staff
 }
-collective Staff
-subkind JuniorStaff specializes Staff
-
-kind teste {
-  
+collective Staff {
+  @memberOf [1..*] <>-- members -- [2..*] Employee
 }
 
 collective SeniorStaff {
   @subCollectionOf [1] --<o> [1] Staff
   @memberOf [1..*] <>-- professors -- [2..*] Professor ({subsets members})
 }
-roleMixin Employer specializes Organization
-relator EmploymentContract {
- @mediation [1..*] -- [1] Employee
- @mediation [1..*] -- [1] Employer
-}
 
 relator PhDEnrollment {
   @mediation [*] -- [1] University
   @mediation [1..*] -- [1] Persons.PhDCandidate
 }
-

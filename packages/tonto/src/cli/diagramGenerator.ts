@@ -1,6 +1,6 @@
 import { Class, Generalization, GeneralizationSet, MultilingualText, Package, Project, Relation } from "ontouml-js";
+import { contextModuleGenerator } from "../cli/generators/contextModule.generator.js";
 import { Model } from "../language/index.js";
-import { contextModuleGenerator } from "./generators/contextModule.generator.js";
 
 interface GeneratorContext {
     model: Model;
