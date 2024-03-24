@@ -40,7 +40,10 @@ const checkSortalSpecializesUniqueUltimateSortalRecursive = (
             const specItem = specializationItem.ref;
             if (specItem) {
                 const specCategory = specItem?.classElementType?.ontologicalCategory;
+                const SpecifiedNatures = specItem?.ontologicalNatures?.natures.length ?? 0;
                 if (isUltimateSortalOntoCategory(specCategory)) {
+                    totalUltimateSortalSpecialized += 1;
+                } else if (SpecifiedNatures > 0) {
                     totalUltimateSortalSpecialized += 1;
                 }
 
@@ -63,9 +66,9 @@ const checkSortalSpecializesUniqueUltimateSortalRecursive = (
             );
         });
     } else if (actualElement.$type === "GeneralizationSet") {
-    /**
-     * If the element is a GeneralizationSet, then we need to check the general element and go up from there
-     */
+        /**
+         * If the element is a GeneralizationSet, then we need to check the general element and go up from there
+         */
         const generalItem: ClassDeclarationOrRelation | undefined = actualElement.generalItem.ref;
         if (!generalItem || generalItem.$type !== "ClassDeclaration") {
             return totalUltimateSortalSpecialized;

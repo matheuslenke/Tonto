@@ -11,6 +11,7 @@ import { EnumItem } from "./EnumItem.js";
 import { GenSetItem } from "./GensetItem.js";
 
 export class PackageDeclarationItem extends ASTDeclarationItem {
+    ontoumlPackage: Package;
     isGlobal: boolean = false;
     name: string;
     nameSlug: string;
@@ -24,6 +25,7 @@ export class PackageDeclarationItem extends ASTDeclarationItem {
 
     constructor(ontoumlPackage: Package, dir: string) {
         super();
+        this.ontoumlPackage = ontoumlPackage;
         this.dir = dir;
         this.name = ontoumlPackage.getNameOrId();
         this.nameSlug = formatForId(this.name);
@@ -34,15 +36,20 @@ export class PackageDeclarationItem extends ASTDeclarationItem {
         this.packages = internalPackages.map(pack => new PackageDeclarationItem(pack, path.join(this.dir, this.nameSlug)));
 
         try {
-            this.classDeclarations = this.getClasses(ontoumlPackage);
-            this.datatypes = this.getDatatypes(ontoumlPackage);
-            this.enumerations = this.getEnumerations(ontoumlPackage);
-            this.genSets = this.getGensets(ontoumlPackage);
+            this.classDeclarations = this.getClasses();
+            this.datatypes = this.getDatatypes();
+            this.enumerations = this.getEnumerations();
+            this.genSets = this.getGensets();
 
             this.getImports();
         } catch (error) {
             console.log(chalk.red("Error creating Package " + this.name, error));
         }
+    }
+
+    getInternalPackages(): PackageDeclarationItem[] {
+        const internal = this.packages.flatMap(pack => pack.getInternalPackages());
+        return [...internal, this];
     }
 
     getImports() {
@@ -66,37 +73,51 @@ export class PackageDeclarationItem extends ASTDeclarationItem {
             });
     }
 
-    getClasses(ontoumlPackage: Package): ClassDeclarationItem[] {
-        return ontoumlPackage.getContents()
+    getClasses(): ClassDeclarationItem[] {
+        return this.ontoumlPackage.getContents()
             .filter(item => item.type === OntoumlType.CLASS_TYPE)
             .filter(item => item instanceof Class)
             .map(item => item as Class)
             .filter((item: Class) => (item.stereotype !== ClassStereotype.ENUMERATION &&
                 item.stereotype !== ClassStereotype.DATATYPE))
-            .map((item: Class) => new ClassDeclarationItem(item, this.nameSlug));
+            .flatMap((item: Class) => {
+                try {
+                    return new ClassDeclarationItem(item, this.nameSlug);
+                } catch (error) {
+                    console.log(`Error creating class ${item.name}`);
+                }
+                return [];
+            });
     }
 
-    getDatatypes(ontoumlPackage: Package): DataTypeItem[] {
-        return ontoumlPackage.getContents()
+    getDatatypes(): DataTypeItem[] {
+        return this.ontoumlPackage.getContents()
             .filter(item => item.type === OntoumlType.CLASS_TYPE)
             .map(item => item as Class)
-            .filter(item => item.stereotype === ClassStereotype.DATATYPE)
+            .filter(item => item.stereotype === ClassStereotype.DATATYPE && !item.hasEnumerationStereotype())
             .map(item => new DataTypeItem(item));
     }
 
-    getEnumerations(ontoumlPackage: Package): EnumItem[] {
-        return ontoumlPackage.getContents()
+    getEnumerations(): EnumItem[] {
+        return this.ontoumlPackage.getContents()
             .filter(item => item.type === OntoumlType.CLASS_TYPE)
             .map(item => item as Class)
-            .filter(item => item.stereotype === ClassStereotype.ENUMERATION)
+            .filter(item => item.stereotype === ClassStereotype.DATATYPE && item.hasEnumerationStereotype())
             .map(item => new EnumItem(item));
     }
 
-    getGensets(ontoumlPackage: Package): GenSetItem[] {
-        return ontoumlPackage.getContents()
+    getGensets(): GenSetItem[] {
+        return this.ontoumlPackage.getContents()
             .filter(item => item.type === OntoumlType.GENERALIZATION_SET_TYPE)
             .map(item => item as GeneralizationSet)
-            .map(item => new GenSetItem(item));
+            .flatMap(item => {
+                try {
+                    return new GenSetItem(item);
+                } catch (error) {
+                    console.log(`Error creating Genset[${item.getNameOrId()}]: ${error}`);
+                    return [];
+                }
+            });
     }
 
     writePackage(): void {
@@ -135,15 +156,30 @@ export class PackageDeclarationItem extends ASTDeclarationItem {
             enumeration.writeToNode(node);
             node.appendNewLine();
         });
+
+        this.genSets.forEach(genSet => {
+            genSet.writeToNode(node);
+            node.appendNewLine();
+        });
+    }
+
+    getElementNames(): string[] {
+        const classNames = this.classDeclarations.map(item => item.name);
+        const datatypeNames = this.datatypes.map(item => item.name);
+        const enumNames = this.enumerations.map(item => item.name);
+        // const attributeNames = this..map(item => item.name);
+        return [...classNames, ...datatypeNames, ...enumNames];
     }
 
     override getNumberOfInternalElements(): number {
-        const packageElements = this.packages.reduce((previous, item) => previous + item.getNumberOfInternalElements(), 0);
         const classes = this.classDeclarations.reduce((previous, item) => item.getNumberOfInternalElements() + previous, 0);
         const datatypes = this.datatypes.reduce((previous, item) => item.getNumberOfInternalElements() + previous, 0);
         const enums = this.enumerations.reduce((previous, item) => item.getNumberOfInternalElements() + previous, 0);
         const genSets = this.genSets.reduce((previous, item) => previous + item.getNumberOfInternalElements(), 0);
 
-        return classes + datatypes + enums + genSets + packageElements;
+        const total = classes + datatypes + enums + genSets;
+        // + datatypes + enums + genSets + relations + packageElements;
+        console.log(`Package ${this.name}: ${total}`);
+        return total;
     }
 }

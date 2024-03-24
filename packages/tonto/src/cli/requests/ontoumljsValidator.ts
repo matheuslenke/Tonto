@@ -34,22 +34,30 @@ interface JsonResult {
     result: ResultResponse[];
 }
 
-export async function validateTontoFile(project: Project): Promise<ResultResponse[] | ErrorResultResponse> {
+export interface ValidationReturn {
+    result: ResultResponse[];
+    numberOfErrors: number;
+}
+
+export async function validateTontoFile(project: Project, locally: boolean): Promise<ValidationReturn | ErrorResultResponse> {
     const body = {
         project,
         options: undefined,
     };
+    const url = locally ? "http://localhost:80/v1/verify" : "http://api.ontouml.org/v1/verify";
 
     try {
-        const response = await fetch("http://api.ontouml.org/v1/verify", {
+        const response = await fetch(url, {
             method: "post",
             body: JSON.stringify(body),
             headers: { "Content-Type": "application/json" },
         });
         const json: JsonResult | ErrorResultResponse = await response.json() as JsonResult;
-        const resultResponse = json.result;
-        if (resultResponse) {
-            return resultResponse;
+        if (json) {
+            return {
+                result: json.result,
+                numberOfErrors: json.result.length
+            } as ValidationReturn;
         } else {
             // TODO: Fix ErrorResult
             return {} as ErrorResultResponse;

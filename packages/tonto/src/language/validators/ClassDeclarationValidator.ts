@@ -123,7 +123,6 @@ export class ClassDeclarationValidator {
         if (ontologicalCategory === OntologicalCategoryEnum.CLASS) {
             return;
         }
-        // if (isUltimateSortalOntoCategory(classDeclaration.classElementType.ontologicalCategory)) {
         const elementNatures = classDeclaration.ontologicalNatures?.natures;
         if (elementNatures) {
             const ontologicalCategoryEnum = getOntologicalCategory(ontologicalCategory);

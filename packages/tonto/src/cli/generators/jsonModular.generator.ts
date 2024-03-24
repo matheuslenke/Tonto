@@ -3,7 +3,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { MultilingualText, Package, Project } from "ontouml-js";
 import { Model } from "../../language/index.js";
-import { TontoManifest } from "../model/TontoManifest.js";
+import { TontoManifest } from "../model/grammar/TontoManifest.js";
 import { GeneratedContextModuleData, contextModuleGenerateClasses, contextModuleGenerateRelations, contextModuleModularGenerator } from "./contextModuleModular.generator.js";
 
 export function generateJSONFileModular(

@@ -6,7 +6,7 @@ import { Model, TontoServices, builtInLibs, createTontoServices } from "../../..
 import { extractAllAstNodes, extractAstNode } from "../../cli-util.js";
 import { generateJSONFileModular } from "../../generators/jsonModular.generator.js";
 import { generateJSONFile } from "../../jsonGenerator.js";
-import { TontoManifest } from "../../model/TontoManifest.js";
+import { TontoManifest } from "../../model/grammar/TontoManifest.js";
 import { readOrCreateDefaultTontoManifest } from "../../utils/readManifest.js";
 
 export const generateCommand = async (fileName: string, destination: string): Promise<string | undefined> => {
@@ -24,10 +24,10 @@ export async function generateModularCommand(dir: string): Promise<string | unde
     let folderAbsolutePath: string;
     // Find tonto.json file
     try {
-    /**
-     * Create Tonto Manifest file if it does not exist or read from an existing
-     * one
-     */
+        /**
+         * Create Tonto Manifest file if it does not exist or read from an existing
+         * one
+         */
         manifest = readOrCreateDefaultTontoManifest(dir);
 
         console.log(chalk.bold("tonto.json file parsed successfully."));

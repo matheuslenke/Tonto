@@ -42,7 +42,7 @@
             "type": "node",
             "args": [
                 "validate",
-                "${workspaceFolder}/examples/library",
+                "${workspaceFolder}/examples/newGeneration",
                 "--local",
                 ">> errors.txt"
             ]

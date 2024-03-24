@@ -1,0 +1,7 @@
+
+package SPO
+
+category Artifact of functional-complexes 
+
+category Software_Item of functional-complexes  specializes Artifact 
+

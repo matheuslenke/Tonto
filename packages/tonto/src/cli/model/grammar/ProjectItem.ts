@@ -1,10 +1,10 @@
 import chalk from "chalk";
 import * as fs from "fs";
-import { OntoumlElement, OntoumlType, Package, Project } from "ontouml-js";
+import { OntoumlType, Package, Project } from "ontouml-js";
 import path from "path";
 import { v4 } from "uuid";
 import { formatForId } from "../../utils/replaceWhitespace.js";
-import { TontoManifest } from "../TontoManifest.js";
+import { TontoManifest } from "../grammar/TontoManifest.js";
 import { PackageDeclarationItem } from "./PackageDeclarationItem.js";
 /**
  * Tonto Project element is the main object of the whole project. It contains
@@ -24,20 +24,29 @@ export class TontoProject {
     constructor(ontoumlProject: Project, workingDir: string, outDir: string) {
         this.ontoumlProject = ontoumlProject;
         const name: string = ontoumlProject.getNameOrId() ?? v4();
-        const packages: PackageDeclarationItem[] = [];
-        this.packages = packages;
+        this.packages = [];
         this.projectName = name;
         this.projectSlug = formatForId(name);
         this.workingDir = path.dirname(workingDir);
         this.generationPath = path.join(this.workingDir, outDir);
         this.startPackages();
 
-        const allElements: OntoumlElement[] = ontoumlProject.getAllContentsByType(OntoumlType.CLASS_TYPE)
-            .concat(ontoumlProject.getAllContentsByType(OntoumlType.RELATION_TYPE))
-            .concat(ontoumlProject.getAllContentsByType(OntoumlType.GENERALIZATION_SET_TYPE));
+        const elementsCount = ontoumlProject.getAllPackages().reduce((previous, pack) => {
+            const classes = pack.getContents().filter(item =>
+                item.type === OntoumlType.CLASS_TYPE
+            );
+            const gensets = pack.getContents().filter(item =>
+                item.type === OntoumlType.GENERALIZATION_SET_TYPE
+            );
+            const relations = pack.getContents().filter(item =>
+                item.type === OntoumlType.RELATION_TYPE
+            );
+            const total = classes.length + gensets.length + relations.length;
+            console.log(`Package ${pack.getNameOrId()}: ${classes.length} classes, ${gensets.length} gensets, ${relations.length} relations, ${total} total`);
+            return previous + total;
+        }, 0);
 
-
-        console.log(chalk.green(`Number of elements in model ${this.projectName}: ${allElements.length}`));
+        console.log(chalk.green(` - Number of elements in Project: ${elementsCount}`));
     }
 
     startPackages() {
@@ -53,10 +62,6 @@ export class TontoProject {
             }
             return [];
         });
-    }
-
-    addPackage(packageDeclaration: PackageDeclarationItem) {
-        this.packages.push(packageDeclaration);
     }
 
     writeProject(dir: string): void {
@@ -76,9 +81,12 @@ export class TontoProject {
                 console.log(error);
             }
         });
+        let total = 0;
+        const allPackages = this.packages.flatMap(pack => pack.getInternalPackages());
+        allPackages.forEach(pack => {
+            total += pack.getNumberOfInternalElements();
+        });
 
-        const createdItems = this.packages.reduce((previous, pack) => pack.getNumberOfInternalElements() + previous, 0);
-
-        console.log(chalk.green(`Created ${createdItems} in Tonto.`));
+        console.log(chalk.green(`- Number of elements in Tonto: ${total}`));
     }
 }

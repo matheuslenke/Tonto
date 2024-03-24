@@ -2,7 +2,7 @@
 import * as fs from "node:fs";
 import path from "node:path";
 import { Project } from "ontouml-js";
-import { TontoManifest, toJson } from "../model/TontoManifest.js";
+import { TontoManifest, toJson } from "../model/grammar/TontoManifest.js";
 import { formatForId } from "../utils/replaceWhitespace.js";
 
 

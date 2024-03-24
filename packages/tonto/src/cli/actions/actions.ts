@@ -1,9 +1,8 @@
 import chalk from "chalk";
 import * as fs from "node:fs";
 import path from "path";
-import { DiagnosticSeverity } from "vscode-languageserver-types";
 import { ErrorGufoResultResponse, GufoResultResponse } from "../requests/gufoTransform.js";
-import { ErrorResultResponse, ResultResponse } from "../requests/ontoumljsValidator.js";
+import { ErrorResultResponse, ValidationReturn } from "../requests/ontoumljsValidator.js";
 import { readOrCreateDefaultTontoManifest } from "../utils/readManifest.js";
 import { generateModularCommand } from "./commands/generateCommand.js";
 import { isGufoResultResponse, transformToGufoCommand } from "./commands/generateGufoCommand.js";
@@ -92,23 +91,20 @@ export class TontoActions {
 
         if (opts.local) {
             const diagnostics = await validateCommandLocal(dirName);
-            const totalValidationErrors: number = diagnostics?.filter(item => item.severity === DiagnosticSeverity.Error).length ?? -1;
-            console.log(chalk.bold("- Total of errors:"), totalValidationErrors);
-            // console.log(chalk.bold("# Validation Results:"));
-            // diagnostics?.forEach(diagnostic => {
-            //   console.log(chalk.bold(`[${diagnostic.source}][${diagnostic.tags}]`), chalk.red(diagnostic.message));
-            // });
+            console.log(chalk.bold("- Total of errors:"), diagnostics?.length);
         }
 
         try {
-            const response = await validateCommand(dirName);
+            const response = await validateCommand(dirName, true);
 
             // If it is ResultResponse[]
             if (Array.isArray(response)) {
-                const resultResponses = response as ResultResponse[];
-                resultResponses.forEach((resultResponse) => {
-                    console.log(chalk.bold.redBright(`[${resultResponse.severity}] ${resultResponse.title}:`));
-                    console.log(chalk.red(resultResponse.description));
+                const resultResponses = response as ValidationReturn[];
+                resultResponses.forEach(result => {
+                    result.result.forEach(resultResponse => {
+                        console.log(chalk.bold.redBright(`[${resultResponse.severity}] ${resultResponse.title}:`));
+                        console.log(chalk.red(resultResponse.description));
+                    });
                 });
             } else {
                 const error = response as ErrorResultResponse;

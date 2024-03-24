@@ -2,6 +2,7 @@ import chalk from "chalk";
 import { CompositeGeneratorNode } from "langium/generate";
 import { Class, ClassStereotype, Package, Property } from "ontouml-js";
 import { getStereotypeWord } from "../../constructors/classElement.constructor.js";
+import { getNearestParentPackage } from "../../utils/getParentPackage.js";
 import { formatForId } from "../../utils/replaceWhitespace.js";
 import { ASTDeclarationItem } from "./AstDeclarationItem.js";
 import { AttributeItem } from "./AttributeItem.js";
@@ -42,7 +43,7 @@ export class ClassDeclarationItem extends ASTDeclarationItem {
                 console.log(chalk.red("Error creating property", error));
             }
         });
-        ontoumlClass.getAllOutgoingRelations()
+        ontoumlClass.getOwnOutgoingRelations()
             .forEach(relation => {
                 try {
                     this.relations.push(new RelationItem(relation));
@@ -54,17 +55,21 @@ export class ClassDeclarationItem extends ASTDeclarationItem {
 
     public getReferencedPackages(): Package[] {
         const thisPackages = this.ontoumlClass.getGeneralizationsWhereSpecific()
-            .flatMap(item => item.getGeneralClass().getModelOrRootPackage())
+            .flatMap(item => getNearestParentPackage(item.getGeneralClass()) ?? [])
+            .map(item => item as Package)
             .filter(item => formatForId(item.getNameOrId()) !== this.rootPackageName);
         const relationPackages = this.ontoumlClass.getAllOutgoingRelations()
-            .flatMap(item => item.getTarget().getModelOrRootPackage())
+            .flatMap(item => getNearestParentPackage(item.getTarget()) ?? [])
+            .map(item => item as Package)
             .filter(item => formatForId(item.getName()) !== this.rootPackageName);
         const relationSpecializationPackages = this.ontoumlClass.getAllOutgoingRelations()
             .flatMap(item => item.getGeneralizationsWhereSpecific())
-            .map(item => item.getModelOrRootPackage())
+            .flatMap(item => getNearestParentPackage(item) ?? [])
+            .map(item => item as Package)
             .filter(item => formatForId(item.getName()) !== this.rootPackageName);
         const attributesPackages = this.ontoumlClass.getOwnAttributes()
-            .map(item => item.getModelOrRootPackage())
+            .flatMap(item => getNearestParentPackage(item) ?? [])
+            .map(item => item as Package)
             .filter(item => formatForId(item.getName()) !== formatForId(this.rootPackageName));
 
         return [...thisPackages, ...relationPackages, ...relationSpecializationPackages, ...attributesPackages];
@@ -164,6 +169,6 @@ export class ClassDeclarationItem extends ASTDeclarationItem {
 
     override getNumberOfInternalElements(): number {
         const relationsCount = this.relations.reduce((previous, item) => previous + item.getNumberOfInternalElements(), 0);
-        return 1 + this.attributes.length + relationsCount;
+        return 1 + relationsCount;
     }
 }

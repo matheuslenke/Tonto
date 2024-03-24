@@ -7,9 +7,9 @@ import path from "node:path";
 import { Model, builtInLibs, createTontoServices } from "../../../index.js";
 import { extractAllAstNodes } from "../../cli-util.js";
 import { GeneratorContext, parseProject } from "../../generators/jsonModular.generator.js";
-import { ErrorResultResponse, ResultResponse, TontoManifest, createDefaultTontoManifest, validateTontoFile } from "../../main.js";
+import { ErrorResultResponse, TontoManifest, ValidationReturn, createDefaultTontoManifest, validateTontoFile } from "../../main.js";
 
-export const validateCommand = async (dirName: string): Promise<ResultResponse[] | ErrorResultResponse> => {
+export const validateCommand = async (dirName: string, locally: boolean = false): Promise<ValidationReturn | ErrorResultResponse> => {
     const services = createTontoServices({ ...NodeFileSystem }).Tonto;
 
     let manifest: TontoManifest | undefined;
@@ -45,7 +45,12 @@ export const validateCommand = async (dirName: string): Promise<ResultResponse[]
 
     const project = parseProject(context);
 
-    const validationResult = validateTontoFile(project);
+    const validationResult = await validateTontoFile(project, locally);
+
+    if (isValidationReturn(validationResult)) {
+        console.log(`Total of errors: ${validationResult.numberOfErrors}`);
+    }
+
 
     if (validationResult) {
         return validationResult;
@@ -56,3 +61,8 @@ export const validateCommand = async (dirName: string): Promise<ResultResponse[]
         } as ErrorResultResponse;
     }
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function isValidationReturn(object: any): object is ValidationReturn {
+    return "result" in object;
+}

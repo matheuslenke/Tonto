@@ -1,9 +1,26 @@
 {
 	"folders": [
-		{
-			"path": "."
-		}
-	],
+        {
+            "name": "Tonto",
+            "path": "."
+        },
+        {
+            "name": "tonto",
+            "path": "packages/tonto"
+        },
+        {
+            "name": "tonto-package-manager",
+            "path": "packages/tonto-package-manager"
+        },
+        {
+            "name": "tonto-vscode",
+            "path": "packages/tonto-vscode"
+        },
+        {
+            "name": "newGeneration",
+            "path": "examples/newGeneration"
+        }
+    ],
 	"settings": {
 		"vitest.commandLine": "npx vitest"
 	}

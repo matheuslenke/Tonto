@@ -1,0 +1,14 @@
+import SPO
+
+package SwO
+
+subkind Software_System specializes Software_Item 
+
+mode Loaded_Software_System_Copy{
+    [0..*] -- materialization_of -- [1] Software_System 
+}
+
+kind Computer_System{
+    [1..*] -- has -- [1..*] Loaded_Software_System_Copy 
+}
+

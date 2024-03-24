@@ -1,5 +1,6 @@
 import { CompositeGeneratorNode, NL } from "langium/generate";
-import { OntoumlElement, OntoumlType, Relation } from "ontouml-js";
+import { OntoumlElement, OntoumlType, Package, Relation } from "ontouml-js";
+import { getNearestParentPackage } from "../../utils/getParentPackage.js";
 import { formatForId } from "../../utils/replaceWhitespace.js";
 import { ASTDeclarationItem } from "./AstDeclarationItem.js";
 import { CardinalityItem } from "./CardinalityItem.js";
@@ -11,37 +12,66 @@ enum RelationType {
 }
 
 export class RelationItem extends ASTDeclarationItem {
+    relation: Relation;
     stereotype: string;
+    firstEnd: OntoumlElement;
     firstEndMetaAttributes: string[] = [];
     firstCardinality: CardinalityItem;
 
     name: string | undefined;
+    external: boolean;
 
     secondCardinality: CardinalityItem;
     secondEnd: OntoumlElement;
     secondEndMetaAttributes: string[];
     relationType?: RelationType = RelationType.association;
-    specializes: string[] = [];
+    specializations: string[] = [];
     inverseOf: string[] = [];
 
-    constructor(relation: Relation) {
+    constructor(relation: Relation, external: boolean = false) {
         super();
+        this.relation = relation;
         this.stereotype = relation.stereotype;
         this.name = formatForId(relation.getName());
         this.secondEndMetaAttributes = [];
-
+        this.external = external;
+        this.firstEnd = relation.getSourceClass();
         this.firstCardinality = new CardinalityItem(relation.getSourceEnd().cardinality);
 
         this.secondCardinality = new CardinalityItem(relation.getTargetEnd().cardinality);
         this.secondEnd = relation.getTarget();
-        this.specializes = relation.getGeneralizationsWhereSpecific().map(item => formatForId(item.getName()));
+        this.specializations = relation.getGeneralizationsWhereSpecific().map(item => formatForId(item.getName()));
 
         // TODO: Method uninplemented in ontouml-js
         // this.inverseOf = relation.getAllOppositeRelationEnds().map(item => formatForId(item.getName()));
     }
 
+    public getReferencedPackages(): Package[] {
+        const sourcePack = getNearestParentPackage(this.relation.getSourceClass());
+        const targetPack = getNearestParentPackage(this.relation.getTargetClass());
+        const packages: Package[] = [];
+        if (sourcePack) {
+            packages.push(sourcePack as Package);
+        }
+        if (targetPack) {
+            packages.push(targetPack as Package);
+        }
+        return packages;
+    }
+
+
+    /**
+     * Write to Node Methods
+     * @param node 
+     */
+
     override writeToNode(node: CompositeGeneratorNode): void {
         this.writeStereotype(node);
+
+        if (this.external) {
+            node.append("relation ");
+            node.append(formatForId(this.firstEnd.getName()), " ");
+        }
 
         this.firstCardinality.writeToNode(node);
         node.append(" ");
@@ -55,13 +85,13 @@ export class RelationItem extends ASTDeclarationItem {
         node.append(" ", NL);
     }
 
-    writeStereotype(node: CompositeGeneratorNode): void {
+    private writeStereotype(node: CompositeGeneratorNode): void {
         if (this.stereotype) {
-            node.append(`@${this.stereotype} `, NL);
+            node.append(`@${formatForId(this.stereotype, false)} `);
         }
     }
 
-    writeTypeAndName(node: CompositeGeneratorNode): void {
+    private writeTypeAndName(node: CompositeGeneratorNode): void {
         switch (this.relationType) {
             case RelationType.association:
                 node.append("--");
@@ -79,7 +109,7 @@ export class RelationItem extends ASTDeclarationItem {
         }
     }
 
-    writeTargetElement(node: CompositeGeneratorNode) {
+    private writeTargetElement(node: CompositeGeneratorNode) {
         if (this.secondEnd.type === OntoumlType.RELATION_TYPE) {
             node.append(`${this.secondEnd.getName()}`);
         } else {
@@ -87,35 +117,36 @@ export class RelationItem extends ASTDeclarationItem {
         }
     }
 
-    writeSpecialization(node: CompositeGeneratorNode) {
-        if (this.specializes.length > 0) {
-            node.append("specializes ");
-            this.specializes.forEach((item, index) => {
-                if (index < this.specializes.length - 1) {
-                    node.append(`${item}, `);
-                } else {
-                    node.append(item);
-                }
-            });
-        }
-    }
+    // private writeSpecialization(node: CompositeGeneratorNode) {
+    //     if (this.specializes.length > 0) {
+    //         node.append("specializes ");
+    //         this.specializes.forEach((item, index) => {
+    //             if (index < this.specializes.length - 1) {
+    //                 node.append(`${item}, `);
+    //             } else {
+    //                 node.append(item);
+    //             }
+    //         });
+    //     }
+    // }
 
-    writeInverseOf(node: CompositeGeneratorNode) {
-        if (this.inverseOf?.length > 0) {
-            const first = this.inverseOf.at(0);
-            if (first) {
-                node.append(" inverseOf ", first, " ");
-            }
-        }
-    }
+    // private writeInverseOf(node: CompositeGeneratorNode) {
+    //     if (this.inverseOf?.length > 0) {
+    //         const first = this.inverseOf.at(0);
+    //         if (first) {
+    //             node.append(" inverseOf ", first, " ");
+    //         }
+    //     }
+    // }
 
-    writeSubSets() {
+    // private writeSubSets() {
 
-    }
+    // }
 
-    writeRedefines() {
+    // private writeRedefines() {
 
-    }
+    // }
+
     override getNumberOfInternalElements(): number {
         return 1;
     }

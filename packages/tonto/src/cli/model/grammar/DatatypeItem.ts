@@ -18,19 +18,19 @@ export class DataTypeItem extends ASTDeclarationItem {
     constructor(ontoumlDatatype: Class) {
         super();
         this.datatype = ontoumlDatatype;
-        this.rootPackageName = formatForId(this.datatype.getModelOrRootPackage().getName());
+        this.rootPackageName = formatForId(ontoumlDatatype.getModelOrRootPackage().getName());
         this.name = ontoumlDatatype.getNameOrId();
         this.nameSlug = formatForId(this.name);
-        this.attributes = ontoumlDatatype.getAllAttributes().map(item => item.getNameOrId());
+        this.attributes = ontoumlDatatype.getOwnAttributes().map(item => item.getNameOrId());
     }
 
     public getReferencedPackages(): Package[] {
         const packages = this.datatype.getGeneralizationsWhereSpecific()
             .flatMap(item => item.getModelOrRootPackage())
-            .filter(item => formatForId(item.getName()) !== this.rootPackageName);
+            .filter(item => formatForId(item.getName()) !== this.datatype.getModelOrRootPackage()?.getName());
         const attributesPackages = this.datatype.getOwnAttributes()
             .flatMap(item => item.getModelOrRootPackage())
-            .filter(item => formatForId(item.getName()) !== this.rootPackageName);
+            .filter(item => formatForId(item.getName()) !== this.datatype.getModelOrRootPackage()?.getName());
 
         return [...packages, ...attributesPackages];
     }

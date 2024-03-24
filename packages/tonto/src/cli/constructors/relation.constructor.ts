@@ -19,9 +19,9 @@ function constructRelation(relation: Relation, element: Class, fileNode: Composi
     const targetProperty = relation.getTargetEnd();
     const generalizations = relation.getGeneralizationsWhereGeneral();
 
-    const sourceClassPackage = element.getModelOrRootPackage();
+    const sourceClassPackage = element?.getModelOrRootPackage();
     const sourceName = sourceClassPackage.getName();
-    const targetClassPackage = targetClass.getModelOrRootPackage();
+    const targetClassPackage = targetClass?.getModelOrRootPackage();
     const targetName = targetClassPackage.getName();
     // Stereotype
     if (relation.stereotype) {
