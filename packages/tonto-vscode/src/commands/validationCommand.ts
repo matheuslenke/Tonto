@@ -1,7 +1,7 @@
-import { validateCommand, ResultResponse, ErrorResultResponse } from "tonto-cli";
+import chalk from "chalk";
+import { ErrorResultResponse, ResultResponse, validateCommand } from "tonto-cli";
 import * as vscode from "vscode";
 import { CommandIds } from "./commandIds.js";
-import chalk from "chalk";
 
 function createValidationSatusBarItem(
     context: vscode.ExtensionContext,
@@ -113,7 +113,7 @@ async function validateModel(directoryUri: vscode.Uri, outputChannel: vscode.Out
                     });
                     outputChannel.show();
                 }
-            } else if (isErrorResultResponse(response)) {
+            } else {
                 const error = response as ErrorResultResponse;
                 vscode.window.showErrorMessage(error.message ?? "Error validating model");
             }
@@ -121,10 +121,4 @@ async function validateModel(directoryUri: vscode.Uri, outputChannel: vscode.Out
     );
 }
 
-function isErrorResultResponse(
-    response: void | ErrorResultResponse | ResultResponse[]
-): response is ErrorResultResponse {
-    return (response as ErrorResultResponse).info !== undefined;
-}
-
-export { createValidationSatusBarItem, isErrorResultResponse };
+export { createValidationSatusBarItem };
