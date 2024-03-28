@@ -42,10 +42,10 @@ export class ClassDeclarationValidator {
    * mode, intrinsicMode or extrinsicMode)
    */
     checkUltimateSortalSpecializeUltimateSortal(classDeclaration: ClassDeclaration, accept: ValidationAcceptor): void {
-        if (!classDeclaration || !classDeclaration.classElementType) {
+        if (!classDeclaration || !classDeclaration?.classElementType) {
             return;
         }
-        const ontologicalCategory = classDeclaration.classElementType?.ontologicalCategory;
+        const ontologicalCategory = classDeclaration?.classElementType?.ontologicalCategory;
 
         if (ontologicalCategory === null || ontologicalCategory === undefined) {
             return;
@@ -67,10 +67,10 @@ export class ClassDeclarationValidator {
    * Anti Rigid stereotype
    */
     checkRigidSpecializesAntiRigid(classDeclaration: ClassDeclaration, accept: ValidationAcceptor): void {
-        if (!classDeclaration || !classDeclaration.classElementType) {
+        if (!classDeclaration || !classDeclaration?.classElementType) {
             return;
         }
-        const ontologicalCategory = classDeclaration.classElementType?.ontologicalCategory;
+        const ontologicalCategory = classDeclaration?.classElementType?.ontologicalCategory;
 
         // Check if it is a rigid stereotype
         if (isRigidStereotype(ontologicalCategory) || isSemiRigidStereotype(ontologicalCategory)) {
@@ -79,7 +79,7 @@ export class ClassDeclarationValidator {
                 if (!specDeclaration) {
                     return;
                 }
-                const specOntologicalCategory = specDeclaration.classElementType?.ontologicalCategory;
+                const specOntologicalCategory = specDeclaration?.classElementType?.ontologicalCategory;
 
                 if (isAntiRigidStereotype(specOntologicalCategory)) {
                     accept(

@@ -20,8 +20,7 @@ export class ComplexDataTypeValidator {
             formPhrase;
             accept(
                 "error",
-                `Incompatible stereotype and Nature restriction combination. Datatype ${
-                    complexDataType.name
+                `Incompatible stereotype and Nature restriction combination. Datatype ${complexDataType.name
                 } is incompatible with the following natures: ${formPhrase(wrongNatures as string[])}`,
                 {
                     node: complexDataType,
@@ -41,7 +40,7 @@ export class ComplexDataTypeValidator {
             }
             const type = specItem.$type;
             if (type === "ClassDeclaration") {
-                const stereotype = specItem.classElementType;
+                const stereotype = specItem?.classElementType;
                 if (stereotype.ontologicalCategory === "class") {
                     if (!specItem.ontologicalNatures?.natures.includes("abstract-individuals")) {
                         accept(

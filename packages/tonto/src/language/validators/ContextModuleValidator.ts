@@ -88,7 +88,7 @@ export class ContextModuleValidator {
         }) as ClassDeclaration[];
 
         declaredClasses.forEach((declaredClass) => {
-            const ontologicalCategory = declaredClass.classElementType?.ontologicalCategory;
+            const ontologicalCategory = declaredClass?.classElementType?.ontologicalCategory;
             if (!ontologicalCategory) {
                 return;
             }

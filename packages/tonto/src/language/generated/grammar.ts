@@ -1523,6 +1523,10 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
             "value": "relation"
           },
           {
+            "$type": "Keyword",
+            "value": ":"
+          },
+          {
             "$type": "Assignment",
             "feature": "firstEnd",
             "operator": "=",
@@ -1609,6 +1613,10 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
               "arguments": []
             },
             "cardinality": "?"
+          },
+          {
+            "$type": "Keyword",
+            "value": ":"
           },
           {
             "$type": "Assignment",

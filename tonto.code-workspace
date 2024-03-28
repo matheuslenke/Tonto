@@ -15,10 +15,6 @@
         {
             "name": "tonto-vscode",
             "path": "packages/tonto-vscode"
-        },
-        {
-            "name": "newGeneration",
-            "path": "examples/newGeneration"
         }
     ],
 	"settings": {

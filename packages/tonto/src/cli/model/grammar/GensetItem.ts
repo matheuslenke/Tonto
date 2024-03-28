@@ -1,5 +1,6 @@
 import { CompositeGeneratorNode, NL } from "langium/generate";
 import { GeneralizationSet, Package } from "ontouml-js";
+import { getNearestParentPackage } from "../../utils/getParentPackage.js";
 import { formatForId } from "../../utils/replaceWhitespace.js";
 import { ASTDeclarationItem } from "./AstDeclarationItem.js";
 
@@ -11,7 +12,7 @@ export class GenSetItem extends ASTDeclarationItem {
     nameSlug: string;
     generalItem?: string;
     categorizer?: string;
-    specificItems: string[] = [];
+    specificItems?: string[] = [];
 
     constructor(genset: GeneralizationSet) {
         super();
@@ -20,27 +21,37 @@ export class GenSetItem extends ASTDeclarationItem {
         this.name = genset.getNameOrId();
         this.nameSlug = formatForId(this.name);
 
-        this.generalItem = genset.generalizations.map(item => formatForId(item.general.getName())).at(0);
+        this.generalItem = genset.generalizations?.map(item => formatForId(item.general.getName())).at(0);
         this.categorizer = formatForId(genset.categorizer?.getName());
-        this.specificItems = genset.generalizations.map(item => formatForId(item.specific.getName()));
+        this.specificItems = genset.generalizations?.map(item => formatForId(item.specific.getName()));
     }
 
     getReferencedPackages(): Package[] {
-        const generalReferences = this.genset.generalizations
-            .map(element => element.getModelOrRootPackage())
-            .filter(item => formatForId(item.getNameOrId()) !== this.rootPackageName);
+        const generals = this.genset.generalizations;
+        let packages: Package[] = [];
+        if (generals) {
+            const generalReferences = generals
+                .map(element => getNearestParentPackage(element.container))
+                .filter(item => item && formatForId(item.getNameOrId()) !== this.rootPackageName)
+                .flatMap(item => item as Package ?? []);
+            packages = packages.concat(generalReferences);
+        }
 
         // const categorizerReference = this.genset.categorizer?.getModelOrRootPackage();
+        const specifics = this.genset.getSpecifics();
+        if (specifics) {
+            const specificsPackage = specifics
+                .map(element => getNearestParentPackage(element.container))
+                .filter(item => item && formatForId(item.getNameOrId()) !== this.rootPackageName)
+                .flatMap(item => item as Package ?? []);
+            packages = packages.concat(specificsPackage);
+        }
 
-        const specificsPackage = this.genset.getSpecifics()
-            .map(element => element.getModelOrRootPackage())
-            .filter(item => formatForId(item.getNameOrId()) !== this.rootPackageName);
-
-        return [...generalReferences, ...specificsPackage].filter(item => item !== undefined);
+        return packages.filter(item => item !== undefined);
     }
 
     override writeToNode(node: CompositeGeneratorNode): void {
-        if (!this.generalItem && this.specificItems.length === 0) {
+        if (!this.generalItem && this.specificItems?.length === 0) {
             return;
         }
         node.append(`genset ${this.nameSlug} {`).appendNewLine();
@@ -52,8 +63,8 @@ export class GenSetItem extends ASTDeclarationItem {
             }
 
             indent.append("specifics ");
-            this.specificItems.forEach((item, index) => {
-                if (index < this.specificItems.length - 1) {
+            this.specificItems?.forEach((item, index) => {
+                if (this.specificItems && index < this.specificItems?.length - 1) {
                     indent.append(item, ", ");
                 } else {
                     indent.append(item).appendNewLine();

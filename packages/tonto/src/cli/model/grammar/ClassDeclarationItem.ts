@@ -43,14 +43,14 @@ export class ClassDeclarationItem extends ASTDeclarationItem {
                 console.log(chalk.red("Error creating property", error));
             }
         });
-        ontoumlClass.getOwnOutgoingRelations()
-            .forEach(relation => {
-                try {
-                    this.relations.push(new RelationItem(relation));
-                } catch (error) {
-                    console.log(chalk.red("Error creating relation", error));
-                }
-            });
+    }
+
+    public addRelation(relation: RelationItem) {
+        this.relations.push(relation);
+    }
+
+    public addRelations(relations: RelationItem[]) {
+        this.relations.forEach(this.addRelation);
     }
 
     public getReferencedPackages(): Package[] {

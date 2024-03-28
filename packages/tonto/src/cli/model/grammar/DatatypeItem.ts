@@ -21,7 +21,7 @@ export class DataTypeItem extends ASTDeclarationItem {
         this.rootPackageName = formatForId(ontoumlDatatype.getModelOrRootPackage().getName());
         this.name = ontoumlDatatype.getNameOrId();
         this.nameSlug = formatForId(this.name);
-        this.attributes = ontoumlDatatype.getOwnAttributes().map(item => item.getNameOrId());
+        this.attributes = ontoumlDatatype.getOwnAttributes().map(item => formatForId(item.getNameOrId()));
     }
 
     public getReferencedPackages(): Package[] {
@@ -40,12 +40,13 @@ export class DataTypeItem extends ASTDeclarationItem {
         if (this.attributes.length > 0) {
             node.append("{", NL);
             this.attributes.forEach((item, index) => {
-                if (index < this.attributes.length) {
+                if (index < this.attributes.length - 1) {
                     node.append(item, ",");
                 } else {
                     node.append(item);
                 }
             });
+            node.append(NL);
             node.append("}", NL);
         }
     }

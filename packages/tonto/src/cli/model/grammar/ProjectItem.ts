@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import * as fs from "fs";
-import { OntoumlType, Package, Project } from "ontouml-js";
+import { OntoumlType, Package, Project, Relation } from "ontouml-js";
 import path from "path";
 import { v4 } from "uuid";
 import { formatForId } from "../../utils/replaceWhitespace.js";
@@ -38,15 +38,16 @@ export class TontoProject {
             const gensets = pack.getContents().filter(item =>
                 item.type === OntoumlType.GENERALIZATION_SET_TYPE
             );
-            const relations = pack.getContents().filter(item =>
-                item.type === OntoumlType.RELATION_TYPE
-            );
+            const relations = pack.getContents()
+                .filter(item => item.type === OntoumlType.RELATION_TYPE)
+                .filter(item => item.container.id === pack.id)
+                .map(item => item as Relation);
             const total = classes.length + gensets.length + relations.length;
             console.log(`Package ${pack.getNameOrId()}: ${classes.length} classes, ${gensets.length} gensets, ${relations.length} relations, ${total} total`);
             return previous + total;
         }, 0);
 
-        console.log(chalk.green(` - Number of elements in Project: ${elementsCount}`));
+        console.log(chalk.green(` - Number of elements in Project: ${elementsCount}\n\n`));
     }
 
     startPackages() {

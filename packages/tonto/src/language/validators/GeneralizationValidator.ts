@@ -81,11 +81,11 @@ export class GeneralizationValidator {
         });
 
         if (generalItem.$type === "ClassDeclaration") {
-            if (hasSortalStereotype(generalItem.classElementType.ontologicalCategory)) {
+            if (hasSortalStereotype(generalItem?.classElementType.ontologicalCategory)) {
                 specificsItems.forEach((specific, index) => {
                     if (specific.ref?.$type === "ClassDeclaration") {
                         const specificClass = specific.ref as ClassDeclaration;
-                        if (hasNonSortalStereotype(specificClass.classElementType.ontologicalCategory)) {
+                        if (hasNonSortalStereotype(specificClass?.classElementType.ontologicalCategory)) {
                             accept(
                                 "error",
                                 `Prohibited generalization: non-sortal specializing a sortal. The non-sortal class ${specificClass.name} cannot specialize the sortal class ${generalItem.name}`,
@@ -118,16 +118,16 @@ export class GeneralizationValidator {
             return;
         }
 
-        const ontologicalCategory = generalItem.classElementType.ontologicalCategory;
+        const ontologicalCategory = generalItem?.classElementType.ontologicalCategory;
 
         // Check if it is a anti-rigid stereotype
         if (isAntiRigidStereotype(ontologicalCategory)) {
             specificItems.forEach((specializationItem) => {
                 const refElement = specializationItem.ref as ClassDeclaration;
-                if (!refElement || !refElement.classElementType) {
+                if (!refElement || !refElement?.classElementType) {
                     return;
                 }
-                const refOntologicalCategory = refElement.classElementType.ontologicalCategory;
+                const refOntologicalCategory = refElement?.classElementType.ontologicalCategory;
 
                 if (isRigidStereotype(refOntologicalCategory) || isSemiRigidStereotype(refOntologicalCategory)) {
                     accept(
@@ -156,46 +156,46 @@ export class GeneralizationValidator {
    * class has a DataType stereotype and the specific too
    */
     checkGeneralizationDataType(_genSet: GeneralizationSet, _accept: ValidationAcceptor): void {
-    // const generalItem = genSet.generalItem.ref;
-    // const specificItems = genSet.specificItems;
-    // if (generalItem === undefined) {
-    //   return;
-    // }
-    // if (generalItem.$type === "ElementRelation") {
-    //   return;
-    // }
-    // const ontologicalCategory =
-    //   generalItem.classElementType.ontologicalCategory;
-    // TODO: Fix datatype
-    // if (ontologicalCategory === "datatype") {
-    //   specificItems.forEach((specializationItem) => {
-    //     const refElement = specializationItem.ref as ClassDeclaration;
-    //     if (!refElement || !refElement.classElementType) {
-    //       return;
-    //     }
-    //     const refOntologicalCategory =
-    //       refElement.classElementType.ontologicalCategory;
-    //     if (refOntologicalCategory !== "datatype") {
-    //       accept(
-    //         "error",
-    //         "Prohibited generalization: datatype specialization.
-    //  A datatype can only be in generalization relation with other datatypes",
-    //         {
-    //           node: genSet,
-    //           property: "generalItem",
-    //         }
-    //       );
-    //       accept(
-    //         "error",
-    //         "Prohibited generalization: datatype specialization.
-    // A datatype can only be in generalization relation with other datatypes",
-    //         {
-    //           node: genSet,
-    //           property: "specificItems",
-    //         }
-    //       );
-    //     }
-    //   });
-    // }
+        // const generalItem = genSet.generalItem.ref;
+        // const specificItems = genSet.specificItems;
+        // if (generalItem === undefined) {
+        //   return;
+        // }
+        // if (generalItem.$type === "ElementRelation") {
+        //   return;
+        // }
+        // const ontologicalCategory =
+        //   generalItem.classElementType.ontologicalCategory;
+        // TODO: Fix datatype
+        // if (ontologicalCategory === "datatype") {
+        //   specificItems.forEach((specializationItem) => {
+        //     const refElement = specializationItem.ref as ClassDeclaration;
+        //     if (!refElement || !refElement.classElementType) {
+        //       return;
+        //     }
+        //     const refOntologicalCategory =
+        //       refElement.classElementType.ontologicalCategory;
+        //     if (refOntologicalCategory !== "datatype") {
+        //       accept(
+        //         "error",
+        //         "Prohibited generalization: datatype specialization.
+        //  A datatype can only be in generalization relation with other datatypes",
+        //         {
+        //           node: genSet,
+        //           property: "generalItem",
+        //         }
+        //       );
+        //       accept(
+        //         "error",
+        //         "Prohibited generalization: datatype specialization.
+        // A datatype can only be in generalization relation with other datatypes",
+        //         {
+        //           node: genSet,
+        //           property: "specificItems",
+        //         }
+        //       );
+        //     }
+        //   });
+        // }
     }
 }

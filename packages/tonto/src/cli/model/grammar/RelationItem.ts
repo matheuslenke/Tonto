@@ -1,5 +1,5 @@
 import { CompositeGeneratorNode, NL } from "langium/generate";
-import { OntoumlElement, OntoumlType, Package, Relation } from "ontouml-js";
+import { OntoumlType, Package, Property, Relation } from "ontouml-js";
 import { getNearestParentPackage } from "../../utils/getParentPackage.js";
 import { formatForId } from "../../utils/replaceWhitespace.js";
 import { ASTDeclarationItem } from "./AstDeclarationItem.js";
@@ -14,7 +14,7 @@ enum RelationType {
 export class RelationItem extends ASTDeclarationItem {
     relation: Relation;
     stereotype: string;
-    firstEnd: OntoumlElement;
+    firstEnd: Property | undefined;
     firstEndMetaAttributes: string[] = [];
     firstCardinality: CardinalityItem;
 
@@ -22,7 +22,7 @@ export class RelationItem extends ASTDeclarationItem {
     external: boolean;
 
     secondCardinality: CardinalityItem;
-    secondEnd: OntoumlElement;
+    secondEnd: Property | undefined;
     secondEndMetaAttributes: string[];
     relationType?: RelationType = RelationType.association;
     specializations: string[] = [];
@@ -35,11 +35,11 @@ export class RelationItem extends ASTDeclarationItem {
         this.name = formatForId(relation.getName());
         this.secondEndMetaAttributes = [];
         this.external = external;
-        this.firstEnd = relation.getSourceClass();
+        this.firstEnd = relation.properties.at(0);
         this.firstCardinality = new CardinalityItem(relation.getSourceEnd().cardinality);
 
         this.secondCardinality = new CardinalityItem(relation.getTargetEnd().cardinality);
-        this.secondEnd = relation.getTarget();
+        this.secondEnd = relation.properties.at(1);
         this.specializations = relation.getGeneralizationsWhereSpecific().map(item => formatForId(item.getName()));
 
         // TODO: Method uninplemented in ontouml-js
@@ -47,8 +47,8 @@ export class RelationItem extends ASTDeclarationItem {
     }
 
     public getReferencedPackages(): Package[] {
-        const sourcePack = getNearestParentPackage(this.relation.getSourceClass());
-        const targetPack = getNearestParentPackage(this.relation.getTargetClass());
+        const sourcePack = getNearestParentPackage(this.relation.getSource());
+        const targetPack = getNearestParentPackage(this.relation.getTarget());
         const packages: Package[] = [];
         if (sourcePack) {
             packages.push(sourcePack as Package);
@@ -66,11 +66,12 @@ export class RelationItem extends ASTDeclarationItem {
      */
 
     override writeToNode(node: CompositeGeneratorNode): void {
+        if (!this.firstEnd?.propertyType || this.secondEnd?.propertyType) return;
         this.writeStereotype(node);
 
         if (this.external) {
-            node.append("relation ");
-            node.append(formatForId(this.firstEnd.getName()), " ");
+            node.append("relation :");
+            node.append(formatForId(this.firstEnd?.propertyType.getName() ?? ""), " ");
         }
 
         this.firstCardinality.writeToNode(node);
@@ -102,18 +103,22 @@ export class RelationItem extends ASTDeclarationItem {
             case RelationType.composition:
                 node.append("<o>--");
                 break;
+            default:
+                node.append("--");
+                break;
         }
-
         if (this.name) {
             node.append(` ${this.name} --`);
         }
     }
 
     private writeTargetElement(node: CompositeGeneratorNode) {
-        if (this.secondEnd.type === OntoumlType.RELATION_TYPE) {
-            node.append(`${this.secondEnd.getName()}`);
+        if (!this.secondEnd?.propertyType) return;
+
+        if (this.secondEnd?.propertyType?.type === OntoumlType.RELATION_TYPE) {
+            node.append(`:${this.secondEnd?.propertyType.getName() ?? ""}`);
         } else {
-            node.append(`${formatForId(this.secondEnd.getNameOrId())}`);
+            node.append(`:${formatForId(this.secondEnd?.propertyType.getNameOrId() ?? "")}`);
         }
     }
 

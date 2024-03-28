@@ -1,5 +1,5 @@
-import { OntologicalNature as ASTNature, ClassDeclaration, isUltimateSortal } from "../generated/ast.js";
 import { OntologicalNature } from "ontouml-js";
+import { OntologicalNature as ASTNature, ClassDeclaration, isUltimateSortal } from "../generated/ast.js";
 import { isNonSortalOntoCategory } from "./OntologicalCategory.js";
 
 function getNatureFromAst(nature: ASTNature): OntologicalNature[] {
@@ -61,8 +61,8 @@ function getAstNatureFromOntoumljs(nature: OntologicalNature): string {
 }
 
 function getNatureFromUltimateSortal(classDeclaration: ClassDeclaration): OntologicalNature | undefined {
-    if (isUltimateSortal(classDeclaration.classElementType.ontologicalCategory)) {
-        switch (classDeclaration.classElementType.ontologicalCategory) {
+    if (isUltimateSortal(classDeclaration?.classElementType.ontologicalCategory)) {
+        switch (classDeclaration?.classElementType.ontologicalCategory) {
             case "collective":
                 return OntologicalNature.collective;
             case "extrinsicMode":

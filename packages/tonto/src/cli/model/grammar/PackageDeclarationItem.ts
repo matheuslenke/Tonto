@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { CompositeGeneratorNode, toString } from "langium/generate";
 import * as fs from "node:fs";
-import { Class, ClassStereotype, GeneralizationSet, OntoumlType, Package } from "ontouml-js";
+import { Class, ClassStereotype, GeneralizationSet, OntoumlType, Package, Relation } from "ontouml-js";
 import path from "path";
 import { formatForId } from "../../utils/replaceWhitespace.js";
 import { ASTDeclarationItem } from "./AstDeclarationItem.js";
@@ -9,6 +9,7 @@ import { ClassDeclarationItem } from "./ClassDeclarationItem.js";
 import { ClassDeclarationOrDatatypeItem, DataTypeItem } from "./DatatypeItem.js";
 import { EnumItem } from "./EnumItem.js";
 import { GenSetItem } from "./GensetItem.js";
+import { RelationItem } from "./RelationItem.js";
 
 export class PackageDeclarationItem extends ASTDeclarationItem {
     ontoumlPackage: Package;
@@ -22,6 +23,7 @@ export class PackageDeclarationItem extends ASTDeclarationItem {
     enumerations: EnumItem[] = [];
     genSets: GenSetItem[] = [];
     dir: string;
+    relations: RelationItem[] = [];
 
     constructor(ontoumlPackage: Package, dir: string) {
         super();
@@ -40,6 +42,8 @@ export class PackageDeclarationItem extends ASTDeclarationItem {
             this.datatypes = this.getDatatypes();
             this.enumerations = this.getEnumerations();
             this.genSets = this.getGensets();
+            const relations = this.getRelations();
+            this.addRelationsToClasses(relations);
 
             this.getImports();
         } catch (error) {
@@ -61,13 +65,17 @@ export class PackageDeclarationItem extends ASTDeclarationItem {
                 this.imports.set(formatForId(pack.getNameOrId()), pack);
             });
 
-        this.genSets.
-            flatMap(item => item.getReferencedPackages())
+        // this.genSets.
+        //     flatMap(item => item.getReferencedPackages())
+        //     .forEach(item => {
+        //         this.imports.set(formatForId(item.getNameOrId()), item);
+        //     });
+
+        this.datatypes.flatMap(item => item.getReferencedPackages())
             .forEach(item => {
                 this.imports.set(formatForId(item.getNameOrId()), item);
             });
-
-        this.datatypes.flatMap(item => item.getReferencedPackages())
+        this.relations.flatMap(item => item.getReferencedPackages())
             .forEach(item => {
                 this.imports.set(formatForId(item.getNameOrId()), item);
             });
@@ -94,7 +102,7 @@ export class PackageDeclarationItem extends ASTDeclarationItem {
         return this.ontoumlPackage.getContents()
             .filter(item => item.type === OntoumlType.CLASS_TYPE)
             .map(item => item as Class)
-            .filter(item => item.stereotype === ClassStereotype.DATATYPE && !item.hasEnumerationStereotype())
+            .filter(item => item.stereotype === ClassStereotype.DATATYPE)
             .map(item => new DataTypeItem(item));
     }
 
@@ -102,7 +110,7 @@ export class PackageDeclarationItem extends ASTDeclarationItem {
         return this.ontoumlPackage.getContents()
             .filter(item => item.type === OntoumlType.CLASS_TYPE)
             .map(item => item as Class)
-            .filter(item => item.stereotype === ClassStereotype.DATATYPE && item.hasEnumerationStereotype())
+            .filter(item => item.stereotype === ClassStereotype.ENUMERATION)
             .map(item => new EnumItem(item));
     }
 
@@ -118,6 +126,43 @@ export class PackageDeclarationItem extends ASTDeclarationItem {
                     return [];
                 }
             });
+    }
+
+    getRelations(): RelationItem[] {
+        return this.ontoumlPackage.getContents()
+            .filter(item => item.type === OntoumlType.RELATION_TYPE)
+            .map(item => item as Relation)
+            .filter(item => item.container.id === this.ontoumlPackage.id)
+            .flatMap(item => {
+                try {
+                    return new RelationItem(item, true);
+                } catch (error) {
+                    console.log(`Error creating Relation${item.getNameOrId()} : ${error}`);
+                    return [];
+                }
+            });
+    }
+
+    addRelationsToClasses(relations: RelationItem[]) {
+        const relationsWithClasses = relations
+            .filter(item => item.firstEnd?.propertyType?.type === OntoumlType.CLASS_TYPE)
+            .filter(relation => relation.firstEnd?.propertyType !== undefined && relation.secondEnd?.propertyType !== undefined);
+        const relationsPerClass: Map<ClassDeclarationItem, RelationItem[]> = new Map();
+        this.classDeclarations.map(item => {
+            if (item instanceof ClassDeclarationItem) {
+                const relations = relationsWithClasses.filter(relation => formatForId(relation.firstEnd?.propertyType?.getName()) === item.name);
+                relationsPerClass.set(item, relations);
+            }
+        });
+
+        this.classDeclarations.forEach(item => {
+            if (item instanceof ClassDeclarationItem) {
+                const relationItem = relationsPerClass.get(item);
+                item.addRelations(relationItem ?? []);
+            }
+        });
+
+        this.relations = relations.filter(item => item.firstEnd?.type !== OntoumlType.CLASS_TYPE) ?? [];
     }
 
     writePackage(): void {
@@ -161,6 +206,11 @@ export class PackageDeclarationItem extends ASTDeclarationItem {
             genSet.writeToNode(node);
             node.appendNewLine();
         });
+
+        this.relations.forEach(relation => {
+            relation.writeToNode(node);
+            node.appendNewLine();
+        });
     }
 
     getElementNames(): string[] {
@@ -176,10 +226,10 @@ export class PackageDeclarationItem extends ASTDeclarationItem {
         const datatypes = this.datatypes.reduce((previous, item) => item.getNumberOfInternalElements() + previous, 0);
         const enums = this.enumerations.reduce((previous, item) => item.getNumberOfInternalElements() + previous, 0);
         const genSets = this.genSets.reduce((previous, item) => previous + item.getNumberOfInternalElements(), 0);
+        const relations = this.relations.reduce((previous, item) => previous + item.getNumberOfInternalElements(), 0);
 
-        const total = classes + datatypes + enums + genSets;
-        // + datatypes + enums + genSets + relations + packageElements;
-        console.log(`Package ${this.name}: ${total}`);
+        const total = classes + datatypes + enums + genSets + relations;
+        console.log(`Package ${this.name}: ${total} with ${this.classDeclarations.length} classes and ${this.relations.length} relations`);
         return total;
     }
 }

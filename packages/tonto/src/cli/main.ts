@@ -3,6 +3,8 @@ import { TontoLanguageMetaData } from "../language/index.js";
 import { TontoActions } from "./main.js";
 // import { viewAction } from "./actions/viewAction";
 
+export const cliVersion = "0.3.2";
+
 export default function (): void {
     const program = new Command();
     const actions = new TontoActions();
@@ -10,7 +12,7 @@ export default function (): void {
     program
         .name("tonto-cli")
         .description("A CLI to run commands in your Tonto project")
-        .version("1.0");
+        .version(cliVersion);
 
     const fileExtensions = TontoLanguageMetaData.fileExtensions.join(", ");
 

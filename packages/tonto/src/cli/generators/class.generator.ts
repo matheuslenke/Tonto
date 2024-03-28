@@ -10,8 +10,8 @@ import {
 import { getParentNatures } from "../../language/utils/getParentNatures.js";
 
 export function classElementGenerator(classElement: ClassDeclaration, packageItem: Package): Class {
-    if (classElement.classElementType) {
-        const stereotype = classElement.classElementType.ontologicalCategory;
+    if (classElement?.classElementType) {
+        const stereotype = classElement?.classElementType.ontologicalCategory;
         let natures: OntologicalNature[] | undefined = [];
         let firstNature: OntologicalNature | undefined;
         natures = getOntoUMLNatures(classElement, classElement.ontologicalNatures?.natures ?? []);
@@ -147,9 +147,9 @@ function getOntoUMLNatures(classDeclaration: ClassDeclaration, natures: Nature[]
         if (nature) {
             return [nature];
         }
-    /**
-     * If it is an BaseSortal, it can have a defined nature from it's parents or a declared one
-     */
+        /**
+         * If it is an BaseSortal, it can have a defined nature from it's parents or a declared one
+         */
     } else if (isBaseSortalOntoCategory(classDeclaration.classElementType.ontologicalCategory)) {
         const parentNatures = getParentNatures(classDeclaration, [], []);
         if (natures.length > 0) {
@@ -162,9 +162,9 @@ function getOntoUMLNatures(classDeclaration: ClassDeclaration, natures: Nature[]
             return parentNatures;
         }
         return undefined;
-    /**
-     * If it is a Non Sortal, it can have functional-complexes by default, a declared one or based on its supertypes
-     */
+        /**
+         * If it is a Non Sortal, it can have functional-complexes by default, a declared one or based on its supertypes
+         */
     } else if (isNonSortalOntoCategory(classDeclaration.classElementType.ontologicalCategory)) {
         if (natures.length > 0) {
             return natures.flatMap((nature) => {
