@@ -4,15 +4,15 @@ import { Cardinality } from "ontouml-js";
 
 
 export function constructCardinality(cardinality: Cardinality, fileNode: CompositeGeneratorNode) {
-  const bounds = cardinality.getCardinalityBounds();
-  if (bounds) {
-    const targetLowerBound = bounds.lowerBound;
-    const targetUpperBound = bounds.upperBound;
+    const bounds = cardinality.getCardinalityBounds();
+    if (bounds) {
+        const targetLowerBound = bounds.lowerBound;
+        const targetUpperBound = bounds.upperBound;
 
-    if (targetLowerBound === targetUpperBound) {
-      fileNode.append(`[${targetLowerBound}] `);
-    } else {
-      fileNode.append(` [${targetLowerBound}..${targetUpperBound}] `);
+        if (targetLowerBound === targetUpperBound) {
+            fileNode.append(`[${targetLowerBound}] `);
+        } else {
+            fileNode.append(` [${targetLowerBound}..${targetUpperBound}] `);
+        }
     }
-  }
 }

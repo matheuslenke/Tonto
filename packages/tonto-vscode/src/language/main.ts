@@ -9,15 +9,15 @@ import { TontoGrammarWorkspaceManager } from "./tonto-workspace-manager.js";
 const connection = createConnection(ProposedFeatures.all);
 
 export const TontoSharedModule: Module<TontoSharedServices, PartialLangiumSharedServices> = {
-  workspace: {
-    WorkspaceManager: (services) => new TontoGrammarWorkspaceManager(services)
-  }
+    workspace: {
+        WorkspaceManager: (services) => new TontoGrammarWorkspaceManager(services)
+    }
 };
 
 // Inject the shared services and language-specific services
 const { shared } = createTontoServices({
-  connection,
-  ...NodeFileSystem
+    connection,
+    ...NodeFileSystem
 }, TontoSharedModule);
 
 // Start the language server with the shared services

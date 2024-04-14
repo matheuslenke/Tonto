@@ -1,0 +1,45 @@
+import SPO
+import RDBSO
+import SwO
+
+package DBSO
+
+category DBMS_Item of functional-complexes  specializes Software_Item 
+
+subkind Data_Language of functional-complexes  specializes Language 
+
+collective Database specializes DBMS_Item {
+    [1] -- [1..*] Data_File 
+}
+
+subkind Data_Schema of functional-complexes  specializes Schema 
+
+kind Schema specializes DBMS_Item {
+    [1..*] -- describes -- [1] Database 
+}
+
+subkind Information_Schema of functional-complexes  specializes Schema {
+    [1] -- defines -- [0..*] Data_Schema 
+}
+
+kind Dictionary specializes DBMS_Item {
+    [1] -- records -- [1..*] Schema 
+    [1] -- records -- [1..*] DBMS_Account 
+}
+
+kind DBMS_Account specializes DBMS_Item 
+
+subkind DBMS specializes Software_System {
+    [0..*] -- adopts -- [1] Data_Language 
+}
+
+mode Loaded_DBMS_Copy specializes Loaded_Software_System_Copy {
+    [0..*] -- manages -- [1..*] DBMS_Item 
+    [0..*] -- materialization_of -- [1] DBMS 
+}
+
+subkind Database_System of functional-complexes  specializes Computer_System {
+    [1] -- has -- [*] DBMS_Item 
+    [1] -- has -- [1..*] Loaded_DBMS_Copy 
+}
+

@@ -2,7 +2,7 @@ import "terminals"
 import "datatypes"
 
 Attribute:
-	name=ID ':' attributeTypeRef=[DataType:QualifiedName]
+	name=QualifiedName ':' attributeTypeRef=[DataType:QualifiedName]
 	cardinality=Cardinality?
 	('{'((isOrdered?='ordered') & (isConst?='const') & (isDerived?='derived'))? '}')?
 ;

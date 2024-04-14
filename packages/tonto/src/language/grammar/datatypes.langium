@@ -5,7 +5,7 @@ import "relations"
 
 // <--- DataTypes --->
 DataType:
-	'datatype' name=ID ontologicalNature=ElementOntologicalNature? 
+	'datatype' name=QualifiedName ontologicalNature=ElementOntologicalNature? 
 	('specializes' specializationEndurants+=[DataTypeOrClass:QualifiedName]
 	(',' specializationEndurants+=[DataTypeOrClass:QualifiedName])?
 	)? 
@@ -16,14 +16,14 @@ DataType:
 
 // <--- Enums --->
 Enum infers DataType:
-	isEnum?='enum' name=ID 
+	isEnum?='enum' name=QualifiedName
 	('specializes' specializationEndurants+=[DataTypeOrClass:QualifiedName]
 	(',' specializationEndurants+=[DataTypeOrClass:QualifiedName])?
 	)? 
-	'{'
+	('{'
 		(elements+=EnumElement
 		((',') elements+=EnumElement)*)?
-	'}'
+	'}')?
 ;
 
 EnumElement:

@@ -5,9 +5,9 @@ import { GeneralizationValidator } from "./GeneralizationValidator.js";
 import { ModelValidator } from "./ModelValidator.js";
 
 export class TontoValidator {
-  ContextModuleValidator = new ContextModuleValidator();
-  ClassDeclarationValidator = new ClassDeclarationValidator();
-  ModelValidator = new ModelValidator();
-  GeneralizationValidator = new GeneralizationValidator();
-  ComplexDataTypeValidator = new ComplexDataTypeValidator();
+    ContextModuleValidator = new ContextModuleValidator();
+    ClassDeclarationValidator = new ClassDeclarationValidator();
+    ModelValidator = new ModelValidator();
+    GeneralizationValidator = new GeneralizationValidator();
+    ComplexDataTypeValidator = new ComplexDataTypeValidator();
 }

@@ -3,26 +3,26 @@ import { ClassDeclaration, ContextModule } from "../../language/index.js";
 import { createInstantiation } from "./class.generator.js";
 
 export function generateInstantiations(
-  contextModule: ContextModule,
-  classes: Class[],
-  relations: Relation[],
-  packageItem: Package
+    contextModule: ContextModule,
+    classes: Class[],
+    relations: Relation[],
+    packageItem: Package
 ): void {
-  contextModule.declarations.forEach((declaration) => {
-    if (declaration.$type === "ClassDeclaration") {
-      const classElement = declaration as ClassDeclaration;
-      const instanceOfClass = classElement.instanceOf?.ref;
+    contextModule.declarations.forEach((declaration) => {
+        if (declaration.$type === "ClassDeclaration") {
+            const classElement = declaration as ClassDeclaration;
+            const instanceOfClass = classElement.instanceOf?.ref;
 
-      if (instanceOfClass) {
-        const sourceClass = classes.find((item) => item.name.getText() === classElement.name);
+            if (instanceOfClass) {
+                const sourceClass = classes.find((item) => item.name.getText() === classElement.name);
 
-        if (sourceClass) {
-          const targetClass = classes.find((item) => item.name.getText() === instanceOfClass.name);
-          if (targetClass) {
-            createInstantiation(packageItem, targetClass, sourceClass);
-          }
+                if (sourceClass) {
+                    const targetClass = classes.find((item) => item.name.getText() === instanceOfClass.name);
+                    if (targetClass) {
+                        createInstantiation(packageItem, targetClass, sourceClass);
+                    }
+                }
+            }
         }
-      }
-    }
-  });
+    });
 }

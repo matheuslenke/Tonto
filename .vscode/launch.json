@@ -19,7 +19,7 @@
             ]
         },
         {
-            "name": "CLI: Import Modular",
+            "name": "CLI: Import From JSON",
             "program": "${workspaceFolder}/packages/tonto/bin/cli",
             "request": "launch",
             "skipFiles": [
@@ -28,7 +28,8 @@
             "type": "node",
             "args": [
                 "import",
-                "${workspaceFolder}/examples/library/ontology.json"
+                "${workspaceFolder}/examples/newGeneration/ontology.json",
+                "generated"
             ]
         },
         {
@@ -41,7 +42,7 @@
             "type": "node",
             "args": [
                 "validate",
-                "${workspaceFolder}/examples/library",
+                "${workspaceFolder}/examples/newGeneration",
                 "--local",
                 ">> errors.txt"
             ]
@@ -96,7 +97,8 @@
             "request": "launch",
             "args": [
                 // "${workspaceFolder}/../tonto-example-models/Library",
-                "${workspaceFolder}/../tonto-catalog/models/abel2015petroleum-system",
+                // "${workspaceFolder}/../tonto-catalog/models/abel2015petroleum-system",
+                "${workspaceFolder}/examples/newGeneration",
                 "--extensionDevelopmentPath=${workspaceFolder}/packages/tonto-vscode"
             ],
             "outFiles": [

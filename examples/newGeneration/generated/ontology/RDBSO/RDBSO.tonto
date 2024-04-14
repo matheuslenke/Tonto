@@ -1,0 +1,109 @@
+import SPO
+import DBSO
+import SwO
+
+package RDBSO
+
+kind Language{
+    [1..*] -- describes -- [0..*] Artifact 
+}
+
+kind Data_File specializes Software_Item 
+
+category RDBMS_Item of functional-complexes  specializes DBMS_Item 
+
+subkind Relational_Database of collectives  specializes RDBMS_Item, Database 
+
+subkind Relational_Schema of functional-complexes  specializes RDBMS_Item, Schema {
+    [1..*] -- describes -- [1] Relational_Database 
+}
+
+subkind RDBMS specializes DBMS {
+    [0..*] -- adopts -- [1] Relational_Data_Language 
+}
+
+mode Loaded_RDBMS_Copy specializes Loaded_DBMS_Copy {
+    [1] -- manages -- [*] RDBMS_Item 
+    [0..*] -- materialization_of -- [1] RDBMS 
+}
+
+subkind Relational_Data_Language of functional-complexes  specializes Data_Language 
+
+kind Table specializes RDBMS_Item {
+    [1..*] -- represents -- [1] Data_File 
+    [1] -- defines -- [1] Line_Type 
+}
+
+subkind Base_Table of functional-complexes  specializes Table 
+
+subkind Derived_Table of functional-complexes  specializes Table {
+    [0..*] -- obtained_by -- [1..*] Base_Table 
+}
+
+kind Line{
+    [0..*] -- instance_of -- [1] Line_Type 
+}
+
+kind Line_Type{
+    [1] -- constituted_of -- [1..*] Column 
+}
+
+kind Column
+
+role Foreign_Key_Column of functional-complexes  specializes Column 
+
+role Primary_Key_Column of functional-complexes  specializes Column 
+
+kind Data_Type
+
+subkind External_Data_Type of functional-complexes  specializes Data_Type {
+    [0..*] -- defined_from -- [1..*] Data_Type 
+}
+
+subkind Internal_Data_Type of functional-complexes  specializes Data_Type 
+
+subkind Primary_Key_Constraint of functional-complexes  specializes Column_Constraint {
+    @material [1] -- specifies -- [1..*] Primary_Key_Column 
+}
+
+subkind Column_Type_Constraint of functional-complexes  specializes Column_Constraint {
+    [0..*] -- refers_to -- [1] Data_Type 
+}
+
+subkind Foreign_Key_Constraint of functional-complexes  specializes Column_Constraint {
+    [0..*] -- refers_to -- [1..*] Primary_Key_Column 
+    @material [1] -- specifies -- [1..*] Foreign_Key_Column 
+}
+
+subkind Check_Constraint of functional-complexes  specializes Column_Constraint 
+
+kind Constraint specializes RDBMS_Item 
+
+subkind Data_Type_Constraint of functional-complexes  specializes Constraint {
+    [1] -- specifies -- [1] Data_Type 
+}
+
+subkind Column_Constraint of functional-complexes  specializes Constraint {
+    [1..*] -- specifies -- [1] Column 
+}
+
+subkind Relational_Database_System of functional-complexes  specializes Database_System {
+    [1] -- has -- [1..*] Loaded_RDBMS_Copy 
+    [1] -- has -- [*] RDBMS_Item 
+}
+
+genset VK4p36GAqACBTSE {
+    general Table
+    specifics Derived_Table, Base_Table
+}
+
+genset nnL4p36GAqACBTTT {
+    general Data_Type
+    specifics External_Data_Type, Internal_Data_Type
+}
+
+genset xMeEp36GAqACBTVw {
+    general Column_Constraint
+    specifics Primary_Key_Constraint, Foreign_Key_Constraint, Column_Type_Constraint, Check_Constraint
+}
+

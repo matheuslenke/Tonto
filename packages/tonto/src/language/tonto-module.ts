@@ -14,12 +14,12 @@ import { TontoValidator } from "./validators/TontoValidator.js";
  * Declaration of custom services - add your own service classes here.
  */
 export type TontoAddedServices = {
-  references: {
-    QualifiedNameProvider: TontoQualifiedNameProvider
-  }
-  validation: {
-    TontoValidator: TontoValidator
-  }
+    references: {
+        QualifiedNameProvider: TontoQualifiedNameProvider
+    }
+    validation: {
+        TontoValidator: TontoValidator
+    }
 }
 
 /**
@@ -34,21 +34,21 @@ export type TontoServices = LangiumServices & TontoAddedServices
  * selected services, while the custom services must be fully specified.
  */
 export const TontoModule: Module<TontoServices, PartialLangiumServices & TontoAddedServices> = {
-  references: {
-    ScopeComputation: (services: TontoServices) => new TontoScopeComputation(services),
-    QualifiedNameProvider: () => new TontoQualifiedNameProvider(),
-    ScopeProvider: (services: TontoServices) => new TontoScopeProvider(services),
-  },
-  validation: {
-    ValidationRegistry: (services: TontoServices) => new TontoValidationRegistry(services),
-    TontoValidator: () => new TontoValidator(),
-  },
-  lsp: {
-    CodeActionProvider: () => new TontoActionProvider(),
-    // Formatter: () => new TontoFormatter(),
-    // SemanticTokenProvider: (services) => new TontoSemanticTokenProvider(services),
-    // CompletionProvider: (services) => new TontoCompletionProvider(services),
-  },
+    references: {
+        ScopeComputation: (services: TontoServices) => new TontoScopeComputation(services),
+        QualifiedNameProvider: () => new TontoQualifiedNameProvider(),
+        ScopeProvider: (services: TontoServices) => new TontoScopeProvider(services),
+    },
+    validation: {
+        ValidationRegistry: (services: TontoServices) => new TontoValidationRegistry(services),
+        TontoValidator: () => new TontoValidator(),
+    },
+    lsp: {
+        CodeActionProvider: () => new TontoActionProvider(),
+        // Formatter: () => new TontoFormatter(),
+        // SemanticTokenProvider: (services) => new TontoSemanticTokenProvider(services),
+        // CompletionProvider: (services) => new TontoCompletionProvider(services),
+    },
 };
 
 export type TontoSharedServices = LangiumSharedServices
@@ -69,14 +69,11 @@ export type TontoSharedServices = LangiumSharedServices
  * @returns An object wrapping the shared services and the language-specific services
  */
 export function createTontoServices(
-  context: DefaultSharedModuleContext,
-  sharedModule?: Module<TontoSharedServices, PartialLangiumSharedServices>
-): {
-  shared: LangiumSharedServices
-  Tonto: TontoServices
-} {
-  const shared = inject(createDefaultSharedModule(context), TontoGeneratedSharedModule, sharedModule);
-  const services = inject(createDefaultModule({ shared }), TontoGeneratedModule, TontoModule);
-  shared.ServiceRegistry.register(services);
-  return { shared, Tonto: services };
+    context: DefaultSharedModuleContext,
+    sharedModule?: Module<TontoSharedServices, PartialLangiumSharedServices>
+) {
+    const shared = inject(createDefaultSharedModule(context), TontoGeneratedSharedModule, sharedModule);
+    const services = inject(createDefaultModule({ shared }), TontoGeneratedModule, TontoModule);
+    shared.ServiceRegistry.register(services);
+    return { shared, Tonto: services };
 }

@@ -1,5 +1,5 @@
 import { Class } from "ontouml-js";
-import { Configuration } from "../../utils/extensionConfig";
+import { Configuration } from "../../utils/extensionConfig.js";
 
 export function classViewer(
     model: Class,
@@ -9,20 +9,20 @@ export function classViewer(
 
     nomnomlCode += `[«${model.stereotype}» ${(model.getName("en") || "")} `;
 
-    if(config.Entity.Attributes && model.hasAttributes()){
-        nomnomlCode += `| `
-        
+    if (config.Entity.Attributes && model.hasAttributes()) {
+        nomnomlCode += "| ";
+
         model.getOwnAttributes().forEach((property, index) => {
-            nomnomlCode += `${property.getName("en") || ""}: ${(property.propertyType.getName("en") || "")}; `
-        })
+            nomnomlCode += `${property.getName("en") || ""}: ${(property.propertyType.getName("en") || "")}; `;
+        });
     }
-    if(model.hasLiterals()){
-        nomnomlCode += `| `
-        
+    if (model.hasLiterals()) {
+        nomnomlCode += "| ";
+
         model.getOwnLiterals().forEach((literal) => {
-            nomnomlCode += `${literal.getName("en") || ""}; `
-        })
+            nomnomlCode += `${literal.getName("en") || ""}; `;
+        });
     }
-    nomnomlCode += ']\n';
-return nomnomlCode;
+    nomnomlCode += "]\n";
+    return nomnomlCode;
 }
