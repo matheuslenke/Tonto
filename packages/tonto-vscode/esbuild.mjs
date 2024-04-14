@@ -38,7 +38,7 @@ const ctx = await esbuild.context({
     loader: { ".ts": "ts" },
     external: ["vscode"],
     platform: "node",
-    sourcemap: !minify,
+    sourcemap: true,
     minify,
     plugins
 });

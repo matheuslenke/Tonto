@@ -5,7 +5,7 @@ import "relations"
 
 // <--- DataTypes --->
 DataType:
-	'datatype' name=QualifiedName ontologicalNature=ElementOntologicalNature? 
+	ontologicalCategory='datatype' name=QualifiedName ontologicalNature=ElementOntologicalNature? 
 	('specializes' specializationEndurants+=[DataTypeOrClass:QualifiedName]
 	(',' specializationEndurants+=[DataTypeOrClass:QualifiedName])?
 	)? 

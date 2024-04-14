@@ -179,6 +179,7 @@ export interface DataType extends AstNode {
     elements: Array<EnumElement>;
     isEnum: boolean;
     name: QualifiedName;
+    ontologicalCategory?: 'datatype';
     ontologicalNature?: ElementOntologicalNature;
     specializationEndurants: Array<Reference<DataTypeOrClass>>;
 }
@@ -467,6 +468,7 @@ export class TontoAstReflection extends AbstractAstReflection {
                         { name: 'elements', defaultValue: [] },
                         { name: 'isEnum', defaultValue: false },
                         { name: 'name' },
+                        { name: 'ontologicalCategory' },
                         { name: 'ontologicalNature' },
                         { name: 'specializationEndurants', defaultValue: [] }
                     ]

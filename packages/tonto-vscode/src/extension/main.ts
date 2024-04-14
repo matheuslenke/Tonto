@@ -21,7 +21,6 @@ let outputChannel: vscode.OutputChannel;
 
 // This function is called when the extension is activated.
 export function activate(context: vscode.ExtensionContext): void {
-
     outputChannel = vscode.window.createOutputChannel("Tonto: Validation output");
     TontoLibraryFileSystemProvider.register(context);
     client = startLanguageClient(context);
