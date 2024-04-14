@@ -59,38 +59,6 @@
 				"foreground": "#4B83CD"
 			}
 		},
-        // {
-        //     "name": "Natures",
-        //     "scope": [
-        //         "keyword.natures.kind"
-        //     ],
-        //     "settings": {
-        //         "foreground": "#f03939",
-        //         "fontStyle": "bold"
-        //     }
-        // },
-        // {
-        //     "name": "Natures",
-        //     "scope": [
-        //         "keyword",
-        //         "keyowrd.natures",
-        //         "keyword.natures.quality"
-        //     ],
-        //     "settings": {
-        //         "foreground": "#2472d9",
-        //         "fontStyle": "bold"
-        //     }
-        // },
-        // {
-        //     "name": "Natures",
-        //     "scope": [
-        //         "keyword.natures.quantity"
-        //     ],
-        //     "settings": {
-        //         "foreground": "#e95050",
-        //         "fontStyle": "bold"
-        //     }
-        // },
         {
 			"name": "Keywords",
 			"scope": [

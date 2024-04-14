@@ -23,10 +23,15 @@
     "contributes": {
         "themes": [
             {
-              "label": "Tonto",
+              "label": "Tonto Light",
               "uiTheme": "vs",
               "path": "./src/themes/Tonto-color-theme.json"
-            }
+            },
+            {
+                "label": "Tonto Dark",
+                "uiTheme": "vs",
+                "path": "./src/themes/Tonto-dark-color-theme.json"
+              }
           ],
         "languages": [
             {
