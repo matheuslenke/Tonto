@@ -2,13 +2,8 @@ import { AstNode, CstUtils } from "langium";
 import { AbstractSemanticTokenProvider, AllSemanticTokenModifiers, SemanticTokenAcceptor, SemanticTokenRangeOptions } from "langium/lsp";
 import { SemanticTokenModifiers, SemanticTokenTypes } from "vscode-languageserver";
 import * as ast from "../generated/ast.js";
-import { TontoNatures } from "../models/OntologicalCategory.js";
+import { TontoNatureResult, getTontoNature } from "../utils/getTontoNature.js";
 import { TontoSemanticTokenTypes } from "./semantic-token-types.js";
-
-type TontoNatureResult = {
-    nature: TontoNatures;
-    isKind: boolean;
-}
 
 /*
  * This SemanticTokenProvider extension is made so we can create our own SemanticToken
@@ -149,73 +144,8 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
         this.ontologicalCategoryTokens(node, node.classElementType, acceptor);
     }
 
-    private getTontoNature(container: ast.ClassDeclaration): TontoNatureResult {
-        switch (container.classElementType.ontologicalCategory) {
-            case "kind":
-                return { nature: "functional-complexes", isKind: true };
-            case "collective":
-                return { nature: "collectives", isKind: true };
-            case "quantity":
-                return { nature: "quantities", isKind: true };
-            case "relator":
-                return { nature: "relators", isKind: true };
-            case "quality":
-                return { nature: "qualities", isKind: true };
-            case "mode":
-            case "intrinsicMode":
-            case "extrinsicMode":
-                return { nature: "modes", isKind: true };
-            case "type":
-            case "powertype":
-                return { nature: "types", isKind: false };;
-
-            case "event":
-            case "process":
-                return { nature: "events", isKind: false };
-            case "situation":
-                return { nature: "situations", isKind: false };
-
-            // Natures that need to be verified specializations
-            case "subkind":
-            case "phase":
-            case "role":
-            case "historicalRole":
-                if (container.specializationEndurants.length > 0) {
-                    let specializationNature: TontoNatures = "abstract-individuals";
-                    container.specializationEndurants.forEach(item => {
-                        if (item.ref && item.ref.name !== container.name) {
-                            specializationNature = this.getTontoNature(item.ref).nature;
-                        }
-                    });
-                    return { nature: specializationNature, isKind: false };;
-                }
-                break;
-            case "category":
-            case "mixin":
-            case "phaseMixin":
-            case "roleMixin":
-            case "historicalRoleMixin":
-                if (container.ontologicalNatures && container.ontologicalNatures?.natures.length > 0) {
-                    const firstNature = container.ontologicalNatures.natures[0];
-                    if (firstNature === "extrinsic-modes" || firstNature === "intrinsic-modes") {
-                        return { nature: "modes", isKind: false };
-                    }
-                    return { nature: firstNature, isKind: false };
-                } else if (container.specializationEndurants.length > 0) {
-                    let specializationNature: TontoNatures = "abstract-individuals";
-                    container.specializationEndurants.forEach(item => {
-                        if (item.ref && item.ref.name !== container.name) {
-                            specializationNature = this.getTontoNature(item.ref).nature;
-                        }
-                    });
-                    return { nature: specializationNature, isKind: false };;
-                }
-        }
-        return {nature: "none", isKind: false};
-    }
-
     private ontologicalCategoryTokens(container: ast.ClassDeclaration, node: ast.OntologicalCategory, acceptor: SemanticTokenAcceptor) {
-        const result = this.getTontoNature(container);
+        const result = getTontoNature(container);
         const type = this.getTypeFromNature(result);
         acceptor({
             node,

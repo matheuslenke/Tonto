@@ -3,6 +3,7 @@ import { DefaultSharedModuleContext, LangiumServices, LangiumSharedServices, Par
 import { TontoGeneratedModule, TontoGeneratedSharedModule } from "./index.js";
 import { TontoActionProvider } from "./lsp/tonto-code-actions.js";
 import { TontoCompletionProvider } from "./lsp/tonto-completion-provider.js";
+import { TontoHoverProvider } from "./lsp/tonto-hover-provider.js";
 import { TontoSemanticTokenProvider } from "./lsp/tonto-semantic-token-provider.js";
 import { TontoQualifiedNameProvider } from "./references/tonto-name-provider.js";
 import { TontoScopeComputation } from "./references/tonto-scope-computation.js";
@@ -48,6 +49,7 @@ export const TontoModule: Module<TontoServices, PartialLangiumServices & TontoAd
         // Formatter: () => new TontoFormatter(),
         SemanticTokenProvider: (services) => new TontoSemanticTokenProvider(services),
         CompletionProvider: (services) => new TontoCompletionProvider(services),
+        HoverProvider: (services) => new TontoHoverProvider(services),
     },
 };
 
