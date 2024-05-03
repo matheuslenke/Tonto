@@ -68,6 +68,15 @@
 				"foreground": "#396bcd",
 			}
 		},
+        {
+			"name": "Keywords",
+			"scope": [
+				"keyword.control.nonSortal"
+			],
+			"settings": {
+				"fontStyle": "italic"
+			}
+		},
 		{
 			"name": "Types",
 			"scope": [
@@ -422,28 +431,35 @@
     "semanticHighlighting": true,
     "semanticTokenColors": {
         "tontoKind": {
-            "foreground": "#f51212",
+            "foreground": "#CD6872",
             "fontStyle": "bold"
         },
-        "tontoQuality": {
+        "tontoQualityKind": {
             "foreground": "#19b0f1",
             "fontStyle": "bold"
         },
-        "tontoQuantity": {
-            "foreground": "#f51212",
+        "tontoQuantityKind": {
+            "foreground": "#CD6872",
             "fontStyle": "bold"
         },
-        "tontoCollective": {
-            "foreground": "#f51212",
+        "tontoCollectiveKind": {
+            "foreground": "#CD6872",
+            "fontStyle": "bold"
+        },
+        "tontoRelatorKind": {
+            "foreground": "#45e72b",
             "fontStyle": "bold"
         },
         "tontoEvent": {
             "foreground": "#d1ca3c",
             "fontStyle": "bold"
         },
-        "tontoMode": {
-            "foreground": "#22c2de",
+        "tontoModeKind": {
+            "foreground": "#19b0f1",
             "fontStyle": "bold"
+        },
+        "tontoMode": {
+            "foreground": "#19b0f1",
         },
         "tontoSituation": {
             "foreground": "#fca90d",
@@ -457,9 +473,26 @@
             "foreground": "#f51212",
             "fontStyle": "bold"
         },
+        "tontoFunctionalComplex": {
+            "foreground": "#CD6872",
+        },
+        "tontoQuality": {
+            "foreground": "#19b0f1",
+        },
+        "tontoQuantity": {
+            "foreground": "#CD6872",
+        },
+        "tontoCollective": {
+            "foreground": "#CD6872",
+        },
         "tontoRelator": {
             "foreground": "#45e72b",
-            "fontStyle": "bold"
         },
+        "tontoNone": {
+            "foreground": "#7f7d7d",
+        },
+        "tontoNonSortal": {
+            "fontStyle": "italic"
+        }
     }
 }

@@ -19,7 +19,7 @@
     ],
     "rules": {
         "indent": "off",
-        "@typescript-eslint/indent": ["error"],
+        "@typescript-eslint/indent": ["off", {}],
         "linebreak-style": [
             "error",
             "unix"

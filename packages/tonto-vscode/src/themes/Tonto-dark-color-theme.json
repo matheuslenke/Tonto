@@ -1,7 +1,7 @@
 {
 	"$schema": "vscode://schemas/color-theme",
 	"type": "dark",
-	"colors": {
+    "colors": {
 		"actionBar.toggledBackground": "#383a49",
 		"activityBarBadge.background": "#007acc",
 		"checkbox.border": "#6b6b6b",
@@ -27,7 +27,7 @@
 		"tab.lastPinnedBorder": "#cccccc33",
 		"terminal.inactiveSelectionBackground": "#3a3d41",
 		"widget.border": "#303031",
-
+		"activityBar.activeBorder": "#ffffff",
 		"activityBar.background": "#333333",
 		"activityBar.dropBorder": "#ffffff",
 		"activityBar.foreground": "#ffffff",
@@ -152,7 +152,6 @@
 		"editor.wordHighlightBackground": "#575757b8",
 		"editor.wordHighlightStrongBackground": "#004972b8",
 		"editor.wordHighlightTextBackground": "#575757b8",
-		"editorActiveLineNumber.foreground": "#c6c6c6",
 		"editorBracketHighlight.foreground1": "#ffd700",
 		"editorBracketHighlight.foreground2": "#da70d6",
 		"editorBracketHighlight.foreground3": "#179fff",
@@ -203,13 +202,11 @@
 		"editorHoverWidget.foreground": "#cccccc",
 		"editorHoverWidget.highlightForeground": "#2aaaff",
 		"editorHoverWidget.statusBarBackground": "#2c2c2d",
-		"editorIndentGuide.activeBackground": "#e3e4e229",
 		"editorIndentGuide.activeBackground2": "#00000000",
 		"editorIndentGuide.activeBackground3": "#00000000",
 		"editorIndentGuide.activeBackground4": "#00000000",
 		"editorIndentGuide.activeBackground5": "#00000000",
 		"editorIndentGuide.activeBackground6": "#00000000",
-		"editorIndentGuide.background": "#e3e4e229",
 		"editorIndentGuide.background2": "#00000000",
 		"editorIndentGuide.background3": "#00000000",
 		"editorIndentGuide.background4": "#00000000",
@@ -685,125 +682,6 @@
 		"welcomePage.tileBorder": "#ffffff1a",
 		"welcomePage.tileHoverBackground": "#2c2c2d",
 		"widget.shadow": "#0000005c",
-		"activityBar.activeBackground": null,
-		"activityBar.activeFocusBorder": null,
-		"activityBar.border": null,
-		"activityBarTop.activeBackground": null,
-		"activityBarTop.background": null,
-		"button.border": null,
-		"contrastActiveBorder": null,
-		"contrastBorder": null,
-		"debugToolBar.border": null,
-		"diffEditor.border": null,
-		"diffEditor.insertedTextBorder": null,
-		"diffEditor.removedTextBorder": null,
-		"diffEditorGutter.insertedLineBackground": null,
-		"diffEditorGutter.removedLineBackground": null,
-		"diffEditorOverview.insertedForeground": null,
-		"diffEditorOverview.removedForeground": null,
-		"dropdown.listBackground": null,
-		"editor.findMatchBorder": null,
-		"editor.findMatchHighlightBorder": null,
-		"editor.findRangeHighlightBorder": null,
-		"editor.lineHighlightBackground": null,
-		"editor.rangeHighlightBorder": null,
-		"editor.selectionForeground": null,
-		"editor.selectionHighlightBorder": null,
-		"editor.snippetFinalTabstopHighlightBackground": null,
-		"editor.snippetTabstopHighlightBorder": null,
-		"editor.symbolHighlightBorder": null,
-		"editor.wordHighlightBorder": null,
-		"editor.wordHighlightStrongBorder": null,
-		"editor.wordHighlightTextBorder": null,
-		"editorCursor.background": null,
-		"editorError.background": null,
-		"editorError.border": null,
-		"editorGhostText.background": null,
-		"editorGhostText.border": null,
-		"editorGroup.dropIntoPromptBorder": null,
-		"editorGroup.emptyBackground": null,
-		"editorGroup.focusedEmptyBorder": null,
-		"editorGroupHeader.border": null,
-		"editorGroupHeader.tabsBorder": null,
-		"editorHint.border": null,
-		"editorInfo.background": null,
-		"editorInfo.border": null,
-		"editorLineNumber.dimmedForeground": null,
-		"editorMultiCursor.primary.background": null,
-		"editorMultiCursor.secondary.background": null,
-		"editorOverviewRuler.background": null,
-		"editorStickyScroll.border": null,
-		"editorUnicodeHighlight.background": null,
-		"editorUnnecessaryCode.border": null,
-		"editorWarning.background": null,
-		"editorWarning.border": null,
-		"editorWidget.resizeBorder": null,
-		"input.border": null,
-		"inputValidation.errorForeground": null,
-		"inputValidation.infoForeground": null,
-		"inputValidation.warningForeground": null,
-		"list.filterMatchBorder": null,
-		"list.focusAndSelectionOutline": null,
-		"list.focusBackground": null,
-		"list.focusForeground": null,
-		"list.hoverForeground": null,
-		"list.inactiveFocusBackground": null,
-		"list.inactiveFocusOutline": null,
-		"list.inactiveSelectionForeground": null,
-		"list.inactiveSelectionIconForeground": null,
-		"menu.selectionBorder": null,
-		"menubar.selectionBorder": null,
-		"merge.border": null,
-		"minimap.background": null,
-		"multiDiffEditor.background": null,
-		"notebook.cellHoverBackground": null,
-		"notebook.focusedCellBackground": null,
-		"notebook.inactiveSelectedCellBorder": null,
-		"notebook.outputContainerBackgroundColor": null,
-		"notebook.outputContainerBorderColor": null,
-		"notificationCenterHeader.foreground": null,
-		"outputView.background": null,
-		"outputViewStickyScroll.background": null,
-		"panelInput.border": null,
-		"panelSectionHeader.border": null,
-		"panelSectionHeader.foreground": null,
-		"peekViewEditor.matchHighlightBorder": null,
-		"quickInput.list.focusBackground": null,
-		"searchEditor.findMatchBorder": null,
-		"searchEditor.textInputBorder": null,
-		"selection.background": null,
-		"settings.numberInputBorder": null,
-		"settings.textInputBorder": null,
-		"sideBar.border": null,
-		"sideBar.foreground": null,
-		"sideBarSectionHeader.foreground": null,
-		"statusBar.border": null,
-		"statusBar.debuggingBorder": null,
-		"statusBar.noFolderBorder": null,
-		"tab.activeBorder": null,
-		"tab.activeBorderTop": null,
-		"tab.hoverBackground": null,
-		"tab.hoverBorder": null,
-		"tab.hoverForeground": null,
-		"tab.unfocusedActiveBorder": null,
-		"tab.unfocusedActiveBorderTop": null,
-		"tab.unfocusedHoverBackground": null,
-		"tab.unfocusedHoverBorder": null,
-		"tab.unfocusedHoverForeground": null,
-		"terminal.background": null,
-		"terminal.findMatchBorder": null,
-		"terminal.findMatchHighlightBorder": null,
-		"terminal.selectionForeground": null,
-		"terminal.tab.activeBorder": null,
-		"terminalCursor.background": null,
-		"terminalCursor.foreground": null,
-		"terminalStickyScroll.background": null,
-		"testing.message.info.lineBackground": null,
-		"titleBar.border": null,
-		"toolbar.hoverOutline": null,
-		"welcomePage.background": null,
-		"window.activeBorder": null,
-		"window.inactiveBorder": null
 	},
 	"tokenColors": [
 		{
@@ -1098,9 +976,18 @@
 			}
 		},
 		{
-			"scope": "keyword.control",
+			"scope": "keyword.control.tonto",
 			"settings": {
 				"foreground": "#569CD6"
+			}
+		},
+        {
+			"name": "Keywords",
+			"scope": [
+				"keyword.control.nonSortal"
+			],
+			"settings": {
+				"fontStyle": "italic"
 			}
 		},
 		{
@@ -1379,28 +1266,36 @@
     "semanticHighlighting": true,
     "semanticTokenColors": {
         "tontoKind": {
-            "foreground": "#f51212",
+            "foreground": "#CD6872",
             "fontStyle": "bold"
         },
-        "tontoQuality": {
+        "tontoQualityKind": {
             "foreground": "#19b0f1",
             "fontStyle": "bold"
         },
-        "tontoQuantity": {
-            "foreground": "#f51212",
+        "tontoQuantityKind": {
+            "foreground": "#CD6872",
             "fontStyle": "bold"
         },
-        "tontoCollective": {
-            "foreground": "#f51212",
+        "tontoCollectiveKind": {
+            "foreground": "#CD6872",
+            "fontStyle": "bold"
+        },
+        "tontoRelatorKind": {
+            "foreground": "#45e72b",
             "fontStyle": "bold"
         },
         "tontoEvent": {
             "foreground": "#d1ca3c",
             "fontStyle": "bold"
         },
-        "tontoMode": {
-            "foreground": "#22c2de",
+        "tontoModeKind": {
+            "foreground": "#19b0f1",
             "fontStyle": "bold"
+        },
+        "tontoMode": {
+            "foreground": "#19b0f1",
+            "fontStyle": "italic"
         },
         "tontoSituation": {
             "foreground": "#fca90d",
@@ -1411,12 +1306,31 @@
             "fontStyle": "bold"
         },
         "tontoObjects": {
-            "foreground": "#f51212",
+            "foreground": "#CD6872",
             "fontStyle": "bold"
+        },
+        "tontoFunctionalComplex": {
+            "foreground": "#f46a6a",
+            "fontStyle": "italic"
+        },
+        "tontoQuality": {
+            "foreground": "#19b0f1",
+            "fontStyle": "italic"
+        },
+        "tontoQuantity": {
+            "foreground": "#CD6872",
+            "fontStyle": "italic"
+        },
+        "tontoCollective": {
+            "foreground": "#CD6872",
+            "fontStyle": "italic"
         },
         "tontoRelator": {
             "foreground": "#45e72b",
-            "fontStyle": "bold"
+            "fontStyle": "italic"
         },
+        "tontoNone": {
+            "foreground": "#a1a1a1",
+        }
     }
 }

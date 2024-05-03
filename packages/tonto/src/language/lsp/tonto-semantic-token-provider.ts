@@ -1,10 +1,15 @@
-
-
 import { AstNode, CstUtils } from "langium";
 import { AbstractSemanticTokenProvider, AllSemanticTokenModifiers, SemanticTokenAcceptor, SemanticTokenRangeOptions } from "langium/lsp";
 import { SemanticTokenModifiers, SemanticTokenTypes } from "vscode-languageserver";
 import * as ast from "../generated/ast.js";
+import { TontoNatures } from "../models/OntologicalCategory.js";
 import { TontoSemanticTokenTypes } from "./semantic-token-types.js";
+
+type TontoNatureResult = {
+    nature: TontoNatures;
+    isKind: boolean;
+}
+
 /*
  * This SemanticTokenProvider extension is made so we can create our own SemanticToken
  * definitions for the members of the Tonto AST
@@ -117,8 +122,7 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
         acceptor({
             node,
             property: "ontologicalCategory",
-            type: SemanticTokenTypes.type,
-            modifier: "bold"
+            type:"tontoNone",
         });
     }
 
@@ -142,76 +146,112 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
             modifier: SemanticTokenModifiers.declaration,
             keyword: "ClassTonto"
         });
-        acceptor({
-            node,
-            property: "specializationEndurants",
-            type: SemanticTokenTypes.variable,
-        });
         this.ontologicalCategoryTokens(node, node.classElementType, acceptor);
     }
 
-    private ontologicalCategoryTokens(container: ast.ClassDeclaration, node: ast.OntologicalCategory, acceptor: SemanticTokenAcceptor) {
-        if (node.ontologicalCategory === "kind") {
-            acceptor({
-                node,
-                property: "ontologicalCategory",
-                type: "tontoKind",
-            });
-        } else if (node.ontologicalCategory === "relator") {
-            acceptor({
-                node,
-                property: "ontologicalCategory",
-                type: "tontoRelator"
-            });
-        } else if (node.ontologicalCategory === "quality") {
-            acceptor({
-                node,
-                property: "ontologicalCategory",
-                type: "tontoQuality"
-            });
-        } else if (node.ontologicalCategory === "quantity") {
-            acceptor({
-                node,
-                property: "ontologicalCategory",
-                type: "tontoQuantity"
-            });
-        } else if (node.ontologicalCategory === "collective") {
-            acceptor({
-                node,
-                property: "ontologicalCategory",
-                type: "tontoCollective"
-            });
-        } else if (node.ontologicalCategory === "event") {
-            acceptor({
-                node,
-                property: "ontologicalCategory",
-                type: "tontoEvent"
-            });
-        } else if (node.ontologicalCategory === "mode" || node.ontologicalCategory === "intrinsicMode" || node.ontologicalCategory === "extrinsicMode") {
-            acceptor({
-                node,
-                property: "ontologicalCategory",
-                type: "tontoMode"
-            });
-        } else if (node.ontologicalCategory === "situation") {
-            acceptor({
-                node,
-                property: "ontologicalCategory",
-                type: "tontoSituation"
-            });
-        } else if (node.ontologicalCategory === "type") {
-            acceptor({
-                node,
-                property: "ontologicalCategory",
-                type: "tontoType"
-            });
-        } else if (node.ontologicalCategory === "subkind") {
-            acceptor({
-                node,
-                property: "ontologicalCategory",
-                type: "tontoObjects"
-            });
+    private getTontoNature(container: ast.ClassDeclaration): TontoNatureResult {
+        switch (container.classElementType.ontologicalCategory) {
+            case "kind":
+                return { nature: "functional-complexes", isKind: true };
+            case "collective":
+                return { nature: "collectives", isKind: true };
+            case "quantity":
+                return { nature: "quantities", isKind: true };
+            case "relator":
+                return { nature: "relators", isKind: true };
+            case "quality":
+                return { nature: "qualities", isKind: true };
+            case "mode":
+            case "intrinsicMode":
+            case "extrinsicMode":
+                return { nature: "modes", isKind: true };
+            case "type":
+            case "powertype":
+                return { nature: "types", isKind: false };;
+
+            case "event":
+            case "process":
+                return { nature: "events", isKind: false };
+            case "situation":
+                return { nature: "situations", isKind: false };
+
+            // Natures that need to be verified specializations
+            case "subkind":
+            case "phase":
+            case "role":
+            case "historicalRole":
+                if (container.specializationEndurants.length > 0) {
+                    let specializationNature: TontoNatures = "abstract-individuals";
+                    container.specializationEndurants.forEach(item => {
+                        if (item.ref && item.ref.name !== container.name) {
+                            specializationNature = this.getTontoNature(item.ref).nature;
+                        }
+                    });
+                    return { nature: specializationNature, isKind: false };;
+                }
+                break;
+            case "category":
+            case "mixin":
+            case "phaseMixin":
+            case "roleMixin":
+            case "historicalRoleMixin":
+                if (container.ontologicalNatures && container.ontologicalNatures?.natures.length > 0) {
+                    const firstNature = container.ontologicalNatures.natures[0];
+                    if (firstNature === "extrinsic-modes" || firstNature === "intrinsic-modes") {
+                        return { nature: "modes", isKind: false };
+                    }
+                    return { nature: firstNature, isKind: false };
+                } else if (container.specializationEndurants.length > 0) {
+                    let specializationNature: TontoNatures = "abstract-individuals";
+                    container.specializationEndurants.forEach(item => {
+                        if (item.ref && item.ref.name !== container.name) {
+                            specializationNature = this.getTontoNature(item.ref).nature;
+                        }
+                    });
+                    return { nature: specializationNature, isKind: false };;
+                }
         }
+        return {nature: "none", isKind: false};
+    }
+
+    private ontologicalCategoryTokens(container: ast.ClassDeclaration, node: ast.OntologicalCategory, acceptor: SemanticTokenAcceptor) {
+        const result = this.getTontoNature(container);
+        const type = this.getTypeFromNature(result);
+        acceptor({
+            node,
+            property: "ontologicalCategory",
+            type: type
+        });
+    }
+
+    private getTypeFromNature(nature: TontoNatureResult): string {
+        switch (nature.nature) {
+            case "functional-complexes":
+                if (nature.isKind) return "tontoKind";
+                return "tontoFunctionalComplex";
+            case "relators":
+                if (nature.isKind) return "tontoRelatorKind";
+                return "tontoRelator";
+            case "qualities":
+                if (nature.isKind) return "tontoQualityKind";
+                return "tontoQuality";
+            case "quantities":
+                if (nature.isKind) return "tontoQuantityKind";
+                return "tontoQuantity";
+            case "collectives":
+                if (nature.isKind) return "tontoCollectiveKind";
+                return "tontoCollective";
+            case "modes":
+                if (nature.isKind) return "tontoModeKind";
+                return "tontoMode";
+            case "events":
+                return "tontoEvent";
+            case "situations":
+                return "tontoSituation";
+            case "types":
+                return "tontoType";
+        }
+        return "tontoNone";
     }
 
     private attributeTokens(node: ast.Attribute, acceptor: SemanticTokenAcceptor) {
@@ -266,8 +306,8 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
     private enumTokens(node: ast.DataType, acceptor: SemanticTokenAcceptor) {
         acceptor({
             node,
-            property: "name",
-            type: SemanticTokenTypes.enum,
+            property: "isEnum",
+            type: "tontoNone",
         });
     }
 
@@ -280,10 +320,5 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
     }
 
     private generalizationSetTokens(node: ast.GeneralizationSet, acceptor: SemanticTokenAcceptor) {
-        acceptor({
-            node,
-            property: "name",
-            type: SemanticTokenTypes.variable,
-        });
     }
 }

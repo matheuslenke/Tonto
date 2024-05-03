@@ -25,6 +25,10 @@ enum OntologicalCategoryEnum {
     ABSTRACT = "abstract",
 }
 
+export type TontoNatures = 	"objects" | "functional-complexes" | "collectives"  
+| "quantities" | "relators" | "modes" | "qualities" |"events" | "situations" 
+| "types" | "abstract-individuals" | "none"
+
 const UltimateSortalOntoCategories = [
     OntologicalCategoryEnum.KIND,
     OntologicalCategoryEnum.COLLECTIVE,
@@ -183,13 +187,8 @@ function getOntologicalCategory(stereotype: string): OntologicalCategoryEnum | u
 }
 
 export {
-    OntologicalCategoryEnum,
-    UltimateSortalOntoCategories,
-    BaseSortalOntoCategories,
-    SortalOntoCategories,
-    isSortalOntoCategory,
-    isUltimateSortalOntoCategory,
-    isBaseSortalOntoCategory,
-    isNonSortalOntoCategory,
-    getOntologicalCategory,
+    BaseSortalOntoCategories, OntologicalCategoryEnum, SortalOntoCategories, UltimateSortalOntoCategories, getOntologicalCategory, isBaseSortalOntoCategory,
+    isNonSortalOntoCategory, isSortalOntoCategory,
+    isUltimateSortalOntoCategory
 };
+
