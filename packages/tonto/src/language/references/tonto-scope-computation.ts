@@ -121,7 +121,6 @@ export class TontoScopeComputation extends DefaultScopeComputation {
             await interruptAndCheck(cancelToken);
             if (isElementRelation(element)) {
                 const qualifiedName = this.qualifiedNameProvider.getQualifiedName(element);
-                console.log(qualifiedName);
                 if (qualifiedName) {
                     const descriptionQualified = this.descriptions.createDescription(element, qualifiedName, document);
                     localDescriptions.push(descriptionQualified);
