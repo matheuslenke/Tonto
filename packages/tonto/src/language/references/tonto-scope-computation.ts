@@ -44,7 +44,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
                 const contextModule = this.getContextModuleFromContainer(childNode);
                 let name: string | undefined;
 
-                if (isClassDeclaration(childNode.$container)) {
+                if (isClassDeclaration(childNode.$container) || isElementRelation(childNode.$container)) {
                     name = this.qualifiedNameProvider.getName(childNode);
                 } else {
                     name = childNode.name;
@@ -121,6 +121,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
             await interruptAndCheck(cancelToken);
             if (isElementRelation(element)) {
                 const qualifiedName = this.qualifiedNameProvider.getQualifiedName(element);
+                console.log(qualifiedName);
                 if (qualifiedName) {
                     const descriptionQualified = this.descriptions.createDescription(element, qualifiedName, document);
                     localDescriptions.push(descriptionQualified);

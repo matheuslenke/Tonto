@@ -1,8 +1,8 @@
-import { ErrorMessages } from "../../../../src/language-server/models/ErrorMessages";
 import { EmptyFileSystem } from "langium";
+import { ErrorMessages } from "../../../../src/language/models/ErrorMessages.js";
 
+import { createTontoServices } from "../../../../src/language/tonto-module.js";
 import { validationHelper } from "../../../../src/test/tonto-test";
-import { createTontoServices } from "../../../../src/language-server/tonto-module";
 
 describe("CheckCircularSpecialization", () => {
   const services = createTontoServices(EmptyFileSystem);
