@@ -87,9 +87,6 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
         if (ast.isClassDeclaration(node)) {
             this.classElementTokens(node, acceptor);
         }
-        if (ast.isAttribute(node)) {
-            this.attributeTokens(node, acceptor);
-        }
         if (ast.isElementRelation(node)) {
             this.elementRelationTokens(node, acceptor);
         }
@@ -184,32 +181,12 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
         return "tontoNone";
     }
 
-    private attributeTokens(node: ast.Attribute, acceptor: SemanticTokenAcceptor) {
-        acceptor({
-            node,
-            property: "attributeTypeRef",
-            type: SemanticTokenTypes.type,
-        });
-        acceptor({
-            node,
-            property: "name",
-            type: SemanticTokenTypes.property,
-            modifier: SemanticTokenModifiers.declaration,
-        });
-    }
-
     private elementRelationTokens(node: ast.ElementRelation, acceptor: SemanticTokenAcceptor) {
         acceptor({
             node,
             property: "relationType",
             type: SemanticTokenTypes.class,
         });
-        acceptor({
-            node,
-            property: "name",
-            type: SemanticTokenTypes.variable,
-        });
-
         acceptor({
             node,
             property: "firstEndMetaAttributes",
