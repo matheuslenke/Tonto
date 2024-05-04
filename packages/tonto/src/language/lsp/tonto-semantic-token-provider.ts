@@ -1,74 +1,128 @@
-
-
-import { AstNode } from "langium";
-import { AbstractSemanticTokenProvider, SemanticTokenAcceptor } from "langium/lsp";
+import { AstNode, CstUtils } from "langium";
+import { AbstractSemanticTokenProvider, AllSemanticTokenModifiers, SemanticTokenAcceptor, SemanticTokenRangeOptions } from "langium/lsp";
 import { SemanticTokenModifiers, SemanticTokenTypes } from "vscode-languageserver";
-import {
-    Attribute,
-    ClassDeclaration,
-    ContextModule,
-    DataType,
-    ElementRelation,
-    EnumElement,
-    GeneralizationSet,
-    OntologicalCategory,
-    RelationMetaAttribute,
-    RelationMetaAttributes,
-    isAttribute,
-    isClassDeclaration,
-    isContextModule,
-    isDataType,
-    isElementRelation,
-    isEnumElement,
-    isGeneralizationSet,
-    isOntologicalCategory,
-    isRelationMetaAttribute,
-    isRelationMetaAttributes,
-} from "../generated/ast.js";
+import * as ast from "../generated/ast.js";
+import { TontoNatureResult, getTontoNature } from "../utils/getTontoNature.js";
+import { TontoSemanticTokenTypes } from "./semantic-token-types.js";
 
 /*
  * This SemanticTokenProvider extension is made so we can create our own SemanticToken
  * definitions for the members of the Tonto AST
  */
 export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
+    protected override highlightToken(options: SemanticTokenRangeOptions): void {
+        const { range, type } = options;
+        let modifiers = options.modifier;
+        if ((this.currentRange && !CstUtils.inRange(range, this.currentRange)) || !this.currentDocument || !this.currentTokensBuilder) {
+            return;
+        }
+        const intType = TontoSemanticTokenTypes[type];
+        let totalModifier = 0;
+        if (modifiers !== undefined) {
+            if (typeof modifiers === "string") {
+                modifiers = [modifiers];
+            }
+            for (const modifier of modifiers) {
+                const intModifier = AllSemanticTokenModifiers[modifier];
+                totalModifier |= intModifier;
+            }
+        }
+        const startLine = range.start.line;
+        const endLine = range.end.line;
+        if (startLine === endLine) {
+            // Token only spans a single line
+            const char = range.start.character;
+            const length = range.end.character - char;
+            this.currentTokensBuilder.push(startLine, char, length, intType, totalModifier);
+        } else if (this.clientCapabilities?.multilineTokenSupport) {
+            // Let token span multiple lines
+            const startChar = range.start.character;
+            const startOffset = this.currentDocument.textDocument.offsetAt(range.start);
+            const endOffset = this.currentDocument.textDocument.offsetAt(range.end);
+            this.currentTokensBuilder.push(startLine, startChar, endOffset - startOffset, intType, totalModifier);
+        } else {
+            // Token spans multiple lines, but the client doesn't support it
+            // Split the range into multiple semantic tokens
+            const firstLineStart = range.start;
+            let nextLineOffset = this.currentDocument.textDocument.offsetAt({
+                line: startLine + 1,
+                character: 0
+            });
+            // Build first line
+            this.currentTokensBuilder.push(
+                firstLineStart.line,
+                firstLineStart.character,
+                nextLineOffset - firstLineStart.character - 1,
+                intType,
+                totalModifier
+            );
+            // Build all lines in between first and last
+            for (let i = startLine + 1; i < endLine; i++) {
+                const currentLineOffset = nextLineOffset;
+                nextLineOffset = this.currentDocument.textDocument.offsetAt({
+                    line: i + 1,
+                    character: 0
+                });
+                this.currentTokensBuilder.push(
+                    i,
+                    0,
+                    nextLineOffset - currentLineOffset - 1,
+                    intType, totalModifier
+                );
+            }
+            // Build last line
+            this.currentTokensBuilder.push(
+                endLine,
+                0,
+                range.end.character,
+                intType,
+                totalModifier
+            );
+        }
+    }
     protected highlightElement(node: AstNode, acceptor: SemanticTokenAcceptor): void {
-        if (isContextModule(node)) {
+        if (ast.isContextModule(node)) {
             this.contextModuleTokens(node, acceptor);
         }
-        if (isClassDeclaration(node)) {
+        if (ast.isClassDeclaration(node)) {
             this.classElementTokens(node, acceptor);
         }
-        if (isOntologicalCategory(node)) {
-            this.ontologicalCategoryTokens(node, acceptor);
-        }
-        if (isAttribute(node)) {
-            this.attributeTokens(node, acceptor);
-        }
-        if (isElementRelation(node)) {
+        if (ast.isElementRelation(node)) {
             this.elementRelationTokens(node, acceptor);
         }
-        if (isDataType(node) && node.isEnum) {
+        if (ast.isDataType(node)) {
+            this.datatypeTokens(node, acceptor);
+        }
+        if (ast.isDataType(node) && node.isEnum) {
             this.enumTokens(node, acceptor);
         }
-        if (isEnumElement(node)) {
+        if (ast.isEnumElement(node)) {
             this.enumElementTokens(node, acceptor);
         }
-        if (isRelationMetaAttributes(node)) {
+        if (ast.isRelationMetaAttributes(node)) {
             this.relationMetaAttributesTokens(node, acceptor);
         }
-        if (isRelationMetaAttribute(node)) {
+        if (ast.isRelationMetaAttribute(node)) {
             this.relationMetaAttributeTokens(node, acceptor);
         }
-        if (isGeneralizationSet(node)) {
+        if (ast.isGeneralizationSet(node)) {
             this.generalizationSetTokens(node, acceptor);
         }
+    }
+
+    datatypeTokens(node: ast.DataType, acceptor: SemanticTokenAcceptor) {
+        acceptor({
+            node,
+            property: "ontologicalCategory",
+            type:"tontoNone",
+        });
     }
 
     /*
    * ---- HELPERS ----
    */
 
-    private contextModuleTokens(node: ContextModule, acceptor: SemanticTokenAcceptor) {
+    private contextModuleTokens(node: ast.ContextModule, acceptor: SemanticTokenAcceptor) {
         acceptor({
             node,
             property: "name",
@@ -76,43 +130,58 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
         });
     }
 
-    private classElementTokens(node: ClassDeclaration, acceptor: SemanticTokenAcceptor) {
+    private classElementTokens(node: ast.ClassDeclaration, acceptor: SemanticTokenAcceptor) {
         acceptor({
             node,
             property: "name",
             type: SemanticTokenTypes.class,
             modifier: SemanticTokenModifiers.declaration,
+            keyword: "ClassTonto"
         });
-        acceptor({
-            node,
-            property: "specializationEndurants",
-            type: SemanticTokenTypes.variable,
-        });
+        this.ontologicalCategoryTokens(node, node.classElementType, acceptor);
     }
 
-    private ontologicalCategoryTokens(node: OntologicalCategory, acceptor: SemanticTokenAcceptor) {
+    private ontologicalCategoryTokens(container: ast.ClassDeclaration, node: ast.OntologicalCategory, acceptor: SemanticTokenAcceptor) {
+        const result = getTontoNature(container);
+        const type = this.getTypeFromNature(result);
         acceptor({
             node,
             property: "ontologicalCategory",
-            type: SemanticTokenTypes.decorator,
+            type: type
         });
     }
 
-    private attributeTokens(node: Attribute, acceptor: SemanticTokenAcceptor) {
-        acceptor({
-            node,
-            property: "attributeTypeRef",
-            type: SemanticTokenTypes.type,
-        });
-        acceptor({
-            node,
-            property: "name",
-            type: SemanticTokenTypes.property,
-            modifier: SemanticTokenModifiers.declaration,
-        });
+    private getTypeFromNature(nature: TontoNatureResult): string {
+        switch (nature.nature) {
+            case "functional-complexes":
+                if (nature.isKind) return "tontoKind";
+                return "tontoFunctionalComplex";
+            case "relators":
+                if (nature.isKind) return "tontoRelatorKind";
+                return "tontoRelator";
+            case "qualities":
+                if (nature.isKind) return "tontoQualityKind";
+                return "tontoQuality";
+            case "quantities":
+                if (nature.isKind) return "tontoQuantityKind";
+                return "tontoQuantity";
+            case "collectives":
+                if (nature.isKind) return "tontoCollectiveKind";
+                return "tontoCollective";
+            case "modes":
+                if (nature.isKind) return "tontoModeKind";
+                return "tontoMode";
+            case "events":
+                return "tontoEvent";
+            case "situations":
+                return "tontoSituation";
+            case "types":
+                return "tontoType";
+        }
+        return "tontoNone";
     }
 
-    private elementRelationTokens(node: ElementRelation, acceptor: SemanticTokenAcceptor) {
+    private elementRelationTokens(node: ast.ElementRelation, acceptor: SemanticTokenAcceptor) {
         acceptor({
             node,
             property: "relationType",
@@ -120,18 +189,12 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
         });
         acceptor({
             node,
-            property: "name",
-            type: SemanticTokenTypes.variable,
-        });
-
-        acceptor({
-            node,
             property: "firstEndMetaAttributes",
             type: SemanticTokenTypes.property,
         });
     }
 
-    private relationMetaAttributesTokens(node: RelationMetaAttributes, acceptor: SemanticTokenAcceptor) {
+    private relationMetaAttributesTokens(node: ast.RelationMetaAttributes, acceptor: SemanticTokenAcceptor) {
         acceptor({
             node,
             property: "endName",
@@ -139,7 +202,7 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
         });
     }
 
-    private relationMetaAttributeTokens(node: RelationMetaAttribute, acceptor: SemanticTokenAcceptor) {
+    private relationMetaAttributeTokens(node: ast.RelationMetaAttribute, acceptor: SemanticTokenAcceptor) {
         acceptor({
             node,
             property: "subsetRelation",
@@ -147,15 +210,15 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
         });
     }
 
-    private enumTokens(node: DataType, acceptor: SemanticTokenAcceptor) {
+    private enumTokens(node: ast.DataType, acceptor: SemanticTokenAcceptor) {
         acceptor({
             node,
-            property: "name",
-            type: SemanticTokenTypes.enum,
+            property: "isEnum",
+            type: "tontoNone",
         });
     }
 
-    private enumElementTokens(node: EnumElement, acceptor: SemanticTokenAcceptor) {
+    private enumElementTokens(node: ast.EnumElement, acceptor: SemanticTokenAcceptor) {
         acceptor({
             node,
             property: "name",
@@ -163,11 +226,6 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
         });
     }
 
-    private generalizationSetTokens(node: GeneralizationSet, acceptor: SemanticTokenAcceptor) {
-        acceptor({
-            node,
-            property: "name",
-            type: SemanticTokenTypes.variable,
-        });
+    private generalizationSetTokens(node: ast.GeneralizationSet, acceptor: SemanticTokenAcceptor) {
     }
 }

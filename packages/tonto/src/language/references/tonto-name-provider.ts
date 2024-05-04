@@ -38,6 +38,8 @@ export class TontoQualifiedNameProvider extends DefaultNameProvider {
             const parent = node.$container;
             if (isClassDeclaration(parent)) {
                 return `${parent.name}.${node.name}`;
+            } else if (isContextModule(parent)) {
+                return `${node.firstEnd?.$refText}.${node.name}`;
             }
             return node.name;
         }

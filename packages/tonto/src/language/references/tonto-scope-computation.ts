@@ -44,7 +44,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
                 const contextModule = this.getContextModuleFromContainer(childNode);
                 let name: string | undefined;
 
-                if (isClassDeclaration(childNode.$container)) {
+                if (isClassDeclaration(childNode.$container) || isElementRelation(childNode.$container)) {
                     name = this.qualifiedNameProvider.getName(childNode);
                 } else {
                     name = childNode.name;

@@ -116,12 +116,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "sourceMaps": true,
-            "outFiles": [
-                "${workspaceFolder}/packages/tonto/lib/**/*.js",
-                "${workspaceFolder}/packages/tonto/lib/cli/**/*.js",
-                "${workspaceFolder}/packages/tonto-vscode/out/**/*.js"
-            ]
+            "sourceMaps": true
         },
         {
             "name": "Attach to CLI",

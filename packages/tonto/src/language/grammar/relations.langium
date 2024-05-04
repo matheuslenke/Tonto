@@ -12,7 +12,7 @@ InternalRelation infers ElementRelation:
 
 ExternalRelation infers ElementRelation:
 	('@'relationType=RelationStereotype)?
-	'relation' ':'firstEnd=[DataTypeOrClassOrRelation:QualifiedName]
+	'relation' firstEnd=[DataTypeOrClassOrRelation:QualifiedName]
 	RelationData
 ;
 
@@ -24,7 +24,7 @@ fragment RelationData:
     RelationName 
     secondCardinality=Cardinality?
 
-	':'secondEnd=[DataTypeOrClassOrRelation:QualifiedName]
+	secondEnd=[DataTypeOrClassOrRelation:QualifiedName]
 	
 	secondEndMetaAttributes=RelationMetaAttributes?
 	('specializes' specializeRelation=[ElementRelation:QualifiedName])?

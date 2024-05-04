@@ -11,10 +11,9 @@
     }
   ],
   "include": [
-    "src/**/*"
+    "src/**/*.ts"
   ],
   "exclude": [
-    "out",
     "/node_modules"
   ]
 }

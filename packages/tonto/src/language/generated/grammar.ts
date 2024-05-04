@@ -928,8 +928,13 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
         "$type": "Group",
         "elements": [
           {
-            "$type": "Keyword",
-            "value": "datatype"
+            "$type": "Assignment",
+            "feature": "ontologicalCategory",
+            "operator": "=",
+            "terminal": {
+              "$type": "Keyword",
+              "value": "datatype"
+            }
           },
           {
             "$type": "Assignment",
@@ -1523,10 +1528,6 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
             "value": "relation"
           },
           {
-            "$type": "Keyword",
-            "value": ":"
-          },
-          {
             "$type": "Assignment",
             "feature": "firstEnd",
             "operator": "=",
@@ -1613,10 +1614,6 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
               "arguments": []
             },
             "cardinality": "?"
-          },
-          {
-            "$type": "Keyword",
-            "value": ":"
           },
           {
             "$type": "Assignment",
