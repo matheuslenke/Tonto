@@ -20,7 +20,8 @@
         "lint": "npm run lint --workspaces",
         "lint:fix": "npm run lint --workspaces --fix",
         "watch": "concurrently -n tsc,esbuild -c blue,yellow \"tsc -b tsconfig.build.json -w\" \"npm run watch --workspace=langium-vscode\"",
-        "test": "vitest",
+        "test": "vitest run",
+        "test:watch": "vitest watch",
         "test-ui": "vitest --ui",
         "coverage": "vitest run --coverage",
         "langium:generate": "langium generate --workspace=tonto-cli",
@@ -43,7 +44,7 @@
         "shx": "^0.3.4",
         "typescript": "~4.9.5",
         "vite": "^4.3.8",
-        "vitest": "^0.31.1"
+        "vitest": "^1.0.0"
     },
     "workspaces": [
         "packages/tonto",

@@ -1617,6 +1617,19 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
           },
           {
             "$type": "Assignment",
+            "feature": "secondEndMetaAttributes",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@34"
+              },
+              "arguments": []
+            },
+            "cardinality": "?"
+          },
+          {
+            "$type": "Assignment",
             "feature": "secondEnd",
             "operator": "=",
             "terminal": {
@@ -1633,19 +1646,6 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
               },
               "deprecatedSyntax": false
             }
-          },
-          {
-            "$type": "Assignment",
-            "feature": "secondEndMetaAttributes",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$ref": "#/rules@34"
-              },
-              "arguments": []
-            },
-            "cardinality": "?"
           },
           {
             "$type": "Group",
