@@ -1,4 +1,5 @@
 import { EmptyFileSystem } from "langium";
+import { describe, expect, it } from "vitest";
 import { ErrorMessages } from "../../../../src/language/models/ErrorMessages.js";
 import { createTontoServices } from "../../../../src/language/tonto-module.js";
 import { validationHelper } from "../../../../src/test/tonto-test.js";

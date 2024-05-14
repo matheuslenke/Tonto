@@ -1,6 +1,7 @@
 import { EmptyFileSystem } from "langium";
+import { describe, expect, it } from "vitest";
 import { createTontoServices } from "../../../../src/language/tonto-module.js";
-import { validationHelper } from "../../../../src/test/tonto-test";
+import { validationHelper } from "../../../../src/test/tonto-test.js";
 
 describe("checkGeneralizationSortality", async () => {
   const services = createTontoServices(EmptyFileSystem);
