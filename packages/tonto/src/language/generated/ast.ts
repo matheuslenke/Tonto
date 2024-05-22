@@ -12,7 +12,7 @@ export const TontoTerminals = {
     INT: /[0-9]+/,
     STRING: /"[^"]*"|'[^']*'/,
     CAMEL_CASE_ID: /[a-z]([a-zA-Z0-9_]*)/,
-    CAPS_ID: /[A-Z]([a-zA-Z0-9_]*)/,
+    CAPITALIZED_ID: /[A-Z]([a-zA-Z0-9_]*)/,
     ID: /[_a-zA-Z][\w_]*/,
     ML_COMMENT: /\/\*[\s\S]*?\*\//,
     SL_COMMENT: /\/\/[^\n\r]*/,
@@ -92,12 +92,6 @@ export type QualifiedName = string;
 
 export function isQualifiedName(item: unknown): item is QualifiedName {
     return typeof item === 'string';
-}
-
-export type RELATION_ID = string;
-
-export function isRELATION_ID(item: unknown): item is RELATION_ID {
-    return (typeof item === 'string' && (/[a-z]([a-zA-Z0-9_]*)/.test(item)));
 }
 
 export type RelationStereotype = 'aggregation' | 'bringsAbout' | 'characterization' | 'comparative' | 'componentOf' | 'composition' | 'constitution' | 'creation' | 'derivation' | 'externalDependence' | 'formal' | 'historicalDependence' | 'inherence' | 'instantiation' | 'manifestation' | 'material' | 'mediation' | 'memberOf' | 'participation' | 'participational' | 'subCollectionOf' | 'subQuantityOf' | 'termination' | 'triggers' | 'value' | string;
@@ -229,7 +223,7 @@ export interface ElementRelation extends AstNode {
     isAssociation: boolean;
     isComposition: boolean;
     isCompositionInverted: boolean;
-    name?: RELATION_ID;
+    name?: string;
     relationType?: RelationStereotype;
     secondCardinality?: Cardinality;
     secondEnd: Reference<DataTypeOrClassOrRelation>;
