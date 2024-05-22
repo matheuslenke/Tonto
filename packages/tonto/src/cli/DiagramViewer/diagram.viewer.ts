@@ -12,13 +12,13 @@ export const generateDiagram = (content: diagramContent, domToImgUri: Uri, jsUri
     let svg: string = "";
 
     let nomnomlCode = `
-    #edges: rounded
-    #padding: 20
-    #gravity: 1.5
-    #lineWidth: 1.5
-    #background: transparent
-    #ranker: tight-tree
-    `;
+#edges: rounded
+#padding: 20
+#gravity: 1.5
+#lineWidth: 1.5
+#background: transparent
+#ranker: tight-tree
+`;
 
     content.specializations.forEach((generalization) => {
         const general = generalization.getGeneralClass();
@@ -34,15 +34,6 @@ export const generateDiagram = (content: diagramContent, domToImgUri: Uri, jsUri
 
     content.specializationSets.forEach((genSet) => {
         nomnomlCode += generalizationSetViewer(genSet);
-    });
-
-    content.relations.forEach((relation, id) => {
-        nomnomlCode += relationViewer(relation, id, config);
-    });
-
-    content.class.forEach((element) => {
-        if ((config.Datatype || !element.hasDatatypeStereotype()) && (config.Enumeration || !element.hasEnumerationStereotype()))
-            nomnomlCode += classViewer(element, config);
     });
 
     content.relations.forEach((relation, id) => {
