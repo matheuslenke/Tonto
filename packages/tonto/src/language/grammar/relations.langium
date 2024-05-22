@@ -30,8 +30,8 @@ fragment RelationData:
 ;
 
 fragment RelationName:
-	(RelationType (name=QualifiedName '--')?) |
-	(('--' name=QualifiedName)? RelationInvertedType)?
+	(RelationType (name=(RELATION_ID) '--')?) |
+	(('--' name=RELATION_ID)? RelationInvertedType)?
 ;
 
 fragment RelationType:
