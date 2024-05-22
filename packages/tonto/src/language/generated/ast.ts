@@ -9,9 +9,11 @@ import { AbstractAstReflection } from 'langium';
 
 export const TontoTerminals = {
     WS: /\s+/,
-    ID: /[_a-zA-Z][\w_]*/,
     INT: /[0-9]+/,
     STRING: /"[^"]*"|'[^']*'/,
+    CAMEL_CASE_ID: /[a-z]([a-zA-Z0-9_]*)/,
+    CAPS_ID: /[A-Z]([a-zA-Z0-9_]*)/,
+    ID: /[_a-zA-Z][\w_]*/,
     ML_COMMENT: /\/\*[\s\S]*?\*\//,
     SL_COMMENT: /\/\/[^\n\r]*/,
 };
@@ -62,6 +64,12 @@ export function isEndurantType(item: unknown): item is EndurantType {
     return isNonSortal(item) || isUltimateSortal(item) || isSortal(item);
 }
 
+export type NAME = string;
+
+export function isNAME(item: unknown): item is NAME {
+    return (typeof item === 'string' && (/[_a-zA-Z][\w_]*/.test(item) || /"[^"]*"|'[^']*'/.test(item) || /[a-z]([a-zA-Z0-9_]*)/.test(item) || /[A-Z]([a-zA-Z0-9_]*)/.test(item)));
+}
+
 export type NonEndurantType = 'event' | 'process' | 'situation';
 
 export function isNonEndurantType(item: unknown): item is NonEndurantType {
@@ -84,6 +92,12 @@ export type QualifiedName = string;
 
 export function isQualifiedName(item: unknown): item is QualifiedName {
     return typeof item === 'string';
+}
+
+export type RELATION_ID = string;
+
+export function isRELATION_ID(item: unknown): item is RELATION_ID {
+    return (typeof item === 'string' && (/[a-z]([a-zA-Z0-9_]*)/.test(item)));
 }
 
 export type RelationStereotype = 'aggregation' | 'bringsAbout' | 'characterization' | 'comparative' | 'componentOf' | 'composition' | 'constitution' | 'creation' | 'derivation' | 'externalDependence' | 'formal' | 'historicalDependence' | 'inherence' | 'instantiation' | 'manifestation' | 'material' | 'mediation' | 'memberOf' | 'participation' | 'participational' | 'subCollectionOf' | 'subQuantityOf' | 'termination' | 'triggers' | 'value' | string;
@@ -146,7 +160,7 @@ export interface ClassDeclaration extends AstNode {
     attributes: Array<Attribute>;
     classElementType: OntologicalCategory;
     instanceOf?: Reference<ClassDeclaration>;
-    name: QualifiedName;
+    name: string;
     ontologicalNatures?: ElementOntologicalNature;
     references: Array<ElementRelation>;
     specializationEndurants: Array<Reference<ClassDeclaration>>;
@@ -163,7 +177,7 @@ export interface ContextModule extends AstNode {
     readonly $type: 'ContextModule';
     declarations: Array<Declaration>;
     isGlobal: boolean;
-    name: QualifiedName | string;
+    name: QualifiedName;
 }
 
 export const ContextModule = 'ContextModule';
@@ -215,7 +229,7 @@ export interface ElementRelation extends AstNode {
     isAssociation: boolean;
     isComposition: boolean;
     isCompositionInverted: boolean;
-    name?: QualifiedName;
+    name?: RELATION_ID;
     relationType?: RelationStereotype;
     secondCardinality?: Cardinality;
     secondEnd: Reference<DataTypeOrClassOrRelation>;
