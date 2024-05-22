@@ -40,43 +40,128 @@
 <!-- ABOUT THE PROJECT -->
 <div id="about-the-project"> </div>
 
-## 📝 About The Project
+## Tonto CLI
 
-Tonto is an acronym with the words Textual and Ontology, because it is a written way of writing Ontology models. It was developed using the `Langium` tool, with `Typescript`, and creates a Visual Studio Code Extension with a Language server. 
+Tonto Command Line Interface (CLI) is a tool that expands the use of Tonto models by enabling the transformation of Tonto projects into other formats and providing validation capabilities.
 
-Tonto was designed as a friendly textual syntax for ontologies. It offers specialized support for constructs reflecting the UFO foundational ontology, which makes it possible to identify errors in the ontology that would otherwise pass unnoticed. The language was designed to allow transformation to a number of languages including UML (more specifically OntoUML), OWL (for gUFO-based ontologies), Alloy, Common Logic, and the TPTP syntax.
+### Functionalities
 
-This NPM Project aims to provide a CLI to help with the use of Tonto projects and to validate it
+1.  **Transformation to JSON:** The `generate` command converts a Tonto model into a JSON file that adheres to the OntoUML JSON schema. This allows for interoperability with OntoUML tools and further processing.
+    ```bash
+    tonto-cli generate [directoryName]
+    ```
+2.  **Import from JSON:** The `import` command takes a JSON file conforming to the OntoUML JSON schema and generates a corresponding Tonto project. This facilitates the migration of existing OntoUML models to Tonto.
+    ```bash
+    tonto-cli import [jsonFileName]
+    ```
+3.  **Transformation to OWL:** The `transform` command converts a Tonto model into a gUFO-based OWL ontology using the Turtle syntax. This bridges the gap between conceptual models and formal ontologies used in the Semantic Web.
+    ```bash
+    tonto-cli transform [directoryName]
+    ```
+4.  **Validation:** The `validate` command sends the Tonto model to the `ontouml-server` API for validation. It returns any validation errors identified by the server, helping to ensure the model's correctness and adherence to OntoUML/UFO rules.
+    ```bash
+    tonto-cli validate [directoryName]
+    ```
 
-### The language supports:
+### Installation and Usage
 
-- UFO-based annotations to facilitate error checking and meaning negotiation
+Tonto CLI is available as an NPM package. To install it globally, use the following command:
 
-- High-order types for multi-level taxomies
+```bash
+npm install -g tonto-cli
+```
 
-- Structured comments for documentation generation
+Once installed, you can use the `tonto-cli` command followed by the desired command and directory or file name to perform the corresponding action.
 
-- Constraints specification when extra precision is required
+### Additional Considerations
 
-- Ontology testing/verification directives 
-
-
-As a textual syntax, the language can benefit from source control tools such as git, and ontologies can be viewed and edited without special tools. This VS Code extension is provided with support for syntax verification, syntax highlight, content assist and ontology visualization preview. The extension is integrated with the [OntoUML](https://github.com/OntoUML/OntoUML) server, to benefit from services designed for the language, such as transformation to OWL and generation of database schemas.
-
-<p align="right">(<a href="#top">back to top</a>)</p>
+*   **Node.js Requirement:** Tonto CLI requires Node.js to be installed on your system.
+*   **Global Installation:** Installing Tonto CLI globally allows you to use the `tonto-cli` command from any directory.
 
 
-<div id="built-with"> </div>
 
-### 🔨 Built With
+<!-- Tonto Grammar -->
+## Language Elements
+<div id="language-elements" />
 
-Here are some of the languages, frameworks, tools and libraries used in development of this application:
+Tonto grammar allows you declare elements by using its keyword and the defined name for the element.
 
-* [Typescript](https://www.typescriptlang.org/)
-* [Langium](https://langium.org/)
+```java
+package example 
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+kind Person {
+    name: String
+    age: Integer
+    gender: Gender
+}
 
+phase Child specializes Person
+
+enum Gender {
+    MALE
+    FEMALE
+    OTHER
+}
+
+relation Person [0..*] -- hasFriend -- [0..*] Person
+```
+### Package Declarations
+Tonto specifications are organized into packages, defined using the package keyword followed by the package name. Packages act as namespaces and are fundamental for modularity.
+
+```java
+package myPackage
+```
+
+### Class Declarations
+Classes are declared using keywords corresponding to UFO types (e.g., kind, role, phase) followed by the class name. Specializations are indicated using the specializes keyword.
+```java
+kind Person {
+    name: string
+    birthDate: date {const}
+}
+
+phase Child specializes Person
+```
+
+### Datatype Declarations
+Tonto supports built-in datatypes (number, string, boolean, date, time, datetime) and allows defining custom datatypes using the datatype keyword.
+```
+datatype Address {
+    street: string
+    number: int
+}
+```
+
+### Enumeration Declarations
+Enumerations are declared using the enum keyword, listing possible literal values.
+```
+enum EyeColor { Blue, Green, Brown, Black }
+```
+
+### Generalization Sets
+
+Generalization sets define relationships between a general class and its specializations. They can be marked as disjoint and/or complete.
+```java
+disjoint complete genset PersonAgeGroup where Child, Adult specializes Person
+
+genset PersonAgeGroup {
+    general Person
+    specifics Child, Adult
+}
+```
+
+### Relations
+Relations (associations) can be declared internally (within a class body) or externally. They are specified using relation stereotypes (e.g., @componentOf, @mediation) and cardinalities.
+
+```java
+// Internal relation
+kind University {
+    @componentOf [1] <>-- [1..*] Department
+}
+
+// External relation
+@mediation relation EmploymentContract [1..*] -- [1] Employee
+```
 
 <div id="getting-started"> </div>
 
@@ -109,25 +194,21 @@ This is all the tools you need installed to run the project and the versions tha
 
  - Help command to list all available commands
  ```bash
-  tonto-cli help
+    tonto-cli help
  ```
-
-- Generate JSON File from Tonto Project command:
+- Generate JSON File from Tonto Project command::
  ```bash
-  tonto-cli generate <dirName>
+    tonto-cli generate <dirName>
  ```
-
-- Generate Tonto Project from a JSON File
+- Generate Tonto Project from a JSON Filee
  ```bash
-  tonto-cli import <fileName.json>
+    tonto-cli import <fileName.json>
  ```
-
-- Validate Tonto Project with [ontouml-js](https://github.com/OntoUML/ontouml-js) server API
+- Validate Tonto Project with [ontouml-js](https://github.com/OntoUML/ontouml-js) server APII
  ```bash
-  tonto-cli validate <dirName>
+    tonto-cli validate <dirName>
  ```
-
-<!-- LICENSE -->
+<!-- LICENSE -->>
 ## 🔐 License
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.

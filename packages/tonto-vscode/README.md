@@ -7,7 +7,7 @@
     <img src="/docs/images/TontoLogo.png" alt="Logo"  height="100" alt="Tonto Logo image, a blue background with TONTO written in it">
   </a>
 
-  <h3 align="center">An DSL for Ontology models</h3>
+  <h3 align="center">Tonto Visual Studio Code Extension</h3>
 
 </div>
 

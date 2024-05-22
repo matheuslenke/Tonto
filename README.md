@@ -69,8 +69,6 @@ Here are some of the languages, frameworks, tools and libraries used in developm
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
-<div id="getting-started"> </div>
-
 <!-- PACKAGES -->
 ##  Packages
 
@@ -83,9 +81,24 @@ This project is divided in 3 packages, each of them responsible for a different 
 - This package is responsible for the [VSCode Extension](https://marketplace.visualstudio.com/items?itemName=Lenke.tonto)
 
 ### [Tonto Package Manager](packages/tonto-package-manager/)
-- This package is responsible for the TPM responsible for managing
+- This package is responsible for the `Tonto Package Manager (TPM)`. The TPM provides a way to manage ontologies as sepparate packages, simmilarly to how programming languages work.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
+
+#### 4.1 Visual Studio Code Extension
+
+The Tonto VS Code extension provides a rich editing experience with features like:
+
+*   Real-time syntax verification
+*   Syntax highlighting
+*   Autocompletion
+*   Code snippets
+*   Transformation to OntoUML (JSON) and gUFO-based OWL
+*   Visualization of diagrams
+
+#### 4.2 Tonto Package Manager (TPM)
+
+TPM enables managing dependencies between Tonto projects, facilitating code reuse and modular development.
 
 
 <!-- GETTING STARTED -->
@@ -105,13 +118,14 @@ This is all the tools you need installed to run the project and the versions tha
 
 
 ### ⚙️ Initializing
+#### Tasks
+This project defines tasks in order to be easier for vscode to build everything. 
 
- * Run `npm run langium:generate` to generate TypeScript code from the grammar definition.
- * Run `npm run build` to compile all TypeScript code or `npm run watch` if you want the compiler to work automatically everytime you update your files
- * Press `F5` to open a new window with your extension loaded.
- * Create a new file with a file name suffix matching your language.
- * Verify that syntax highlighting, validation, completion etc. are working as expected.
+1. If you want to build all packages in watch mode just press `cmd` + `shift` + `b` or the equivalent command to run the build task.
 
+2. After that, select at the debug tab the `Run Extension` command or press `F5` to run the extension in a sepparate Extension Development Host.
+
+3. Create a new file with a file name suffix `.tonto` and start using Tonto 
 
  ### Packaging the extension
 
@@ -119,12 +133,25 @@ This is all the tools you need installed to run the project and the versions tha
 
  ```bash
   # Run this to generate .vsix file
+  npm run package
+  # Or
   vsce package --pre-release --baseContentUrl https://github.com/matheuslenke/Tonto
 
   # Installing the extension in your vscode (requires the code extension in path)
   code --install-extension tonto-x.x.x.vsix
  ```
 
+### Publishing
+
+You can Publish the `tonto-cli` to npm and the Visual Studio Code extension to the extension marketplace
+
+In order to publish the extension, you need to configure your azure key and your npm key locally.
+
+Then, inside the `tonto` or `tonto-vscode` folder, run the following command:
+
+```bash
+    npm run publish
+```
 <!-- LICENSE -->
 ## 🔐 License
 

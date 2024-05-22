@@ -1,0 +1,124 @@
+{
+    "version": "2.0.0",
+
+    "tasks": [
+        {
+            "label": "watch langium",
+            "hide": false,
+            "type": "shell",
+            "command": "npm run langium:watch",
+            "isBackground": true,
+            "group": "build",
+            "runOptions": {
+                "runOn": "default"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/packages/tonto",
+            },
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "never"
+            }
+        },
+        {
+            "label": "watch tonto",
+            "type": "shell",
+            "command": "npm run watch",
+            "hide": false,
+            "isBackground": true,
+            "group": "build",
+            "runOptions": {
+                "runOn": "default"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/packages/tonto"
+            },
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "never"
+            }
+        },
+        {
+            "label": "watch extension",
+            "type": "shell",
+            "hide": false,
+            "command": "npm run watch",
+            "isBackground": true,
+            "group": "build",
+            "runOptions": {
+                "runOn": "default"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/packages/tonto-vscode"
+            },
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "always"
+            }
+        },
+        {
+            "label": "watch tpm",
+            "type": "shell",
+            "command": "npm run watch",
+            "isBackground": true,
+            "group": "build",
+            "runOptions": {
+                "runOn": "default"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}/packages/tonto-package-manager"
+            },
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "never"
+            }
+        },
+        {
+            "label": "watch workspace",
+            "command": "npm run watch",
+            "isBackground": true,
+            "group": "build",
+            "problemMatcher": "$tsc-watch",
+            "runOptions": {
+                "runOn": "folderOpen"
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "panel": "dedicated",
+                "reveal": "always"
+            },
+            "detail": "npm run watch --workspaces"
+        },
+        {
+            "label": "Watch all",
+            "dependsOn": [
+                "watch langium",
+                "watch tonto",
+                "watch extension",
+                "watch tpm"
+            ],
+            "dependsOrder": "parallel",
+            "group": "build",
+            "problemMatcher": [
+                "$tsc-watch"
+            ],
+            "isBackground": true, 
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+        },
+
+        // Test tasks
+        {
+            "label": "test: tonto",
+            "command": "npm run test",
+            "isBackground": false,
+            "options": {
+                "cwd": "${workspaceFolder}/packages/tonto"
+            },
+        }
+    ]
+  }
+  
