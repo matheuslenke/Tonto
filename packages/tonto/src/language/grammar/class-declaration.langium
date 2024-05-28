@@ -5,7 +5,7 @@ import "relations"
 
 ClassDeclaration:
 	classElementType=OntologicalCategory 
-	name=QualifiedName
+	(name=CAPITALIZED_ID)
 	ontologicalNatures=ElementOntologicalNature?
     ('(' 'instanceOf' instanceOf=[ClassDeclaration:QualifiedName] ')')?
     ('specializes' specializationEndurants+=[ClassDeclaration:QualifiedName]

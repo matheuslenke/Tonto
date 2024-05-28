@@ -23,17 +23,15 @@ fragment RelationData:
     firstCardinality=Cardinality?
     RelationName 
     secondCardinality=Cardinality?
-
-	secondEnd=[DataTypeOrClassOrRelation:QualifiedName]
-	
 	secondEndMetaAttributes=RelationMetaAttributes?
+	secondEnd=[DataTypeOrClassOrRelation:CAPITALIZED_ID]
 	('specializes' specializeRelation=[ElementRelation:QualifiedName])?
 	(hasInverse='inverseOf' inverseEnd=[ElementRelation:QualifiedName])?
 ;
 
 fragment RelationName:
-	(RelationType (name=QualifiedName '--')?) |
-	(('--' name=QualifiedName)? RelationInvertedType)?
+	(RelationType (name=(CAMEL_CASE_ID) '--')?) |
+	(('--' name=CAMEL_CASE_ID)? RelationInvertedType)?
 ;
 
 fragment RelationType:

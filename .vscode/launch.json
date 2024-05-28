@@ -6,6 +6,19 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Run Extension",
+            "type": "extensionHost",
+            "sourceMaps": true,
+            "request": "launch",
+            "args": [
+                "${workspaceFolder}/examples/newGeneration",
+                "--extensionDevelopmentPath=${workspaceFolder}/packages/tonto-vscode"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/{packages,examples}/*/{lib,out}/**/*.js"
+            ]
+        },
+        {
             "name": "CLI: GenerateModular",
             "program": "${workspaceFolder}/packages/tonto/bin/cli.js",
             "request": "launch",
@@ -89,24 +102,6 @@
                 "-d SWO"
             ],
             "cwd": "${workspaceFolder}/examples/ontouml-models/Aguiar2019ooco"
-        },
-        {
-            "name": "Run Extension",
-            "type": "extensionHost",
-            "sourceMaps": true,
-            "request": "launch",
-            "args": [
-                // "${workspaceFolder}/../tonto-example-models/Library",
-                // "${workspaceFolder}/../tonto-catalog/models/abel2015petroleum-system",
-                "${workspaceFolder}/examples/newGeneration",
-                "--extensionDevelopmentPath=${workspaceFolder}/packages/tonto-vscode"
-            ],
-            "outFiles": [
-                "${workspaceFolder}/{packages,examples}/*/{lib,out}/**/*.js"
-            ]
-            // "env": {
-            //     "DEBUG_BREAK": "true"
-            // }
         },
         {
             "name": "Attach to Language Server",

@@ -1,7 +1,8 @@
 import { EmptyFileSystem } from "langium";
-import { Model } from "../src/language/generated/ast";
-import { createTontoServices } from "../src/language/tonto-module";
-import { validationHelper } from "../src/test/tonto-test";
+import { describe, expect, test } from "vitest";
+import { Model } from "../src/language/generated/ast.js";
+import { createTontoServices } from "../src/language/tonto-module.js";
+import { validationHelper } from "../src/test/tonto-test.js";
 
 describe("A", () => {
   const tontoStub = `

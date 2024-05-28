@@ -1,10 +1,16 @@
-    package CheckGeneralizationConsistency
-    kind Person
-    role Doctor specializes Person
+package tokens
 
-    relation Doctor -- treats -- Person
+kind B
+kind A {
+    --  B
+}
 
-    genset GeneralizationSet {
-      general Person
-      specifics Doctor.treats
-    }
+kind C {
+    -- name -- B
+    -- B
+    -- [1] B
+    [1..*] -- [1] B
+    [1..*] -- A
+    -- C.name
+}
+

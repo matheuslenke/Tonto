@@ -1,8 +1,9 @@
 import { EmptyFileSystem } from "langium";
 import { ErrorMessages } from "../../../../src/language/models/ErrorMessages.js";
 
+import { describe, expect, it } from "vitest";
 import { createTontoServices } from "../../../../src/language/tonto-module.js";
-import { validationHelper } from "../../../../src/test/tonto-test";
+import { validationHelper } from "../../../../src/test/tonto-test.js";
 
 describe("CheckCircularSpecialization", () => {
   const services = createTontoServices(EmptyFileSystem);

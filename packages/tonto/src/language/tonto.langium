@@ -23,7 +23,7 @@ entry Model:
  * go inside this declaration
  */
 ContextModule:
-	(isGlobal?='global')? 'package' (name=QualifiedName | name=STRING)
+	(isGlobal?='global')? 'package' (name=QualifiedName)
 
 	declarations+=Declaration*
 ;

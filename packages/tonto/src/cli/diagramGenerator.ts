@@ -2,6 +2,7 @@ import { Class, Generalization, GeneralizationSet, MultilingualText, Package, Pr
 import { contextModuleGenerator } from "../cli/generators/contextModule.generator.js";
 import { Model } from "../language/index.js";
 
+
 interface GeneratorContext {
     model: Model;
     name: string;
