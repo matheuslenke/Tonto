@@ -6,10 +6,13 @@
       "path": "packages/tonto",
     },
     {
-      "path": "packages/tonto-vscode"
+      "path": "packages/extension"
     },
     {
-      "path": "packages/tonto-package-manager"
-    }
+      "path": "packages/tpm"
+    },
+    {
+        "path": "packages/webview"
+      }
   ]
 }

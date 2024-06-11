@@ -1,4 +1,4 @@
-import { Package, Class } from "ontouml-js";
+import { Class, Package } from "ontouml-js";
 import { DataType } from "../../language/index.js";
 
 export function enumGenerator(enumData: DataType, model: Package): Class {

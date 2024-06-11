@@ -1,8 +1,8 @@
+import chalk from "chalk";
 import { Class, Package, Relation } from "ontouml-js";
 import { ClassDeclaration, ContextModule, DataType, ElementRelation } from "../../language/index.js";
 import { generalizationGenerator } from "./class.generator.js";
 import { relationGeneralizationGenerator } from "./relation.generator.js";
-import chalk from "chalk";
 
 export function generateDataTypeSpecializations(
     contextModule: ContextModule,

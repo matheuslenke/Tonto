@@ -4,9 +4,9 @@ import SwO
 
 package DBSO
 
-category DBMS_Item of functional-complexes  specializes Software_Item 
+category DBMS_Item  specializes Software_Item 
 
-subkind Data_Language of functional-complexes  specializes Language 
+subkind Data_Language  specializes Language 
 
 collective Database specializes DBMS_Item {
     [1] -- [1..*] Data_File 

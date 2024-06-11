@@ -1,16 +1,15 @@
 import * as path from "path";
 import * as vscode from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from "vscode-languageclient/node.js";
-import { createConfigurationCommands } from "../commands/ConfigurationCommands.js";
-import { createGenerateDiagramStatusBarItem } from "../commands/DiagramGenerationCommands.js";
 import { createGenerateJsonStatusBarItem } from "../commands/JsonGenerationCommands.js";
 import { createTontoGenerationStatusBarItem } from "../commands/TontoGenerationCommand.js";
 import { createTpmInstallCommands } from "../commands/TpmInstallCommand.js";
 import { createTransformToGufoSatusBarItem } from "../commands/gufoTransformCommand.js";
 import { createValidationSatusBarItem } from "../commands/validationCommand.js";
+import { activateDiagram } from "../diagram/activateDiagram.js";
 import { TontoLibraryFileSystemProvider } from "./TontoLibraryFileSystemProvider.js";
 
-let client: LanguageClient;
+let languageClient: LanguageClient;
 let generateTontoStatusBarItem: vscode.StatusBarItem;
 let generateJsonStatusBarItem: vscode.StatusBarItem;
 let generateDiagramStatusBarItem: vscode.StatusBarItem;
@@ -19,24 +18,54 @@ let transformToGufoStatusBarItem: vscode.StatusBarItem;
 let tpmInstallStatusBarItem: vscode.StatusBarItem;
 let outputChannel: vscode.OutputChannel;
 
+
+
 // This function is called when the extension is activated.
 export function activate(context: vscode.ExtensionContext): void {
     outputChannel = vscode.window.createOutputChannel("Tonto: Validation output");
     TontoLibraryFileSystemProvider.register(context);
-    client = startLanguageClient(context);
-    createConfigurationCommands(context);
+    languageClient = startLanguageClient(context);
+    // createConfigurationCommands(context);
     createGenerateJsonStatusBarItem(context, generateJsonStatusBarItem);
     createTontoGenerationStatusBarItem(context, generateTontoStatusBarItem);
-    createGenerateDiagramStatusBarItem(context, generateDiagramStatusBarItem);
+    // createGenerateDiagramStatusBarItem(context, generateDiagramStatusBarItem);
     createValidationSatusBarItem(context, validateStatusBarItem, outputChannel);
     createTransformToGufoSatusBarItem(context, transformToGufoStatusBarItem);
     createTpmInstallCommands(context, tpmInstallStatusBarItem);
+    activateDiagram(context, languageClient);
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand("catCoding.start", () => {
+            // Create and show a new webview
+            const panel = vscode.window.createWebviewPanel(
+                "catCoding", // Identifies the type of the webview. Used internally
+                "Cat Coding", // Title of the panel displayed to the user
+                vscode.ViewColumn.One, // Editor column to show the new webview panel in.
+                {} // Webview options. More on these later.
+            );
+            panel.webview.html = getWebviewContent();
+        })
+    );
+}
+
+function getWebviewContent() {
+    return `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Cat Coding</title>
+  </head>
+  <body>
+      <img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif" width="300" />
+  </body>
+  </html>`;
 }
 
 // This function is called when the extension is deactivated.
 export function deactivate(): Thenable<void> | undefined {
-    if (client) {
-        return client.stop();
+    if (languageClient) {
+        return languageClient.stop();
     }
     validateStatusBarItem.dispose();
     generateJsonStatusBarItem.dispose();

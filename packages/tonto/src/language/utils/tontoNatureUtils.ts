@@ -6,7 +6,37 @@ export type TontoNatureResult = {
     isKind: boolean;
 }
 
-export function getTontoNature(container: ast.ClassDeclaration): TontoNatureResult {
+function getSemanticTokenFromNature(nature: TontoNatureResult): string {
+    switch (nature.nature) {
+        case "functional-complexes":
+            if (nature.isKind) return "tontoKind";
+            return "tontoFunctionalComplex";
+        case "relators":
+            if (nature.isKind) return "tontoRelatorKind";
+            return "tontoRelator";
+        case "qualities":
+            if (nature.isKind) return "tontoQualityKind";
+            return "tontoQuality";
+        case "quantities":
+            if (nature.isKind) return "tontoQuantityKind";
+            return "tontoQuantity";
+        case "collectives":
+            if (nature.isKind) return "tontoCollectiveKind";
+            return "tontoCollective";
+        case "modes":
+            if (nature.isKind) return "tontoModeKind";
+            return "tontoMode";
+        case "events":
+            return "tontoEvent";
+        case "situations":
+            return "tontoSituation";
+        case "types":
+            return "tontoType";
+    }
+    return "tontoNone";
+}
+
+function getTontoNature(container: ast.ClassDeclaration): TontoNatureResult {
     switch (container.classElementType.ontologicalCategory) {
         case "kind":
             return { nature: "functional-complexes", isKind: true };
@@ -70,5 +100,10 @@ export function getTontoNature(container: ast.ClassDeclaration): TontoNatureResu
                 return { nature: specializationNature, isKind: false };;
             }
     }
-    return {nature: "none", isKind: false};
+    return { nature: "none", isKind: false };
 }
+
+export const tontoNatureUtils = {
+    getSemanticTokenFromNature,
+    getTontoNature
+};

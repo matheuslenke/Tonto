@@ -9,7 +9,6 @@ export class TontoParserErrorMessageProvider extends LangiumParserErrorMessagePr
         previous: IToken,
         ruleName: string
     }): string {
-        console.log(expected, actual);
         if (expected.name === "CAPITALIZED_ID") {
             const expectedMsg = "This Identifier needs to have its first letter capitalized.";
             return expectedMsg;

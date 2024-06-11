@@ -29,7 +29,7 @@
     },
     "devDependencies": {
         "@types/jest": "^29.2.3",
-        "@types/node": "^18.11.17",
+        "@types/node": "^18.19.33",
         "@types/node-fetch": "^2.6.1",
         "@types/vscode": "^1.63.0",
         "@typescript-eslint/eslint-plugin": "^7.1.1",
@@ -45,10 +45,10 @@
     },
     "workspaces": [
         "packages/tonto",
-        "packages/tonto-vscode",
-        "packages/tonto-package-manager"
+        "packages/extension",
+        "packages/tpm",
+        "packages/webview"
     ],
     "dependencies": {
-        "langium": "^3.0.0"
     }
 }

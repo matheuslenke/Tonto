@@ -8,11 +8,14 @@
   "references": [
     {
       "path": "../tonto"
+    },
+    {
+        "path": "../webview"
     }
   ],
   "include": [
     "src/**/*.ts"
-  ],
+, "src/webview.cts"  ],
   "exclude": [
     "/node_modules"
   ]

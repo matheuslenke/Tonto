@@ -1,5 +1,5 @@
 {
-  "name": "tonto-package-manager",
+  "name": "tpm",
   "displayName": "Tonto Package Manager",
   "version": "0.3.2",
   "description": "A package manager for Tonto dependencies",
@@ -12,7 +12,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/matheuslenke/Tonto.git",
-    "directory": "packages/tonto-package-manager"
+    "directory": "packages/tpm"
   },
   "type": "module",
   "keywords": [

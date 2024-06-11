@@ -1,6 +1,12 @@
+import ElkConstructor from "elkjs";
 import { Module, inject } from "langium";
+import { LangiumSprottyServices, LangiumSprottySharedServices, SprottyDiagramServices, SprottySharedModule } from "langium-sprotty";
 import { DefaultSharedModuleContext, LangiumServices, LangiumSharedServices, PartialLangiumServices, PartialLangiumSharedServices, createDefaultModule, createDefaultSharedModule } from "langium/lsp";
-import { TontoGeneratedModule, TontoGeneratedSharedModule } from "./index.js";
+import "reflect-metadata";
+import { DefaultElementFilter, ElkFactory, ElkLayoutEngine, IElementFilter, ILayoutConfigurator } from "sprotty-elk";
+import { TontoLayoutConfigurator } from "./diagram/layout-config.js";
+import { TontoDiagramGenerator } from "./diagram/tonto-diagram.js";
+import { TontoGeneratedModule, TontoGeneratedSharedModule } from "./generated/module.js";
 import { TontoActionProvider } from "./lsp/tonto-code-actions.js";
 import { TontoCompletionProvider } from "./lsp/tonto-completion-provider.js";
 import { TontoHoverProvider } from "./lsp/tonto-hover-provider.js";
@@ -18,24 +24,43 @@ import { TontoValidator } from "./validators/TontoValidator.js";
 export type TontoAddedServices = {
     references: {
         QualifiedNameProvider: TontoQualifiedNameProvider
-    }
+    },
     validation: {
         TontoValidator: TontoValidator
     },
+    layout: {
+        ElkFactory: ElkFactory,
+        ElementFilter: IElementFilter,
+        LayoutConfigurator: ILayoutConfigurator
+    }
 }
 
 /**
  * Union of Langium default services and your custom services - use this as constructor parameter
  * of custom service classes.
  */
-export type TontoServices = LangiumServices & TontoAddedServices
+export type TontoServices = LangiumServices & TontoAddedServices & LangiumSprottyServices
 
 /**
  * Dependency injection module that overrides Langium default services and contributes the
  * declared custom services. The Langium defaults can be partially specified to override only
  * selected services, while the custom services must be fully specified.
  */
-export const TontoModule: Module<TontoServices, PartialLangiumServices & TontoAddedServices> = {
+const ElkDefault = ElkConstructor.default;
+export const TontoModule: Module<TontoServices, PartialLangiumServices & TontoAddedServices & SprottyDiagramServices> = {
+    diagram: {
+        DiagramGenerator: services => new TontoDiagramGenerator(services),
+        ModelLayoutEngine: services => new ElkLayoutEngine(
+            services.layout.ElkFactory,
+            services.layout.ElementFilter,
+            services.layout.LayoutConfigurator
+        ),
+    },
+    layout: {
+        ElkFactory: () => () => new ElkDefault({ algorithms: ["layered"] }),
+        ElementFilter: () => new DefaultElementFilter,
+        LayoutConfigurator: () => new TontoLayoutConfigurator
+    },
     references: {
         ScopeComputation: (services: TontoServices) => new TontoScopeComputation(services),
         QualifiedNameProvider: () => new TontoQualifiedNameProvider(),
@@ -74,12 +99,22 @@ export type TontoSharedServices = LangiumSharedServices;
  * @param context Optional module context with the LSP connection
  * @returns An object wrapping the shared services and the language-specific services
  */
+
 export function createTontoServices(
     context: DefaultSharedModuleContext,
-    sharedModule?: Module<LangiumSharedServices, PartialLangiumSharedServices>
-) {
-    const shared = inject(createDefaultSharedModule(context), TontoGeneratedSharedModule, sharedModule);
-    const Tonto = inject(createDefaultModule({ shared }), TontoGeneratedModule, TontoModule);
+    sharedModule?: Module<LangiumSprottySharedServices, PartialLangiumSharedServices>
+): { shared: LangiumSprottySharedServices, Tonto: TontoServices } {
+    const shared = inject(
+        createDefaultSharedModule(context),
+        TontoGeneratedSharedModule,
+        SprottySharedModule,
+        sharedModule
+    );
+    const Tonto = inject(
+        createDefaultModule({ shared }),
+        TontoGeneratedModule,
+        TontoModule
+    );
     shared.ServiceRegistry.register(Tonto);
     return { shared, Tonto: Tonto };
 }
