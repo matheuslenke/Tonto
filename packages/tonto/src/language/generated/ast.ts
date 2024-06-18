@@ -11,9 +11,7 @@ export const TontoTerminals = {
     WS: /\s+/,
     INT: /[0-9]+/,
     STRING: /"[^"]*"|'[^']*'/,
-    CAMEL_CASE_ID: /[a-z]([a-zA-Z0-9_]*)/,
-    CAPITALIZED_ID: /[A-Z]([a-zA-Z0-9_]*)/,
-    ID: /[_a-zA-Z][\w_]*/,
+    ID: /[_a-zA-Z][\w_\-~$#@/\d]*/,
     ML_COMMENT: /\/\*[\s\S]*?\*\//,
     SL_COMMENT: /\/\/[^\n\r]*/,
 };
@@ -64,12 +62,6 @@ export function isEndurantType(item: unknown): item is EndurantType {
     return isNonSortal(item) || isUltimateSortal(item) || isSortal(item);
 }
 
-export type NAME = string;
-
-export function isNAME(item: unknown): item is NAME {
-    return (typeof item === 'string' && (/[_a-zA-Z][\w_]*/.test(item) || /"[^"]*"|'[^']*'/.test(item) || /[a-z]([a-zA-Z0-9_]*)/.test(item) || /[A-Z]([a-zA-Z0-9_]*)/.test(item)));
-}
-
 export type NonEndurantType = 'event' | 'process' | 'situation';
 
 export function isNonEndurantType(item: unknown): item is NonEndurantType {
@@ -97,7 +89,7 @@ export function isQualifiedName(item: unknown): item is QualifiedName {
 export type RelationStereotype = 'aggregation' | 'bringsAbout' | 'characterization' | 'comparative' | 'componentOf' | 'composition' | 'constitution' | 'creation' | 'derivation' | 'externalDependence' | 'formal' | 'historicalDependence' | 'inherence' | 'instantiation' | 'manifestation' | 'material' | 'mediation' | 'memberOf' | 'participation' | 'participational' | 'subCollectionOf' | 'subQuantityOf' | 'termination' | 'triggers' | 'value' | string;
 
 export function isRelationStereotype(item: unknown): item is RelationStereotype {
-    return item === 'material' || item === 'derivation' || item === 'comparative' || item === 'mediation' || item === 'characterization' || item === 'externalDependence' || item === 'componentOf' || item === 'memberOf' || item === 'subCollectionOf' || item === 'subQuantityOf' || item === 'instantiation' || item === 'termination' || item === 'participational' || item === 'participation' || item === 'historicalDependence' || item === 'creation' || item === 'manifestation' || item === 'bringsAbout' || item === 'triggers' || item === 'composition' || item === 'aggregation' || item === 'inherence' || item === 'value' || item === 'formal' || item === 'manifestation' || item === 'constitution' || (typeof item === 'string' && (/[_a-zA-Z][\w_]*/.test(item) || /"[^"]*"|'[^']*'/.test(item)));
+    return item === 'material' || item === 'derivation' || item === 'comparative' || item === 'mediation' || item === 'characterization' || item === 'externalDependence' || item === 'componentOf' || item === 'memberOf' || item === 'subCollectionOf' || item === 'subQuantityOf' || item === 'instantiation' || item === 'termination' || item === 'participational' || item === 'participation' || item === 'historicalDependence' || item === 'creation' || item === 'manifestation' || item === 'bringsAbout' || item === 'triggers' || item === 'composition' || item === 'aggregation' || item === 'inherence' || item === 'value' || item === 'formal' || item === 'manifestation' || item === 'constitution' || (typeof item === 'string' && (/[_a-zA-Z][\w_\-~$#@/\d]*/.test(item) || /"[^"]*"|'[^']*'/.test(item)));
 }
 
 export type Sortal = 'historicalRole' | 'phase' | 'role' | 'subkind';

@@ -1,5 +1,0 @@
-package TontoNatures
-
-category SocialEntity of functional-complexes
-
-kind Hospital specializes SocialEntity

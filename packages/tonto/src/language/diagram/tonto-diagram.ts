@@ -35,7 +35,7 @@ export class TontoDiagramGenerator extends LangiumDiagramGenerator {
 
         const classDeclarations = tontoUtils.getClassDeclarations()
             .flatMap(d => generateNode(d, args) ?? []);
-        const externalRelations = tontoUtils.getRelations()
+        const externalRelations = tontoUtils.getRelations(this.showExternalDiagrams)
             .map(d => generateEdge(d, args));
         const specializationEdges: SEdge[] = tontoUtils.getSpecializations(this.showExternalDiagrams)
             .map(spec => {
@@ -43,6 +43,7 @@ export class TontoDiagramGenerator extends LangiumDiagramGenerator {
             });
         // // const referencedPackages = this.showExternalDiagrams ?
         //     this.generateExternalPackages(args, tontoUtils.getReferencedClasses()) : [];
+        const dataTypes = tontoUtils.getDatatypes().flatMap(d => generateNode(d, args) ?? []);
 
         const packageId = args.idCache.uniqueId(model.name + "_package");
 
@@ -81,6 +82,7 @@ export class TontoDiagramGenerator extends LangiumDiagramGenerator {
                 ...classDeclarations,
                 ...externalRelations,
                 ...specializationEdges,
+                ...dataTypes
                 // ],
                 // },
             ]

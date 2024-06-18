@@ -1,10 +1,9 @@
 import PersonAndOrganizationDatatypes
-import Persons
+import Person
 package University
 
-category Organization
+category Organization of functional-complexes
 kind University specializes Organization {
-  address: Address
   @componentOf [1] <o>-- has -- [2..*] Department
 }
 
@@ -19,10 +18,10 @@ collective Staff {
 
 collective SeniorStaff {
   @subCollectionOf [1] --<o> [1] Staff
-  @memberOf [1..*] <>-- professors -- [2..*] Professor ({subsets members})
+  @memberOf [1..*] <>-- professors -- [2..*] ({subsets Staff.members}) Professor 
 }
 
-relator PhDEnrollment {
-  @mediation [*] -- [1] University
-  @mediation [1..*] -- [1] Persons.PhDCandidate
+relator EmploymentContract {
+  @mediation [*] -- [1] Employee
+  @mediation [1..*] -- [1] Person.Employer
 }

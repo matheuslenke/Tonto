@@ -1,4 +1,5 @@
-import { ClassDeclaration, ContextModule, DataTypeOrClassOrRelation, ElementRelation, Model } from "../generated/ast.js";
+import { AstUtils } from "langium";
+import { ClassDeclaration, ContextModule, DataType, DataTypeOrClassOrRelation, ElementRelation, Model, isClassDeclaration, isContextModule, isDataType, isElementRelation } from "../generated/ast.js";
 
 export type Specialization = {
     from: ClassDeclaration;
@@ -15,29 +16,29 @@ export class TontoDiagramUtils {
 
     public getClassDeclarations(): ClassDeclaration[] {
         return this.model.declarations
-            .filter(item => item.$type === "ClassDeclaration")
-            .map(d => d as ClassDeclaration);
+            .filter(isClassDeclaration);
     }
 
-    getRelations(): ElementRelation[] {
+    public getDatatypes(): DataType[] {
+        return this.model.declarations
+            .filter(isDataType);
+    }
+
+    getRelations(withExternal: boolean): ElementRelation[] {
         const internalRelations = this.model.declarations
-            .filter(item => item.$type === "ClassDeclaration")
-            .map(d => d as ClassDeclaration)
+            .filter(isClassDeclaration)
             .flatMap(d => d.references)
-            .filter(item => item.$type === "ElementRelation")
-            .map(d => d as ElementRelation)
+            .filter(isElementRelation)
             .filter(d => d.secondEnd.ref?.$container.name === this.model.name);
         const externalRelations = this.model.declarations
-            .filter(item => item.$type === "ElementRelation")
-            .map(d => d as ElementRelation)
+            .filter(isElementRelation)
             .filter(d => d.firstEnd?.ref?.$container.name === this.model.name
                 && d.secondEnd.ref?.$container.name === this.model.name);
         return [...internalRelations, ...externalRelations];
     }
 
     getSpecializations(withExternal: boolean): Specialization[] {
-        return this.model.declarations.filter(item => item.$type === "ClassDeclaration")
-            .map(d => d as ClassDeclaration)
+        return this.model.declarations.filter(isClassDeclaration)
             .flatMap(classD => {
                 let specializations = classD.specializationEndurants
                     .flatMap(s => s.ref ?? []);
@@ -80,12 +81,19 @@ export class TontoDiagramUtils {
                 });
             });
         // Find references from relations
-        this.getRelations()
+        this.getRelations(true)
             .forEach(relation => {
                 this.addReferencedClasses(relation, referencedModels);
             });
 
         return referencedModels;
+    }
+
+    private getSourcePackageNames(element: ElementRelation): string[] {
+        const firstPack = AstUtils.getContainerOfType(element.firstEnd?.ref, isContextModule);
+        const secondPack = AstUtils.getContainerOfType(element.secondEnd.ref, isContextModule);
+
+        return [firstPack?.name, secondPack?.name].filter(p => p !== undefined) as string[];
     }
 
     protected addReferencedClasses(
