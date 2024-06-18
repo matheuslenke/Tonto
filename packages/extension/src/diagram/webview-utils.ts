@@ -17,7 +17,7 @@
 import * as path from "path";
 import { SprottyDiagramIdentifier } from "sprotty-vscode-protocol";
 import * as vscode from "vscode";
-import type { WebviewContainer } from "./webview-endpoint";
+
 
 export function serializeUri(uri: vscode.Uri): string {
     let uriString = uri.toString();
@@ -41,11 +41,11 @@ export function createWebviewPanel(identifier: SprottyDiagramIdentifier,
             enableScripts: true,
             retainContextWhenHidden: true
         });
-    diagramPanel.webview.html = createWebviewHtml(identifier, diagramPanel, {
-        scriptUri: options.scriptUri,
-        cssUri: options.cssUri,
-        title,
-    });
+    // diagramPanel.webview.html = createWebviewHtml(identifier, diagramPanel, {
+    //     scriptUri: options.scriptUri,
+    //     cssUri: options.cssUri,
+    //     title,
+    // });
     return diagramPanel;
 }
 
@@ -60,24 +60,24 @@ export function createWebviewTitle(identifier: SprottyDiagramIdentifier): string
     }
 }
 
-export function createWebviewHtml(identifier: SprottyDiagramIdentifier, container: WebviewContainer,
-    options: { scriptUri: vscode.Uri, cssUri?: vscode.Uri, title?: string; }): string {
-    const transformUri = (uri: vscode.Uri) => container.webview.asWebviewUri(uri).toString();
-    return `<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, height=device-height">
-        ${options.title ? `<title>${options.title}</title>` : ""}
-        ${options.cssUri ? `<link rel="stylesheet" type="text/css" href="${transformUri(options.cssUri)}" />` : ""}
-        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src ${container.webview.cspSource}; style-src 'unsafe-inline' ${container.webview.cspSource};">
-    </head>
-    <body>
-        <div id="${identifier.clientId}_container" style="height: 100%;"></div>
-        <script src="${transformUri(options.scriptUri)}"></script>
-    </body>
-</html>`;
-}
+// export function createWebviewHtml(identifier: SprottyDiagramIdentifier, container: WebviewContainer,
+//     options: { scriptUri: vscode.Uri, cssUri?: vscode.Uri, title?: string; }): string {
+//     const transformUri = (uri: vscode.Uri) => container.webview.asWebviewUri(uri).toString();
+//     return `<!DOCTYPE html>
+// <html lang="en">
+//     <head>
+//         <meta charset="UTF-8">
+//         <meta name="viewport" content="width=device-width, height=device-height">
+//         ${options.title ? `<title>${options.title}</title>` : ""}
+//         ${options.cssUri ? `<link rel="stylesheet" type="text/css" href="${transformUri(options.cssUri)}" />` : ""}
+//         <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src ${container.webview.cspSource}; style-src 'unsafe-inline' ${container.webview.cspSource};">
+//     </head>
+//     <body>
+//         <div id="${identifier.clientId}_container" style="height: 100%;"></div>
+//         <script src="${transformUri(options.scriptUri)}"></script>
+//     </body>
+// </html>`;
+// }
 
 export function createFileUri(...segments: string[]): vscode.Uri {
     return vscode.Uri.file(path.join(...segments));

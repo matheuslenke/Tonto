@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
+    "target": "ES2020",
     "module": "Node16",
     "lib": ["ESNext", "DOM", "WebWorker"] /* Specify library files to be included in the compilation. */,
     "allowJs": true /* Allow javascript files to be compiled. */,
@@ -55,6 +55,6 @@
     /* Advanced Options */
     "skipLibCheck": true /* Skip type checking of declaration files. */,
     "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */
-  },
-  "exclude": ["lib", "out", "node_modules"]
+    },
+    "exclude": ["lib", "out", "node_modules"]
 }

@@ -5,7 +5,8 @@ import SwO
 package RDBSO
 
 kind Language {
-    [1..*] -- describes -- [0..*] Artifact 
+    // [1..*] -- describes -- [0..*] Artifact
+    teste: number
 }
 
 kind Data_File specializes Software_Item 

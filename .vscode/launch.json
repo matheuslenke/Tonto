@@ -11,7 +11,7 @@
             "sourceMaps": true,
             "request": "launch",
             "args": [
-                "${workspaceFolder}/examples/newGeneration",
+                "${workspaceFolder}/examples/diagram",
                 "--extensionDevelopmentPath=${workspaceFolder}/packages/extension"
             ],
             "outFiles": [

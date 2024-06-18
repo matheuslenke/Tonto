@@ -6,11 +6,11 @@ export function generalizationSetGenerator(
     classes: Class[],
     model: Package
 ): GeneralizationSet | undefined {
-    const generalItem = classes.find((item) => item.name.getText() === enumData.generalItem?.ref?.name);
+    const generalItem = classes.find((item) => item.name.getText() === enumData.generalItem?.ref?.id);
 
     const specifics: Class[] = enumData.specificItems
         .map((specificElement) => {
-            const specificItem = classes.find((item) => item.name.getText() === specificElement.ref?.name);
+            const specificItem = classes.find((item) => item.name.getText() === specificElement.ref?.id);
             if (specificItem) {
                 return specificItem;
             }
@@ -24,7 +24,7 @@ export function generalizationSetGenerator(
             specifics,
             enumData.disjoint,
             enumData.complete,
-            enumData.name
+            enumData.id
         );
     }
     return undefined;

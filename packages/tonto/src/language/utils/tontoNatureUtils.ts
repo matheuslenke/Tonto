@@ -70,7 +70,7 @@ function getTontoNature(container: ast.ClassDeclaration): TontoNatureResult {
             if (container.specializationEndurants.length > 0) {
                 let specializationNature: TontoNatures = "abstract-individuals";
                 container.specializationEndurants.forEach(item => {
-                    if (item.ref && item.ref.name !== container.name) {
+                    if (item.ref && item.ref.id !== container.id) {
                         specializationNature = getTontoNature(item.ref).nature;
                     }
                 });
@@ -93,7 +93,7 @@ function getTontoNature(container: ast.ClassDeclaration): TontoNatureResult {
             } else if (container.specializationEndurants.length > 0) {
                 let specializationNature: TontoNatures = "abstract-individuals";
                 container.specializationEndurants.forEach(item => {
-                    if (item.ref && item.ref.name !== container.name) {
+                    if (item.ref && item.ref.id !== container.id) {
                         specializationNature = getTontoNature(item.ref).nature;
                     }
                 });

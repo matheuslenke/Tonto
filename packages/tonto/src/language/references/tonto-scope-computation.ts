@@ -1,17 +1,22 @@
 
 import { AstNode, AstNodeDescription, AstUtils, DefaultScopeComputation, interruptAndCheck, LangiumDocument, MultiMap, PrecomputedScopes } from "langium";
 import { CancellationToken } from "vscode-jsonrpc";
+import { getPackageName } from "../../utils/ast-util.js";
 import {
-    ContextModule,
     isClassDeclaration,
-    isContextModule,
     isDataType,
     isElementRelation,
     isGeneralizationSet,
+    isModel,
+    isPackageDeclaration,
     Model,
+    PackageDeclaration
 } from "../generated/ast.js";
 import { TontoServices } from "../tonto-module.js";
+import { GlobalAstNodeDescription, PackageLocalAstNodeDescription } from "./tonto-ast-node-description.js";
 import { TontoQualifiedNameProvider } from "./tonto-name-provider.js";
+
+
 
 export class TontoScopeComputation extends DefaultScopeComputation {
     qualifiedNameProvider: TontoQualifiedNameProvider;
@@ -21,55 +26,28 @@ export class TontoScopeComputation extends DefaultScopeComputation {
         this.qualifiedNameProvider = services.references.QualifiedNameProvider;
     }
 
-    /**
-   * Computes all scopes for the given document in order to export it globally. In Tonto,
-   * this is done only for ContextModules that are global
-   * @param document
-   * @param cancelToken
-   * @returns An array of AstNodeDescriptions
-   */
-    override async computeExports(
-        document: LangiumDocument,
-        cancelToken = CancellationToken.None
-    ): Promise<AstNodeDescription[]> {
-        const descr: AstNodeDescription[] = [];
-        for (const childNode of AstUtils.streamAllContents(document.parseResult.value)) {
-            await interruptAndCheck(cancelToken);
-
-            /**
-             * Export element Relations with their qualified name if they are in a
-             * ContextModule and the ContextModule is global.
-             */
-            if (isElementRelation(childNode)) {
-                const contextModule = this.getContextModuleFromContainer(childNode);
-                let name: string | undefined;
-
-                if (isClassDeclaration(childNode.$container) || isElementRelation(childNode.$container)) {
-                    name = this.qualifiedNameProvider.getName(childNode);
-                } else {
-                    name = childNode.name;
-                }
-                if (name && contextModule.isGlobal) descr.push(this.descriptions.createDescription(childNode, name, document));
-            }
-
-            if (
-                isClassDeclaration(childNode) ||
-                isDataType(childNode) ||
-                isContextModule(childNode) ||
-                isGeneralizationSet(childNode)
-            ) {
-                if (isContextModule(childNode.$container) && childNode.$container.isGlobal) {
-                    descr.push(this.descriptions.createDescription(childNode, childNode.name, document));
-                } else if (isContextModule(childNode) && !childNode.isGlobal) {
-                    if (childNode.name !== undefined) {
-                        const fullyQualifiedName = this.qualifiedNameProvider.getName(childNode);
-
-                        descr.push(this.descriptions.createDescription(childNode, fullyQualifiedName, document));
-                    }
-                }
+    protected override exportNode(
+        node: AstNode,
+        exports: AstNodeDescription[],
+        document: LangiumDocument<AstNode>): void {
+        const packageName = getPackageName(document);
+        let description: AstNodeDescription | undefined;
+        const localId = this.qualifiedNameProvider.getLocalId(node);
+        console.log(`${packageName}:${localId}`);
+        if (localId) {
+            description = this.descriptions.createDescription(node, localId, document);
+            if (packageName) {
+                exports.push(new PackageLocalAstNodeDescription(packageName, localId, description));
             }
         }
-        return descr;
+
+        const globalId = this.qualifiedNameProvider.getGlobalId(node);
+        if (globalId && description) {
+            description = this.descriptions.createDescription(node, globalId, document);
+            if (packageName) {
+                exports.push(new GlobalAstNodeDescription(packageName, globalId, description));
+            }
+        }
     }
 
     /**
@@ -85,18 +63,25 @@ export class TontoScopeComputation extends DefaultScopeComputation {
         const model = document.parseResult.value as Model;
         const scopes = new MultiMap<AstNode, AstNodeDescription>();
 
-        for (const importItem of model.imports) {
-            const contextModule = importItem.referencedModel?.ref;
-            if (contextModule) {
-                await this.processContainer(contextModule, scopes, document, cancelToken);
-            }
+        // for (const importItem of model.imports) {
+        //     const PackageDeclaration = importItem.referencedModel?.ref;
+        //     if (PackageDeclaration) {
+        //         await this.processContainer(PackageDeclaration, scopes, document, cancelToken);
+        //     }
+        // }
+
+        /**
+         * Diagrams does not have scope?
+         */
+        if (!model.module) {
+            return scopes;
         }
         await this.processContainer(model.module, scopes, document, cancelToken);
 
         const otherAstNodeDescriptions: AstNodeDescription[] = [];
         scopes.forEach((scope, key) => {
-            if (isContextModule(key)) {
-                if (key.name !== model.module.name) {
+            if (isPackageDeclaration(key)) {
+                if (model.module && key.id !== model.module.id) {
                     otherAstNodeDescriptions.push(scope);
                 }
             }
@@ -108,7 +93,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
     }
 
     private async processContainer(
-        container: ContextModule,
+        container: PackageDeclaration,
         scopes: PrecomputedScopes,
         document: LangiumDocument,
         cancelToken: CancellationToken
@@ -126,8 +111,8 @@ export class TontoScopeComputation extends DefaultScopeComputation {
                     localDescriptions.push(descriptionQualified);
                 }
             }
-            if (isClassDeclaration(element) || isDataType(element)) {
-                if (element.name !== undefined) {
+            if (isClassDeclaration(element) || isDataType(element) || isGeneralizationSet(element)) {
+                if (element.id !== undefined) {
                     const qualifiedName = this.qualifiedNameProvider.getQualifiedName(element);
                     const name = this.qualifiedNameProvider.getName(element);
                     const description = this.descriptions.createDescription(element, name, document);
@@ -152,15 +137,34 @@ export class TontoScopeComputation extends DefaultScopeComputation {
         return localDescriptions;
     }
 
-    private getContextModuleFromContainer(element: AstNode): ContextModule {
-        let contextModule: AstNode;
-        contextModule = element;
-        while (contextModule.$type !== "ContextModule") {
-            if (contextModule.$container === undefined) {
+    /**
+     * With this method, we aim to export every package defined as Global. That way, it can be used anywhere in any other 
+     * package without needing to be imported.
+     * @param document The Langium Document to be analyzed
+     * @param cancelToken 
+     */
+    override async computeExports(document: LangiumDocument<AstNode>, cancelToken: CancellationToken = CancellationToken.None): Promise<AstNodeDescription[]> {
+        const exports: AstNodeDescription[] = [];
+        const rootNode = document.parseResult.value;
+        if (isModel(rootNode) && rootNode.module && rootNode.module.isGlobal) {
+            for (const node of AstUtils.streamContents(rootNode.module)) {
+                await interruptAndCheck(cancelToken);
+                this.exportNode(node, exports, document);
+            }
+        }
+        const otherExports = await super.computeExports(document, cancelToken);
+        return [...exports, ...otherExports];
+    }
+
+    private getPackageDeclarationFromContainer(element: AstNode): PackageDeclaration {
+        let PackageDeclaration: AstNode;
+        PackageDeclaration = element;
+        while (PackageDeclaration.$type !== "PackageDeclaration") {
+            if (PackageDeclaration.$container === undefined) {
                 break;
             }
-            contextModule = contextModule.$container;
+            PackageDeclaration = PackageDeclaration.$container;
         }
-        return contextModule as ContextModule;
+        return PackageDeclaration as PackageDeclaration;
     }
 }

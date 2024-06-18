@@ -19,6 +19,12 @@
         "src",
         "css"
     ],
+    "exports": {
+        ".": {
+            "types": "./out/main.d.ts",
+            "import": "./out/webview.js"
+        }
+    },
     "main": "out/webview.js",
     "dependencies": {
         "reflect-metadata": "^0.1.14",

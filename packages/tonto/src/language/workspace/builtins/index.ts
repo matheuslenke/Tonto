@@ -3,9 +3,10 @@ import { basicDataTypes } from "./basicDataTypes.js";
 
 const builtInLibs: BuiltInLib[] = [
     {
+        name: "Tonto.BasicDataTypes",
         uri: "builtin://basicDataTypes.tonto",
         content: basicDataTypes,
     },
 ];
 
-export { builtInLibs, basicDataTypes };
+export { basicDataTypes, builtInLibs };

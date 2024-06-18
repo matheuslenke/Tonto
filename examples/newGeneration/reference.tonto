@@ -1,0 +1,10 @@
+import RDBSO
+package Reference
+
+kind B specializes RDBSO.Relational_Schema {
+    [1] -- [2] RDBSO.RDBMS_Item specializes Derived_Table.obtained_by
+}
+
+genset Genset {
+
+}

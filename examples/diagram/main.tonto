@@ -1,0 +1,14 @@
+package Main
+
+datatype MeuDatatype
+kind A
+
+kind Teste {
+    named: boolean
+    [1] -- [1] 
+}
+
+genset Teste2 {
+    general Teste
+    specifics Teste
+}

@@ -1,5 +1,5 @@
 import { Class, Generalization, GeneralizationSet, MultilingualText, Package, Project, Relation } from "ontouml-js";
-import { contextModuleGenerator } from "../cli/generators/contextModule.generator.js";
+import { PackageDeclarationGenerator } from "../cli/generators/packageDeclaration.generator.js";
 import { Model } from "../language/index.js";
 
 
@@ -57,10 +57,12 @@ function parseProject(ctx: GeneratorContext): Project {
         name: new MultilingualText("root"),
     });
 
-    const contextModule = ctx.model.module;
+    const packageDeclaration = ctx.model.module;
+    if (packageDeclaration) {
+        const createdPackage = rootModel.createPackage(packageDeclaration.id);
+        // Generate a PackageDeclaration
+        PackageDeclarationGenerator(packageDeclaration, createdPackage);
+    }
 
-    const createdPackage = rootModel.createPackage(contextModule.name);
-    // Generate a contextModule
-    contextModuleGenerator(contextModule, createdPackage);
     return project;
 }

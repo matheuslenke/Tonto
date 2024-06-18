@@ -10,9 +10,9 @@ export function attributeGenerator(
     classElement.attributes.forEach((attribute: Attribute) => {
         let createdAttribute: Property | undefined;
         if (attribute.attributeTypeRef) {
-            const customType = dataTypes.find((item) => item.name.getText() === attribute.attributeTypeRef.ref?.name);
+            const customType = dataTypes.find((item) => item.name.getText() === attribute.attributeTypeRef.ref?.id);
             if (customType) {
-                createdAttribute = createdClass.createAttribute(customType, attribute.name);
+                createdAttribute = createdClass.createAttribute(customType, attribute.id);
             }
         }
         if (createdAttribute) {

@@ -11,8 +11,6 @@ export const TontoTerminals = {
     WS: /\s+/,
     INT: /[0-9]+/,
     STRING: /"[^"]*"|'[^']*'/,
-    CAMEL_CASE_ID: /[a-z]([a-zA-Z0-9_]*)/,
-    CAPITALIZED_ID: /[A-Z]([a-zA-Z0-9_]*)/,
     ID: /[_a-zA-Z][\w_]*/,
     ML_COMMENT: /\/\*[\s\S]*?\*\//,
     SL_COMMENT: /\/\/[^\n\r]*/,
@@ -64,12 +62,6 @@ export function isEndurantType(item: unknown): item is EndurantType {
     return isNonSortal(item) || isUltimateSortal(item) || isSortal(item);
 }
 
-export type NAME = string;
-
-export function isNAME(item: unknown): item is NAME {
-    return (typeof item === 'string' && (/[_a-zA-Z][\w_]*/.test(item) || /"[^"]*"|'[^']*'/.test(item) || /[a-z]([a-zA-Z0-9_]*)/.test(item) || /[A-Z]([a-zA-Z0-9_]*)/.test(item)));
-}
-
 export type NonEndurantType = 'event' | 'process' | 'situation';
 
 export function isNonEndurantType(item: unknown): item is NonEndurantType {
@@ -97,7 +89,7 @@ export function isQualifiedName(item: unknown): item is QualifiedName {
 export type RelationStereotype = 'aggregation' | 'bringsAbout' | 'characterization' | 'comparative' | 'componentOf' | 'composition' | 'constitution' | 'creation' | 'derivation' | 'externalDependence' | 'formal' | 'historicalDependence' | 'inherence' | 'instantiation' | 'manifestation' | 'material' | 'mediation' | 'memberOf' | 'participation' | 'participational' | 'subCollectionOf' | 'subQuantityOf' | 'termination' | 'triggers' | 'value' | string;
 
 export function isRelationStereotype(item: unknown): item is RelationStereotype {
-    return item === 'material' || item === 'derivation' || item === 'comparative' || item === 'mediation' || item === 'characterization' || item === 'externalDependence' || item === 'componentOf' || item === 'memberOf' || item === 'subCollectionOf' || item === 'subQuantityOf' || item === 'instantiation' || item === 'termination' || item === 'participational' || item === 'participation' || item === 'historicalDependence' || item === 'creation' || item === 'manifestation' || item === 'bringsAbout' || item === 'triggers' || item === 'composition' || item === 'aggregation' || item === 'inherence' || item === 'value' || item === 'formal' || item === 'manifestation' || item === 'constitution' || (typeof item === 'string' && (/[_a-zA-Z][\w_]*/.test(item) || /"[^"]*"|'[^']*'/.test(item)));
+    return item === 'material' || item === 'derivation' || item === 'comparative' || item === 'mediation' || item === 'characterization' || item === 'externalDependence' || item === 'componentOf' || item === 'memberOf' || item === 'subCollectionOf' || item === 'subQuantityOf' || item === 'instantiation' || item === 'termination' || item === 'participational' || item === 'participation' || item === 'historicalDependence' || item === 'creation' || item === 'manifestation' || item === 'bringsAbout' || item === 'triggers' || item === 'composition' || item === 'aggregation' || item === 'inherence' || item === 'value' || item === 'formal' || item === 'manifestation' || item === 'constitution' || (typeof item === 'string' && (/"[^"]*"|'[^']*'/.test(item)));
 }
 
 export type Sortal = 'historicalRole' | 'phase' | 'role' | 'subkind';
@@ -123,10 +115,10 @@ export interface Attribute extends AstNode {
     readonly $type: 'Attribute';
     attributeTypeRef: Reference<DataType>;
     cardinality?: Cardinality;
+    id: string;
     isConst: boolean;
     isDerived: boolean;
     isOrdered: boolean;
-    name: QualifiedName;
 }
 
 export const Attribute = 'Attribute';
@@ -149,12 +141,12 @@ export function isCardinality(item: unknown): item is Cardinality {
 }
 
 export interface ClassDeclaration extends AstNode {
-    readonly $container: ContextModule;
+    readonly $container: PackageDeclaration;
     readonly $type: 'ClassDeclaration';
     attributes: Array<Attribute>;
     classElementType: OntologicalCategory;
+    id: string;
     instanceOf?: Reference<ClassDeclaration>;
-    name: string;
     ontologicalNatures?: ElementOntologicalNature;
     references: Array<ElementRelation>;
     specializationEndurants: Array<Reference<ClassDeclaration>>;
@@ -166,27 +158,13 @@ export function isClassDeclaration(item: unknown): item is ClassDeclaration {
     return reflection.isInstance(item, ClassDeclaration);
 }
 
-export interface ContextModule extends AstNode {
-    readonly $container: Model;
-    readonly $type: 'ContextModule';
-    declarations: Array<Declaration>;
-    isGlobal: boolean;
-    name: QualifiedName;
-}
-
-export const ContextModule = 'ContextModule';
-
-export function isContextModule(item: unknown): item is ContextModule {
-    return reflection.isInstance(item, ContextModule);
-}
-
 export interface DataType extends AstNode {
-    readonly $container: ContextModule;
+    readonly $container: PackageDeclaration;
     readonly $type: 'DataType';
     attributes: Array<Attribute>;
     elements: Array<EnumElement>;
+    id: QualifiedName;
     isEnum: boolean;
-    name: QualifiedName;
     ontologicalCategory?: 'datatype';
     ontologicalNature?: ElementOntologicalNature;
     specializationEndurants: Array<Reference<DataTypeOrClass>>;
@@ -211,19 +189,19 @@ export function isElementOntologicalNature(item: unknown): item is ElementOntolo
 }
 
 export interface ElementRelation extends AstNode {
-    readonly $container: ClassDeclaration | ContextModule;
+    readonly $container: ClassDeclaration | PackageDeclaration;
     readonly $type: 'ElementRelation';
     firstCardinality?: Cardinality;
     firstEnd?: Reference<DataTypeOrClassOrRelation>;
     firstEndMetaAttributes?: RelationMetaAttributes;
     hasInverse?: 'inverseOf';
+    id?: string;
     inverseEnd?: Reference<ElementRelation>;
     isAggregation: boolean;
     isAggregationInverted: boolean;
     isAssociation: boolean;
     isComposition: boolean;
     isCompositionInverted: boolean;
-    name?: string;
     relationType?: RelationStereotype;
     secondCardinality?: Cardinality;
     secondEnd: Reference<DataTypeOrClassOrRelation>;
@@ -240,7 +218,7 @@ export function isElementRelation(item: unknown): item is ElementRelation {
 export interface EnumElement extends AstNode {
     readonly $container: DataType;
     readonly $type: 'EnumElement';
-    name: string;
+    id: string;
 }
 
 export const EnumElement = 'EnumElement';
@@ -250,13 +228,13 @@ export function isEnumElement(item: unknown): item is EnumElement {
 }
 
 export interface GeneralizationSet extends AstNode {
-    readonly $container: ContextModule;
+    readonly $container: PackageDeclaration;
     readonly $type: 'GeneralizationSet';
     categorizerItems: Array<Reference<ClassDeclarationOrRelation>>;
     complete: boolean;
     disjoint: boolean;
     generalItem: Reference<ClassDeclarationOrRelation>;
-    name: string;
+    id: string;
     specificItems: Array<Reference<ClassDeclarationOrRelation>>;
 }
 
@@ -269,8 +247,7 @@ export function isGeneralizationSet(item: unknown): item is GeneralizationSet {
 export interface Import extends AstNode {
     readonly $container: Model;
     readonly $type: 'Import';
-    packageAlias?: string;
-    referencedModel: Reference<ContextModule>;
+    referencedModel: Reference<PackageDeclaration>;
 }
 
 export const Import = 'Import';
@@ -281,14 +258,32 @@ export function isImport(item: unknown): item is Import {
 
 export interface Model extends AstNode {
     readonly $type: 'Model';
+    diagram?: TontoDiagramView;
     imports: Array<Import>;
-    module: ContextModule;
+    module?: PackageDeclaration;
 }
 
 export const Model = 'Model';
 
 export function isModel(item: unknown): item is Model {
     return reflection.isInstance(item, Model);
+}
+
+export interface NodeView extends AstNode {
+    readonly $container: TontoDiagramView;
+    readonly $type: 'NodeView';
+    entity: Reference<ClassDeclaration>;
+    height: number;
+    id: string;
+    width: number;
+    x: number;
+    y: number;
+}
+
+export const NodeView = 'NodeView';
+
+export function isNodeView(item: unknown): item is NodeView {
+    return reflection.isInstance(item, NodeView);
 }
 
 export interface OntologicalCategory extends AstNode {
@@ -301,6 +296,20 @@ export const OntologicalCategory = 'OntologicalCategory';
 
 export function isOntologicalCategory(item: unknown): item is OntologicalCategory {
     return reflection.isInstance(item, OntologicalCategory);
+}
+
+export interface PackageDeclaration extends AstNode {
+    readonly $container: Model;
+    readonly $type: 'PackageDeclaration';
+    declarations: Array<Declaration>;
+    id: QualifiedName;
+    isGlobal: boolean;
+}
+
+export const PackageDeclaration = 'PackageDeclaration';
+
+export function isPackageDeclaration(item: unknown): item is PackageDeclaration {
+    return reflection.isInstance(item, PackageDeclaration);
 }
 
 export interface RelationMetaAttribute extends AstNode {
@@ -332,13 +341,27 @@ export function isRelationMetaAttributes(item: unknown): item is RelationMetaAtt
     return reflection.isInstance(item, RelationMetaAttributes);
 }
 
+export interface TontoDiagramView extends AstNode {
+    readonly $container: Model;
+    readonly $type: 'TontoDiagramView';
+    description?: string;
+    id: string;
+    name?: string;
+    nodes: Array<NodeView>;
+}
+
+export const TontoDiagramView = 'TontoDiagramView';
+
+export function isTontoDiagramView(item: unknown): item is TontoDiagramView {
+    return reflection.isInstance(item, TontoDiagramView);
+}
+
 export type TontoAstType = {
     Attribute: Attribute
     AuxiliaryDeclaration: AuxiliaryDeclaration
     Cardinality: Cardinality
     ClassDeclaration: ClassDeclaration
     ClassDeclarationOrRelation: ClassDeclarationOrRelation
-    ContextModule: ContextModule
     DataType: DataType
     DataTypeOrClass: DataTypeOrClass
     DataTypeOrClassOrRelation: DataTypeOrClassOrRelation
@@ -349,15 +372,18 @@ export type TontoAstType = {
     GeneralizationSet: GeneralizationSet
     Import: Import
     Model: Model
+    NodeView: NodeView
     OntologicalCategory: OntologicalCategory
+    PackageDeclaration: PackageDeclaration
     RelationMetaAttribute: RelationMetaAttribute
     RelationMetaAttributes: RelationMetaAttributes
+    TontoDiagramView: TontoDiagramView
 }
 
 export class TontoAstReflection extends AbstractAstReflection {
 
     getAllTypes(): string[] {
-        return ['Attribute', 'AuxiliaryDeclaration', 'Cardinality', 'ClassDeclaration', 'ClassDeclarationOrRelation', 'ContextModule', 'DataType', 'DataTypeOrClass', 'DataTypeOrClassOrRelation', 'Declaration', 'ElementOntologicalNature', 'ElementRelation', 'EnumElement', 'GeneralizationSet', 'Import', 'Model', 'OntologicalCategory', 'RelationMetaAttribute', 'RelationMetaAttributes'];
+        return ['Attribute', 'AuxiliaryDeclaration', 'Cardinality', 'ClassDeclaration', 'ClassDeclarationOrRelation', 'DataType', 'DataTypeOrClass', 'DataTypeOrClassOrRelation', 'Declaration', 'ElementOntologicalNature', 'ElementRelation', 'EnumElement', 'GeneralizationSet', 'Import', 'Model', 'NodeView', 'OntologicalCategory', 'PackageDeclaration', 'RelationMetaAttribute', 'RelationMetaAttributes', 'TontoDiagramView'];
     }
 
     protected override computeIsSubtype(subtype: string, supertype: string): boolean {
@@ -390,7 +416,8 @@ export class TontoAstReflection extends AbstractAstReflection {
                 return DataType;
             }
             case 'ClassDeclaration:instanceOf':
-            case 'ClassDeclaration:specializationEndurants': {
+            case 'ClassDeclaration:specializationEndurants':
+            case 'NodeView:entity': {
                 return ClassDeclaration;
             }
             case 'DataType:specializationEndurants': {
@@ -412,7 +439,7 @@ export class TontoAstReflection extends AbstractAstReflection {
                 return ClassDeclarationOrRelation;
             }
             case 'Import:referencedModel': {
-                return ContextModule;
+                return PackageDeclaration;
             }
             default: {
                 throw new Error(`${referenceId} is not a valid reference id.`);
@@ -428,10 +455,10 @@ export class TontoAstReflection extends AbstractAstReflection {
                     properties: [
                         { name: 'attributeTypeRef' },
                         { name: 'cardinality' },
+                        { name: 'id' },
                         { name: 'isConst', defaultValue: false },
                         { name: 'isDerived', defaultValue: false },
-                        { name: 'isOrdered', defaultValue: false },
-                        { name: 'name' }
+                        { name: 'isOrdered', defaultValue: false }
                     ]
                 };
             }
@@ -450,21 +477,11 @@ export class TontoAstReflection extends AbstractAstReflection {
                     properties: [
                         { name: 'attributes', defaultValue: [] },
                         { name: 'classElementType' },
+                        { name: 'id' },
                         { name: 'instanceOf' },
-                        { name: 'name' },
                         { name: 'ontologicalNatures' },
                         { name: 'references', defaultValue: [] },
                         { name: 'specializationEndurants', defaultValue: [] }
-                    ]
-                };
-            }
-            case 'ContextModule': {
-                return {
-                    name: 'ContextModule',
-                    properties: [
-                        { name: 'declarations', defaultValue: [] },
-                        { name: 'isGlobal', defaultValue: false },
-                        { name: 'name' }
                     ]
                 };
             }
@@ -474,8 +491,8 @@ export class TontoAstReflection extends AbstractAstReflection {
                     properties: [
                         { name: 'attributes', defaultValue: [] },
                         { name: 'elements', defaultValue: [] },
+                        { name: 'id' },
                         { name: 'isEnum', defaultValue: false },
-                        { name: 'name' },
                         { name: 'ontologicalCategory' },
                         { name: 'ontologicalNature' },
                         { name: 'specializationEndurants', defaultValue: [] }
@@ -498,13 +515,13 @@ export class TontoAstReflection extends AbstractAstReflection {
                         { name: 'firstEnd' },
                         { name: 'firstEndMetaAttributes' },
                         { name: 'hasInverse' },
+                        { name: 'id' },
                         { name: 'inverseEnd' },
                         { name: 'isAggregation', defaultValue: false },
                         { name: 'isAggregationInverted', defaultValue: false },
                         { name: 'isAssociation', defaultValue: false },
                         { name: 'isComposition', defaultValue: false },
                         { name: 'isCompositionInverted', defaultValue: false },
-                        { name: 'name' },
                         { name: 'relationType' },
                         { name: 'secondCardinality' },
                         { name: 'secondEnd' },
@@ -517,7 +534,7 @@ export class TontoAstReflection extends AbstractAstReflection {
                 return {
                     name: 'EnumElement',
                     properties: [
-                        { name: 'name' }
+                        { name: 'id' }
                     ]
                 };
             }
@@ -529,7 +546,7 @@ export class TontoAstReflection extends AbstractAstReflection {
                         { name: 'complete', defaultValue: false },
                         { name: 'disjoint', defaultValue: false },
                         { name: 'generalItem' },
-                        { name: 'name' },
+                        { name: 'id' },
                         { name: 'specificItems', defaultValue: [] }
                     ]
                 };
@@ -538,7 +555,6 @@ export class TontoAstReflection extends AbstractAstReflection {
                 return {
                     name: 'Import',
                     properties: [
-                        { name: 'packageAlias' },
                         { name: 'referencedModel' }
                     ]
                 };
@@ -547,8 +563,22 @@ export class TontoAstReflection extends AbstractAstReflection {
                 return {
                     name: 'Model',
                     properties: [
+                        { name: 'diagram' },
                         { name: 'imports', defaultValue: [] },
                         { name: 'module' }
+                    ]
+                };
+            }
+            case 'NodeView': {
+                return {
+                    name: 'NodeView',
+                    properties: [
+                        { name: 'entity' },
+                        { name: 'height' },
+                        { name: 'id' },
+                        { name: 'width' },
+                        { name: 'x' },
+                        { name: 'y' }
                     ]
                 };
             }
@@ -557,6 +587,16 @@ export class TontoAstReflection extends AbstractAstReflection {
                     name: 'OntologicalCategory',
                     properties: [
                         { name: 'ontologicalCategory' }
+                    ]
+                };
+            }
+            case 'PackageDeclaration': {
+                return {
+                    name: 'PackageDeclaration',
+                    properties: [
+                        { name: 'declarations', defaultValue: [] },
+                        { name: 'id' },
+                        { name: 'isGlobal', defaultValue: false }
                     ]
                 };
             }
@@ -578,6 +618,17 @@ export class TontoAstReflection extends AbstractAstReflection {
                     properties: [
                         { name: 'endMetaAttributes', defaultValue: [] },
                         { name: 'endName' }
+                    ]
+                };
+            }
+            case 'TontoDiagramView': {
+                return {
+                    name: 'TontoDiagramView',
+                    properties: [
+                        { name: 'description' },
+                        { name: 'id' },
+                        { name: 'name' },
+                        { name: 'nodes', defaultValue: [] }
                     ]
                 };
             }

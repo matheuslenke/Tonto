@@ -1,4 +1,3 @@
-import { addDiagramHandler } from "langium-sprotty";
 import { startLanguageServer } from "langium/lsp";
 import { NodeFileSystem } from "langium/node";
 import { createConnection, ProposedFeatures } from "vscode-languageserver/node.js";
@@ -12,4 +11,9 @@ const { shared } = createTontoServices({ connection, ...NodeFileSystem });
 
 // Start the language server with the language-specific services
 startLanguageServer(shared);
-addDiagramHandler(connection, shared);
+
+shared.workspace.WorkspaceManager.initialized(() => {
+    // Start the graphical language server with the shared services
+
+    // Start the JSON server with the shared services
+});

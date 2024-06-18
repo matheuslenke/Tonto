@@ -1,0 +1,8 @@
+import Main
+
+package Internal.Pack
+
+kind Person (instanceOf Main.Teste)
+
+phase Adult specializes Internal.Pack.Person
+phase Adult specializes Person

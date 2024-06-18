@@ -16,7 +16,7 @@ export class TontoHoverProvider extends AstNodeHoverProvider {
                 contents: {
                     kind: "markdown",
                     value: `Ontological Category: ${node.classElementType.ontologicalCategory}\n 
-Name: ${node.name}\n
+Name: ${node.id}\n
 Ontological Nature: ${nature.nature}
                 `
                 }

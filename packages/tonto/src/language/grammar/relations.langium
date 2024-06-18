@@ -21,17 +21,17 @@ type DataTypeOrClassOrRelation = DataType | ClassDeclaration | ElementRelation;
 fragment RelationData:
 	firstEndMetaAttributes=RelationMetaAttributes?
     firstCardinality=Cardinality?
-    RelationName 
+    RelationName
     secondCardinality=Cardinality?
 	secondEndMetaAttributes=RelationMetaAttributes?
-	secondEnd=[DataTypeOrClassOrRelation:CAPITALIZED_ID]
+	secondEnd=[DataTypeOrClassOrRelation:QualifiedName]
 	('specializes' specializeRelation=[ElementRelation:QualifiedName])?
 	(hasInverse='inverseOf' inverseEnd=[ElementRelation:QualifiedName])?
 ;
 
 fragment RelationName:
-	(RelationType (name=(CAMEL_CASE_ID) '--')?) |
-	(('--' name=CAMEL_CASE_ID)? RelationInvertedType)?
+	(RelationType (id=ID '--')?) |
+	(('--' id=ID)? RelationInvertedType)?
 ;
 
 fragment RelationType:
@@ -83,6 +83,5 @@ RelationStereotype returns string:
 	'formal' |
 	'manifestation' |
 	'constitution' |
-	ID |
 	STRING
 ;

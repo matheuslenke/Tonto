@@ -6,7 +6,7 @@ type ClassDeclarationOrRelation = ClassDeclaration | ElementRelation;
 interface GeneralizationSet {
 	disjoint: boolean
 	complete: boolean
-	name: string
+	id: string
 	generalItem: @ClassDeclarationOrRelation
 	categorizerItems: @ClassDeclarationOrRelation[]
 	specificItems: @ClassDeclarationOrRelation[]
@@ -14,7 +14,7 @@ interface GeneralizationSet {
 
 GeneralizationSetImpl returns GeneralizationSet:
 	(disjoint?='disjoint')? (complete?='complete')?
-	'genset' name=ID '{'
+	'genset' id=ID '{'
 	// TODO: Change to unordered group when Langium supports it
 			(
 				'general' generalItem=[ClassDeclarationOrRelation:QualifiedName]
@@ -27,7 +27,7 @@ GeneralizationSetImpl returns GeneralizationSet:
 
 GeneralizationSetShort returns GeneralizationSet:
 	(disjoint?='disjoint')? (complete?='complete')?
-	'genset' name=ID 'where' 
+	'genset' id=ID 'where' 
 	specificItems+=[ClassDeclarationOrRelation:QualifiedName] 	(',' specificItems+=[ClassDeclarationOrRelation:QualifiedName])*
 	'specializes' generalItem=[ClassDeclarationOrRelation:QualifiedName]
 ;

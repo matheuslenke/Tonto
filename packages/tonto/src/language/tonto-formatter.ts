@@ -5,7 +5,7 @@ import * as ast from "./generated/ast.js";
 
 export class TontoFormatter extends AbstractFormatter {
     protected format(node: AstNode): void {
-        if (ast.isContextModule(node)) {
+        if (ast.isPackageDeclaration(node)) {
             const formatter = this.getNodeFormatter(node);
             const bracesOpen = formatter.keyword("{");
             const bracesClose = formatter.keyword("}");

@@ -227,7 +227,7 @@
         "rimraf": "^4.1.2",
         "sprotty": "^1.2.0",
         "sprotty-vscode": "^1.0.0",
-        "tonto-cli": "~0.3.6",
+        "tonto-cli": "file:../tonto",
         "tonto-package-manager": "~0.2.9",
         "tonto-sprotty-webview": "file:../webview",
         "uuid": "^9.0.1",

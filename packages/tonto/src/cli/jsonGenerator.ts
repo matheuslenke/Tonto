@@ -4,7 +4,7 @@ import * as path from "node:path";
 import { MultilingualText, Project } from "ontouml-js";
 import { Model } from "../language/index.js";
 import { extractDestinationAndName } from "./cli-util.js";
-import { contextModuleGenerator } from "./generators/contextModule.generator.js";
+import { PackageDeclarationGenerator } from "./generators/packageDeclaration.generator.js";
 
 export function generateJSONFile(model: Model, filePath: string, destination: string | undefined): string {
     const data = extractDestinationAndName(filePath, destination);
@@ -51,10 +51,12 @@ export function parseProject(ctx: GeneratorContext): Project {
         name: new MultilingualText("root"),
     });
 
-    const contextModule = ctx.model.module;
+    const packageDeclaration = ctx.model.module;
+    if (packageDeclaration) {
+        const createdPackage = rootModel.createPackage(packageDeclaration.id);
+        // Generate a PackageDeclaration
+        PackageDeclarationGenerator(packageDeclaration, createdPackage);
+    }
 
-    const createdPackage = rootModel.createPackage(contextModule.name);
-    // Generate a contextModule
-    contextModuleGenerator(contextModule, createdPackage);
     return project;
 }

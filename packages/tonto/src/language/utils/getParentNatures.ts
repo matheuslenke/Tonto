@@ -13,7 +13,7 @@ const getParentNatures = (
     /**
    * Because this is a recursive function, we need to add a stop condition
    */
-    if (verifiedElements.find((item) => item.name === actualElement.name && item.$type === actualElement.$type)) {
+    if (verifiedElements.find((item) => item.id === actualElement.id && item.$type === actualElement.$type)) {
         return natures;
     }
     verifiedElements.push(actualElement);
@@ -49,7 +49,7 @@ const getParentNatures = (
         } else {
             currentElementNatures = parseOntologicalNatures(actualElement.ontologicalNatures?.natures);
         }
-        const genSetsWithElement: GeneralizationSet[] = getGensetsWhereSpecific(actualElement.name, genSets);
+        const genSetsWithElement: GeneralizationSet[] = getGensetsWhereSpecific(actualElement.id, genSets);
         let parentGenSetNatures: OntologicalNature[] = [];
         genSetsWithElement.forEach((genSet) => {
             parentGenSetNatures = getParentNatures(genSet, natures, genSets, verifiedElements);

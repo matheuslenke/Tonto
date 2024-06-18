@@ -81,8 +81,8 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
         }
     }
     protected highlightElement(node: AstNode, acceptor: SemanticTokenAcceptor): void {
-        if (ast.isContextModule(node)) {
-            this.contextModuleTokens(node, acceptor);
+        if (ast.isPackageDeclaration(node)) {
+            this.PackageDeclarationTokens(node, acceptor);
         }
         if (ast.isClassDeclaration(node)) {
             this.classElementTokens(node, acceptor);
@@ -122,10 +122,10 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
    * ---- HELPERS ----
    */
 
-    private contextModuleTokens(node: ast.ContextModule, acceptor: SemanticTokenAcceptor) {
+    private PackageDeclarationTokens(node: ast.PackageDeclaration, acceptor: SemanticTokenAcceptor) {
         acceptor({
             node,
-            property: "name",
+            property: "id",
             type: SemanticTokenTypes.namespace,
         });
     }
@@ -133,7 +133,7 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
     private classElementTokens(node: ast.ClassDeclaration, acceptor: SemanticTokenAcceptor) {
         acceptor({
             node,
-            property: "name",
+            property: "id",
             type: SemanticTokenTypes.class,
             modifier: SemanticTokenModifiers.declaration,
             keyword: "ClassTonto"
@@ -193,7 +193,7 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
     private enumElementTokens(node: ast.EnumElement, acceptor: SemanticTokenAcceptor) {
         acceptor({
             node,
-            property: "name",
+            property: "id",
             type: SemanticTokenTypes.enumMember,
         });
     }

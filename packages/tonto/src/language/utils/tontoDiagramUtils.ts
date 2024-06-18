@@ -1,4 +1,4 @@
-import { ClassDeclaration, ContextModule, DataTypeOrClassOrRelation, ElementRelation, Model } from "../generated/ast.js";
+import { ClassDeclaration, DataTypeOrClassOrRelation, ElementRelation, Model, PackageDeclaration } from "../generated/ast.js";
 
 export type Specialization = {
     from: ClassDeclaration;
@@ -6,10 +6,10 @@ export type Specialization = {
 }
 
 export class TontoDiagramUtils {
-    model: ContextModule;
-    referencedModels: Map<ContextModule, DataTypeOrClassOrRelation[]> = new Map();
+    model: PackageDeclaration;
+    referencedModels: Map<PackageDeclaration, DataTypeOrClassOrRelation[]> = new Map();
 
-    constructor(model: ContextModule) {
+    constructor(model: PackageDeclaration) {
         this.model = model;
     }
 
@@ -20,19 +20,20 @@ export class TontoDiagramUtils {
     }
 
     getRelations(): ElementRelation[] {
-        const internalRelations = this.model.declarations
-            .filter(item => item.$type === "ClassDeclaration")
-            .map(d => d as ClassDeclaration)
-            .flatMap(d => d.references)
-            .filter(item => item.$type === "ElementRelation")
-            .map(d => d as ElementRelation)
-            .filter(d => d.secondEnd.ref?.$container.name === this.model.name);
-        const externalRelations = this.model.declarations
-            .filter(item => item.$type === "ElementRelation")
-            .map(d => d as ElementRelation)
-            .filter(d => d.firstEnd?.ref?.$container.name === this.model.name
-                && d.secondEnd.ref?.$container.name === this.model.name);
-        return [...internalRelations, ...externalRelations];
+        // const internalRelations = this.model.declarations
+        //     .filter(item => item.$type === "ClassDeclaration")
+        //     .map(d => d as ClassDeclaration)
+        //     .flatMap(d => d.references)
+        //     .filter(item => item.$type === "ElementRelation")
+        //     .map(d => d as ElementRelation)
+        //     .filter(d => d.secondEnd.ref?.$container.id === this.model.id);
+        // const externalRelations = this.model.declarations
+        //     .filter(item => item.$type === "ElementRelation")
+        //     .map(d => d as ElementRelation)
+        //     .filter(d => d.firstEnd?.ref?.$container.id === this.model.id
+        //         && d.secondEnd.ref?.$container.id === this.model.id);
+        // return [...internalRelations, ...externalRelations];
+        return [];
     }
 
     getSpecializations(withExternal: boolean): Specialization[] {
@@ -43,7 +44,7 @@ export class TontoDiagramUtils {
                     .flatMap(s => s.ref ?? []);
                 if (!withExternal) {
                     specializations = specializations
-                        .filter(s => s.$container.name === this.model.name);
+                        .filter(s => s.$container.id === this.model.id);
                 }
                 const specs: Specialization[] = specializations.map(specialization => {
                     return {
@@ -55,8 +56,8 @@ export class TontoDiagramUtils {
             });
     }
 
-    getReferencedClasses(): Map<ContextModule, DataTypeOrClassOrRelation[]> {
-        const referencedModels = new Map<ContextModule, DataTypeOrClassOrRelation[]>();
+    getReferencedClasses(): Map<PackageDeclaration, DataTypeOrClassOrRelation[]> {
+        const referencedModels = new Map<PackageDeclaration, DataTypeOrClassOrRelation[]>();
 
         // Find all classes that are specialized
         this.getClassDeclarations()
@@ -66,7 +67,7 @@ export class TontoDiagramUtils {
                         const ref = specialization.ref;
                         if (ref) {
                             const model = ref.$container.$container as Model;
-                            if (model.module.name !== this.model.name) {
+                            if (model.module && model.module.id !== this.model.id) {
                                 if (!referencedModels.has(model.module)) {
                                     referencedModels.set(model.module, []);
                                 }
@@ -90,30 +91,30 @@ export class TontoDiagramUtils {
 
     protected addReferencedClasses(
         relation: ElementRelation,
-        referencedModels: Map<ContextModule, DataTypeOrClassOrRelation[]>
+        referencedModels: Map<PackageDeclaration, DataTypeOrClassOrRelation[]>
     ): void {
-        const source = relation.firstEnd;
-        const target = relation.secondEnd;
-        if (!source || !target) {
-            return;
-        }
-        const sourceModel = source.ref?.$container as ContextModule;
-        const targetModel = target.ref?.$container as ContextModule;
-        if (sourceModel.name !== this.model.name) {
-            if (!referencedModels.has(sourceModel)) {
-                referencedModels.set(sourceModel, []);
-            }
-            if (source.ref) {
-                referencedModels.get(sourceModel)?.push(source.ref);
-            }
-        }
-        if (targetModel.name !== this.model.name) {
-            if (!referencedModels.has(targetModel)) {
-                referencedModels.set(targetModel, []);
-            }
-            if (target.ref) {
-                referencedModels.get(targetModel)?.push(target.ref);
-            }
-        }
+        // const source = relation.firstEnd;
+        // const target = relation.secondEnd;
+        // if (!source || !target) {
+        //     return;
+        // }
+        // const sourceModel = source.ref?.$container as PackageDeclaration;
+        // const targetModel = target.ref?.$container as PackageDeclaration;
+        // if (sourceModel.id !== this.model.id) {
+        //     if (!referencedModels.has(sourceModel)) {
+        //         referencedModels.set(sourceModel, []);
+        //     }
+        //     if (source.ref) {
+        //         referencedModels.get(sourceModel)?.push(source.ref);
+        //     }
+        // }
+        // if (targetModel.id !== this.model.id) {
+        //     if (!referencedModels.has(targetModel)) {
+        //         referencedModels.set(targetModel, []);
+        //     }
+        //     if (target.ref) {
+        //         referencedModels.get(targetModel)?.push(target.ref);
+        //     }
+        // }
     }
 }

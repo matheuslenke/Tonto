@@ -32,7 +32,17 @@
   "bin": {
     "tonto-cli": "./bin/cli.js"
   },
-  "exports": "./lib/index.js",
+  "exports": {
+    ".": {
+        "types": "./lib/index.d.ts",
+        "import":"./lib/index.js"
+    },
+    "./lsp": {
+        "types": "./lib/main.d.ts",
+        "import":"./lib/main.js"
+    }
+},
+  "main": "src/index.ts",
   "types": "lib/index.d.ts",
   "scripts": {
     "clean": "shx rm -rf lib coverage",
@@ -64,6 +74,7 @@
     "sprotty": "^1.2.0",
     "sprotty-elk": "^1.2.0",
     "uuid": "^9.0.1",
+    "vscode-jsonrpc": "^8.2.1",
     "vscode-languageclient": "~9.0.1",
     "vscode-languageserver": "~9.0.1",
     "vscode-languageserver-types": "^3.17.3",

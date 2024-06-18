@@ -15,7 +15,6 @@ import {
     isRigidStereotype,
     isSemiRigidStereotype,
 } from "../models/StereotypeUtils.js";
-import { toQualifiedName } from "../references/tonto-name-provider.js";
 import { checkUltimateSortalSpecializesUltimateSortalRecursive } from "../utils/CheckUltimateSortalSpecializesUltimateSortalRecursive.js";
 import { checkNatureCompatibleRestrictedTo } from "../utils/checkNatureCompatibleRestrictedTo.js";
 import { formPhrase } from "../utils/formPhrase.js";
@@ -84,7 +83,7 @@ export class ClassDeclarationValidator {
                 if (isAntiRigidStereotype(specOntologicalCategory)) {
                     accept(
                         "error",
-                        `Prohibited specialization: rigid/semi-rigid specializing an anti-rigid. The rigid/semi-rigid class ${classDeclaration.name} cannot specialize the anti-rigid class ${specDeclaration.name}`,
+                        `Prohibited specialization: rigid/semi-rigid specializing an anti-rigid. The rigid/semi-rigid class ${classDeclaration.id} cannot specialize the anti-rigid class ${specDeclaration.id}`,
                         { node: classDeclaration }
                     );
                 }
@@ -96,22 +95,22 @@ export class ClassDeclarationValidator {
    * Verify if there are duplicated declaration names
    */
     checkDuplicatedReferenceNames(classDeclaration: ClassDeclaration, accept: ValidationAcceptor): void {
-        const references = classDeclaration.references;
+        // const references = classDeclaration.references;
 
-        const names: string[] = [];
+        // const names: string[] = [];
 
-        references.forEach((reference) => {
-            if (!reference.name) {
-                return;
-            }
-            const qualifiedName = toQualifiedName(classDeclaration, reference.name);
-            const nameExists = names.find((name) => name === qualifiedName);
-            if (nameExists) {
-                accept("error", "Duplicated reference name", { node: reference });
-            } else {
-                names.push(qualifiedName);
-            }
-        });
+        // references.forEach((reference) => {
+        //     if (!reference.id) {
+        //         return;
+        //     }
+        //     const qualifiedName = toQualifiedName(classDeclaration, reference.id);
+        //     const nameExists = names.find((name) => name === qualifiedName);
+        //     if (nameExists) {
+        //         accept("error", "Duplicated reference name", { node: reference });
+        //     } else {
+        //         names.push(qualifiedName);
+        //     }
+        // });
     }
 
     /**
@@ -143,7 +142,7 @@ export class ClassDeclarationValidator {
                     const naturesString = formPhrase(incompatibleNatures);
                     accept(
                         "error",
-                        `Incompatible stereotype and Nature restriction combination. Class ${classDeclaration.name} is incompatible with the following natures: ${naturesString}`,
+                        `Incompatible stereotype and Nature restriction combination. Class ${classDeclaration.id} is incompatible with the following natures: ${naturesString}`,
                         {
                             node: classDeclaration,
                             property: "ontologicalNatures",
@@ -205,7 +204,7 @@ export class ClassDeclarationValidator {
                 if (hasSortalStereotype(generalClass.classElementType?.ontologicalCategory)) {
                     accept(
                         "error",
-                        `Prohibited generalization: non-sortal specializing a sortal. The non-sortal class ${classDeclaration.name} cannot specialize the sortal class ${generalClass.name}`,
+                        `Prohibited generalization: non-sortal specializing a sortal. The non-sortal class ${classDeclaration.id} cannot specialize the sortal class ${generalClass.id}`,
                         {
                             node: classDeclaration,
                             property: "specializationEndurants",

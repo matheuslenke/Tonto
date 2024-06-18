@@ -20,7 +20,7 @@ export class ComplexDataTypeValidator {
             formPhrase;
             accept(
                 "error",
-                `Incompatible stereotype and Nature restriction combination. Datatype ${complexDataType.name
+                `Incompatible stereotype and Nature restriction combination. Datatype ${complexDataType.id
                 } is incompatible with the following natures: ${formPhrase(wrongNatures as string[])}`,
                 {
                     node: complexDataType,

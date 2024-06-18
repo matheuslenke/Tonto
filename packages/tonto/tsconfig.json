@@ -9,10 +9,14 @@
     "declaration": true,
     "baseUrl": "src/",
     "strict": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "paths": {
       "@/*": ["./src/*"],
       "@/language/*": ["./src/language/*"]
     },
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
   },
   "include": ["src"],
   "exclude": ["lib", "node_modules"]

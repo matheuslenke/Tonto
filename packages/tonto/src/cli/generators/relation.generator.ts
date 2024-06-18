@@ -20,14 +20,14 @@ export function relationGenerator(
     const relationStereotype = getStereotype(relationItem.relationType);
 
     if (sourceClass && destinationClass) {
-        const sourceClassAlreadyCreated = classes.find((item) => item.name.getText() === sourceClass.name);
-        const destinationClassAlreadyCreated = classes.find((item) => item.name.getText() === destinationClass.name);
+        const sourceClassAlreadyCreated = classes.find((item) => item.name.getText() === sourceClass.id);
+        const destinationClassAlreadyCreated = classes.find((item) => item.name.getText() === destinationClass.id);
 
         if (sourceClassAlreadyCreated && destinationClassAlreadyCreated) {
             const relation = packageItem.createBinaryRelation(
                 sourceClassAlreadyCreated,
                 destinationClassAlreadyCreated,
-                relationItem.name,
+                relationItem.id,
                 relationStereotype
             );
 
@@ -38,11 +38,11 @@ export function relationGenerator(
             setMetaAttributes(targetEnd, relationItem.secondEndMetaAttributes);
 
             relationItem.firstEndMetaAttributes &&
-        relationItem.firstEndMetaAttributes.endName &&
-        sourceEnd.setName(relationItem.firstEndMetaAttributes.endName);
+                relationItem.firstEndMetaAttributes.endName &&
+                sourceEnd.setName(relationItem.firstEndMetaAttributes.endName);
             relationItem.secondEndMetaAttributes &&
-        relationItem.secondEndMetaAttributes.endName &&
-        targetEnd.setName(relationItem.secondEndMetaAttributes.endName);
+                relationItem.secondEndMetaAttributes.endName &&
+                targetEnd.setName(relationItem.secondEndMetaAttributes.endName);
 
             setPropertyCardinality(relationItem.firstCardinality, sourceEnd);
             setPropertyCardinality(relationItem.secondCardinality, targetEnd);
@@ -62,7 +62,7 @@ export function relationGenerator(
             } else if (relationItem.isComposition) {
                 relation.getSourceEnd().aggregationKind = AggregationKind.COMPOSITE;
                 relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
-            } 
+            }
             // else if (relationItem.isCompositionInverted) {
             //   relation.getSourceEnd().aggregationKind = AggregationKind.NONE;
             //   relation.getTargetEnd().aggregationKind = AggregationKind.COMPOSITE;
@@ -79,8 +79,7 @@ export function relationGenerator(
         } else {
             console.log(
                 chalk.yellow(
-                    `Could not create relation named (${relationItem.name ?? "(No name)"}) between ${sourceClass.name} and ${
-                        destinationClass.name
+                    `Could not create relation named (${relationItem.id ?? "(No name)"}) between ${sourceClass.id} and ${destinationClass.id
                     } because one or both of them was not created.`
                 )
             );

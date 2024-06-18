@@ -6,7 +6,7 @@ export function generateEdge(relation: ElementRelation, { idCache }: GeneratorCo
     const sourceId = idCache.getId(relation.$container ?? relation.firstEnd?.ref);
     const targetId = idCache.getId(relation.secondEnd.ref);
 
-    const edgeId = idCache.uniqueId(`${sourceId}:${relation.name ?? "unamed"}:${targetId}`, relation);
+    const edgeId = idCache.uniqueId(`${sourceId}:${relation.id ?? "unamed"}:${targetId}`, relation);
     return {
         type: "edge",
         id: edgeId,
@@ -17,7 +17,7 @@ export function generateEdge(relation: ElementRelation, { idCache }: GeneratorCo
             <SLabel>{
                 type: "edge:label",
                 id: idCache.uniqueId(edgeId + ".label"),
-                text: relation.name ?? "",
+                text: relation.id ?? "",
                 edgePlacement: {
                     position: 0.5,
                     offset: 10,

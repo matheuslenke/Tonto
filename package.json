@@ -50,5 +50,6 @@
         "packages/webview"
     ],
     "dependencies": {
+        "@eclipse-glsp/server": "^2.1.1"
     }
 }

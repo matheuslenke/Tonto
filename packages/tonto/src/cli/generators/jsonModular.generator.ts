@@ -4,7 +4,7 @@ import * as path from "node:path";
 import { MultilingualText, Package, Project } from "ontouml-js";
 import { Model } from "../../language/index.js";
 import { TontoManifest } from "../model/grammar/TontoManifest.js";
-import { GeneratedContextModuleData, contextModuleGenerateClasses, contextModuleGenerateRelations, contextModuleModularGenerator } from "./contextModuleModular.generator.js";
+import { GeneratedPackageDeclarationData, PackageDeclarationGenerateClasses, PackageDeclarationGenerateRelations, PackageDeclarationModularGenerator } from "./packageDeclarationModular.generator.js";
 
 export function generateJSONFileModular(
     models: Model[],
@@ -30,7 +30,7 @@ export interface GeneratorContext {
 interface GeneratedModelData {
     package: Package
     model: Model
-    generatedData: GeneratedContextModuleData
+    generatedData: GeneratedPackageDeclarationData
 }
 
 function generate(ctx: GeneratorContext): string {
@@ -71,38 +71,46 @@ export function parseProject(ctx: GeneratorContext): Project {
    * First we generate all the classes for each context module
    */
     for (const model of ctx.models) {
-        const contextModule = model.module;
+        const packageDeclaration = model.module;
+        if (!packageDeclaration) {
+            continue;
+        }
 
-        const createdPackage = rootPackage.createPackage(contextModule.name);
+        const createdPackage = rootPackage.createPackage(packageDeclaration.id);
 
-        const generatedContextModuleData = contextModuleGenerateClasses(contextModule, createdPackage);
+        const generatedPackageDeclarationData = PackageDeclarationGenerateClasses(packageDeclaration, createdPackage);
 
         const generatedModelData: GeneratedModelData = {
             package: createdPackage,
             model: model,
-            generatedData: generatedContextModuleData,
+            generatedData: generatedPackageDeclarationData,
         };
-        generatedModelDatas.set(model.module.name, generatedModelData);
+        if (model.module) {
+            generatedModelDatas.set(model.module.id, generatedModelData);
+        }
     }
 
     /**
    * Secondly, we generate all the relations for each context module
    */
     ctx.models.forEach((model) => {
-        const importedNames = model.imports.flatMap((e) => e.referencedModel.ref?.name).filter((e) => e !== undefined);
+        if (!model.module) {
+            return;
+        }
+        const importedNames = model.imports.flatMap((e) => e.referencedModel.ref?.id).filter((e) => e !== undefined);
         const arrayOfGeneratedModelDatas = Array.from(generatedModelDatas.values());
 
         const globalDataTypes = arrayOfGeneratedModelDatas
-            .filter((data) => data.model.module.isGlobal)
+            .filter((data) => data.model.module?.isGlobal)
             .map((data) => data.generatedData);
         const importedDataTypes = arrayOfGeneratedModelDatas
-            .filter((data) => importedNames.includes(data.model.module.name))
+            .filter((data) => importedNames.includes(data.model.module?.id))
             .map((data) => data.generatedData);
 
-        const createdPackage = generatedModelDatas.get(model.module.name)?.package;
-        const generatedContextModelData = generatedModelDatas.get(model.module.name)?.generatedData;
+        const createdPackage = generatedModelDatas.get(model.module.id)?.package;
+        const generatedContextModelData = generatedModelDatas.get(model.module.id)?.generatedData;
         if (createdPackage && generatedContextModelData) {
-            contextModuleGenerateRelations(model.module, createdPackage, generatedContextModelData, [
+            PackageDeclarationGenerateRelations(model.module, createdPackage, generatedContextModelData, [
                 ...importedDataTypes,
                 ...globalDataTypes,
             ]);
@@ -114,21 +122,24 @@ export function parseProject(ctx: GeneratorContext): Project {
    * that needed the references of the classes and relations generated in the previous step
    */
     ctx.models.forEach((model) => {
-        const importedNames = model.imports.flatMap((e) => e.referencedModel.ref?.name).filter((e) => e !== undefined);
+        if (!model.module) {
+            return;
+        }
+        const importedNames = model.imports.flatMap((e) => e.referencedModel.ref?.id).filter((e) => e !== undefined);
         const arrayOfGeneratedModelDatas = Array.from(generatedModelDatas.values());
 
         const globalDataTypes = arrayOfGeneratedModelDatas
-            .filter((data) => data.model.module.isGlobal)
+            .filter((data) => data.model.module?.isGlobal)
             .map((data) => data.generatedData);
         const importedDataTypes = arrayOfGeneratedModelDatas
-            .filter((data) => importedNames.includes(data.model.module.name))
+            .filter((data) => importedNames.includes(data.model.module?.id))
             .map((data) => data.generatedData);
 
-        const createdPackage = generatedModelDatas.get(model.module.name)?.package;
-        const generatedContextModelData = generatedModelDatas.get(model.module.name)?.generatedData;
+        const createdPackage = generatedModelDatas.get(model.module.id)?.package;
+        const generatedContextModelData = generatedModelDatas.get(model.module.id)?.generatedData;
 
         if (createdPackage && generatedContextModelData) {
-            contextModuleModularGenerator(model.module, generatedContextModelData, createdPackage, [
+            PackageDeclarationModularGenerator(model.module, generatedContextModelData, createdPackage, [
                 ...importedDataTypes,
                 ...globalDataTypes,
             ]);

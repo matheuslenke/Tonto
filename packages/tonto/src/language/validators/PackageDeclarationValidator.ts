@@ -1,7 +1,7 @@
 
 import { ValidationAcceptor } from "langium";
 import { OntologicalNature } from "ontouml-js";
-import { ClassDeclaration, ContextModule, GeneralizationSet } from "../generated/ast.js";
+import { ClassDeclaration, GeneralizationSet, PackageDeclaration } from "../generated/ast.js";
 import { ErrorMessages } from "../models/ErrorMessages.js";
 import { tontoNatureUtils } from "../models/Natures.js";
 import {
@@ -15,36 +15,36 @@ import { compareArrays } from "../utils/compareArrays.js";
 import { formPhrase } from "../utils/formPhrase.js";
 import { getParentNatures } from "../utils/getParentNatures.js";
 
-export class ContextModuleValidator {
-    checkContextModuleStartsWithCapital(contextModule: ContextModule, accept: ValidationAcceptor): void {
-        if (contextModule.name) {
-            const firstChar = contextModule.name.substring(0, 1);
+export class PackageDeclarationValidator {
+    checkPackageDeclarationStartsWithCapital(PackageDeclaration: PackageDeclaration, accept: ValidationAcceptor): void {
+        if (PackageDeclaration.id) {
+            const firstChar = PackageDeclaration.id.substring(0, 1);
             if (firstChar.toUpperCase() !== firstChar) {
                 accept("warning", "Module name should start with a capital.", {
-                    node: contextModule,
-                    property: "name",
+                    node: PackageDeclaration,
+                    property: "id",
                 });
             }
         }
     }
 
-    checkDuplicatedClassName(contextModule: ContextModule, accept: ValidationAcceptor): void {
-        const elements = contextModule.declarations;
+    checkDuplicatedClassName(PackageDeclaration: PackageDeclaration, accept: ValidationAcceptor): void {
+        const elements = PackageDeclaration.declarations;
         const names: string[] = [];
 
         elements.forEach((declaration) => {
             if (declaration.$type === "ClassDeclaration") {
                 const classElement = declaration as ClassDeclaration;
-                const nameExists = names.find((name) => name === classElement.name);
-                const refName = classElement.name;
+                const nameExists = names.find((name) => name === classElement.id);
+                const refName = classElement.id;
 
                 if (nameExists) {
                     accept("error", "Duplicated class declaration", {
                         node: classElement,
-                        property: "name",
+                        property: "id",
                     });
                 } else if (refName !== undefined) {
-                    names.push(classElement.name!);
+                    names.push(classElement.id!);
                 }
             }
         });
@@ -54,12 +54,12 @@ export class ContextModuleValidator {
    * Checks if a ClassDeclaration has a ciclic specialization considering also
    * considering generalizationSets
    */
-    checkCircularSpecialization(contextModule: ContextModule, accept: ValidationAcceptor): void {
-        const genSets = contextModule.declarations.filter((declaration) => {
+    checkCircularSpecialization(PackageDeclaration: PackageDeclaration, accept: ValidationAcceptor): void {
+        const genSets = PackageDeclaration.declarations.filter((declaration) => {
             return declaration.$type === "GeneralizationSet";
         }) as GeneralizationSet[];
 
-        const declaredClasses: ClassDeclaration[] = contextModule.declarations.filter((declaration) => {
+        const declaredClasses: ClassDeclaration[] = PackageDeclaration.declarations.filter((declaration) => {
             return declaration.$type === "ClassDeclaration";
         }) as ClassDeclaration[];
 
@@ -78,12 +78,12 @@ export class ContextModuleValidator {
    * it is not restricted to the Type nature, then it shows an error that
    * it needs to specialize an Ultimate Sortal
    */
-    checkClassDeclarationShouldSpecializeUltimateSortal(contextModule: ContextModule, accept: ValidationAcceptor): void {
-        const genSets = contextModule.declarations.filter((declaration) => {
+    checkClassDeclarationShouldSpecializeUltimateSortal(PackageDeclaration: PackageDeclaration, accept: ValidationAcceptor): void {
+        const genSets = PackageDeclaration.declarations.filter((declaration) => {
             return declaration.$type === "GeneralizationSet";
         }) as GeneralizationSet[];
 
-        const declaredClasses: ClassDeclaration[] = contextModule.declarations.filter((declaration) => {
+        const declaredClasses: ClassDeclaration[] = PackageDeclaration.declarations.filter((declaration) => {
             return declaration.$type === "ClassDeclaration";
         }) as ClassDeclaration[];
 
@@ -107,20 +107,20 @@ export class ContextModuleValidator {
                         if (isRestrictedToType === undefined) {
                             accept("error", ErrorMessages.sortalSpecializesUniqueUltimateSortal, {
                                 node: declaredClass,
-                                property: "name",
+                                property: "id",
                             });
                         }
                     } else {
                         accept("error", ErrorMessages.sortalSpecializeNoUltimateSortal, {
                             node: declaredClass,
-                            property: "name",
+                            property: "id",
                         });
                     }
                 }
                 if (totalUltimateSortalSpecializations > 1) {
                     accept("error", ErrorMessages.sortalSpecializesUniqueUltimateSortal, {
                         node: declaredClass,
-                        property: "name",
+                        property: "id",
                     });
                 }
             }
@@ -129,15 +129,15 @@ export class ContextModuleValidator {
 
     /**
    * Validate if a element have the correct nature based on specialization.
-   * @param contextModule Actual ContextModule
+   * @param PackageDeclaration Actual PackageDeclaration
    * @param accept Error creator helper
    */
-    checkCompatibleNaturesOfBaseSortals(contextModule: ContextModule, accept: ValidationAcceptor): void {
-        const genSets = contextModule.declarations.filter((declaration) => {
+    checkCompatibleNaturesOfBaseSortals(PackageDeclaration: PackageDeclaration, accept: ValidationAcceptor): void {
+        const genSets = PackageDeclaration.declarations.filter((declaration) => {
             return declaration.$type === "GeneralizationSet";
         }) as GeneralizationSet[];
 
-        const declaredClasses: ClassDeclaration[] = contextModule.declarations.filter((declaration) => {
+        const declaredClasses: ClassDeclaration[] = PackageDeclaration.declarations.filter((declaration) => {
             return declaration.$type === "ClassDeclaration";
         }) as ClassDeclaration[];
 
@@ -153,7 +153,7 @@ export class ContextModuleValidator {
                         "This class must specify the ontological nature of its instances. Specify a Nature or specialize an Ultimate Sortal that provides a nature",
                         {
                             node: classDeclaration,
-                            property: "name",
+                            property: "id",
                         }
                     );
                 }
@@ -165,12 +165,12 @@ export class ContextModuleValidator {
    * Verify if the class restricts to Natures that is general class also
    * restricts
    */
-    checkSpecializationNatureRestrictions(contextModule: ContextModule, accept: ValidationAcceptor) {
-        const genSets = contextModule.declarations.filter((declaration) => {
+    checkSpecializationNatureRestrictions(PackageDeclaration: PackageDeclaration, accept: ValidationAcceptor) {
+        const genSets = PackageDeclaration.declarations.filter((declaration) => {
             return declaration.$type === "GeneralizationSet";
         }) as GeneralizationSet[];
 
-        const declaredClasses: ClassDeclaration[] = contextModule.declarations.filter((declaration) => {
+        const declaredClasses: ClassDeclaration[] = PackageDeclaration.declarations.filter((declaration) => {
             return declaration.$type === "ClassDeclaration";
         }) as ClassDeclaration[];
 
@@ -208,12 +208,12 @@ export class ContextModuleValidator {
         });
     }
 
-    checkRedundantNatures(contextModule: ContextModule, accept: ValidationAcceptor) {
-        const genSets = contextModule.declarations.filter((declaration) => {
+    checkRedundantNatures(PackageDeclaration: PackageDeclaration, accept: ValidationAcceptor) {
+        const genSets = PackageDeclaration.declarations.filter((declaration) => {
             return declaration.$type === "GeneralizationSet";
         }) as GeneralizationSet[];
 
-        const declaredClasses: ClassDeclaration[] = contextModule.declarations.filter((declaration) => {
+        const declaredClasses: ClassDeclaration[] = PackageDeclaration.declarations.filter((declaration) => {
             return declaration.$type === "ClassDeclaration";
         }) as ClassDeclaration[];
 

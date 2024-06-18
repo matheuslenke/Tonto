@@ -16,8 +16,8 @@ export function generateNode(
 }
 
 function generateClassNode(classDeclaration: ClassDeclaration, { idCache }: GeneratorContext<Model>): SNode {
-    const packageName = classDeclaration.$container?.name ?? "";
-    const nodeId = idCache.uniqueId(`${packageName}:${classDeclaration.name}`, classDeclaration);
+    const packageName = classDeclaration.$container?.id ?? "";
+    const nodeId = idCache.uniqueId(`${packageName}:${classDeclaration.id}`, classDeclaration);
     const nature = tontoNatureUtils.getTontoNature(classDeclaration);
     const semanticToken = tontoNatureUtils.getSemanticTokenFromNature(nature);
     return {
@@ -31,7 +31,7 @@ function generateClassNode(classDeclaration: ClassDeclaration, { idCache }: Gene
             <SLabel>{
                 type: "label",
                 id: idCache.uniqueId(nodeId + ".label"),
-                text: classDeclaration.name,
+                text: classDeclaration.id,
             },
         ],
         layout: "vbox",
@@ -46,8 +46,8 @@ function generateClassNode(classDeclaration: ClassDeclaration, { idCache }: Gene
 }
 
 function generateDatatypeNode(datatype: DataType, { idCache }: GeneratorContext<Model>): SNode {
-    const packageName = datatype.$container?.name ?? "";
-    const nodeId = idCache.uniqueId(`${packageName}:${datatype.name}`, datatype);
+    const packageName = datatype.$container?.id ?? "";
+    const nodeId = idCache.uniqueId(`${packageName}:${datatype.id}`, datatype);
     return {
         type: "node:class",
         id: nodeId,
@@ -59,7 +59,7 @@ function generateDatatypeNode(datatype: DataType, { idCache }: GeneratorContext<
             <SLabel>{
                 type: "label",
                 id: idCache.uniqueId(nodeId + ".label"),
-                text: datatype.name,
+                text: datatype.id,
             },
         ],
         layout: "vbox",

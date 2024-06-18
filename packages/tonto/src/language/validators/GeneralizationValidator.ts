@@ -54,7 +54,7 @@ export class GeneralizationValidator {
         }
 
         specificsItems.forEach((specific) => {
-            if (specific.ref?.name === generalItem.name) {
+            if (specific.ref?.id === generalItem.id) {
                 accept("error", ErrorMessages.genSetCircularGeneralization, {
                     node: genSet,
                 });
@@ -88,7 +88,7 @@ export class GeneralizationValidator {
                         if (hasNonSortalStereotype(specificClass?.classElementType.ontologicalCategory)) {
                             accept(
                                 "error",
-                                `Prohibited generalization: non-sortal specializing a sortal. The non-sortal class ${specificClass.name} cannot specialize the sortal class ${generalItem.name}`,
+                                `Prohibited generalization: non-sortal specializing a sortal. The non-sortal class ${specificClass.id} cannot specialize the sortal class ${generalItem.id}`,
                                 {
                                     node: genSet,
                                     property: "specificItems",
@@ -132,7 +132,7 @@ export class GeneralizationValidator {
                 if (isRigidStereotype(refOntologicalCategory) || isSemiRigidStereotype(refOntologicalCategory)) {
                     accept(
                         "error",
-                        `Prohibited specialization: rigid/semi-rigid specializing an anti-rigid. The rigid/semi-rigid class ${refElement.name} cannot specialize the anti-rigid class ${generalItem.name}`,
+                        `Prohibited specialization: rigid/semi-rigid specializing an anti-rigid. The rigid/semi-rigid class ${refElement.id} cannot specialize the anti-rigid class ${generalItem.id}`,
                         {
                             node: genSet,
                             property: "generalItem",
@@ -140,7 +140,7 @@ export class GeneralizationValidator {
                     );
                     accept(
                         "error",
-                        `Prohibited specialization: rigid/semi-rigid specializing an anti-rigid. The rigid/semi-rigid class ${refElement.name} cannot specialize the anti-rigid class ${generalItem.name}`,
+                        `Prohibited specialization: rigid/semi-rigid specializing an anti-rigid. The rigid/semi-rigid class ${refElement.id} cannot specialize the anti-rigid class ${generalItem.id}`,
                         {
                             node: genSet,
                             property: "specificItems",

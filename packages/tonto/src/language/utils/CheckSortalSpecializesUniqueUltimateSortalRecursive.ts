@@ -17,7 +17,7 @@ const validateSortalSpecializesUniqueUltimateSortalRecursive = (
     if (totalUltimateSortalSpecializations > 1) {
         accept("error", ErrorMessages.sortalSpecializesUniqueUltimateSortal, {
             node: actualElement,
-            property: "name",
+            property: "id",
         });
     }
 };
@@ -55,7 +55,7 @@ const checkSortalSpecializesUniqueUltimateSortalRecursive = (
                 );
             }
         });
-        const genSetsWithElement: GeneralizationSet[] = getGensetsWhereSpecific(actualElement.name, genSets);
+        const genSetsWithElement: GeneralizationSet[] = getGensetsWhereSpecific(actualElement.id, genSets);
 
         genSetsWithElement.forEach((genSet) => {
             totalUltimateSortalSpecialized = checkSortalSpecializesUniqueUltimateSortalRecursive(
@@ -93,7 +93,7 @@ const checkSortalSpecializesUniqueUltimateSortalRecursive = (
             }
         });
 
-        const genSetsWhereElementIsSpecific = getGensetsWhereSpecific(generalItem.name ?? "", genSets);
+        const genSetsWhereElementIsSpecific = getGensetsWhereSpecific(generalItem.id ?? "", genSets);
 
         genSetsWhereElementIsSpecific.forEach((genSet) => {
             totalUltimateSortalSpecialized = checkSortalSpecializesUniqueUltimateSortalRecursive(
@@ -109,7 +109,7 @@ const checkSortalSpecializesUniqueUltimateSortalRecursive = (
 
 function getGensetsWhereSpecific(declaration: string, genSets: GeneralizationSet[]): GeneralizationSet[] {
     return genSets.filter((genSet) => {
-        const specificItem = genSet.specificItems.find((specific) => specific.ref?.name === declaration);
+        const specificItem = genSet.specificItems.find((specific) => specific.ref?.id === declaration);
         return specificItem ?? undefined;
     });
 }

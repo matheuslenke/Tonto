@@ -3,22 +3,22 @@ import { DataType } from "../../language/generated/ast.js";
 import { setPropertyCardinality } from "./cardinality.generator.js";
 
 export function customDataTypeGenerator(dataType: DataType, model: Package): Class {
-    const dataTypeClass = model.createDatatype(dataType.name);
+    const dataTypeClass = model.createDatatype(dataType.id);
 
     return dataTypeClass;
 }
 
 export function customDataTypeAttributesGenerator(dataType: DataType, dataTypes: Class[]) {
-    const dataTypeClass = dataTypes.find((item) => item.getName() === dataType.name);
+    const dataTypeClass = dataTypes.find((item) => item.getName() === dataType.id);
     if (dataTypeClass) {
         dataType.attributes.forEach((element) => {
             let createdAttribute: Property | undefined;
 
             if (element.attributeTypeRef !== undefined) {
-                const customType = dataTypes.find((item) => item.getName() === element.attributeTypeRef.ref?.name);
+                const customType = dataTypes.find((item) => item.getName() === element.attributeTypeRef.ref?.id);
 
                 if (customType) {
-                    createdAttribute = dataTypeClass.createAttribute(customType, element.name);
+                    createdAttribute = dataTypeClass.createAttribute(customType, element.id);
                 }
             }
 
@@ -37,6 +37,6 @@ export function customDataTypeAttributesGenerator(dataType: DataType, dataTypes:
             }
         });
     } else {
-    // console.log(chalk.yellow(`Could not generate attributes for dataType class named ${dataType.name}`));
+        // console.log(chalk.yellow(`Could not generate attributes for dataType class named ${dataType.id}`));
     }
 }

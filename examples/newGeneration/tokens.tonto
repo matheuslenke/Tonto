@@ -12,7 +12,6 @@ intrinsicMode IntrinsicMode
 extrinsicMode ExtrinsicMode
 type Type
 powertype Powertype
-
 // Base Sortal
 subkind Subkind specializes Kind 
 phase Phase specializes Subkind

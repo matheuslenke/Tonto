@@ -1,5 +1,5 @@
 import { Class, Package, Relation } from "ontouml-js";
-import { ClassDeclaration, ContextModule, DataType, ElementRelation, GeneralizationSet } from "../../language/index.js";
+import { ClassDeclaration, DataType, ElementRelation, GeneralizationSet, PackageDeclaration } from "../../language/index.js";
 import { attributeGenerator } from "./attribute.generator.js";
 import { classElementGenerator } from "./class.generator.js";
 import { customDataTypeGenerator } from "./datatype.generator.js";
@@ -9,13 +9,13 @@ import { generateInstantiations } from "./instantiation.generator.js";
 import { relationGenerator } from "./relation.generator.js";
 import { generateDataTypeSpecializations, generateSpecializations } from "./specialization.generator.js";
 
-export function contextModuleGenerator(contextModule: ContextModule, packageItem: Package): void {
+export function PackageDeclarationGenerator(PackageDeclaration: PackageDeclaration, packageItem: Package): void {
     const classes: Class[] = [];
     const dataTypes: Class[] = [];
     const relations: Relation[] = [];
     // Creating base datatypes
 
-    contextModule.declarations.forEach((declaration) => {
+    PackageDeclaration.declarations.forEach((declaration) => {
         switch (declaration.$type) {
             case "ClassDeclaration": {
                 const classElement = declaration as ClassDeclaration;
@@ -40,17 +40,17 @@ export function contextModuleGenerator(contextModule: ContextModule, packageItem
         }
     });
 
-    generateGenSets(contextModule, classes, packageItem);
-    generateInternalRelations(contextModule, classes, relations, packageItem);
-    generateExternalRelations(contextModule, classes, relations, packageItem);
-    generateSpecializations(contextModule, classes, relations, packageItem);
-    generateDataTypeSpecializations(contextModule, classes, dataTypes, packageItem);
+    generateGenSets(PackageDeclaration, classes, packageItem);
+    generateInternalRelations(PackageDeclaration, classes, relations, packageItem);
+    generateExternalRelations(PackageDeclaration, classes, relations, packageItem);
+    generateSpecializations(PackageDeclaration, classes, relations, packageItem);
+    generateDataTypeSpecializations(PackageDeclaration, classes, dataTypes, packageItem);
 
-    generateInstantiations(contextModule, classes, relations, packageItem);
+    generateInstantiations(PackageDeclaration, classes, relations, packageItem);
 }
 
-function generateGenSets(contextModule: ContextModule, classes: Class[], packageItem: Package) {
-    contextModule.declarations.forEach((declaration) => {
+function generateGenSets(PackageDeclaration: PackageDeclaration, classes: Class[], packageItem: Package) {
+    PackageDeclaration.declarations.forEach((declaration) => {
         if (declaration.$type === "GeneralizationSet") {
             const gensetData = declaration as GeneralizationSet;
             generalizationSetGenerator(gensetData, classes, packageItem);
@@ -59,12 +59,12 @@ function generateGenSets(contextModule: ContextModule, classes: Class[], package
 }
 
 function generateExternalRelations(
-    contextModule: ContextModule,
+    PackageDeclaration: PackageDeclaration,
     classes: Class[],
     relations: Relation[],
     packageItem: Package
 ): void {
-    contextModule.declarations.forEach((declaration) => {
+    PackageDeclaration.declarations.forEach((declaration) => {
         switch (declaration.$type) {
             case "ElementRelation": {
                 const elementRelation = declaration as ElementRelation;
@@ -78,12 +78,12 @@ function generateExternalRelations(
 }
 
 function generateInternalRelations(
-    contextModule: ContextModule,
+    PackageDeclaration: PackageDeclaration,
     classes: Class[],
     relations: Relation[],
     packageItem: Package
 ): void {
-    contextModule.declarations.forEach((declaration) => {
+    PackageDeclaration.declarations.forEach((declaration) => {
         if (declaration.$type === "ClassDeclaration") {
             const classDeclaration = declaration as ClassDeclaration;
 

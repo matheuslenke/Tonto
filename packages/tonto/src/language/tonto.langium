@@ -8,36 +8,21 @@ import "./grammar/relations"
 import "./grammar/attributes"
 import "./grammar/datatypes"
 import "./grammar/gensets"
+import "./grammar/diagram"
+import "./grammar/package-declaration"
 
+/**
+ * Model is the entry point of the grammar.
+ * It contains a list of imports, which can be a PackageDeclaration
+ * It then contains the declaration of a Package, or a Diagram.
+ * The Package Declaration is supposed to have all entities, while the Diagram
+ * represents the view of the model.
+ */
 entry Model:
 	imports+=Import*
-	module=ContextModule
-;
-
-/**
- * Package declaration
- */
-
-/**
- * ContextModule is the main declaration of a module, that wraps a context of elements. All declarations should
- * go inside this declaration
- */
-ContextModule:
-	(isGlobal?='global')? 'package' (name=QualifiedName)
-
-	declarations+=Declaration*
+	(module=PackageDeclaration | diagram=TontoDiagramView)
 ;
 
 Import:
-	'import' referencedModel=[ContextModule:QualifiedName] ('as' packageAlias=ID)?
-;
-
-// <--- Declarations --->
-
-Declaration:
-	ClassDeclaration | AuxiliaryDeclaration
-;
-
-AuxiliaryDeclaration:
-	DataType | Enum | GeneralizationSetImpl | GeneralizationSetShort | ExternalRelation
+	'import' referencedModel=[PackageDeclaration:QualifiedName]
 ;

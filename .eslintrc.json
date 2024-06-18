@@ -18,6 +18,7 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "no-unused-vars": "off",
         "indent": "off",
         "@typescript-eslint/indent": ["off", {}],
         "linebreak-style": [

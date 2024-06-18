@@ -23,73 +23,73 @@ export function classElementGenerator(classElement: ClassDeclaration, packageIte
        * Non sortals
        */
             case "category": {
-                return packageItem.createCategory(classElement.name, natures);
+                return packageItem.createCategory(classElement.id, natures);
             }
             case "mixin": {
-                return packageItem.createMixin(classElement.name, natures);
+                return packageItem.createMixin(classElement.id, natures);
             }
             case "phaseMixin": {
-                return packageItem.createPhaseMixin(classElement.name, natures);
+                return packageItem.createPhaseMixin(classElement.id, natures);
             }
             case "roleMixin": {
-                return packageItem.createRoleMixin(classElement.name, natures);
+                return packageItem.createRoleMixin(classElement.id, natures);
             }
             case "historicalRoleMixin": {
-                return packageItem.createRoleMixin(classElement.name, natures);
+                return packageItem.createRoleMixin(classElement.id, natures);
             }
             /**
        * Non Endurants
        */
             case "event": {
-                return packageItem.createEvent(classElement.name);
+                return packageItem.createEvent(classElement.id);
             }
             case "situation": {
-                return packageItem.createSituation(classElement.name);
+                return packageItem.createSituation(classElement.id);
             }
             /**
        * Ultimate Sortals
        */
             case "kind": {
-                return packageItem.createKind(classElement.name);
+                return packageItem.createKind(classElement.id);
             }
             case "collective": {
-                return packageItem.createCollective(classElement.name);
+                return packageItem.createCollective(classElement.id);
             }
             case "quantity": {
-                return packageItem.createQuantity(classElement.name);
+                return packageItem.createQuantity(classElement.id);
             }
             case "quality": {
-                return packageItem.createQuality(classElement.name);
+                return packageItem.createQuality(classElement.id);
             }
             case "mode": {
-                return packageItem.createClass(classElement.name, ClassStereotype.MODE, natures);
+                return packageItem.createClass(classElement.id, ClassStereotype.MODE, natures);
             }
             case "intrinsicMode": {
-                return packageItem.createIntrinsicMode(classElement.name);
+                return packageItem.createIntrinsicMode(classElement.id);
             }
             case "extrinsicMode": {
-                return packageItem.createExtrinsicMode(classElement.name);
+                return packageItem.createExtrinsicMode(classElement.id);
             }
 
             /**
        * Base Sortals
        */
             case "subkind": {
-                const subkind = packageItem.createSubkind(classElement.name, firstNature);
+                const subkind = packageItem.createSubkind(classElement.id, firstNature);
                 if (!firstNature) {
                     subkind.restrictedTo = [];
                 }
                 return subkind;
             }
             case "phase": {
-                const phase = packageItem.createPhase(classElement.name, firstNature);
+                const phase = packageItem.createPhase(classElement.id, firstNature);
                 if (!firstNature) {
                     phase.restrictedTo = [];
                 }
                 return phase;
             }
             case "role": {
-                const role = packageItem.createRole(classElement.name, firstNature);
+                const role = packageItem.createRole(classElement.id, firstNature);
                 if (!firstNature) {
                     role.restrictedTo = [];
                 }
@@ -97,21 +97,21 @@ export function classElementGenerator(classElement: ClassDeclaration, packageIte
             }
             case "historicalRole": {
                 if (firstNature) {
-                    return packageItem.createHistoricalRole(classElement.name, { restrictedTo: [firstNature] });
+                    return packageItem.createHistoricalRole(classElement.id, { restrictedTo: [firstNature] });
                 } else {
-                    const historicalRole = packageItem.createHistoricalRole(classElement.name);
+                    const historicalRole = packageItem.createHistoricalRole(classElement.id);
                     historicalRole.restrictedTo = [];
                     return historicalRole;
                 }
             }
             case "relator": {
-                return packageItem.createRelator(classElement.name);
+                return packageItem.createRelator(classElement.id);
             }
             case "type": {
-                return packageItem.createType(classElement.name);
+                return packageItem.createType(classElement.id);
             }
             case "powertype": {
-                const powerType = packageItem.createType(classElement.name);
+                const powerType = packageItem.createType(classElement.id);
                 powerType.isPowertype = true;
                 return powerType;
             }
@@ -120,13 +120,13 @@ export function classElementGenerator(classElement: ClassDeclaration, packageIte
        */
             case "class": {
                 if (classElement.ontologicalNatures?.natures.includes("abstract-individuals")) {
-                    return packageItem.createAbstract(classElement.name, { stereotype: ClassStereotype.ABSTRACT });
+                    return packageItem.createAbstract(classElement.id, { stereotype: ClassStereotype.ABSTRACT });
                 }
-                return packageItem.createClass(classElement.name, undefined, natures);
+                return packageItem.createClass(classElement.id, undefined, natures);
             }
         }
     }
-    return packageItem.createClass(classElement.name);
+    return packageItem.createClass(classElement.id);
 }
 
 export function generalizationGenerator(model: Package, sourceClass: Class, targetClass: Class) {
