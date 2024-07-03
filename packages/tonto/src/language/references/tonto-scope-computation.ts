@@ -18,6 +18,10 @@ import { TontoQualifiedNameProvider } from "./tonto-name-provider.js";
 
 
 
+/**
+ * The `TontoScopeComputation` class extends the `DefaultScopeComputation` class and provides
+ * additional functionality for computing local scopes and exports in the Tonto language.
+ */
 export class TontoScopeComputation extends DefaultScopeComputation {
     qualifiedNameProvider: TontoQualifiedNameProvider;
 
@@ -33,7 +37,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
         const packageName = getPackageName(document);
         let description: AstNodeDescription | undefined;
         const localId = this.qualifiedNameProvider.getLocalId(node);
-        console.log(`${packageName}:${localId}`);
+
         if (localId) {
             description = this.descriptions.createDescription(node, localId, document);
             if (packageName) {
@@ -63,12 +67,12 @@ export class TontoScopeComputation extends DefaultScopeComputation {
         const model = document.parseResult.value as Model;
         const scopes = new MultiMap<AstNode, AstNodeDescription>();
 
-        // for (const importItem of model.imports) {
-        //     const PackageDeclaration = importItem.referencedModel?.ref;
-        //     if (PackageDeclaration) {
-        //         await this.processContainer(PackageDeclaration, scopes, document, cancelToken);
-        //     }
-        // }
+        /**
+         * For each import item, we need to create descriptions for every element
+         * However, in order to allow a better UX, Users should be able to import
+         * a package recursively, without importing everything every time.
+         */
+        await this.processImport(model, scopes, document, cancelToken);
 
         /**
          * Diagrams does not have scope?
@@ -92,6 +96,25 @@ export class TontoScopeComputation extends DefaultScopeComputation {
         return scopes;
     }
 
+    private async processImport(
+        model: Model,
+        scopes: MultiMap<AstNode, AstNodeDescription>,
+        document: LangiumDocument<AstNode>,
+        cancelToken: CancellationToken
+    ): Promise<void> {
+        for (const importItem of model.imports) {
+            const PackageDeclaration = importItem.referencedModel?.ref;
+            if (PackageDeclaration) {
+                await this.processContainer(PackageDeclaration, scopes, document, cancelToken);
+                // Recursively process the imports of the imported package
+                await this.processImport(PackageDeclaration.$container, scopes, document, cancelToken);
+            }
+        }
+    }
+
+    /**
+     * Process the container and add the descriptions to the scopes
+     */
     private async processContainer(
         container: PackageDeclaration,
         scopes: PrecomputedScopes,

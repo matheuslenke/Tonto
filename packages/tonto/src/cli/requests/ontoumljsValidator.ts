@@ -30,6 +30,20 @@ interface ErrorInfo {
     schemaPath?: string
 }
 
+export interface GufoErrorResultResponse {
+    id?: string
+    message?: string
+    status?: number
+    info: ErrorInfoGufo[]
+}
+
+interface ErrorInfoGufo {
+    code?: string
+    title?: string
+    description?: string
+    severity?: string
+}
+
 interface JsonResult {
     result: ResultResponse[];
 }

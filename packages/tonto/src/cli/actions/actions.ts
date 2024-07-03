@@ -4,6 +4,7 @@ import path from "path";
 import { ErrorGufoResultResponse, GufoResultResponse } from "../requests/gufoTransform.js";
 import { ErrorResultResponse, ValidationReturn } from "../requests/ontoumljsValidator.js";
 import { readOrCreateDefaultTontoManifest } from "../utils/readManifest.js";
+import { transformToGufoLocalCommand } from "./commands/generate-gufo-local.js";
 import { generateModularCommand } from "./commands/generateCommand.js";
 import { isGufoResultResponse, transformToGufoCommand } from "./commands/generateGufoCommand.js";
 import { ImportOptions, newImportCommand } from "./commands/importCommand.js";
@@ -75,6 +76,33 @@ export class TontoActions {
                     console.log(chalk.bold.redBright(`[${errorInfo.severity}] ${errorInfo.title}:`));
                     console.log(chalk.red(errorInfo.description));
                 });
+            }
+            console.log(chalk.bold.green("Transformation to Gufo finished"));
+        } catch (error) {
+            console.log(chalk.red(error));
+        }
+    }
+
+    async transformToGufoLocalAction(dirName: string): Promise<void> {
+        if (!dirName) {
+            console.log(chalk.red("Directory not provided!"));
+            return;
+        }
+        console.log(chalk.bold("Transforming to gufo..."));
+
+        try {
+            const manifest = readOrCreateDefaultTontoManifest(dirName);
+            const response = await transformToGufoLocalCommand(dirName);
+
+            if (isGufoResultResponse(response)) {
+                const resultResponse = response as GufoResultResponse;
+                const folderAbsolutePath = path.resolve(dirName);
+                const outFolder = path.join(folderAbsolutePath, manifest.outFolder);
+
+                if (!fs.existsSync(outFolder)) {
+                    fs.mkdirSync(outFolder);
+                }
+                fs.writeFileSync(path.join(outFolder, "gufo.ttl"), resultResponse.result);
             }
             console.log(chalk.bold.green("Transformation to Gufo finished"));
         } catch (error) {

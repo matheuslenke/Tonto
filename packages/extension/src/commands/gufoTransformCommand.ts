@@ -1,7 +1,9 @@
+import chalk from "chalk";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import {
     ErrorResultResponse,
+    GufoErrorResultResponse,
     GufoResultResponse,
     ResultResponse,
     isGufoResultResponse,
@@ -11,12 +13,20 @@ import {
 import * as vscode from "vscode";
 import { CommandIds } from "./commandIds.js";
 
-function createTransformToGufoSatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
+function createTransformToGufoSatusBarItem(
+    context: vscode.ExtensionContext,
+    statusBarItem: vscode.StatusBarItem,
+    outputChannel: vscode.OutputChannel
+) {
     context.subscriptions.push(
-        vscode.commands.registerCommand(CommandIds.transformTontoFromButton, createStatusBarItemValidateTontoCommand)
+        vscode.commands.registerCommand(CommandIds.transformTontoFromButton, () => {
+            createStatusBarItemValidateTontoCommand(undefined, outputChannel);
+        })
     );
     context.subscriptions.push(
-        vscode.commands.registerCommand(CommandIds.transformTonto, createTransformTontoToGufoCommand)
+        vscode.commands.registerCommand(CommandIds.transformTonto, () => {
+            createTransformTontoToGufoCommand(outputChannel);
+        })
     );
 
     createStatusBarItem(context, statusBarItem);
@@ -50,7 +60,10 @@ function updateTransformToGufoStatusBarItem(statusBarItem: vscode.StatusBarItem)
     statusBarItem.show();
 }
 
-async function createStatusBarItemValidateTontoCommand(uri: vscode.Uri) {
+async function createStatusBarItemValidateTontoCommand(
+    uri: vscode.Uri | undefined,
+    outputChannel: vscode.OutputChannel
+) {
     const editor = vscode.window.activeTextEditor;
     if (!uri) {
         const documentUri = editor?.document.uri;
@@ -67,14 +80,14 @@ async function createStatusBarItemValidateTontoCommand(uri: vscode.Uri) {
     if (uri) {
         const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
         if (workspaceFolder) {
-            await transformModel(workspaceFolder.uri);
+            await transformModel(workspaceFolder.uri, outputChannel);
         } else {
             vscode.window.showErrorMessage("Failed! File needs to be in a workspace");
         }
     }
 }
 
-async function createTransformTontoToGufoCommand() {
+async function createTransformTontoToGufoCommand(outputChannel: vscode.OutputChannel) {
     const directoryUri = await vscode.window.showOpenDialog({
         canSelectFiles: false,
         canSelectFolders: true,
@@ -84,13 +97,13 @@ async function createTransformTontoToGufoCommand() {
 
     if (directoryUri && directoryUri[0]) {
         const selectedFolder = directoryUri[0];
-        await transformModel(selectedFolder);
+        await transformModel(selectedFolder, outputChannel);
     } else {
         vscode.window.showErrorMessage("Failed! Not a valid directory selected");
     }
 }
 
-async function transformModel(directoryUri: vscode.Uri) {
+async function transformModel(directoryUri: vscode.Uri, outputChannel: vscode.OutputChannel) {
     await vscode.window.withProgress(
         {
             location: vscode.ProgressLocation.Notification,
@@ -111,8 +124,14 @@ async function transformModel(directoryUri: vscode.Uri) {
                 fs.writeFileSync(path.join(outFolder, "gufo.ttl"), gufoResult.result);
                 vscode.window.showInformationMessage("Generated gufo OWL file!");
             } else {
-                const error = response as ErrorResultResponse;
+                const error = response as GufoErrorResultResponse;
                 vscode.window.showErrorMessage(error.message ?? "Error Transforming model");
+                error.info.forEach((info) => {
+                    outputChannel.appendLine(chalk.bold.redBright(`[${info.title}]: `));
+                    outputChannel.appendLine(chalk.red(info.description));
+                    outputChannel.appendLine("");
+                });
+                outputChannel.show();
             }
         }
     );

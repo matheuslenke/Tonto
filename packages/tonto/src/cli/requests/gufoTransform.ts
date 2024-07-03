@@ -2,7 +2,8 @@ import fetch from "node-fetch-native";
 import { Project } from "ontouml-js";
 
 export interface GufoResultResponse {
-    result: string
+    result: string;
+    issues?: string[]
 }
 
 export interface ErrorGufoResultResponse {

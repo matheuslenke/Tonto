@@ -28,7 +28,7 @@ export function activate(context: vscode.ExtensionContext): void {
     createTontoGenerationStatusBarItem(context, generateTontoStatusBarItem);
     // createGenerateDiagramStatusBarItem(context, generateDiagramStatusBarItem);
     createValidationSatusBarItem(context, validateStatusBarItem, outputChannel);
-    createTransformToGufoSatusBarItem(context, transformToGufoStatusBarItem);
+    createTransformToGufoSatusBarItem(context, transformToGufoStatusBarItem, outputChannel);
     createTpmInstallCommands(context, tpmInstallStatusBarItem);
     activateDiagram(context, languageClient);
 

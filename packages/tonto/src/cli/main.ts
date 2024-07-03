@@ -61,10 +61,17 @@ export default function (): void {
         .action(actions.validateAction);
 
     program
+        .command("transform-local")
+        .argument("<dir>", "Directory of the actual project")
+        .description("Transform you Tonto project to gufo with the ontouml-js API")
+        .action(actions.transformToGufoLocalAction);
+
+    program
         .command("transform")
         .argument("<dir>", "Directory of the actual project")
         .description("Transform you Tonto project to gufo with the ontouml-js API")
         .action(actions.transformToGufoAction);
+
 
     program.parseAsync(process.argv);
 }

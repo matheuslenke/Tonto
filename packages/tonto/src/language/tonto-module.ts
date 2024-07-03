@@ -17,6 +17,7 @@ import { TontoParserErrorMessageProvider } from "./lsp/tonto-parser-error-messag
 import { TontoSemanticTokenProvider } from "./lsp/tonto-semantic-token-provider.js";
 import { TontoIndexManager } from "./references/tonto-index-manager.js";
 import { TontoQualifiedNameProvider } from "./references/tonto-name-provider.js";
+import { TontoPackageManager } from "./references/tonto-package-manager.js";
 import { TontoScopeComputation } from "./references/tonto-scope-computation.js";
 import { TontoScopeProvider } from "./references/tonto-scope-provider.js";
 import { TontoSerializer } from "./serializer/tonto-serializer.js";
@@ -63,6 +64,7 @@ export interface TontoAddedSharedServices {
         TextDocumentManager: OpenTextDocumentManager;
         LangiumDocuments: TontoLangiumDocuments;
         IndexManager: TontoIndexManager;
+        PackageManager: TontoPackageManager;
     }
     logger: {
         ClientLogger: ClientLogger;
@@ -88,7 +90,8 @@ export const TontoSharedModule: Module<
         TextDocuments: services => new OpenableTextDocuments(TextDocument, services),
         TextDocumentManager: (services: TontoSharedServices) => new OpenTextDocumentManager(services),
         LangiumDocuments: services => new TontoLangiumDocuments(services),
-        IndexManager: services => new TontoIndexManager(services)
+        IndexManager: services => new TontoIndexManager(services),
+        PackageManager: services => new TontoPackageManager(services),
     },
     logger: {
         ClientLogger: services => new ClientLogger(services)

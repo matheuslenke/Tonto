@@ -73,8 +73,8 @@
             ],
             "type": "node",
             "args": [
-                "transform",
-                "${workspaceFolder}/examples/fixingErrors"
+                "transform-local",
+                "${workspaceFolder}/examples/diagram"
             ]
         },
         {

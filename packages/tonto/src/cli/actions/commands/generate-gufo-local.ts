@@ -2,18 +2,23 @@ import { glob } from "glob";
 import { CompositeGeneratorNode } from "langium/generate";
 import { NodeFileSystem } from "langium/node";
 import * as fs from "node:fs";
+import { Ontouml2Gufo, ServiceIssue } from "ontouml-js";
 import path from "path";
 import { Model, builtInLibs } from "../../../language/index.js";
 import { createTontoServices } from "../../../language/tonto-module.js";
 import { extractAllAstNodes } from "../../cli-util.js";
 import { GeneratorContext, parseProject } from "../../generators/jsonModular.generator.js";
-import { ErrorGufoResultResponse, GufoResultResponse, TontoManifest, TransformTontoToGufo, createDefaultTontoManifest } from "../../main.js";
+import { TontoManifest, createDefaultTontoManifest } from "../../main.js";
 
-export const transformToGufoCommand = async (
+type GufoResult = {
+    result: unknown;
+    issues?: ServiceIssue[] | undefined;
+}
+
+export const transformToGufoLocalCommand = async (
     dirName: string
-): Promise<GufoResultResponse | ErrorGufoResultResponse> => {
+): Promise<GufoResult | undefined> => {
     const services = createTontoServices({ ...NodeFileSystem }).Tonto;
-
     let manifest: TontoManifest | undefined;
 
     const folderAbsolutePath = path.resolve(dirName);
@@ -21,20 +26,16 @@ export const transformToGufoCommand = async (
     if (!fs.existsSync(path.join(folderAbsolutePath, "tonto.json"))) {
         manifest = createDefaultTontoManifest();
     } else {
-        const filePath = path.join(dirName, "tonto.json");
-
+        const filePath = path.join(folderAbsolutePath, "tonto.json");
         const tontoManifestContent = fs.readFileSync(filePath, "utf-8");
         manifest = JSON.parse(tontoManifestContent);
     }
 
     if (manifest === undefined) {
-        return {
-            status: 400,
-            message: "Could not find or create default tonto.json file",
-        } as ErrorGufoResultResponse;
+        return undefined;
     }
 
-    const allFiles = await glob(dirName + "/**/*.tonto");
+    const allFiles = await glob(folderAbsolutePath + "/**/*.tonto");
 
     const models: Model[] = await extractAllAstNodes(allFiles, services, builtInLibs, false);
 
@@ -46,25 +47,8 @@ export const transformToGufoCommand = async (
     };
 
     const project = parseProject(context);
+    const service = new Ontouml2Gufo(project);
+    const response = service.run();
 
-    const transformResult = await TransformTontoToGufo(project);
-    if (transformResult) {
-        return transformResult;
-    } else {
-        return {
-            status: 500,
-            message: "Transformation failed: Could not connect with OntoUML API",
-        } as ErrorGufoResultResponse;
-    }
+    return response;
 };
-
-export function isGufoResultResponse(value: unknown): value is GufoResultResponse | ErrorGufoResultResponse {
-    if (typeof value === "object" && value !== null) {
-        if ("result" in value) {
-            return typeof value.result === "string";
-        } else if ("info" in value) {
-            return !Array.isArray(value.info);
-        }
-    }
-    return false;
-}

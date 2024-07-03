@@ -30,6 +30,10 @@ export function readOrCreateDefaultTontoManifest(dirName: string): TontoManifest
 
         const tontoManifestContent = fs.readFileSync(filePath, "utf-8");
         manifest = JSON.parse(tontoManifestContent);
+
+        if (manifest.outFolder === undefined) {
+            manifest.outFolder = "out";
+        }
     }
     return manifest;
 }
