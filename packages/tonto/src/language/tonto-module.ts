@@ -1,5 +1,4 @@
 import { AstNode, DefaultServiceRegistry, Hydrator, JsonSerializer, Module, ServiceRegistry, TextDocument, inject } from "langium";
-import { LangiumSprottyServices } from "langium-sprotty";
 import { DefaultSharedModuleContext, LangiumServices, LangiumSharedServices, PartialLangiumServices, PartialLangiumSharedServices, createDefaultModule, createDefaultSharedModule } from "langium/lsp";
 import "reflect-metadata";
 import { URI } from "vscode-uri";
@@ -86,7 +85,10 @@ export const TontoSharedModule: Module<
     PartialLangiumSharedServices & TontoAddedSharedServices & AddedSharedModelServices> = {
     ServiceRegistry: () => new DefaultExtendedServiceRegistry(),
     workspace: {
-        WorkspaceManager: services => new TontoWorkspaceManager(services),
+        WorkspaceManager: services => {
+            console.log("Initialized Workspace Manager service");
+            return new TontoWorkspaceManager(services);
+        },
         TextDocuments: services => new OpenableTextDocuments(TextDocument, services),
         TextDocumentManager: (services: TontoSharedServices) => new OpenTextDocumentManager(services),
         LangiumDocuments: services => new TontoLangiumDocuments(services),
@@ -134,7 +136,7 @@ export type TontoAddedServices = {
  * Union of Langium default services and your custom services - use this as constructor parameter
  * of custom service classes.
  */
-export type TontoServices = LangiumServices & TontoAddedServices & LangiumSprottyServices
+export type TontoServices = LangiumServices & TontoAddedServices
 export const TontoServices = Symbol("TontoServices");
 /**
  * Dependency injection module that overrides Langium default services and contributes the

@@ -35,7 +35,7 @@ const ctx = await esbuild.context({
     bundle: true,
     target: "ES2017",
     format: "cjs",
-    loader: { ".ts": "ts" },
+    loader: { ".ts": "ts", ".ttf": "text" },
     external: ["vscode"],
     platform: "node",
     sourcemap: true,

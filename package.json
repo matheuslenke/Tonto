@@ -46,8 +46,7 @@
     "workspaces": [
         "packages/tonto",
         "packages/extension",
-        "packages/tpm",
-        "packages/webview"
+        "packages/tpm"
     ],
     "dependencies": {
         "@eclipse-glsp/server": "^2.1.1"

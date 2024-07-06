@@ -106,14 +106,13 @@
         ],
         "customEditors": [
             {
-                "viewType": "tonto",
-                "displayName": "Tonto Diagram",
+                "viewType": "tonto.glspDiagram",
+                "displayName": "Tonto Diagram Editor",
                 "selector": [
                     {
-                        "filenamePattern": "*.tonto"
+                        "filenamePattern": "*.diagram.tonto"
                     }
-                ],
-                "priority": "option"
+                ]
             }
         ],
         "commands": [
@@ -177,11 +176,7 @@
     },
     "activationEvents": [
         "onLanguage:tonto",
-        "workspaceContains:tonto.json",
-        "onWebviewPanel:tonto",
-        "onCustomEditor:tonto",
-        "onView:tonto",
-        "onCommand:tonto.diagram.open"
+        "workspaceContains:tonto.json"
     ],
     "files": [
         "bin",
@@ -215,6 +210,10 @@
         "prepare:public": "node scripts/prepare-public.mjs"
     },
     "dependencies": {
+        "@eclipse-glsp/client": "^2.2.0",
+        "@eclipse-glsp/vscode-integration": "^2.1.1",
+        "@eclipse-glsp/vscode-integration-webview": "^2.1.1",
+        "@vscode/codicons": "^0.0.36",
         "chalk": "^5.3.0",
         "commander": "^11.0.0",
         "langium": "^3.0.0",
@@ -228,9 +227,11 @@
         "sprotty": "^1.2.0",
         "sprotty-vscode": "^1.0.0",
         "tonto-cli": "file:../tonto",
+        "tonto-diagram-webview": "file:../webview",
         "tonto-package-manager": "~0.2.9",
-        "tonto-sprotty-webview": "file:../webview",
+        "ts-loader": "^9.5.1",
         "uuid": "^9.0.1",
+        "vscode-jsonrpc": "^8.2.1",
         "vscode-languageclient": "^9.0.1",
         "vscode-languageserver": "^9.0.1",
         "vscode-languageserver-types": "^3.17.3",

@@ -1,0 +1,14 @@
+
+svg {
+    border-style: solid;
+    border-width: 1px;
+    border-color: #bbb;
+}
+
+.sprotty-node {
+    fill: inherit;
+}
+
+.tasklist-node > .sprotty-node {
+    fill: #f1bd6c;
+}

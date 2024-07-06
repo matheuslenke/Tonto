@@ -1,14 +1,16 @@
+import Person
+
 package Main
 
 datatype MeuDatatype
 kind A
 
 kind Teste {
-    named: boolean
-    [1] -- [1] 
+    named: date
+    [1] -- [1] A
 }
 
-genset Teste2 {
-    general Teste
-    specifics Teste
-}
+// genset Teste2 {
+//     general Teste
+//     specifics A
+// }

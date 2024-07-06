@@ -1,31 +1,13 @@
 {
-	"compilerOptions": {
-    "sourceMap": true,
-    "downlevelIteration": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "target": "ES2017",
-    "jsx": "react",
-    "rootDir": "src",
-    "outDir": "out",
-    "useUnknownInCatchVariables": false,
-    "lib": [
-        "ES2017",
-        "es6",
-        "dom"
-    ],
-    "declaration": true,
-    "declarationMap": false,
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "noUnusedLocals": true,
-    "noImplicitOverride": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "strictPropertyInitialization": false,
-    "composite": true
-  },
-  "include": [
-    "src"
-  ]
-}
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+      "composite": true,
+      "rootDir": "src",
+      "outDir": "lib",
+      "skipLibCheck": true,
+      "preserveSymlinks": true,
+    },
+    "include": ["src"],
+    "exclude": ["node_modules"]
+  }
+  

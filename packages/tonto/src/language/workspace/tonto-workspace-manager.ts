@@ -25,7 +25,6 @@ export class TontoWorkspaceManager extends DefaultWorkspaceManager {
     override async initializeWorkspace(folders: WorkspaceFolder[], cancelToken?: CancellationToken | undefined): Promise<void> {
         try {
             await super.initializeWorkspace(folders, cancelToken);
-            this.logger.info("Workspace Initialized");
             const uris = this.folders?.map(folder => this.getRootFolder(folder)) || [];
             this.workspaceInitializedDeferred.resolve(uris);
             this.onWorkspaceInitializedEmitter.fire(uris);
@@ -42,13 +41,13 @@ export class TontoWorkspaceManager extends DefaultWorkspaceManager {
    * Loads built-in libraries into every Tonto Project
    */
     protected override async loadAdditionalDocuments(
-        _folders: WorkspaceFolder[],
+        folders: WorkspaceFolder[],
         _collector: (document: LangiumDocument<AstNode>) => void
     ): Promise<void> {
         const uri = URI.parse("builtin://basicDatatypes.tonto");
         const document = this.documentFactory.fromString(this.basicDataTypes, uri);
         _collector(document);
-        console.log("Additional documents loaded");
+        return this.services.workspace.PackageManager.initialize(folders);
     }
 
     protected override includeEntry(_workspaceFolder: WorkspaceFolder, entry: FileSystemNode, fileExtensions: string[]): boolean {

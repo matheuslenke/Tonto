@@ -2,7 +2,7 @@ import Main
 
 package Internal.Pack
 
-kind Person (instanceOf Main.Teste)
+kind Person (instanceOf Person.Person)
 
 phase Adult specializes Internal.Pack.Person
-phase Adult specializes Person
+phase Adult2 specializes Person

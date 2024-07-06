@@ -1,5 +1,5 @@
 import { AstNode, AstNodeDescription, DefaultScopeProvider, ReferenceInfo, Scope, ScopeOptions, StreamScope, URI, stream } from "langium";
-import { CrossReferenceContainer, ReferenceableElement, isGlobalElementReference, isSyntheticDocument } from "../../model-server/types.js";
+import { CrossReference, CrossReferenceContainer, ReferenceableElement, isGlobalElementReference, isSyntheticDocument } from "../../model-server/types.js";
 import { findRootNode, getDocument, getPackageName } from "../../utils/ast-util.js";
 import { Model, isModel } from "../generated/ast.js";
 import { TontoServices } from "../tonto-module.js";
@@ -106,12 +106,12 @@ export class TontoScopeProvider extends DefaultScopeProvider {
         return referenceInfo;
     }
 
-    // resolveCrossReference(reference: CrossReference): AstNode | undefined {
-    //     const description = this.getScope(this.referenceContextToInfo(reference))
-    //         .getAllElements()
-    //         .find(desc => desc.name === reference.value);
-    //     return this.services.shared.workspace.IndexManager.resolveElement(description);
-    // }
+    resolveCrossReference(reference: CrossReference): AstNode | undefined {
+        const description = this.getScope(this.referenceContextToInfo(reference))
+            .getAllElements()
+            .find(desc => desc.name === reference.value);
+        return this.services.shared.workspace.IndexManager.resolveElement(description);
+    }
 
     getCompletionScope(ctx: CrossReferenceContext): CompletionScope {
         const referenceInfo = this.referenceContextToInfo(ctx);

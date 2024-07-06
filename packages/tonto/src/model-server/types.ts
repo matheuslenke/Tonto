@@ -15,7 +15,7 @@ export const CrossModelRegex = {
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type Reference<T> = string;
 
-export interface CrossModelElement {
+export interface TontoElement {
     readonly $type: string;
 }
 
@@ -24,26 +24,26 @@ export interface Identifiable {
     $globalId: string;
 }
 
-export interface CrossModelRoot extends CrossModelElement {
-    readonly $type: "CrossModelRoot";
+export interface TontoRoot extends TontoElement {
+    readonly $type: "TontoRoot";
     entity?: Entity;
     relationship?: Relationship;
     mapping?: Mapping;
 }
 
-export function isCrossModelRoot(model?: any): model is CrossModelRoot {
-    return !!model && model.$type === "CrossModelRoot";
+export function isTontoRoot(model?: any): model is TontoRoot {
+    return !!model && model.$type === "TontoRoot";
 }
 
 export const EntityType = "Entity";
-export interface Entity extends CrossModelElement, Identifiable {
+export interface Entity extends TontoElement, Identifiable {
     readonly $type: typeof EntityType;
     attributes: Array<EntityAttribute>;
     description?: string;
     name?: string;
 }
 
-export interface Attribute extends CrossModelElement, Identifiable {
+export interface Attribute extends TontoElement, Identifiable {
     datatype?: string;
     description?: string;
     name?: string;
@@ -55,7 +55,7 @@ export interface EntityAttribute extends Attribute {
 }
 
 export const RelationshipType = "Relationship";
-export interface Relationship extends CrossModelElement, Identifiable {
+export interface Relationship extends TontoElement, Identifiable {
     readonly $type: typeof RelationshipType;
     attributes: Array<RelationshipAttribute>;
     child?: Reference<Entity>;
@@ -66,35 +66,35 @@ export interface Relationship extends CrossModelElement, Identifiable {
 }
 
 export const RelationshipAttributeType = "RelationshipAttribute";
-export interface RelationshipAttribute extends CrossModelElement {
+export interface RelationshipAttribute extends TontoElement {
     readonly $type: typeof RelationshipAttributeType;
     parent?: Reference<EntityAttribute>;
     child?: Reference<EntityAttribute>;
 }
 
 export const MappingType = "Mapping";
-export interface Mapping extends CrossModelElement, Identifiable {
+export interface Mapping extends TontoElement, Identifiable {
     readonly $type: typeof MappingType;
     sources: Array<SourceObject>;
     target: TargetObject;
 }
 
 export const SourceObjectType = "SourceObject";
-export interface SourceObject extends CrossModelElement, Identifiable {
+export interface SourceObject extends TontoElement, Identifiable {
     readonly $type: typeof SourceObjectType;
     entity?: Reference<Entity>;
     join?: "from" | "inner-join" | "cross-join" | "left-join" | "apply";
 }
 
 export const TargetObjectType = "TargetObject";
-export interface TargetObject extends CrossModelElement {
+export interface TargetObject extends TontoElement {
     readonly $type: typeof TargetObjectType;
     entity?: Reference<Entity>;
     mappings: Array<AttributeMapping>;
 }
 
 export const AttributeMappingType = "AttributeMapping";
-export interface AttributeMapping extends CrossModelElement {
+export interface AttributeMapping extends TontoElement {
     readonly $type: typeof AttributeMappingType;
     attribute?: AttributeMappingTarget;
     sources: Array<AttributeMappingSource>;
@@ -102,7 +102,7 @@ export interface AttributeMapping extends CrossModelElement {
 }
 
 export const AttributeMappingTargetType = "AttributeMappingTarget";
-export interface AttributeMappingTarget extends CrossModelElement {
+export interface AttributeMappingTarget extends TontoElement {
     readonly $type: typeof AttributeMappingTargetType;
     value?: Reference<Attribute>;
 }
@@ -113,7 +113,7 @@ export interface TargetObjectAttribute extends Attribute {
 }
 
 export const AttributeMappingSourceType = "AttributeMappingSource";
-export interface AttributeMappingSource extends CrossModelElement {
+export interface AttributeMappingSource extends TontoElement {
     readonly $type: typeof AttributeMappingSourceType;
     value: Reference<Attribute>;
 }
@@ -240,7 +240,7 @@ export interface CrossReference {
 
 export interface ResolvedElement {
     uri: string;
-    model: CrossModelRoot;
+    model: TontoRoot;
 }
 
 export interface ModelUpdatedEvent<T> {
@@ -268,18 +268,18 @@ export interface SystemUpdatedEvent {
 }
 export type SystemUpdateListener = (event: SystemUpdatedEvent) => void | Promise<void>;
 
-export const OpenModel = new rpc.RequestType1<OpenModelArgs, CrossModelRoot | undefined, void>("server/open");
+export const OpenModel = new rpc.RequestType1<OpenModelArgs, TontoRoot | undefined, void>("server/open");
 export const CloseModel = new rpc.RequestType1<CloseModelArgs, void, void>("server/close");
-export const RequestModel = new rpc.RequestType1<string, CrossModelRoot | undefined, void>("server/request");
+export const RequestModel = new rpc.RequestType1<string, TontoRoot | undefined, void>("server/request");
 export const RequestModelDiagramNode = new rpc.RequestType2<string, string, Element | undefined, void>("server/requestModelDiagramNode");
 
 export const FindReferenceableElements = new rpc.RequestType1<CrossReferenceContext, ReferenceableElement[], void>("server/complete");
 export const ResolveReference = new rpc.RequestType1<CrossReference, ResolvedElement | undefined, void>("server/resolve");
 
-export const UpdateModel = new rpc.RequestType1<UpdateModelArgs<CrossModelRoot>, CrossModelRoot, void>("server/update");
-export const SaveModel = new rpc.RequestType1<SaveModelArgs<CrossModelRoot>, void, void>("server/save");
-export const OnModelSaved = new rpc.NotificationType1<ModelSavedEvent<CrossModelRoot>>("server/onSave");
-export const OnModelUpdated = new rpc.NotificationType1<ModelUpdatedEvent<CrossModelRoot>>("server/onUpdated");
+export const UpdateModel = new rpc.RequestType1<UpdateModelArgs<TontoRoot>, TontoRoot, void>("server/update");
+export const SaveModel = new rpc.RequestType1<SaveModelArgs<TontoRoot>, void, void>("server/save");
+export const OnModelSaved = new rpc.NotificationType1<ModelSavedEvent<TontoRoot>>("server/onSave");
+export const OnModelUpdated = new rpc.NotificationType1<ModelUpdatedEvent<TontoRoot>>("server/onUpdated");
 
 export const RequestSystemInfos = new rpc.RequestType1<void, SystemInfo[], void>("server/systems");
 export const RequestSystemInfo = new rpc.RequestType1<SystemInfoArgs, SystemInfo | undefined, void>("server/system");

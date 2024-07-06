@@ -1,21 +1,28 @@
 // @ts-check
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require("path");
 
-const outputPath = path.resolve(__dirname, "out");
+const outputPath = path.resolve(__dirname, "./dist/");
 
 /**@type {import('webpack').Configuration}*/
 const config = {
     target: "web",
 
-    entry: path.resolve(__dirname, "src/main.ts"),
+    entry: path.resolve(__dirname, "src/index.ts"),
     output: {
-		filename: "webview.js",
+        filename: "webview.js",
         path: outputPath
     },
-    devtool: "source-map",
+    devtool: "eval-source-map",
+    mode: "development",
 
     resolve: {
+        fallback: {
+            fs: false,
+            net: false
+        },
+        alias: {
+            process: "process/browser"
+        },
         extensions: [".ts", ".tsx", ".js"]
     },
     module: {
@@ -33,20 +40,13 @@ const config = {
                 test: /\.css$/,
                 exclude: /\.useable\.css$/,
                 use: ["style-loader", "css-loader"]
-            },
-            {
-                test: /\.(ttf)$/,
-                loader: "file-loader",
-                options: {
-                    name: "[name].[ext]",
-                    outputPath: "",
-                    publicPath: "..",
-                    postTransformPublicPath: (p) => `__webpack_public_path__ + ${p}`,
-                }
-            },
+            }
         ]
     },
-    ignoreWarnings: [/Failed to parse source map/]
+    ignoreWarnings: [/Failed to parse source map/, /Can't resolve .* in '.*ws\/lib'/],
+    performance: {
+        hints: false
+    }
 };
 
 module.exports = config;

@@ -15,6 +15,10 @@
         {
             "name": "tonto-vscode",
             "path": "packages/extension"
+        },
+        {
+            "name": "tonto-vscode",
+            "path": "packages/webview"
         }
     ],
 	"settings": {

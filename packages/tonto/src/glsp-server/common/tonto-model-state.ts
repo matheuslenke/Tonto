@@ -1,10 +1,11 @@
 import { DefaultModelState, JsonModelState } from "@eclipse-glsp/server";
 import { inject } from "inversify";
-import { TontoLSPServices } from "../../integration.js";
 import { Model } from "../../language/generated/ast.js";
 import { TontoQualifiedNameProvider } from "../../language/references/tonto-name-provider.js";
 import { ModelService } from "../../model-server/model-service.js";
 import { Serializer } from "../../model-server/serializer.js";
+
+import { TontoLSPServices } from "../../integration.js";
 import { TontoIndex } from "./tonto-index.js";
 
 export interface TontoSourceModel {

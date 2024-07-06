@@ -1,9 +1,9 @@
-import { AstNode, Deferred, DocumentState, URI, isAstNode } from "langium";
+import { AstNode, Deferred, DocumentState, URI, UriUtils, isAstNode } from "langium";
 import { Disposable, OptionalVersionedTextDocumentIdentifier, Range, TextDocumentEdit, TextEdit, uinteger } from "vscode-languageserver";
 import { TontoServices, TontoSharedServices } from "../language/tonto-module.js";
 import { findDocument } from "../utils/ast-util.js";
 import { LANGUAGE_CLIENT_ID } from "./openable-text-document.js";
-import { CloseModelArgs, ModelSavedEvent, ModelUpdatedEvent, SaveModelArgs, UpdateModelArgs } from "./types.js";
+import { CloseModelArgs, CrossReference, CrossReferenceContext, ModelSavedEvent, ModelUpdatedEvent, ReferenceableElement, SaveModelArgs, SystemInfo, SystemInfoArgs, SystemUpdatedEvent, UpdateModelArgs } from "./types.js";
 
 export interface ClientModelArgs {
     uri: string;
@@ -187,32 +187,32 @@ export class ModelService {
         return undefined;
     }
 
-    // async findReferenceableElements(args: CrossReferenceContext): Promise<ReferenceableElement[]> {
-    //     return this.shared.Tonto.references.ScopeProvider.complete(args);
-    // }
+    async findReferenceableElements(args: CrossReferenceContext): Promise<ReferenceableElement[]> {
+        return this.shared.Tonto.references.ScopeProvider.complete(args);
+    }
 
-    // async resolveCrossReference(args: CrossReference): Promise<AstNode | undefined> {
-    //     return this.shared.Tonto.references.ScopeProvider.resolveCrossReference(args);
-    // }
+    async resolveCrossReference(args: CrossReference): Promise<AstNode | undefined> {
+        return this.shared.Tonto.references.ScopeProvider.resolveCrossReference(args);
+    }
 
-    // async getSystemInfos(): Promise<SystemInfo[]> {
-    //     return this.shared.workspace.PackageManager.getPackageInfos().map(info =>
-    //         this.shared.workspace.PackageManager.convertPackageInfoToSystemInfo(info)
-    //     );
-    // }
+    async getSystemInfos(): Promise<SystemInfo[]> {
+        return this.shared.workspace.PackageManager.getPackageInfos().map(info =>
+            this.shared.workspace.PackageManager.convertPackageInfoToSystemInfo(info)
+        );
+    }
 
-    // async getSystemInfo(args: SystemInfoArgs): Promise<SystemInfo | undefined> {
-    //     const contextUri = URI.parse(args.contextUri);
-    //     const packageInfo =
-    //         this.shared.workspace.PackageManager.getPackageInfoByURI(contextUri) ??
-    //         this.shared.workspace.PackageManager.getPackageInfoByURI(UriUtils.joinPath(contextUri, PACKAGE_JSON));
-    //     if (!packageInfo) {
-    //         return undefined;
-    //     }
-    //     return this.shared.workspace.PackageManager.convertPackageInfoToSystemInfo(packageInfo);
-    // }
+    async getSystemInfo(args: SystemInfoArgs): Promise<SystemInfo | undefined> {
+        const contextUri = URI.parse(args.contextUri);
+        const packageInfo =
+            this.shared.workspace.PackageManager.getPackageInfoByURI(contextUri) ??
+            this.shared.workspace.PackageManager.getPackageInfoByURI(UriUtils.joinPath(contextUri, "tonto.json"));
+        if (!packageInfo) {
+            return undefined;
+        }
+        return this.shared.workspace.PackageManager.convertPackageInfoToSystemInfo(packageInfo);
+    }
 
-    // onSystemUpdated(listener: (event: SystemUpdatedEvent) => void): Disposable {
-    //     return this.shared.workspace.PackageManager.onUpdate(listener);
-    // }
+    onSystemUpdated(listener: (event: SystemUpdatedEvent) => void): Disposable {
+        return this.shared.workspace.PackageManager.onUpdate(listener);
+    }
 }

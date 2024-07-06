@@ -10,16 +10,19 @@
             "type": "extensionHost",
             "sourceMaps": true,
             "request": "launch",
+            "runtimeExecutable": "${execPath}",
             "args": [
                 "${workspaceFolder}/examples/diagram",
                 "--extensionDevelopmentPath=${workspaceFolder}/packages/extension"
             ],
             "outFiles": [
-                "${workspaceFolder}/{packages,examples}/*/{lib,out}/**/*.js",
-                "${workspaceFolder}/sprotty-vscode-extension/lib/**/*.js"
+                "${workspaceFolder}/**/*.(m|c|)js",
+                "!**/node_modules/**"
             ],
             "env": {
-                "DIAGRAM_MODE": "panel"
+                // "DEBUG_BREAK": "true",
+                "DIAGRAM_MODE": "panel",
+                "TONTO_SERVER_PORT": "5007"
             },
         },
         {

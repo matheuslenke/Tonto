@@ -5,6 +5,7 @@ import * as uuid from "uuid";
 import { TontoLSPServices } from "../../integration.js";
 import { Model } from "../../language/index.js";
 
+
 @injectable()
 export class TontoIndex extends GModelIndex {
     @inject(TontoLSPServices) services!: TontoLSPServices;

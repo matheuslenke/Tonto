@@ -6,3 +6,4 @@ export { GrammarAST, Model };
 import type { Model } from "./language/generated/ast.js";
 import * as GrammarAST from "./language/generated/ast.js";
 
+export * from "integration.js";
