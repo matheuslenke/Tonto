@@ -15,7 +15,7 @@
   ],
   "include": [
     "src/**/*.ts",
-    "src/webview.cts",
+    "src/webview.cjs",
 ],
   "exclude": [
     "/node_modules"

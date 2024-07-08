@@ -1,4 +1,4 @@
-import Main
+import Person
 
 package Internal.Pack
 

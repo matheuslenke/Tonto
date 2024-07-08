@@ -1,1 +1,1 @@
-export * from "./tonto-diagram-module";
+export * from "./tonto-diagram-module.js";

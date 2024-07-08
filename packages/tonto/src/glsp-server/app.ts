@@ -1,7 +1,7 @@
 import {
+    GModelStorage,
     LogLevel,
     LoggerFactory,
-    MaybePromise,
     SocketLaunchOptions,
     SocketServerLauncher,
     createAppModule,
@@ -12,12 +12,12 @@ import { Container, ContainerModule } from "inversify";
 import { AddressInfo } from "node:net";
 import { URI } from "vscode-uri";
 
+import { configureELKLayoutModule } from "@eclipse-glsp/layout-elk";
 import { TontoLSPServices, TontoServices, TontoSharedServices } from "tonto-cli";
-import { GLSP_PORT_COMMAND } from "./protocol/integration.js";
 import { TontoDiagramModule, TontoServerModule } from "./tonto-diagram/tonto-diagram-module.js";
 
 
-export function startGLSPServer(services: TontoLSPServices, workspaceFolder: URI): MaybePromise<void> {
+export async function startGLSPServer(services: TontoLSPServices, workspaceFolder: URI): Promise<void> {
     const launchOptions: SocketLaunchOptions = {
         ...defaultSocketLaunchOptions,
         host: "127.0.0.1",
@@ -25,8 +25,17 @@ export function startGLSPServer(services: TontoLSPServices, workspaceFolder: URI
         logLevel: LogLevel.info
     };
 
+    // Add fallback hooks to catch unhandled exceptions & promise rejections and prevent the node process from crashing
+    process.on("unhandledRejection", (reason, p) => {
+        logger.error("Unhandled Rejection:", p, reason);
+    });
+
+    process.on("uncaughtException", error => {
+        logger.error("Uncaught exception:", error);
+    });
+
     const appModule = createAppModule(launchOptions);
-    // const elkLayoutModule = configureELKLayoutModule({ algorithms: ["layered"] });
+    const elkLayoutModule = configureELKLayoutModule({ algorithms: ["layered"] });
     const lspModule = createLSPModule(services);
 
     const appContainer = new Container();
@@ -34,23 +43,23 @@ export function startGLSPServer(services: TontoLSPServices, workspaceFolder: URI
 
     // create server
     const serverModule = new TontoServerModule()
-        .configureDiagramModule(new TontoDiagramModule());
+        .configureDiagramModule(new TontoDiagramModule(() => GModelStorage), elkLayoutModule);
 
     const logger = appContainer.get<LoggerFactory>(LoggerFactory)("TontoServer");
     const launcher = appContainer.resolve<SocketServerLauncher>(SocketServerLauncher);
     launcher.configure(serverModule);
+    await launcher.start(launchOptions);
 
-    try {
-        const stop = launcher.start(launchOptions);
-        launcher["netServer"].on(
-            "listening", () => services.shared.lsp.Connection?.onRequest(GLSP_PORT_COMMAND, () => getPort(launcher["netServer"].address()))
-        );
-        return stop;
-    } catch (error) {
-        logger.error("Error in GLSP server launcher: ", error);
-    }
 
-    process.on("unhandledRejection", error => console.log("Unhandled rejection", error));
+    // try {
+    //     const stop = launcher.start(launchOptions);
+    //     launcher["netServer"].on(
+    //         "listening", () => services.shared.lsp.Connection?.onRequest(GLSP_PORT_COMMAND, () => getPort(launcher["netServer"].address()))
+    //     );
+    //     return stop;
+    // } catch (error) {
+    //     logger.error("Error in GLSP server launcher: ", error);
+    // }
 }
 
 function getPort(address: AddressInfo | string | null): number | undefined {

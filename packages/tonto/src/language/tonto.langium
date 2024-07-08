@@ -20,7 +20,7 @@ import "./grammar/package-declaration"
  */
 entry Model:
 	imports+=Import*
-	(module=PackageDeclaration | diagram=TontoDiagramView)
+	(module=PackageDeclaration)
 ;
 
 Import:

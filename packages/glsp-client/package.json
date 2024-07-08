@@ -2,13 +2,14 @@
   "name": "tonto-glsp-client",
   "version": "1.0.0",
   "description": "A GLSP Client to render diagrams",
-  "main": "src/index.js",
+  "main": "out/index.js",
   "scripts": {
     "build": "tsc -b",
     "clean": "rimraf *.tsbuildinfo  lib",
     "lint": "eslint --ext .ts,.tsx ./src",
     "watch": "tsc -w"
   },
+  "type": "module",
   "author": "Matheus Lenke Coutinho",
   "license": "MIT",
   "dependencies": {

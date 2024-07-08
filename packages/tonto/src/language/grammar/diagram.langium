@@ -2,10 +2,11 @@ import 'terminals'
 import 'class-declaration'
 
 TontoDiagramView:
-    'diagram' id=ID
+    'diagram' id=ID '{'
     ('name' ':' name=STRING)?
     ('description' ':' description=STRING)?
     ('nodes' ':' '[' nodes+=NodeView (',' nodes+=NodeView)* ']')?
+    '}'
 ;
 
 NodeView:

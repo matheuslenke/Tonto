@@ -1,5 +1,18 @@
 package Person
 
-kind Person {
-    
+category LegalPerson of functional-complexes
+// Person elements
+kind Person specializes LegalPerson {
+    name: string
 }
+phase DeceasedPerson specializes Person
+phase LivingPerson specializes Person
+role Student specializes LivingPerson
+
+// Organization elements
+kind Organization specializes LegalPerson
+subkind School specializes Organization
+/**
+* Relation between a student and a school
+*/
+relation School [1..*] -- studiesIn -- [0..*] Student

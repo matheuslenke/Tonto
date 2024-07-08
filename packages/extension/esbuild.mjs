@@ -27,7 +27,7 @@ const plugins = [{
 }];
 
 const ctx = await esbuild.context({
-    entryPoints: ["src/extension/main.ts", "src/language/main.ts", "src/webview.cts"],
+    entryPoints: ["src/extension/main.ts", "src/language/main.ts", "src/webview.cjs"],
     outdir: "out",
     outExtension: {
         ".js": ".cjs"

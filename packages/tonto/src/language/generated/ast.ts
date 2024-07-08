@@ -115,7 +115,7 @@ export interface Attribute extends AstNode {
     readonly $type: 'Attribute';
     attributeTypeRef: Reference<DataType>;
     cardinality?: Cardinality;
-    id: string;
+    id: QualifiedName;
     isConst: boolean;
     isDerived: boolean;
     isOrdered: boolean;
@@ -258,9 +258,8 @@ export function isImport(item: unknown): item is Import {
 
 export interface Model extends AstNode {
     readonly $type: 'Model';
-    diagram?: TontoDiagramView;
     imports: Array<Import>;
-    module?: PackageDeclaration;
+    module: PackageDeclaration;
 }
 
 export const Model = 'Model';
@@ -342,7 +341,6 @@ export function isRelationMetaAttributes(item: unknown): item is RelationMetaAtt
 }
 
 export interface TontoDiagramView extends AstNode {
-    readonly $container: Model;
     readonly $type: 'TontoDiagramView';
     description?: string;
     id: string;
@@ -563,7 +561,6 @@ export class TontoAstReflection extends AbstractAstReflection {
                 return {
                     name: 'Model',
                     properties: [
-                        { name: 'diagram' },
                         { name: 'imports', defaultValue: [] },
                         { name: 'module' }
                     ]

@@ -13,11 +13,12 @@
   },
   "exports": {
     ".": {
-      "import": "./lib/index.js",
-      "require": "./lib/index.js",
+      "import": "./dist/webview.js",
+      "require": "./dist/webview.js",
       "types": "./lib/index.d.ts"
     }
   },
+  "type": "module",
   "author": "",
   "license": "ISC",
   "devDependencies": {
@@ -31,6 +32,7 @@
     "ts-loader": "^9.5.1",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4",
-    "webpack-merge": "^5.9.0"
+    "webpack-merge": "^5.9.0",
+    "tonto-glsp-client": "file:../glsp-client"
   }
 }

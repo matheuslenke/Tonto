@@ -34,33 +34,16 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
             "cardinality": "*"
           },
           {
-            "$type": "Alternatives",
-            "elements": [
-              {
-                "$type": "Assignment",
-                "feature": "module",
-                "operator": "=",
-                "terminal": {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$ref": "#/rules@40"
-                  },
-                  "arguments": []
-                }
+            "$type": "Assignment",
+            "feature": "module",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@40"
               },
-              {
-                "$type": "Assignment",
-                "feature": "diagram",
-                "operator": "=",
-                "terminal": {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$ref": "#/rules@38"
-                  },
-                  "arguments": []
-                }
-              }
-            ]
+              "arguments": []
+            }
           }
         ]
       },
@@ -1115,7 +1098,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@7"
+                "$ref": "#/rules@10"
               },
               "arguments": []
             }
@@ -2382,6 +2365,10 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
             }
           },
           {
+            "$type": "Keyword",
+            "value": "{"
+          },
+          {
             "$type": "Group",
             "elements": [
               {
@@ -2488,6 +2475,10 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
               }
             ],
             "cardinality": "?"
+          },
+          {
+            "$type": "Keyword",
+            "value": "}"
           }
         ]
       },

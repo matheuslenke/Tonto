@@ -56,10 +56,6 @@
         "menus": {
             "commandPalette": [
                 {
-                    "command": "tonto.diagram.open",
-                    "when": "editorLangId == 'tonto'"
-                },
-                {
                     "command": "tonto.diagram.fit",
                     "when": "tonto-diagram-focused"
                 },
@@ -68,33 +64,12 @@
                     "when": "tonto-diagram-focused"
                 },
                 {
-                    "command": "tonto.diagram.delete",
+                    "command": "tonto.diagram.layout",
                     "when": "tonto-diagram-focused"
                 },
                 {
-                    "command": "tonto.diagram.export",
+                    "command": "tonto.diagram.exportAsSVG",
                     "when": "tonto-diagram-focused"
-                }
-            ],
-            "editor/context": [
-                {
-                    "command": "tonto.diagram.open",
-                    "when": "editorLangId == 'tonto'",
-                    "group": "navigation"
-                }
-            ],
-            "editor/title": [
-                {
-                    "command": "tonto.diagram.open",
-                    "when": "editorLangId == 'tonto'",
-                    "group": "navigation"
-                }
-            ],
-            "explorer/context": [
-                {
-                    "command": "tonto.diagram.open",
-                    "when": "resourceExtname == '.tonto'",
-                    "group": "navigation"
                 }
             ]
         },
@@ -117,35 +92,29 @@
         ],
         "commands": [
             {
-                "command": "tonto.diagram.open",
-                "icon": "$(symbol-structure)",
-                "title": "Open Tonto Diagram",
-                "category": "tonto Diagram"
-            },
-            {
                 "command": "tonto.diagram.fit",
                 "title": "Fit to Screen",
-                "category": "tonto Diagram"
-            },
-            {
+                "category": "Workflow Diagram",
+                "enablement": "activeCustomEditorId == 'tonto.glspDiagram'"
+              },
+              {
                 "command": "tonto.diagram.center",
                 "title": "Center selection",
-                "category": "tonto Diagram"
-            },
-            {
-                "command": "tonto.diagram.delete",
-                "title": "Delete selected element",
-                "category": "tonto Diagram"
-            },
-            {
-                "command": "tonto.diagram.export",
-                "title": "Export diagram to SVG",
-                "category": "tonto Diagram"
-            },
-            {
-                "command": "catCoding.start",
-                "title": "Start Cat Coding"
-            }
+                "category": "Workflow Diagram",
+                "enablement": "activeCustomEditorId == 'tonto.glspDiagram'"
+              },
+              {
+                "command": "tonto.diagram.layout",
+                "title": "Layout diagram",
+                "category": "Workflow Diagram",
+                "enablement": "activeCustomEditorId == 'tonto.glspDiagram'"
+              },
+              {
+                "command": "tonto.diagram.exportAsSVG",
+                "title": "Export as SVG",
+                "category": "Workflow Diagram",
+                "enablement": "activeCustomEditorId == 'tonto.glspDiagram'"
+              }
         ],
         "keybindings": [
             {
