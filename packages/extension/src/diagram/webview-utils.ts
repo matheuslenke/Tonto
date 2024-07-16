@@ -15,9 +15,9 @@
  ********************************************************************************/
 
 import * as path from "path";
+import { WebviewContainer } from "sprotty-vscode";
 import { SprottyDiagramIdentifier } from "sprotty-vscode-protocol";
 import * as vscode from "vscode";
-import type { WebviewContainer } from "./webview-endpoint";
 
 export function serializeUri(uri: vscode.Uri): string {
     let uriString = uri.toString();
