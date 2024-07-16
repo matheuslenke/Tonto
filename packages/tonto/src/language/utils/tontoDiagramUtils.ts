@@ -1,5 +1,4 @@
-import { AstUtils } from "langium";
-import { ClassDeclaration, ContextModule, DataType, DataTypeOrClassOrRelation, ElementRelation, Model, isClassDeclaration, isContextModule, isDataType, isElementRelation } from "../generated/ast.js";
+import { ClassDeclaration, ContextModule, DataType, DataTypeOrClassOrRelation, ElementRelation, Model, isClassDeclaration, isDataType, isElementRelation } from "../generated/ast.js";
 
 export type Specialization = {
     from: ClassDeclaration;
@@ -89,12 +88,12 @@ export class TontoDiagramUtils {
         return referencedModels;
     }
 
-    private getSourcePackageNames(element: ElementRelation): string[] {
-        const firstPack = AstUtils.getContainerOfType(element.firstEnd?.ref, isContextModule);
-        const secondPack = AstUtils.getContainerOfType(element.secondEnd.ref, isContextModule);
+    // private getSourcePackageNames(element: ElementRelation): string[] {
+    //     const firstPack = AstUtils.getContainerOfType(element.firstEnd?.ref, isContextModule);
+    //     const secondPack = AstUtils.getContainerOfType(element.secondEnd.ref, isContextModule);
 
-        return [firstPack?.name, secondPack?.name].filter(p => p !== undefined) as string[];
-    }
+    //     return [firstPack?.name, secondPack?.name].filter(p => p !== undefined) as string[];
+    // }
 
     protected addReferencedClasses(
         relation: ElementRelation,
