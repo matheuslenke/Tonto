@@ -8,12 +8,11 @@
   },
   "type": "module",
   "description": "Tonto is a DSL for creating OntoUML models",
-  "version": "0.3.6",
+  "version": "0.3.8",
   "license": "MIT",
-  "icon": "data/images/TontoIcon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/matheuslenke/Tonto",
+    "url": "git+https://github.com/matheuslenke/Tonto.git",
     "directory": "packages/tonto"
   },
   "engines": {
@@ -30,10 +29,11 @@
     "tonto-manifest-schema.json"
   ],
   "bin": {
-    "tonto-cli": "./bin/cli.js"
+    "tonto-cli": "bin/cli.js"
   },
   "exports": "./lib/index.js",
   "types": "lib/index.d.ts",
+  "main": "lib/index",
   "scripts": {
     "clean": "shx rm -rf lib coverage",
     "build": "tsc",
@@ -48,14 +48,11 @@
     "publish:latest": "npm publish --tag latest"
   },
   "dependencies": {
-    "ajv": "^8.12.0",
     "chalk": "^5.3.0",
     "chevrotain": "^10.4.2",
-    "commander": "^11.0.0",
     "elkjs": "^0.9.3",
     "glob": "^10.2.2",
     "jspdf": "^2.5.1",
-    "langium": "^3.0.0",
     "langium-sprotty": "^3.0.0",
     "node-fetch-native": "^1.0.1",
     "nomnoml": "^1.6.2",
@@ -78,7 +75,6 @@
     "@typescript-eslint/eslint-plugin": "^7.1.1",
     "@typescript-eslint/parser": "^7.1.1",
     "@vitest/coverage-c8": "^0.23.2",
-    "langium-cli": "^3.0.0",
     "prettier": "^3.2.5",
     "typescript": "~4.9.5"
   }

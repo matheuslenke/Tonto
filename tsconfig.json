@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsx": "react",
     "target": "ES2022",
     "module": "Node16",
     "lib": ["ESNext", "DOM", "WebWorker"] /* Specify library files to be included in the compilation. */,
