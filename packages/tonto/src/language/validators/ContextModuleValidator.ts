@@ -144,11 +144,12 @@ export class ContextModuleValidator {
 
         declaredClasses.forEach((classDeclaration) => {
             if (isBaseSortalOntoCategory(classDeclaration.classElementType.ontologicalCategory)) {
-                const parentNatures: Set<OntologicalNature> = new Set();
+                let parentNatures: Set<OntologicalNature> = getParentNatures(classDeclaration, new Set(), genSets);
                 classDeclaration.specializationEndurants.forEach((specialization) => {
                     if (specialization.ref)
-                        getParentNatures(specialization.ref, parentNatures, genSets);
+                        parentNatures = getParentNatures(specialization.ref, parentNatures, genSets);
                 });
+
                 if (
                     parentNatures.size === 0 &&
                     (!classDeclaration.ontologicalNatures || classDeclaration.ontologicalNatures?.natures.length === 0)
@@ -185,7 +186,7 @@ export class ContextModuleValidator {
                 if (specialization.ref)
                     getParentNatures(specialization.ref, parentNatures, genSets);
             });
-            console.log(parentNatures);
+
             if (classDeclaration.ontologicalNatures) {
                 classDeclaration.ontologicalNatures.natures.forEach((nature) => {
                     /**
@@ -224,7 +225,7 @@ export class ContextModuleValidator {
 
         declaredClasses.forEach((classDeclaration) => {
             if (classDeclaration.ontologicalNatures) {
-                const parentNatures: Set<OntologicalNature> = new Set();
+                const parentNatures: Set<OntologicalNature> = getParentNatures(classDeclaration, new Set(), genSets);
                 classDeclaration.specializationEndurants.forEach((specialization) => {
                     if (specialization.ref)
                         getParentNatures(specialization.ref, parentNatures, genSets);

@@ -14,10 +14,6 @@
                 "${workspaceFolder}/examples/newGeneration",
                 "--extensionDevelopmentPath=${workspaceFolder}/packages/extension"
             ],
-            "outFiles": [
-                "${workspaceFolder}/{packages,examples}/*/{lib,out}/**/*.js",
-                "${workspaceFolder}/sprotty-vscode-extension/lib/**/*.js"
-            ],
             "env": {
                 "DIAGRAM_MODE": "panel"
             },

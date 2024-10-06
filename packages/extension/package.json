@@ -11,6 +11,7 @@
         "url": "https://github.com/matheuslenke/Tonto",
         "directory": "packages/extension"
     },
+    "icon": "data/images/TontoIcon.png",
     "engines": {
         "vscode": "^1.92.0",
         "node": ">=16"
