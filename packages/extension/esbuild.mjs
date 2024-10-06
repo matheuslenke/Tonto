@@ -1,51 +1,85 @@
 //@ts-check
 import * as esbuild from "esbuild";
 
-const watch = process.argv.includes("--watch");
-const minify = process.argv.includes("--minify");
+const options = {
+    watch: process.argv.includes("--watch"),
+    minify: process.argv.includes("--minify"),
+};
 
-const success = watch ? "Watch build succeeded" : "Build succeeded";
+const successMessage = options.watch
+    ? "Watch build succeeded"
+    : "Build succeeded";
+
+/** @type {import('esbuild').Plugin[]} */
+const plugins = [
+    {
+        name: "watch-plugin",
+        setup(build) {
+            build.onEnd((result) => {
+                if (result.errors.length === 0) {
+                    console.log(getTime() + successMessage);
+                }
+            });
+        },
+    },
+];
+
+const nodeContext = await esbuild.context({
+    entryPoints: [
+        "src/extension/main.ts",
+        "src/language/main.ts"
+    ],
+    outdir: "pack",
+    bundle: true,
+    target: "es6",
+    format: "cjs",
+    loader: { ".ts": "ts" },
+    outExtension: {
+        ".js": ".cjs",
+    },
+    external: ["vscode"],
+    platform: "node",
+    sourcemap: !options.minify,
+    minify: options.minify,
+    plugins,
+});
+
+const browserContext = await esbuild.context({
+    entryPoints: ["../webview/src/main.ts"],
+    outdir: "pack/diagram",
+    bundle: true,
+    target: "es6",
+    loader: { ".ts": "ts", ".css": "css" },
+    platform: "browser",
+    sourcemap: !options.minify,
+    minify: options.minify,
+    plugins,
+});
+
+if (options.watch) {
+    await Promise.all([
+        nodeContext.watch(),
+        browserContext.watch()
+    ]);
+} else {
+    await Promise.all([
+        nodeContext.rebuild(),
+        browserContext.rebuild()
+    ]);
+    nodeContext.dispose();
+    browserContext.dispose();
+}
 
 function getTime() {
     const date = new Date();
-    return `[${`${padZeroes(date.getHours())}:${padZeroes(date.getMinutes())}:${padZeroes(date.getSeconds())}`}] `;
+    return `[${`${padZeroes(date.getHours())}:${padZeroes(
+        date.getMinutes()
+    )}:${padZeroes(date.getSeconds())}`}] `;
 }
 
+/**
+ * @param {number} i
+ */
 function padZeroes(i) {
     return i.toString().padStart(2, "0");
-}
-
-const plugins = [{
-    name: "watch-plugin",
-    setup(build) {
-        build.onEnd(result => {
-            if (result.errors.length === 0) {
-                console.log(getTime() + success);
-            }
-        });
-    },
-}];
-
-const ctx = await esbuild.context({
-    entryPoints: ["src/extension/main.ts", "src/language/main.ts", "src/webview.cts"],
-    outdir: "out",
-    outExtension: {
-        ".js": ".cjs"
-    },
-    bundle: true,
-    target: "ES2017",
-    format: "cjs",
-    loader: { ".ts": "ts" },
-    external: ["vscode"],
-    platform: "node",
-    sourcemap: true,
-    minify,
-    plugins
-});
-
-if (watch) {
-    await ctx.watch();
-} else {
-    await ctx.rebuild();
-    ctx.dispose();
 }

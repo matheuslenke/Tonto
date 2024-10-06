@@ -1,4 +1,4 @@
-import { SprottyDocument, createFileUri, createWebviewHtml } from "sprotty-vscode";
+import { createFileUri, createWebviewHtml, SprottyDocument } from "sprotty-vscode";
 import { LspSprottyEditorProvider } from "sprotty-vscode/lib/lsp/lsp-sprotty-editor-provider.js";
 import * as vscode from "vscode";
 
@@ -13,7 +13,7 @@ export class TontoSprottyEditorProvider extends LspSprottyEditorProvider {
         };
         const identifier = document.endpoint?.diagramIdentifier;
         if (identifier) {
-            const scriptUri = createFileUri(extensionPath, "out", "webview.cjs");
+            const scriptUri = createFileUri(extensionPath, "pack", "diagram", "main.js");
             webviewPanel.webview.html = createWebviewHtml(identifier, webviewPanel, { scriptUri });
         }
     }

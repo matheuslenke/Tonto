@@ -4,19 +4,13 @@
     "rootDir": "src",
     "outDir": "out",
     "sourceMap": true,
+    "experimentalDecorators": true,
+    "noImplicitAny": false
   },
   "references": [
-    {
-      "path": "../tonto"
-    },
-    {
-        "path": "../webview"
-    }
   ],
-  "include": [
-    "src/**/*.ts"
-, "src/webview.cts"  ],
+  "include": ["src/**/*.ts"],
   "exclude": [
-    "/node_modules"
+    "/node_modules",
   ]
 }

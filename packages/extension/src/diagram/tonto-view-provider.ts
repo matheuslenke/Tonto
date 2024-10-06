@@ -1,4 +1,4 @@
-import { WebviewEndpoint, createFileUri, createWebviewHtml } from "sprotty-vscode";
+import { createFileUri, createWebviewHtml, WebviewEndpoint } from "sprotty-vscode";
 import { LspSprottyViewProvider } from "sprotty-vscode/lib/lsp/lsp-sprotty-view-provider.js";
 import { CancellationToken, WebviewView } from "vscode";
 
@@ -14,7 +14,7 @@ export class TontoViewProvider extends LspSprottyViewProvider {
             // Create a preliminary diagram identifier to fill the webview's HTML content
             identifier = { clientId: this.clientId, diagramType: this.options.viewType, uri: "" };
         }
-        const scriptUri = createFileUri(extensionPath, "out", "webview.cjs");
+        const scriptUri = createFileUri(extensionPath, "pack", "diagram", "main.js");
         webviewView.webview.html = createWebviewHtml(identifier, webviewView, { scriptUri });
     }
 }

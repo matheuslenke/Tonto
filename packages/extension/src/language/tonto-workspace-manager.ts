@@ -1,6 +1,7 @@
 import { AstNode, DefaultWorkspaceManager, FileSystemNode, LangiumDocument, LangiumDocumentFactory } from "langium";
 import { LangiumSharedServices } from "langium/lsp";
 import { basicDataTypes } from "tonto-cli";
+
 import { WorkspaceFolder } from "vscode-languageserver-protocol";
 import { URI, Utils } from "vscode-uri";
 
