@@ -7,11 +7,11 @@ import { tontoNatureUtils } from "../models/Natures.js";
 import {
     isBaseSortalOntoCategory,
     isSortalOntoCategory,
-    isUltimateSortalOntoCategory,
+    isUltimateSortalOntoCategory
 } from "../models/OntologicalCategory.js";
 import { checkCircularSpecializationRecursiveWithGenset } from "../utils/CheckCircularSpecializationRecursive.js";
 import { checkSortalSpecializesUniqueUltimateSortalRecursive } from "../utils/CheckSortalSpecializesUniqueUltimateSortalRecursive.js";
-import { compareArrays } from "../utils/compareArrays.js";
+import { compareArrayWithSet } from "../utils/compareArrays.js";
 import { formPhrase } from "../utils/formPhrase.js";
 import { getParentNatures } from "../utils/getParentNatures.js";
 
@@ -93,14 +93,15 @@ export class ContextModuleValidator {
                 return;
             }
             // Check if it is a Sortal but not an Ultimate Sortal
+            const ultimateSortalSpecializedSet = new Set<string>();
             if (isSortalOntoCategory(ontologicalCategory) && !isUltimateSortalOntoCategory(ontologicalCategory)) {
-                const totalUltimateSortalSpecializations = checkSortalSpecializesUniqueUltimateSortalRecursive(
+                checkSortalSpecializesUniqueUltimateSortalRecursive(
                     declaredClass,
                     genSets,
                     accept,
-                    0
+                    ultimateSortalSpecializedSet
                 );
-                if (totalUltimateSortalSpecializations === 0) {
+                if (ultimateSortalSpecializedSet.size === 0) {
                     const natures = declaredClass.ontologicalNatures?.natures;
                     if (natures) {
                         const isRestrictedToType = natures.find((nature) => nature === "types");
@@ -117,7 +118,7 @@ export class ContextModuleValidator {
                         });
                     }
                 }
-                if (totalUltimateSortalSpecializations > 1) {
+                if (ultimateSortalSpecializedSet.size > 1) {
                     accept("error", ErrorMessages.sortalSpecializesUniqueUltimateSortal, {
                         node: declaredClass,
                         property: "name",
@@ -143,9 +144,13 @@ export class ContextModuleValidator {
 
         declaredClasses.forEach((classDeclaration) => {
             if (isBaseSortalOntoCategory(classDeclaration.classElementType.ontologicalCategory)) {
-                const parentNatures = getParentNatures(classDeclaration, [], genSets);
+                const parentNatures: Set<OntologicalNature> = new Set();
+                classDeclaration.specializationEndurants.forEach((specialization) => {
+                    if (specialization.ref)
+                        getParentNatures(specialization.ref, parentNatures, genSets);
+                });
                 if (
-                    parentNatures.length === 0 &&
+                    parentNatures.size === 0 &&
                     (!classDeclaration.ontologicalNatures || classDeclaration.ontologicalNatures?.natures.length === 0)
                 ) {
                     accept(
@@ -175,14 +180,12 @@ export class ContextModuleValidator {
         }) as ClassDeclaration[];
 
         declaredClasses.forEach((classDeclaration) => {
-            let parentNatures: OntologicalNature[] = [];
-            parentNatures = classDeclaration.specializationEndurants.flatMap((specItem) => {
-                if (!specItem.ref) {
-                    return [];
-                }
-                const natures = getParentNatures(specItem.ref, [], genSets);
-                return natures;
+            const parentNatures: Set<OntologicalNature> = new Set();
+            classDeclaration.specializationEndurants.forEach((specialization) => {
+                if (specialization.ref)
+                    getParentNatures(specialization.ref, parentNatures, genSets);
             });
+            console.log(parentNatures);
             if (classDeclaration.ontologicalNatures) {
                 classDeclaration.ontologicalNatures.natures.forEach((nature) => {
                     /**
@@ -190,11 +193,13 @@ export class ContextModuleValidator {
            */
                     const actualNatures = tontoNatureUtils.getNatureFromAst(nature);
                     actualNatures.forEach((actualNature) => {
-                        if (parentNatures.length > 0 && !parentNatures.includes(actualNature)) {
+                        if (parentNatures.size > 0 && !parentNatures.has(actualNature)) {
+                            const naturesString: string[] = [];
+                            parentNatures.forEach(nature => naturesString.push(nature));
                             accept(
                                 "error",
                                 `Incompatible nature restrictions. Parent has nature ${formPhrase(
-                                    parentNatures
+                                    naturesString
                                 )} while this class has natures: ${actualNature}`,
                                 {
                                     node: classDeclaration,
@@ -219,17 +224,14 @@ export class ContextModuleValidator {
 
         declaredClasses.forEach((classDeclaration) => {
             if (classDeclaration.ontologicalNatures) {
-                let parentNatures: OntologicalNature[] = [];
-                parentNatures = classDeclaration.specializationEndurants.flatMap((specItem) => {
-                    if (!specItem.ref) {
-                        return [];
-                    }
-                    const natures = getParentNatures(specItem.ref, [], genSets);
-                    return natures;
+                const parentNatures: Set<OntologicalNature> = new Set();
+                classDeclaration.specializationEndurants.forEach((specialization) => {
+                    if (specialization.ref)
+                        getParentNatures(specialization.ref, parentNatures, genSets);
                 });
                 const ultimateSortalNature = tontoNatureUtils.getNatureFromUltimateSortal(classDeclaration);
                 if (ultimateSortalNature) {
-                    parentNatures.push(ultimateSortalNature);
+                    parentNatures.add(ultimateSortalNature);
                 }
                 const parsedNatures = classDeclaration.ontologicalNatures.natures.flatMap((nature) =>
                     tontoNatureUtils.getNatureFromAst(nature)
@@ -238,7 +240,7 @@ export class ContextModuleValidator {
          * This checks if the declaration of natures is redundant, because the nature
          * of this element is already defined by its specializations
          */
-                if (compareArrays(parsedNatures, parentNatures)) {
+                if (compareArrayWithSet(parsedNatures, parentNatures)) {
                     accept(
                         "warning",
                         "Redundant nature declaration. The ontological natures of this element is already defined from its specializations",

@@ -68,7 +68,7 @@ export class TontoActions {
                 if (!fs.existsSync(dirName)) {
                     fs.mkdirSync(dirName);
                 }
-                fs.writeFileSync(path.join(dirName, manifest.outFolder, "gufo.ttl"), resultResponse.result);
+                fs.writeFileSync(path.join(dirName, manifest.outFolder, manifest.projectName), resultResponse.result);
             } else {
                 const errorResponse = response as ErrorGufoResultResponse;
                 errorResponse.info.forEach((errorInfo) => {

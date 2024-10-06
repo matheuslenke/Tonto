@@ -1,15 +1,15 @@
 import { OntologicalNature } from "ontouml-js";
-import { OntologicalNature as ASTNature, ClassDeclaration, GeneralizationSet } from "../generated/ast.js";
+import { ClassDeclaration, GeneralizationSet, OntologicalNature as ASTNature } from "../generated/ast.js";
 import { tontoNatureUtils } from "../models/Natures.js";
 import { isUltimateSortalOntoCategory } from "../models/OntologicalCategory.js";
 import { getGensetsWhereSpecific } from "./genSetsWhereSpecific.js";
 
 const getParentNatures = (
     actualElement: ClassDeclaration | GeneralizationSet,
-    natures: OntologicalNature[],
+    natures: Set<OntologicalNature>,
     genSets: GeneralizationSet[],
     verifiedElements: Array<ClassDeclaration | GeneralizationSet> = []
-): OntologicalNature[] => {
+): Set<OntologicalNature> => {
     /**
    * Because this is a recursive function, we need to add a stop condition
    */
@@ -33,11 +33,11 @@ const getParentNatures = (
             } else {
                 specElementNatures = parseOntologicalNatures(specItem.ontologicalNatures?.natures);
             }
+            specElementNatures.forEach((nature) => natures.add(nature));
 
-            const newNatures = [...natures, ...specElementNatures];
-            const parentNatures = getParentNatures(specItem, newNatures, genSets, verifiedElements);
+            const parentNatures = getParentNatures(specItem, natures, genSets, verifiedElements);
 
-            natures = [...natures, ...parentNatures];
+            parentNatures.forEach((nature) => natures.add(nature));
         });
 
         let currentElementNatures: OntologicalNature[] = [];
@@ -50,19 +50,22 @@ const getParentNatures = (
             currentElementNatures = parseOntologicalNatures(actualElement.ontologicalNatures?.natures);
         }
         const genSetsWithElement: GeneralizationSet[] = getGensetsWhereSpecific(actualElement.name, genSets);
-        let parentGenSetNatures: OntologicalNature[] = [];
+        let parentGenSetNatures: Set<OntologicalNature> = new Set();
         genSetsWithElement.forEach((genSet) => {
             parentGenSetNatures = getParentNatures(genSet, natures, genSets, verifiedElements);
         });
-        return [...natures, ...currentElementNatures, ...parentGenSetNatures];
+        currentElementNatures.forEach((nature) => natures.add(nature));
+        parentGenSetNatures.forEach((nature) => natures.add(nature));
+        return natures;
     } else if (actualElement.$type === "GeneralizationSet") {
-        let parentNatures: OntologicalNature[] = [];
+        let parentNatures: Set<OntologicalNature> = new Set();
         if (actualElement.generalItem.ref?.$type === "ClassDeclaration") {
             parentNatures = getParentNatures(actualElement.generalItem.ref, natures, genSets, verifiedElements);
         }
-        return [...natures, ...parentNatures];
+        parentNatures.forEach((nature) => natures.add(nature));
+        return natures;
     }
-    return [];
+    return natures;
 };
 
 function parseOntologicalNatures(natures?: ASTNature[]): OntologicalNature[] {

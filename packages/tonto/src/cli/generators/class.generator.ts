@@ -5,7 +5,7 @@ import { tontoNatureUtils } from "../../language/models/Natures.js";
 import {
     isBaseSortalOntoCategory,
     isNonSortalOntoCategory,
-    isUltimateSortalOntoCategory,
+    isUltimateSortalOntoCategory
 } from "../../language/models/OntologicalCategory.js";
 import { getParentNatures } from "../../language/utils/getParentNatures.js";
 
@@ -45,6 +45,9 @@ export function classElementGenerator(classElement: ClassDeclaration, packageIte
             }
             case "situation": {
                 return packageItem.createSituation(classElement.name);
+            }
+            case "process": {
+                return packageItem.createEvent(classElement.name);
             }
             /**
        * Ultimate Sortals
@@ -100,7 +103,7 @@ export function classElementGenerator(classElement: ClassDeclaration, packageIte
                     return packageItem.createHistoricalRole(classElement.name, { restrictedTo: [firstNature] });
                 } else {
                     const historicalRole = packageItem.createHistoricalRole(classElement.name);
-                    historicalRole.restrictedTo = [];
+                    // historicalRole.restrictedTo = [];
                     return historicalRole;
                 }
             }
@@ -151,15 +154,15 @@ function getOntoUMLNatures(classDeclaration: ClassDeclaration, natures: Nature[]
          * If it is an BaseSortal, it can have a defined nature from it's parents or a declared one
          */
     } else if (isBaseSortalOntoCategory(classDeclaration.classElementType.ontologicalCategory)) {
-        const parentNatures = getParentNatures(classDeclaration, [], []);
+        const parentNatures = getParentNatures(classDeclaration, new Set(), []);
         if (natures.length > 0) {
             const specifiedNatures = natures.flatMap((nature) => {
                 return tontoNatureUtils.getNatureFromAst(nature);
             });
-            return [...parentNatures, ...specifiedNatures];
+            return [...Array.from(parentNatures), ...specifiedNatures];
         }
-        if (parentNatures.length > 0) {
-            return parentNatures;
+        if (parentNatures.size > 0) {
+            return Array.from(parentNatures);
         }
         return undefined;
         /**

@@ -1,5 +1,5 @@
 import { OntologicalNature } from "ontouml-js";
-import { OntologicalNature as ASTNature, ClassDeclaration, isUltimateSortal } from "../generated/ast.js";
+import { ClassDeclaration, isUltimateSortal, OntologicalNature as ASTNature } from "../generated/ast.js";
 import { isNonSortalOntoCategory } from "./OntologicalCategory.js";
 
 function getNatureFromAst(nature: ASTNature): OntologicalNature[] {
