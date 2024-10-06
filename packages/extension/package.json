@@ -183,6 +183,7 @@
         "out",
         "pack",
         "syntaxes",
+        "src/themes",
         "LICENSE.md"
     ],
     "exports": "./pack/extension/main.cjs",
