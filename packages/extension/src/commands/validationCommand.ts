@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { ErrorResultResponse, ResultResponse, validateCommand } from "tonto-cli";
+import { ErrorResultResponse, validateCommand, ValidationReturn } from "tonto-cli";
 import * as vscode from "vscode";
 import { CommandIds } from "./commandIds.js";
 
@@ -99,15 +99,14 @@ async function validateModel(directoryUri: vscode.Uri, outputChannel: vscode.Out
             cancellable: false,
         },
         async () => {
-            const response = await validateCommand(directoryUri.fsPath);
+            const response: ValidationReturn | ErrorResultResponse = await validateCommand(directoryUri.fsPath);
 
-            if (Array.isArray(response)) {
+            if (isValidationReturn(response)) {
                 outputChannel.clear();
-                const resultResponses = response as ResultResponse[];
-                if (resultResponses.length === 0) {
+                if (response.result.length === 0) {
                     vscode.window.showInformationMessage("Validation successful! No errors found.");
                 } else {
-                    resultResponses.forEach((resultResponse) => {
+                    response.result.forEach((resultResponse) => {
                         outputChannel.appendLine(chalk.bold.redBright(`[${resultResponse.severity}] ${resultResponse.title}:`));
                         outputChannel.appendLine(chalk.red(resultResponse.description));
                     });
@@ -119,6 +118,10 @@ async function validateModel(directoryUri: vscode.Uri, outputChannel: vscode.Out
             }
         }
     );
+}
+
+function isValidationReturn(object: unknown): object is ValidationReturn {
+    return typeof object === "object" && object !== null && "result" in (object as Record<string, unknown>);
 }
 
 export { createValidationSatusBarItem };

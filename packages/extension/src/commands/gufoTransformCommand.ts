@@ -1,12 +1,8 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import {
-    ErrorResultResponse,
-    GufoResultResponse,
-    ResultResponse,
-    isGufoResultResponse,
-    readOrCreateDefaultTontoManifest,
-    transformToGufoCommand
+    ErrorGufoResultResponse, GufoResultResponse, isGufoResultResponse,
+    readOrCreateDefaultTontoManifest, ResultResponse, transformToGufoCommand
 } from "tonto-cli";
 import * as vscode from "vscode";
 import { CommandIds } from "./commandIds.js";
@@ -111,17 +107,21 @@ async function transformModel(directoryUri: vscode.Uri) {
                 fs.writeFileSync(path.join(outFolder, "gufo.ttl"), gufoResult.result);
                 vscode.window.showInformationMessage("Generated gufo OWL file!");
             } else {
-                const error = response as ErrorResultResponse;
-                vscode.window.showErrorMessage(error.message ?? "Error Transforming model");
+                const error = response as ErrorGufoResultResponse;
+                const infoArray = error.info.map((info) => info.description).join("\n");
+                const message = error.message ?
+                    (error.message + "." + "\n" + infoArray)
+                    : ("Error transforming model");
+                vscode.window.showErrorMessage(message);
             }
         }
     );
 }
 
 function isErrorResultResponse(
-    response: void | ErrorResultResponse | ResultResponse[]
-): response is ErrorResultResponse {
-    return (response as ErrorResultResponse).info !== undefined;
+    response: void | ErrorGufoResultResponse | ResultResponse[]
+): response is ErrorGufoResultResponse {
+    return (response as ErrorGufoResultResponse).info !== undefined;
 }
 
 export { createTransformToGufoSatusBarItem, isErrorResultResponse };

@@ -3,7 +3,7 @@
     "displayName": "Tonto",
     "publisher": "lenke",
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.3.8",
+    "version": "0.3.9",
     "license": "MIT",
     "type": "module",
     "repository": {
@@ -177,13 +177,17 @@
     "activationEvents": [
         "workspaceContains:tonto.json",
         "onWebviewPanel:tonto",
-        "onView:tonto"
+        "onView:tonto",
+        "onLanguage:tonto",
+        "onCustomEditor:tonto",
+        "onCommand:tonto.diagram.open"
     ],
     "files": [
         "out",
         "pack",
         "syntaxes",
         "src/themes",
+        "data",
         "LICENSE.md"
     ],
     "exports": "./pack/extension/main.cjs",

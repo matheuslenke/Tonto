@@ -1,6 +1,7 @@
 import chalk from "chalk";
 
 import * as fs from "node:fs";
+import path from "node:path";
 import { Project, serializationUtils } from "ontouml-js";
 import { generateTontoFile } from "../../constructors/index.js";
 import { TontoProject } from "../../model/grammar/ProjectItem.js";
@@ -22,8 +23,8 @@ export const importCommand = async (opts: ImportOptions): Promise<ImportReturn> 
 
         const project: Project = serializationUtils.parse(data, true) as Project;
         /**
-     * First we validate the imported model
-     */
+         * First we validate the imported model
+         */
         const isValid = serializationUtils.validate(project);
         if (isValid) {
             console.log(chalk.bold("Model is valid. Proceding to generate tonto project..."));
@@ -33,10 +34,14 @@ export const importCommand = async (opts: ImportOptions): Promise<ImportReturn> 
         }
 
         /**
-     * Creating the directory to hold the generated files
-     */
-        if (!fs.existsSync(project.getName())) {
-            fs.mkdirSync(project.getName());
+         * Creating the directory to hold the generated files
+         */
+        if (!fs.existsSync(opts.destination ?? "generated")) {
+            fs.mkdirSync(opts.destination ?? "generated");
+        }
+        const projectPath = path.join(opts.destination ?? "generated", project.getNameOrId());
+        if (!fs.existsSync(projectPath)) {
+            fs.mkdirSync(projectPath);
         }
 
         const generatedFilePath = generateTontoFile(project, opts.fileName, opts.destination);
