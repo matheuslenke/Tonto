@@ -1,0 +1,155 @@
+.sprotty-graph {
+    font-size: 15pt;
+}
+
+.sprotty-graph .node-package {
+    fill-opacity: 0;
+    stroke-width: 0;
+}
+
+.sprotty-node {
+    border-color: antiquewhite;
+    color: violet;
+}
+
+.sprotty-node.selected {
+    stroke-width: 5pt;
+}
+
+.node-class {
+    border-radius: 16;
+    border-width: 2pt;
+    /* fill: #888686; */
+}
+
+.node-package {
+    stroke: #541;
+}
+
+.node-external {
+    fill: #f0f0f0;
+}
+
+.tontoKind {
+    fill: #f51212 !important;
+}
+
+.tontoQualityKind {
+    fill: #19b0f1 !important;
+}
+.tontoQuantityKind {
+    fill: #f51212 !important;
+}
+.tontoCollectiveKind {
+    fill: #f51212 !important;
+}
+.tontoRelatorKind {
+    fill: #45e72b !important;
+}
+.tontoEvent {
+    fill: #d1ca3c !important;
+}
+.tontoModeKind {
+    fill: #19b0f1 !important;
+}
+.tontoMode {
+    fill: #19b0f1 !important;
+}
+.tontoSituation {
+    fill: #fca90d !important;
+}
+.tontoType {
+    fill: #9b69b1 !important;
+}
+.tontoObjects {
+    fill: #f51212 !important;
+}
+.tontoFunctionalComplex {
+    fill: #CD6872 !important;
+}
+.tontoQuality {
+    fill: #19b0f1;
+}
+.tontoQuantity {
+    fill: #CD6872;
+}
+.tontoCollective {
+    fill: #CD6872
+}
+.tontoRelator {
+    fill: #6de35b;
+}
+.tontoNone {
+    fill: #7f7d7d;
+}
+.datatype {
+    fill: #7f7d7d;
+}
+
+.sprotty-comp {
+    line-height: 3px;
+    font-weight: normal;
+    text-align: left;
+}
+
+.sprotty-node.selected {
+    stroke-width: 2;
+    stroke: var(--vscode-button-hover-background);
+}
+
+.sprotty-label {
+    fill: var(--vscode-button-foreground);
+    stroke-width: 0;
+    font-weight: inherit;
+    text-align: inherit;
+    font-size: 100%;
+}
+
+.sprotty-button {
+    fill: var(--vscode-editorActiveLineNumber-foreground);
+}
+
+.sprotty-edge .sprotty-label {
+    fill: var(--vscode-editorActiveLineNumber-foreground);
+    font-size: 10pt;
+    border-width: 2;
+    border-color: var(--vscode-editor-symbolHighlightBackground);
+}
+
+.sprotty-edge {
+    fill:none;
+    stroke: var(--vscode-editorActiveLineNumber-foreground);
+    stroke-width: 2px;
+}
+
+.sprotty-edge-arrow {
+    fill:var(--vscode-editorActiveLineNumber-foreground);
+}
+
+.sprotty-edge > .sprotty-routing-handle {
+    fill: var(--vscode-editor-selectionBackground);
+    stroke: none;
+    z-index: 1000;
+}
+
+.sprotty-edge > .sprotty-routing-handle[data-kind='line'] {
+    opacity: 0.35;
+}
+
+.sprotty-edge > .sprotty-routing-handle.selected {
+    fill: var(--vscode-editor-selectionHighlightBackground);
+}
+
+.sprotty-edge > .sprotty-routing-handle.mouseover {
+    stroke: var(--vscode-editor-symbolHighlightBackground);
+    stroke-width: 1;
+}
+
+.sprotty-edge.mouseover:not(.selected) {
+    stroke-width: 3px;
+}
+
+.sprotty-hidden {
+    width: 0px;
+    height: 0px;
+}

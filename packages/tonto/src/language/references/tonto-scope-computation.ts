@@ -7,6 +7,7 @@ import {
     isContextModule,
     isDataType,
     isElementRelation,
+    isEnumElement,
     isGeneralizationSet,
     Model,
 } from "../generated/ast.js";
@@ -126,7 +127,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
                     localDescriptions.push(descriptionQualified);
                 }
             }
-            if (isClassDeclaration(element) || isDataType(element)) {
+            if (isClassDeclaration(element) || isDataType(element) || isEnumElement(element)) {
                 if (element.name !== undefined) {
                     const qualifiedName = this.qualifiedNameProvider.getQualifiedName(element);
                     const name = this.qualifiedNameProvider.getName(element);

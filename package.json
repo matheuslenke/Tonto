@@ -3,12 +3,13 @@
     "private": true,
     "engineStrict": true,
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.3.6",
+    "version": "0.3.7",
     "license": "MIT",
     "repository": {
         "type": "git",
         "url": "https://github.com/matheuslenke/Tonto"
     },
+    "icon": "packages/extension/data/images/TontoIcon.png",
     "engines": {
         "npm": ">= 7.7.0",
         "node": ">=16"
@@ -29,7 +30,7 @@
     },
     "devDependencies": {
         "@types/jest": "^29.2.3",
-        "@types/node": "^18.11.17",
+        "@types/node": "^18.19.33",
         "@types/node-fetch": "^2.6.1",
         "@types/vscode": "^1.63.0",
         "@typescript-eslint/eslint-plugin": "^7.1.1",
@@ -38,6 +39,7 @@
         "eslint": "^8.57.0",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-prettier": "^5.1.3",
+        "langium-cli": "^3.0.0",
         "prettier": "^3.2.5",
         "shx": "^0.3.4",
         "typescript": "~4.9.5",
@@ -45,10 +47,13 @@
     },
     "workspaces": [
         "packages/tonto",
-        "packages/tonto-vscode",
-        "packages/tonto-package-manager"
+        "packages/extension",
+        "packages/tpm",
+        "packages/webview"
     ],
     "dependencies": {
-        "langium": "^3.0.0"
+        "commander": "^11.0.0",
+        "langium": "^3.2.0",
+        "ajv": "^8.12.0"
     }
 }

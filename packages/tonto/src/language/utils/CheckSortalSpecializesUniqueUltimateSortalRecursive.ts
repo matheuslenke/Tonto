@@ -5,16 +5,16 @@ import { isUltimateSortalOntoCategory } from "../models/OntologicalCategory.js";
 
 const validateSortalSpecializesUniqueUltimateSortalRecursive = (
     actualElement: ClassDeclaration,
-    totalUltimateSortalSpecialized: number,
+    UltimateSortalSpecializedSet: Set<string>,
     accept: ValidationAcceptor
 ): void => {
-    const totalUltimateSortalSpecializations = checkSortalSpecializesUniqueUltimateSortalRecursive(
+    const totalUltimateSortalSpecializations: Set<string> = checkSortalSpecializesUniqueUltimateSortalRecursive(
         actualElement,
         [],
         accept,
-        totalUltimateSortalSpecialized
+        UltimateSortalSpecializedSet
     );
-    if (totalUltimateSortalSpecializations > 1) {
+    if (totalUltimateSortalSpecializations.size > 1) {
         accept("error", ErrorMessages.sortalSpecializesUniqueUltimateSortal, {
             node: actualElement,
             property: "name",
@@ -26,10 +26,10 @@ const checkSortalSpecializesUniqueUltimateSortalRecursive = (
     actualElement: ClassDeclaration | GeneralizationSet,
     genSets: GeneralizationSet[],
     accept: ValidationAcceptor,
-    totalUltimateSortalSpecialized: number
-): number => {
-    if (totalUltimateSortalSpecialized >= 2) {
-        return totalUltimateSortalSpecialized;
+    UltimateSortalSpecializedSet: Set<string>
+): Set<string> => {
+    if (UltimateSortalSpecializedSet.size >= 2) {
+        return UltimateSortalSpecializedSet;
     }
     /**
    * If the element is a ClassDeclaration, then we need to check its specialization items. And we need
@@ -42,27 +42,27 @@ const checkSortalSpecializesUniqueUltimateSortalRecursive = (
                 const specCategory = specItem?.classElementType?.ontologicalCategory;
                 const SpecifiedNatures = specItem?.ontologicalNatures?.natures.length ?? 0;
                 if (isUltimateSortalOntoCategory(specCategory)) {
-                    totalUltimateSortalSpecialized += 1;
+                    UltimateSortalSpecializedSet.add(specItem.name);
                 } else if (SpecifiedNatures > 0) {
-                    totalUltimateSortalSpecialized += 1;
+                    // totalUltimateSortalSpecialized += 1;
                 }
 
-                totalUltimateSortalSpecialized = checkSortalSpecializesUniqueUltimateSortalRecursive(
+                checkSortalSpecializesUniqueUltimateSortalRecursive(
                     specItem,
                     genSets,
                     accept,
-                    totalUltimateSortalSpecialized
+                    UltimateSortalSpecializedSet
                 );
             }
         });
         const genSetsWithElement: GeneralizationSet[] = getGensetsWhereSpecific(actualElement.name, genSets);
 
         genSetsWithElement.forEach((genSet) => {
-            totalUltimateSortalSpecialized = checkSortalSpecializesUniqueUltimateSortalRecursive(
+            checkSortalSpecializesUniqueUltimateSortalRecursive(
                 genSet,
                 genSets,
                 accept,
-                totalUltimateSortalSpecialized
+                UltimateSortalSpecializedSet
             );
         });
     } else if (actualElement.$type === "GeneralizationSet") {
@@ -71,24 +71,24 @@ const checkSortalSpecializesUniqueUltimateSortalRecursive = (
          */
         const generalItem: ClassDeclarationOrRelation | undefined = actualElement.generalItem.ref;
         if (!generalItem || generalItem.$type !== "ClassDeclaration") {
-            return totalUltimateSortalSpecialized;
+            return UltimateSortalSpecializedSet;
         }
 
         if (isUltimateSortalOntoCategory(generalItem?.classElementType?.ontologicalCategory)) {
-            totalUltimateSortalSpecialized += 1;
+            UltimateSortalSpecializedSet.add(generalItem.name);
         }
 
         generalItem.specializationEndurants.forEach((specializationItem) => {
             const specItem = specializationItem.ref;
             if (specItem) {
                 if (isUltimateSortalOntoCategory(specItem?.classElementType?.ontologicalCategory)) {
-                    totalUltimateSortalSpecialized += 1;
+                    UltimateSortalSpecializedSet.add(specItem.name);
                 }
-                totalUltimateSortalSpecialized = checkSortalSpecializesUniqueUltimateSortalRecursive(
+                checkSortalSpecializesUniqueUltimateSortalRecursive(
                     specItem,
                     genSets,
                     accept,
-                    totalUltimateSortalSpecialized
+                    UltimateSortalSpecializedSet
                 );
             }
         });
@@ -96,15 +96,15 @@ const checkSortalSpecializesUniqueUltimateSortalRecursive = (
         const genSetsWhereElementIsSpecific = getGensetsWhereSpecific(generalItem.name ?? "", genSets);
 
         genSetsWhereElementIsSpecific.forEach((genSet) => {
-            totalUltimateSortalSpecialized = checkSortalSpecializesUniqueUltimateSortalRecursive(
+            checkSortalSpecializesUniqueUltimateSortalRecursive(
                 genSet,
                 genSets,
                 accept,
-                totalUltimateSortalSpecialized
+                UltimateSortalSpecializedSet
             );
         });
     }
-    return totalUltimateSortalSpecialized;
+    return UltimateSortalSpecializedSet;
 };
 
 function getGensetsWhereSpecific(declaration: string, genSets: GeneralizationSet[]): GeneralizationSet[] {

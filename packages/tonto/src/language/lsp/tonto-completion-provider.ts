@@ -1,7 +1,6 @@
 import { AstNode, GrammarAST, MaybePromise } from "langium";
 import { CompletionAcceptor, CompletionContext, DefaultCompletionProvider, NextFeature } from "langium/lsp";
 import { completeForAttributeSnippets } from "./completions/completeForAttribute.js";
-import { completeForCardinality } from "./completions/completeForCardinality.js";
 import { completeForDataType } from "./completions/completeForDatatype.js";
 import { completeForElementRelation } from "./completions/completeForElementRelation.js";
 import { completeForEnumSnippets } from "./completions/completeForEnumSnippets.js";
@@ -11,10 +10,10 @@ import { completeFullElementRelationSnippets, completeFullExternalElementRelatio
 export class TontoCompletionProvider extends DefaultCompletionProvider {
 
     protected override completionFor(context: CompletionContext, next: NextFeature, acceptor: CompletionAcceptor): MaybePromise<void> {
-        // Completion for Cardinality in any context
-        if (GrammarAST.isKeyword(next.feature) && next.type === "Cardinality" && next.feature.value === "[") {
-            completeForCardinality(context, acceptor);
-        }
+        // // Completion for Cardinality in any context
+        // if (GrammarAST.isKeyword(next.feature) && next.type === "Cardinality" && next.feature.value === "[") {
+        //     completeForCardinality(context, acceptor);
+        // }
 
         if (GrammarAST.isKeyword(next.feature)) {
             switch (next.type) {

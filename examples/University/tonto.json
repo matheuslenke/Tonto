@@ -11,5 +11,5 @@
       "directory": "path/to/package"
     }
   },
-  "outFolder": "out"
+  "outFolder": "generated-files"
 }

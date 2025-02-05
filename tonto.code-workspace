@@ -10,11 +10,11 @@
         },
         {
             "name": "tonto-package-manager",
-            "path": "packages/tonto-package-manager"
+            "path": "packages/tpm"
         },
         {
             "name": "tonto-vscode",
-            "path": "packages/tonto-vscode"
+            "path": "packages/extension"
         }
     ],
 	"settings": {

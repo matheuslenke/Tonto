@@ -1,0 +1,26 @@
+import PersonAndOrganizationDatatypes
+import University
+
+package Person
+
+kind Person {
+  age: number { derived }
+  birthDate: date { const }
+  name: string
+  preferredNames: string [1..*] { ordered }
+
+  @instantiation
+  [*] -- [1] PersonTypeByAge
+}
+
+type PersonTypeByAge
+
+phase Child specializes Person
+phase Teenager specializes Person
+phase Adult specializes Person
+
+roleMixin Employer specializes University.Organization
+role Employee specializes Person
+role Professor specializes Employee
+
+role PhDCandidate specializes Person

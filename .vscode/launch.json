@@ -12,11 +12,11 @@
             "request": "launch",
             "args": [
                 "${workspaceFolder}/examples/newGeneration",
-                "--extensionDevelopmentPath=${workspaceFolder}/packages/tonto-vscode"
+                "--extensionDevelopmentPath=${workspaceFolder}/packages/extension"
             ],
-            "outFiles": [
-                "${workspaceFolder}/{packages,examples}/*/{lib,out}/**/*.js"
-            ]
+            "env": {
+                "DIAGRAM_MODE": "panel"
+            },
         },
         {
             "name": "CLI: GenerateModular",
@@ -75,7 +75,7 @@
         },
         {
             "name": "TPM: Install",
-            "program": "${workspaceFolder}/packages/tonto-package-manager/bin/cli",
+            "program": "${workspaceFolder}/packages/tpm/bin/cli",
             "request": "launch",
             "skipFiles": [
                 "<node_internals>/**"
@@ -88,7 +88,7 @@
         },
         {
             "name": "TPM: Add dependency",
-            "program": "${workspaceFolder}/packages/tonto-package-manager/bin/cli",
+            "program": "${workspaceFolder}/packages/tpm/bin/cli",
             "request": "launch",
             "skipFiles": [
                 "<node_internals>/**"

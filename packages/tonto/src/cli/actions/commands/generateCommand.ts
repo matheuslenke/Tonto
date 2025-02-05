@@ -1,8 +1,10 @@
+
 import chalk from "chalk";
 import { glob } from "glob";
 import { NodeFileSystem } from "langium/node";
 import path from "path";
-import { Model, TontoServices, builtInLibs, createTontoServices } from "../../../language/index.js";
+import { Model, builtInLibs } from "../../../language/index.js";
+import { TontoServices, createTontoServices } from "../../../language/tonto-module.js";
 import { extractAllAstNodes, extractAstNode } from "../../cli-util.js";
 import { generateJSONFileModular } from "../../generators/jsonModular.generator.js";
 import { generateJSONFile } from "../../jsonGenerator.js";

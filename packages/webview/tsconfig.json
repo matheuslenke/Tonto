@@ -1,0 +1,31 @@
+{
+	"compilerOptions": {
+    "sourceMap": true,
+    "downlevelIteration": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "ES2017",
+    "jsx": "react",
+    "rootDir": "src",
+    "outDir": "out",
+    "useUnknownInCatchVariables": false,
+    "lib": [
+        "ES2017",
+        "es6",
+        "dom"
+    ],
+    "declaration": true,
+    "declarationMap": false,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "noImplicitOverride": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "composite": true
+  },
+  "include": [
+    "src"
+  ]
+}

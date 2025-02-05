@@ -2,7 +2,7 @@ import { AstNode, CstUtils } from "langium";
 import { AbstractSemanticTokenProvider, AllSemanticTokenModifiers, SemanticTokenAcceptor, SemanticTokenRangeOptions } from "langium/lsp";
 import { SemanticTokenModifiers, SemanticTokenTypes } from "vscode-languageserver";
 import * as ast from "../generated/ast.js";
-import { TontoNatureResult, getTontoNature } from "../utils/getTontoNature.js";
+import { tontoNatureUtils } from "../utils/tontoNatureUtils.js";
 import { TontoSemanticTokenTypes } from "./semantic-token-types.js";
 
 /*
@@ -114,7 +114,7 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
         acceptor({
             node,
             property: "ontologicalCategory",
-            type:"tontoNone",
+            type: "tontoNone",
         });
     }
 
@@ -142,8 +142,8 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
     }
 
     private ontologicalCategoryTokens(container: ast.ClassDeclaration, node: ast.OntologicalCategory, acceptor: SemanticTokenAcceptor) {
-        const result = getTontoNature(container);
-        const type = this.getTypeFromNature(result);
+        const result = tontoNatureUtils.getTontoNature(container);
+        const type = tontoNatureUtils.getSemanticTokenFromNature(result);
         acceptor({
             node,
             property: "ontologicalCategory",
@@ -151,35 +151,7 @@ export class TontoSemanticTokenProvider extends AbstractSemanticTokenProvider {
         });
     }
 
-    private getTypeFromNature(nature: TontoNatureResult): string {
-        switch (nature.nature) {
-            case "functional-complexes":
-                if (nature.isKind) return "tontoKind";
-                return "tontoFunctionalComplex";
-            case "relators":
-                if (nature.isKind) return "tontoRelatorKind";
-                return "tontoRelator";
-            case "qualities":
-                if (nature.isKind) return "tontoQualityKind";
-                return "tontoQuality";
-            case "quantities":
-                if (nature.isKind) return "tontoQuantityKind";
-                return "tontoQuantity";
-            case "collectives":
-                if (nature.isKind) return "tontoCollectiveKind";
-                return "tontoCollective";
-            case "modes":
-                if (nature.isKind) return "tontoModeKind";
-                return "tontoMode";
-            case "events":
-                return "tontoEvent";
-            case "situations":
-                return "tontoSituation";
-            case "types":
-                return "tontoType";
-        }
-        return "tontoNone";
-    }
+
 
     private elementRelationTokens(node: ast.ElementRelation, acceptor: SemanticTokenAcceptor) {
         acceptor({

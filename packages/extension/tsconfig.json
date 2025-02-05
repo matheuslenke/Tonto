@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "out",
+    "sourceMap": true,
+    "experimentalDecorators": true,
+    "noImplicitAny": false
+  },
+  "references": [
+  ],
+  "include": ["src/**/*.ts"],
+  "exclude": [
+    "/node_modules",
+  ]
+}

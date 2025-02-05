@@ -1,0 +1,50 @@
+{
+  "name": "sprotty-vscode",
+  "version": "1.0.0",
+  "displayName": "Sprotty VSCode Integration",
+  "description": "Glue code to integrate Sprotty diagrams in VSCode extensions (extension part)",
+  "license": "(EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0)",
+  "keywords": [
+    "vscode",
+    "graph",
+    "diagram",
+    "layout",
+    "sprotty"
+  ],
+  "homepage": "https://sprotty.org/",
+  "bugs": "https://github.com/eclipse/sprotty-vscode/issues",
+  "author": {
+    "name": "Eclipse Sprotty"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eclipse/sprotty-vscode.git",
+    "directory": "packages/sprotty-vscode"
+  },
+  "engines": {
+    "vscode": "^1.46.0"
+  },
+  "files": [
+    "lib",
+    "src"
+  ],
+  "main": "lib/index",
+  "types": "lib/index",
+  "dependencies": {
+    "path": "^0.12.7",
+    "sprotty-vscode-protocol": "^1.0.0",
+    "vscode-languageclient": "^9.0.1",
+    "vscode-messenger": "^0.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^14.17.3",
+    "@types/vscode": "1.50.0"
+  },
+  "scripts": {
+    "prepare": "yarn run clean && yarn run build",
+    "clean": "shx rm -fr lib",
+    "build": "tsc && yarn run lint",
+    "watch": "tsc -w",
+    "lint": "eslint -c ../../configs/.eslintrc.js \"src/**/!(*.spec.ts*)\""
+  }
+}
