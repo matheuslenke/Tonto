@@ -1,8 +1,21 @@
 {
-	"extends": "../../configs/base.tsconfig.json",
 	"compilerOptions": {
-        "rootDir": "src",
-        "outDir": "lib",
+      "sourceMap": true,
+      "declaration": true,
+      "declarationMap": true,
+      "downlevelIteration": true,
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "target": "ES2017",
+      "module": "commonjs",
+      "moduleResolution": "node",
+      "noUnusedLocals": true,
+      "noImplicitOverride": true,
+      "skipLibCheck": true,
+      "strict": true,
+      "strictPropertyInitialization": false,
+      "rootDir": "src",
+      "outDir": "lib",
     },
     "include": [
         "src"

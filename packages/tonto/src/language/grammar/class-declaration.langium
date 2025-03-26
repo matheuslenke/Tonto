@@ -4,14 +4,16 @@ import "datatypes"
 import "relations"
 
 ClassDeclaration:
-	classElementType=OntologicalCategory 
+	classElementType=OntologicalCategory
 	(name=ID)
 	ontologicalNatures=ElementOntologicalNature?
     ('(' 'instanceOf' instanceOf=[ClassDeclaration:QualifiedName] ')')?
     ('specializes' specializationEndurants+=[ClassDeclaration:QualifiedName]
 		(',' specializationEndurants+=[ClassDeclaration:QualifiedName])*
-    )? 
+    )?
 		('{'
+      label=Label?
+      description=Description?
 			(attributes+=Attribute | references+=InternalRelation)*
     '}')?
 ;

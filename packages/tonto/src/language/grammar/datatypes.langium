@@ -5,11 +5,13 @@ import "relations"
 
 // <--- DataTypes --->
 DataType:
-	ontologicalCategory='datatype' name=QualifiedName ontologicalNature=ElementOntologicalNature? 
+	ontologicalCategory='datatype' name=QualifiedName ontologicalNature=ElementOntologicalNature?
 	('specializes' specializationEndurants+=[DataTypeOrClass:QualifiedName]
 	(',' specializationEndurants+=[DataTypeOrClass:QualifiedName])?
-	)? 
+	)?
 	('{'
+      label=Label?
+      description=Description?
 		(attributes+=Attribute)*
 	'}')?
 ;
@@ -19,8 +21,10 @@ Enum infers DataType:
 	isEnum?='enum' name=QualifiedName
 	('specializes' specializationEndurants+=[DataTypeOrClass:QualifiedName]
 	(',' specializationEndurants+=[DataTypeOrClass:QualifiedName])?
-	)? 
+	)?
 	('{'
+      label=Label?
+      description=Description?
 		(elements+=EnumElement
 		((',') elements+=EnumElement)*)?
 	'}')?

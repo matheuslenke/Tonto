@@ -54,6 +54,7 @@ export type TontoKeywordNames =
     | "datatype"
     | "derivation"
     | "derived"
+    | "description"
     | "disjoint"
     | "enum"
     | "event"
@@ -77,6 +78,7 @@ export type TontoKeywordNames =
     | "intrinsicMode"
     | "inverseOf"
     | "kind"
+    | "label"
     | "manifestation"
     | "material"
     | "mediation"
@@ -251,7 +253,9 @@ export interface ClassDeclaration extends AstNode {
     readonly $type: 'ClassDeclaration';
     attributes: Array<Attribute>;
     classElementType: OntologicalCategory;
+    description?: Description;
     instanceOf?: Reference<ClassDeclaration>;
+    label?: Label;
     name: string;
     ontologicalNatures?: ElementOntologicalNature;
     references: Array<ElementRelation>;
@@ -282,8 +286,10 @@ export interface DataType extends AstNode {
     readonly $container: ContextModule;
     readonly $type: 'DataType';
     attributes: Array<Attribute>;
+    description?: Description;
     elements: Array<EnumElement>;
     isEnum: boolean;
+    label?: Label;
     name: QualifiedName;
     ontologicalCategory?: 'datatype';
     ontologicalNature?: ElementOntologicalNature;
@@ -294,6 +300,18 @@ export const DataType = 'DataType';
 
 export function isDataType(item: unknown): item is DataType {
     return reflection.isInstance(item, DataType);
+}
+
+export interface Description extends AstNode {
+    readonly $container: ClassDeclaration | DataType;
+    readonly $type: 'Description';
+    descriptions: Array<LanguageLabelItem>;
+}
+
+export const Description = 'Description';
+
+export function isDescription(item: unknown): item is Description {
+    return reflection.isInstance(item, Description);
 }
 
 export interface ElementOntologicalNature extends AstNode {
@@ -377,6 +395,31 @@ export function isImport(item: unknown): item is Import {
     return reflection.isInstance(item, Import);
 }
 
+export interface Label extends AstNode {
+    readonly $container: ClassDeclaration | DataType;
+    readonly $type: 'Label';
+    labels: Array<LanguageLabelItem>;
+}
+
+export const Label = 'Label';
+
+export function isLabel(item: unknown): item is Label {
+    return reflection.isInstance(item, Label);
+}
+
+export interface LanguageLabelItem extends AstNode {
+    readonly $container: Description | Label;
+    readonly $type: 'LanguageLabelItem';
+    label: string;
+    language: string;
+}
+
+export const LanguageLabelItem = 'LanguageLabelItem';
+
+export function isLanguageLabelItem(item: unknown): item is LanguageLabelItem {
+    return reflection.isInstance(item, LanguageLabelItem);
+}
+
 export interface Model extends AstNode {
     readonly $type: 'Model';
     imports: Array<Import>;
@@ -441,11 +484,14 @@ export type TontoAstType = {
     DataTypeOrClass: DataTypeOrClass
     DataTypeOrClassOrRelation: DataTypeOrClassOrRelation
     Declaration: Declaration
+    Description: Description
     ElementOntologicalNature: ElementOntologicalNature
     ElementRelation: ElementRelation
     EnumElement: EnumElement
     GeneralizationSet: GeneralizationSet
     Import: Import
+    Label: Label
+    LanguageLabelItem: LanguageLabelItem
     Model: Model
     OntologicalCategory: OntologicalCategory
     RelationMetaAttribute: RelationMetaAttribute
@@ -455,7 +501,7 @@ export type TontoAstType = {
 export class TontoAstReflection extends AbstractAstReflection {
 
     getAllTypes(): string[] {
-        return [Attribute, AuxiliaryDeclaration, Cardinality, ClassDeclaration, ClassDeclarationOrRelation, ContextModule, DataType, DataTypeOrClass, DataTypeOrClassOrRelation, Declaration, ElementOntologicalNature, ElementRelation, EnumElement, GeneralizationSet, Import, Model, OntologicalCategory, RelationMetaAttribute, RelationMetaAttributes];
+        return [Attribute, AuxiliaryDeclaration, Cardinality, ClassDeclaration, ClassDeclarationOrRelation, ContextModule, DataType, DataTypeOrClass, DataTypeOrClassOrRelation, Declaration, Description, ElementOntologicalNature, ElementRelation, EnumElement, GeneralizationSet, Import, Label, LanguageLabelItem, Model, OntologicalCategory, RelationMetaAttribute, RelationMetaAttributes];
     }
 
     protected override computeIsSubtype(subtype: string, supertype: string): boolean {
@@ -548,7 +594,9 @@ export class TontoAstReflection extends AbstractAstReflection {
                     properties: [
                         { name: 'attributes', defaultValue: [] },
                         { name: 'classElementType' },
+                        { name: 'description' },
                         { name: 'instanceOf' },
+                        { name: 'label' },
                         { name: 'name' },
                         { name: 'ontologicalNatures' },
                         { name: 'references', defaultValue: [] },
@@ -571,12 +619,22 @@ export class TontoAstReflection extends AbstractAstReflection {
                     name: DataType,
                     properties: [
                         { name: 'attributes', defaultValue: [] },
+                        { name: 'description' },
                         { name: 'elements', defaultValue: [] },
                         { name: 'isEnum', defaultValue: false },
+                        { name: 'label' },
                         { name: 'name' },
                         { name: 'ontologicalCategory' },
                         { name: 'ontologicalNature' },
                         { name: 'specializationEndurants', defaultValue: [] }
+                    ]
+                };
+            }
+            case Description: {
+                return {
+                    name: Description,
+                    properties: [
+                        { name: 'descriptions', defaultValue: [] }
                     ]
                 };
             }
@@ -638,6 +696,23 @@ export class TontoAstReflection extends AbstractAstReflection {
                     properties: [
                         { name: 'packageAlias' },
                         { name: 'referencedModel' }
+                    ]
+                };
+            }
+            case Label: {
+                return {
+                    name: Label,
+                    properties: [
+                        { name: 'labels', defaultValue: [] }
+                    ]
+                };
+            }
+            case LanguageLabelItem: {
+                return {
+                    name: LanguageLabelItem,
+                    properties: [
+                        { name: 'label' },
+                        { name: 'language' }
                     ]
                 };
             }

@@ -36,7 +36,7 @@
   "scripts": {
     "prepare": "yarn run clean && yarn run build",
     "clean": "shx rm -fr lib",
-    "build": "tsc && yarn run lint",
+    "build": "tsc",
     "watch": "tsc -w",
     "lint": "eslint -c ../../configs/.eslintrc.js \"src/**/!(*.spec.ts*)\""
   }
