@@ -3,7 +3,7 @@
     "displayName": "Tonto",
     "publisher": "lenke",
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.3.11",
+    "version": "0.3.12",
     "license": "MIT",
     "type": "module",
     "repository": {

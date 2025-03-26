@@ -2,7 +2,14 @@ import DBSO
 package tokens
 
 // Ultimate Sortals
-kind Kind
+kind Kind {
+    label {
+      @en "A kind"
+    }
+    description {
+      @en "A kind is a sortal that can be used to classify other sortals."
+    }
+}
 collective Collective
 quantity Quantity
 relator Relator
@@ -14,7 +21,7 @@ type Type
 powertype Powertype
 
 // Base Sortal
-subkind Subkind specializes Kind 
+subkind Subkind specializes Kind
 phase Phase specializes Subkind
 role Role specializes Relator
 historicalRole HistoricalRole specializes Mode
