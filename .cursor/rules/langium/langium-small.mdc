@@ -1,0 +1,259 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+
+# Langium Framework: Concise Documentation
+
+This document provides a condensed reference for developers actively working with the Langium framework. It focuses on core concepts, essential APIs, and advanced features, omitting installation and project setup details.
+
+## 1. Core Concepts
+
+Langium simplifies language development by handling complex technical aspects, allowing you to focus on domain-specific requirements.
+
+### 1.1. Grammars & Parsing
+
+Langium uses a high-level grammar language, similar to EBNF, to define the syntax of your language.
+
+- **Grammar Definition**: You define your language's structure in a `.langium` file.
+- **Parser Generation**: Based on the grammar, Langium generates a parser that transforms source code into a semantic model (Abstract Syntax Tree - AST).
+
+**Example Grammar Snippet:**
+```langium
+grammar HelloWorld
+
+// Terminals define the basic tokens of your language
+hidden terminal WS: /\s+/;
+terminal ID: /[_a-zA-Z][\w]*/;
+
+// The 'entry' rule is the starting point for the parser
+entry Model: (persons+=Person | greetings+=Greeting)*;
+
+// Parser rule for a 'Person'
+Person:
+    'person' name=ID;
+
+// Parser rule for a 'Greeting' with a cross-reference
+Greeting:
+    'Hello' person=[Person] '!';
+```
+
+### 1.2. Semantic Model (AST)
+
+The grammar is also used to generate TypeScript interfaces that represent your AST. This provides a type-safe way to interact with the parsed code.
+
+- **Type Generation**: The `langium-cli` generates interfaces from your parser rules.
+- **Type-Safe Traversal**: These interfaces allow you to safely navigate the AST.
+
+For the `Person` rule above, the following interface is generated:
+```typescript
+interface Person {
+    name: string;
+}
+```
+
+### 1.3. Cross-References & Linking
+
+Langium manages resolving references between different elements in your language model, a process known as **linking**.
+
+- **Scoping**: Linking is based on scopes. An element is only visible and referable within its scope.
+- **Custom Scoping**: You can implement custom logic to handle complex scoping scenarios, like those in object-oriented languages.
+- **Cross-File References**: Langium's workspace management tracks a global scope, allowing references to elements across different files within the same project.
+
+**Example of a Cross-Reference in Grammar:**
+```langium
+// The `person=[Person]` part defines a cross-reference.
+// Langium will try to link this to a 'Person' node.
+Greeting: 'Hello' person=[Person] '!';
+```
+
+### 1.4. Validation
+
+You can define custom validation rules to check for semantic correctness, which goes beyond what the parser can enforce.
+
+- **Validation Checks**: Implement validator classes with methods that check specific AST nodes.
+- **Validation Registry**: Register your validation checks to be executed by Langium.
+
+**Example Validation Check:**
+This check ensures a `Person` is not greeted more than once.
+
+```typescript
+import type { ValidationAcceptor, ValidationChecks } from 'langium';
+import type { HelloWorldAstType, Model, Person } from './generated/ast.js';
+
+export class HelloWorldValidator {
+    checkPersonAreGreetedAtMostOnce(model: Model, accept: ValidationAcceptor): void {
+        const greetedPersons = new Set<Person>();
+        model.greetings.forEach(greeting => {
+            const person = greeting.person.ref;
+            if (person) {
+                if (greetedPersons.has(person)) {
+                    accept('error', `Person '${person.name}' is greeted more than once.`, { node: greeting });
+                } else {
+                    greetedPersons.add(person);
+                }
+            }
+        });
+    }
+}
+
+// In your module file, register the check:
+const checks: ValidationChecks<HelloWorldAstType> = {
+    Model: validator.checkPersonAreGreetedAtMostOnce
+};
+registry.register(checks, validator);
+```
+
+### 1.5. Workspace & Document Management
+
+Langium efficiently manages all files belonging to your language within a workspace.
+
+- **Automatic Discovery**: It automatically discovers and processes all relevant files.
+- **Incremental Processing**: When files are added, changed, or deleted, Langium intelligently recomputes only what is necessary, ensuring good performance.
+- **Global Scope**: Manages a global index of symbols, enabling cross-file references.
+
+---
+
+## 2. Key Services & APIs
+
+Langium's architecture is built on dependency injection. You can override default services to customize behavior.
+
+### 2.1. ScopeProvider & ScopeComputation
+
+These services are central to customizing cross-reference resolution.
+
+- **`ScopeProvider`**:
+    - **Purpose**: For a given cross-reference, it provides a `Scope` containing all potential target elements (`AstNodeDescription`).
+    - **Method**: `getScope(context: ReferenceInfo): Scope;`
+    - **Use Case**: Implement custom logic to find candidates for a reference, e.g., implementing import mechanisms.
+
+- **`ScopeComputation`**:
+    - **Purpose**: Defines which elements are exported to the global scope and computes local scopes within a document.
+    - **Methods**:
+        - `computeExports(document)`: Determines which nodes are visible across files.
+        - `computeLocalScopes(document)`: Pre-calculates scopes for nodes within a single file to improve performance.
+
+**Example `ScopeProvider`:**
+```typescript
+import { AstUtils, MapScope, Scope, ScopeProvider, ReferenceInfo } from 'langium';
+import { isGreeting, isModel } from './generated/ast.js';
+
+export class HelloWorldScopeProvider implements ScopeProvider {
+    getScope(context: ReferenceInfo): Scope {
+        if (isGreeting(context.container) && context.property === 'person') {
+            const model = AstUtils.getContainerOfType(context.container, isModel)!;
+            // Create a scope containing all persons in the current model
+            return new MapScope(model.persons.map(p => ({
+                name: p.name,
+                node: p,
+                documentUri: AstUtils.getDocument(p).uri
+            })));
+        }
+        return EMPTY_SCOPE;
+    }
+}
+
+// Register in your language module:
+// references: { ScopeProvider: (services) => new HelloWorldScopeProvider(services) }
+```
+
+### 2.2. Formatter
+
+Create a custom formatter by extending `AbstractFormatter`.
+
+- **`format(node: AstNode)`**: This method is called for every node in the AST. Use it to apply formatting rules.
+- **`NodeFormatter`**: A helper to select parts of a node (keywords, properties) and apply formatting.
+- **`Formatting`**: A namespace with predefined formatting options (`newLine`, `indent`, `oneSpace`, etc.).
+
+**Example Formatter:**
+```typescript
+import { AbstractFormatter, Formatting, AstNode } from 'langium/lsp';
+import * as ast from './generated/ast.js';
+
+export class DomainModelFormatter extends AbstractFormatter {
+    protected format(node: AstNode): void {
+        if (ast.isEntity(node)) {
+            const formatter = this.getNodeFormatter(node);
+            const openBrace = formatter.keyword('{');
+            const closeBrace = formatter.keyword('}');
+            // Indent content within braces
+            formatter.interior(openBrace, closeBrace).prepend(Formatting.indent());
+            closeBrace.prepend(Formatting.newLine());
+        }
+    }
+}
+
+// Register in your language module:
+// lsp: { Formatter: () => new DomainModelFormatter() }
+```
+
+### 2.3. Code Generation
+
+Code generation involves traversing the AST and creating output, such as code in another language or data files.
+
+- **AST Traversal**: Use the generated type-guard functions (`isX`, `isY`) to recursively walk the AST.
+- **Generator Logic**: Implement functions that take an AST node and produce a string or other artifact.
+
+**Example Generator Snippet:**
+```typescript
+import type { Model } from '../language/generated/ast.js';
+
+export function generate(model: Model): string {
+    const greetings = model.greetings.map(greeting =>
+        `console.log('Hello, ${greeting.person.ref?.name}!');`
+    ).join("\n");
+
+    return `"use strict";\n${greetings}`;
+}
+```
+
+---
+
+## 3. Advanced Features
+
+### 3.1. Multiple Languages
+
+Langium supports projects with multiple, interdependent languages.
+
+1.  **Split Grammars**: Define each language in its own `.langium` file. Use `import` statements to share rules between them.
+2.  **Configure `langium-config.json`**: Add a configuration object for each language in the `languages` array.
+3.  **Create Services**: In your module file, create and register services for each language. The `ServiceRegistry` will manage them.
+4.  **VS Code Integration**: Update `package.json` to contribute language features (syntax highlighting, etc.) for each language's file extension.
+
+**Key Idea**: A shared `ServiceRegistry` allows languages to be aware of each other, enabling cross-language references and validation.
+
+### 3.2. Built-in Libraries
+
+You can provide standard library features that are available to users without being explicitly imported.
+
+1.  **Define Library Source**: Create a string containing the source code of your built-in library.
+2.  **Extend `DefaultWorkspaceManager`**: Override the `loadAdditionalDocuments` method to load your library string as a `LangiumDocument`. Use a custom URI scheme like `builtin:///`.
+3.  **Register WorkspaceManager**: Bind your custom workspace manager in the shared module.
+4.  **Client-Side `FileSystemProvider` (VS Code)**: Implement a `vscode.FileSystemProvider` for your custom `builtin` scheme. This allows VS Code to display the in-memory library file when a user navigates to it.
+
+### 3.3. Code Bundling
+
+For production use, especially in VS Code extensions or web environments, bundling your code is recommended for better performance and smaller size.
+
+- **Tooling**: `esbuild` is the recommended bundler for its speed and simplicity. `webpack` is also a viable option.
+- **Configuration**:
+    - Set the `platform` to `'node'` for VS Code extensions.
+    - Mark `vscode` as an `external` dependency, as it's provided by the VS Code runtime.
+    - Bundle the language server and the extension entry point separately.
+
+**Example `esbuild` Script:**
+```javascript
+// esbuild.mjs
+import * as esbuild from 'esbuild';
+
+await esbuild.build({
+    entryPoints: ['src/extension.ts', 'src/language/main.ts'],
+    bundle: true,
+    outdir: 'out',
+    external: ['vscode'],
+    platform: 'node',
+    sourcemap: true,
+    minify: false
+});
+```

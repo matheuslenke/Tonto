@@ -1,0 +1,10 @@
+{
+  "name": "my-project",
+  "version": "0.0.1",
+  "description": "A new Tonto project.",
+  "author": "Lenke",
+  "license": "ISC",
+  "files": [
+    "src"
+  ]
+}

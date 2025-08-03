@@ -1,0 +1,58 @@
+---
+alwaysApply: true
+---
+
+# Tonto Project Guidance
+
+This document provides a concise orientation for an LLM working with the Tonto project. Tonto is a Domain-Specific Language (DSL) for ontological modeling, built with the Langium framework.
+
+## Project Structure
+
+A typical Tonto project has the following structure:
+
+-   **`tonto.json`**: The manifest file, containing project metadata like name, version, and dependencies.
+-   **`src/`**: The directory for all `.tonto` source files, which define the ontology.
+-   **`lib/`**: Contains external ontologies or modules, managed by the Tonto Package Manager (`tpm`).
+-   **`generated/`**: The default output directory for generated artifacts, such as JSON serializations or GUFO transformations.
+
+## Core Concepts
+
+-   **Ontology as Code**: Tonto treats ontologies as code, allowing for versioning, modularity, and automated validation.
+-   **Modularity**: Ontologies can be broken down into smaller, reusable modules and packages.
+-   **Validation**: Tonto provides both local and API-based validation to ensure the semantic correctness of the ontology.
+-   **Transformation**: Tonto models can be transformed into other formats, such as GUFO (General Upper-Level Foundational Ontology), for interoperability.
+
+## Command-Line Interface (CLI)
+
+The `tonto-cli` is the primary tool for interacting with Tonto projects. The LLM can use it to perform various tasks.
+
+### `tonto-cli` Commands:
+
+-   **`tonto-cli init`**: Initializes a new Tonto project, creating the basic directory structure and a `tonto.json` manifest file.
+-   **`tonto-cli validate <directory>`**: Validates a Tonto project.
+    -   By default, it performs local checks for syntax and semantic errors.
+    -   Use the `--with-api` flag to perform additional validation using the `ontouml-js` API.
+    -   *Example*: `tonto-cli validate .`
+-   **`tonto-cli generate <directory>`**: Generates a JSON representation of the Tonto project.
+    -   Use the `-d, --destination <dir>` option to specify an output directory.
+-   **`tonto-cli transform <directory>`**: Transforms the Tonto project into GUFO (in Turtle/TTL format) using the `ontouml-js` API.
+-   **`tonto-cli import <file.json>`**: Generates `.tonto` files from a JSON file.
+-   **`tonto-cli generateSingle <file.tonto>`**: Generates a JSON representation from a single `.tonto` file.
+-   **`tonto-cli importSingle <file.json>`**: Generates a `.tonto` file from a single JSON file.
+
+### Tonto Package Manager (`tpm`)
+
+The `tpm` is a dependency manager for Tonto projects, used to install and manage external ontology packages.
+
+-   **`tpm install`**: Installs the dependencies listed in the `tonto.json` file.
+-   **`tpm add <package>`**: Adds a new dependency to the project and updates the manifest file.
+
+## General Workflow for the LLM
+
+1.  **Understand the Goal**: Analyze the user's request to determine the required changes to the Tonto model.
+2.  **Locate Files**: Identify the relevant `.tonto` files within the `src/` directory.
+3.  **Modify the Code**: Make the necessary changes to the `.tonto` files.
+4.  **Validate the Project**: After making changes, run `tonto-cli validate .` to check for any errors.
+5.  **Fix Errors**: If validation fails, analyze the error messages and attempt to fix the issues.
+6.  **Iterate**: Repeat the modification and validation cycle until the project is valid and meets the user's requirements.
+7.  **Generate/Transform (if required)**: If the user requests a specific output, use the `generate` or `transform` commands.

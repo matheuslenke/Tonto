@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import { TontoLanguageMetaData } from "../language/index.js";
-import { TontoActions } from "./main.js";
+import { TontoActions } from "./actions/actions.js";
 // import { viewAction } from "./actions/viewAction";
 
 export const cliVersion = "0.3.2";
@@ -56,8 +56,8 @@ export default function (): void {
     program
         .command("validate")
         .argument("<dir>", "Directory of the actual project")
-        .option("--local", "Running Local Tonto Checks, or running API checks")
-        .description("Validate your Tonto project with the ontouml-js API")
+        .option("--with-api", "Validate with the ontouml-js API in addition to local checks")
+        .description("Validate your Tonto project locally")
         .action(actions.validateAction);
 
     program
@@ -65,6 +65,13 @@ export default function (): void {
         .argument("<dir>", "Directory of the actual project")
         .description("Transform you Tonto project to gufo with the ontouml-js API")
         .action(actions.transformToGufoAction);
+
+    program
+        .command('init')
+        .description('Initialize a new Tonto project.')
+        .option("-d, --destination <dir>", "Destination directory of generating")
+        .option("-t, --template <template>", "Template to use for the project")
+        .action(actions.initAction);
 
     program.parseAsync(process.argv);
 }

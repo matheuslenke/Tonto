@@ -10,13 +10,13 @@ import { activateDiagram } from "../diagram/activateDiagram.js";
 import { TontoLibraryFileSystemProvider } from "./TontoLibraryFileSystemProvider.js";
 
 let languageClient: LanguageClient;
-let generateTontoStatusBarItem: vscode.StatusBarItem;
-let generateJsonStatusBarItem: vscode.StatusBarItem;
-let generateDiagramStatusBarItem: vscode.StatusBarItem;
-let validateStatusBarItem: vscode.StatusBarItem;
-let transformToGufoStatusBarItem: vscode.StatusBarItem;
-let tpmInstallStatusBarItem: vscode.StatusBarItem;
-let outputChannel: vscode.OutputChannel;
+let generateTontoStatusBarItem!: vscode.StatusBarItem;
+let generateJsonStatusBarItem!: vscode.StatusBarItem;
+let generateDiagramStatusBarItem!: vscode.StatusBarItem;
+let validateStatusBarItem!: vscode.StatusBarItem;
+let transformToGufoStatusBarItem!: vscode.StatusBarItem;
+let tpmInstallStatusBarItem!: vscode.StatusBarItem;
+let outputChannel!: vscode.OutputChannel;
 
 
 
@@ -25,10 +25,9 @@ export function activate(context: vscode.ExtensionContext): void {
     outputChannel = vscode.window.createOutputChannel("Tonto: Validation output");
     TontoLibraryFileSystemProvider.register(context);
     languageClient = startLanguageClient(context);
-    // createConfigurationCommands(context);
+
     createGenerateJsonStatusBarItem(context, generateJsonStatusBarItem);
     createTontoGenerationStatusBarItem(context, generateTontoStatusBarItem);
-    // createGenerateDiagramStatusBarItem(context, generateDiagramStatusBarItem);
     createValidationSatusBarItem(context, validateStatusBarItem, outputChannel);
     createTransformToGufoSatusBarItem(context, transformToGufoStatusBarItem);
     createTpmInstallCommands(context, tpmInstallStatusBarItem);

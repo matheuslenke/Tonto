@@ -2,8 +2,8 @@ import {
   createFileUri, createWebviewHtml as doCreateWebviewHtml,
   registerDefaultCommands, registerLspEditCommands, registerTextEditorSync, SprottyDiagramIdentifier, WebviewContainer, WebviewEndpoint
 } from "sprotty-vscode";
-import { LspSprottyEditorProvider, LspSprottyViewProvider, LspWebviewEndpoint, LspWebviewPanelManager } from "sprotty-vscode/lib/lsp";
-import { addLspLabelEditActionHandler, addWorkspaceEditActionHandler } from "sprotty-vscode/lib/lsp/editing";
+import { addLspLabelEditActionHandler, addWorkspaceEditActionHandler } from "sprotty-vscode/lib/lsp/editing/index.js";
+import { LspSprottyEditorProvider, LspSprottyViewProvider, LspWebviewEndpoint, LspWebviewPanelManager } from "sprotty-vscode/lib/lsp/index.js";
 import * as vscode from "vscode";
 import { LanguageClient } from "vscode-languageclient/node.js";
 import { Messenger } from "vscode-messenger";

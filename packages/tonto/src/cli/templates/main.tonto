@@ -1,0 +1,42 @@
+import Cats
+import Dogs
+import Datatypes
+    
+package main
+
+
+// A 'kind' is a rigid type that provides an identity principle for its instances.
+// 'Animal' is a kind because being an animal is a fundamental and permanent characteristic.
+kind Animal {
+    birthDate: date
+    medicalRecord: Datatypes.MedicalRecord
+}
+
+// A 'relator' is a truth-maker for a material relation, connecting multiple individuals.
+// 'Adoption' is a relator that connects an 'Animal' with a 'Person'.
+relator Adoption {
+    // A 'mediation' is a relation that connects a 'relator' to an object.
+    @mediation [1..*] -- [1] Animal
+    @mediation [1..*] -- [1] Person
+}
+
+// A 'role' is a contingent and relational specialization of a 'kind'.
+// 'Pet' is a role of 'Animal' because an animal can be a pet in the context of an adoption.
+role Pet specializes Animal {}
+
+// A 'kind' can also be a person.
+kind Person {
+    name: string
+}
+
+// An 'event' represents happenings or occurrences.
+// 'VetVisit' is an event that involves a 'Pet' and a 'Veterinarian'.
+event VetVisit {
+    // A 'participational' is a relation that connects an 'event' to an object.
+    @participational [1..*] -- [1] Pet
+    @participational [1..*] -- [1] Veterinarian
+}
+
+// A 'role' can also be a specialization of another role.
+// 'Veterinarian' is a role of 'Person'.
+role Veterinarian specializes Person {}
