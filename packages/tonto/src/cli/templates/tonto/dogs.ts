@@ -1,3 +1,4 @@
+export const dogsTontoFile = `
 import Datatypes
 import main
 
@@ -14,3 +15,4 @@ subkind Dog specializes main.Animal {
 // A 'phase' is a contingent and intrinsic specialization of a 'kind'.
 // 'Puppy' is a phase of 'Dog' because a dog is a puppy for a period of time.
 phase Puppy specializes Dog {}
+`;

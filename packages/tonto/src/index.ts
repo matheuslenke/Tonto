@@ -1,6 +1,11 @@
 export * from "./cli/main.js";
+export * from "./cli/requests/ontoumljsValidator.js";
 export * from "./language/index.js";
 export { Configuration } from "./utils/extensionConfig.js";
+
+export * from "./cli/requests/gufoTransform.js";
+export * from "./cli/requests/ontoumljsValidator.js";
+
 
 export * from "./language/lsp/semantic-token-types.js";
 export * from "./language/lsp/tonto-language-server.js";

@@ -1,3 +1,4 @@
+export const catsTontoFile = `
 import Datatypes
 import main
 package Cats
@@ -14,3 +15,4 @@ subkind Cat specializes main.Animal {
 // A 'phase' is a contingent and intrinsic specialization of a 'kind'.
 // 'Kitten' is a phase of 'Cat' because a cat is a kitten for a period of time.
 phase Kitten specializes Cat {}
+`;

@@ -1,3 +1,4 @@
+export const mainTontoFile = `
 import Cats
 import Dogs
 import Datatypes
@@ -40,3 +41,4 @@ event VetVisit {
 // A 'role' can also be a specialization of another role.
 // 'Veterinarian' is a role of 'Person'.
 role Veterinarian specializes Person {}
+`;

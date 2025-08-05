@@ -1,3 +1,4 @@
+export const mainTontoBlankFile = `
 package main
 
 // 'kind' is a fundamental, rigid type.
@@ -5,3 +6,4 @@ package main
 kind HelloWorld {
     message: string
 }
+`;

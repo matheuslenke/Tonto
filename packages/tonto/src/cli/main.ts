@@ -1,12 +1,12 @@
 import { Command } from "commander";
 import { TontoLanguageMetaData } from "../language/index.js";
 import { TontoActions } from "./actions/actions.js";
-// import { viewAction } from "./actions/viewAction";
 
-export const cliVersion = "0.3.2";
+export const cliVersion = "0.4.0";
 
 export default function (): void {
     const program = new Command();
+
     const actions = new TontoActions();
 
     program

@@ -1,3 +1,4 @@
+export const datatypesTontoFile = `
 package Datatypes
 
 // An 'enum' is a datatype that consists of a set of named values.
@@ -15,3 +16,4 @@ datatype MedicalRecord {
     vaccinationDate: date
     healthCondition: string
 }
+`;

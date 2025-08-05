@@ -8,7 +8,7 @@
   },
   "type": "module",
   "description": "Tonto is a DSL for creating OntoUML models",
-  "version": "0.3.12",
+  "version": "0.4.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -23,19 +23,22 @@
   ],
   "files": [
     "lib",
+    "lib/cli",
     "src",
-    "node.js",
-    "node.d.ts",
     "tonto-manifest-schema.json"
   ],
   "bin": {
     "tonto-cli": "bin/cli.js"
   },
-  "exports": "./lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./lib/*": "./lib/*"
+  },
   "types": "lib/index.d.ts",
   "main": "lib/index",
   "scripts": {
-    "clean": "shx rm -rf lib coverage",
+    "clean": "shx rm -rf lib coverage node_modules",
+    "prebuild": "npm run clean",
     "build": "tsc",
     "watch": "tsc --watch",
     "test": "vitest",

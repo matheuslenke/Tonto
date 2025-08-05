@@ -1,3 +1,4 @@
+export const llmGuidance = `
 ---
 alwaysApply: true
 ---
@@ -14,20 +15,20 @@ To provide the most accurate and context-aware assistance, it is essential to us
 2.  **Identify the Correct Guidance File**: Based on the user's intent, identify the most relevant guidance file.
 
     -   **For creating new elements, enhancing the ontology, or related tasks**:
-        -   **Attach this rule**: `@tonto-llm-create-new-elements.mdc`
+        -   **Attach this rule**: \`@tonto-llm-create-new-elements.mdc\`
         -   This rule provides detailed instructions on how to map user requests to Tonto constructs, generate the correct code, and validate the changes.
 
     -   **For analyzing the ontology, improving terminology, or checking for consistency**:
-        -   **Attach this rule**: `@tonto-llm-terminology-analysis-guide.mdc`
+        -   **Attach this rule**: \`@tonto-llm-terminology-analysis-guide.mdc\`
         -   This rule offers a structured approach to analyzing the clarity, consistency, and precision of the terminology used in the model.
 
     -   **For understanding the model, getting a summary, or explaining the ontology**:
-        -   **Attach this rule**: `@tonto-llm-understanding.mdc`
+        -   **Attach this rule**: \`@tonto-llm-understanding.mdc\`
         -   This rule guides you in summarizing the key concepts, relationships, and overall purpose of the Tonto model.
 
 3.  **Follow the Guidance**: Once the appropriate rule is attached, follow the instructions within that file to complete the user's request.
 
-4.  **Default to General Guidance**: If the user's request does not fall into any of the specific categories above, refer to the general `@tonto-guidance.mdc` file for basic information about the project structure and CLI commands.
+4.  **Default to General Guidance**: If the user's request does not fall into any of the specific categories above, refer to the general \`@tonto-guidance.mdc\` file for basic information about the project structure and CLI commands.
 
 5. **Ask for permission**: Please, first plan step by step and explain to the user your plan. Then, ask for it to confirm or suggest any changes, and only after that execute it.
 
@@ -46,3 +47,4 @@ The user can ask for the following requests, which you can check their guideline
 
 **4. Creating a documentation and translating:** In this task your goal is to help the user build a documentation for their ontology.
 **Guide name:** LLM Guidance: Writing Effective Ontology Documentation
+`;

@@ -3,7 +3,7 @@
     "displayName": "Tonto",
     "publisher": "lenke",
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.3.12",
+    "version": "0.4.0",
     "license": "MIT",
     "type": "module",
     "repository": {
@@ -188,28 +188,26 @@
         "onCommand:tonto.diagram.open"
     ],
     "files": [
-        "out",
         "pack",
-        "syntaxes",
         "src/themes",
         "data",
-        "LICENSE.md"
+        "LICENSE.md",
+        "syntaxes"
     ],
     "vsce": {
         "dependencies": true,
         "yarn": true
     },
-    "exports": "./pack/extension/main.cjs",
     "scripts": {
         "copy:schema": "shx cp ../tonto/tonto-manifest-schema.json ./data",
         "vscode:prepublish": "npm run build && npm run lint && node ./esbuild.mjs --minify",
-        "package": "vsce package --yarn",
-        "publish": "vsce publish --yarn",
-        "clean": "rimraf out pack",
+        "package": "vsce package",
+        "publish": "vsce publish",
+        "clean": "rimraf out pack node_modules",
         "lint": "eslint src --ext ts",
         "lint:fix": "eslint src --ext ts --fix",
-        "build": "tsc && node ./esbuild.mjs",
-        "watch": "tsc && node ./esbuild.mjs --watch",
+        "build": "node ./esbuild.mjs",
+        "watch": "node ./esbuild.mjs --watch",
         "coverage": "vitest run --coverage",
         "langium:generate": "langium generate",
         "langium:watch": "langium generate --watch",
@@ -225,7 +223,7 @@
         "sprotty-elk": "^1.2.0",
         "sprotty-vscode": "file:../sprotty-vscode",
         "sprotty-vscode-webview": "file:../sprotty-vscode-webview",
-        "tonto-cli": "file:../tonto",
+        "tonto-cli": "^0.4.0",
         "tonto-package-manager": "~0.2.9",
         "uuid": "^9.0.1",
         "vite": "^5.4.19",
@@ -242,6 +240,7 @@
         "@types/node-fetch": "^2.6.1",
         "@types/vscode": "^1.63.0",
         "@vitest/coverage-c8": "^0.33.0",
+        "@vscode/vsce": "^3.6.0",
         "concurrently": "^8.2.2",
         "css-loader": "^6.8.1",
         "esbuild": "^0.25.8",
