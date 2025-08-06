@@ -269,11 +269,11 @@ The "Powertype Pattern" is a central concept in multi-level modeling. [cite\_sta
     \`\`\`tonto
     // CarModel includes ALL specializations of Car (e.g., Sedan, SUV,
     // and even the generic Car type itself).
-    powertype CarModel of Car
+    powertype CarModel specializes Car
 
     // Specific car models are instances of this higher-order type.
-    subkind Sedan specializes Car instanceOf CarModel
-    subkind Suv specializes Car instanceOf CarModel
+    subkind Sedan (instanceOf CarModel) specializes Car
+    subkind Suv (instanceOf CarModel) specializes Car
     \`\`\`
 
 ### 3.2. The \`categorizes\` Relation (Categorizer Type)
