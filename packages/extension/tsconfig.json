@@ -5,12 +5,20 @@
     "outDir": "out",
     "sourceMap": true,
     "experimentalDecorators": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "target": "ES2020",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
   },
   "references": [
+    {
+      "path": "../tonto"
+    }
   ],
   "include": ["src/**/*.ts"],
   "exclude": [
-    "/node_modules",
+    "node_modules",
+    "out",
+    "pack"
   ]
 }

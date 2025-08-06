@@ -1,1 +1,0 @@
-declare module "tonto-sprotty-webview";

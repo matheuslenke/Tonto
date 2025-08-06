@@ -13,7 +13,7 @@
                 "runOn": "default"
             },
             "options": {
-                "cwd": "${workspaceFolder}/packages/tonto",
+                "cwd": "${workspaceFolder}/packages/tonto"
             },
             "presentation": {
                 "panel": "dedicated",
@@ -122,20 +122,29 @@
             "problemMatcher": [
                 "$tsc-watch"
             ],
-            "isBackground": true, 
+            "isBackground": true,
             "options": {
                 "cwd": "${workspaceFolder}"
-            },
+            }
         },
-
-        // Test tasks
         {
             "label": "test: tonto",
             "command": "npm run test",
             "isBackground": false,
             "options": {
                 "cwd": "${workspaceFolder}/packages/tonto"
+            }
+        },
+        {
+            "type": "npm",
+            "script": "build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
             },
+            "problemMatcher": [],
+            "label": "npm: build",
+            "detail": "tsc -b tsconfig.build.json && npm run build --workspaces"
         }
     ]
   }

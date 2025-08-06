@@ -1,0 +1,351 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+
+An analysis of the provided documentation reveals a comprehensive guide to the Langium framework, structured as a series of interconnected web pages. For optimal use by a Large Language Model (LLM), the documentation has been revised into a single, self-contained file. Navigational links, interactive elements (like diagrams and figures), and conversational filler have been removed. The core technical explanations, code examples, and procedural steps have been preserved and consolidated to create a detailed and coherent knowledge base.
+
+Here is the revised documentation:
+
+-----
+
+# Langium Framework Overview
+
+## What is Langium?
+
+**Langium** is an open-source language engineering tool designed for creating Domain-Specific Languages (DSLs) and programming languages. It is written in TypeScript, runs on Node.js, and features first-class support for the Language Server Protocol (LSP), enabling easy integration with modern IDEs.
+
+Langium simplifies language development by addressing common technical complexities, allowing developers to focus on domain-specific requirements. It provides out-of-the-box solutions for parsing, semantic modeling, cross-referencing, and IDE support, with the ability to customize every aspect.
+
+-----
+
+## Core Features
+
+### Language Parsing
+
+Languages require sophisticated parsing strategies beyond simple regular expressions. Langium uses a high-level, EBNF-like grammar language to define a context-free grammar. From this grammar, Langium constructs a parser that transforms an input string into a structured Abstract Syntax Tree (AST), also referred to as a semantic model.
+
+### Semantic Models
+
+Langium grammars are used not only for parsing but also for generating a semantic model as **TypeScript interfaces**. When a program is parsed, the resulting AST is automatically typed using these interfaces, ensuring type safety when interacting with the model.
+
+For example, a simple grammar rule for a `Person`:
+
+```langium
+Person:
+    'person' // keyword
+    name=ID; // semantic assignment
+```
+
+The `langium-cli` tool generates the following TypeScript interface from this rule:
+
+```ts
+interface Person {
+    name: string;
+}
+```
+
+This allows for safe traversal of the AST and provides compile-time notifications of breaking changes if the grammar is modified.
+
+### Cross-References and Linking
+
+Relationships between elements in a language are expressed through **references**. The process of resolving these references is called **linking**. Langium manages linking through the concept of **scoping**. Just as variables in programming are only available in certain scopes, Langium determines which elements are visible and referenceable from different parts of the code.
+
+For complex scoping behaviors, such as those in object-oriented languages, developers can implement custom domain-specific scoping rules.
+
+```ts
+class X {
+    y(): void { /* ... */ }
+}
+
+const instance = new X(); // Symbol 'X' is in the local scope.
+instance.y(); // Symbol 'y' exists in the scope of the 'X' class.
+```
+
+Once scoping rules are defined, Langium handles the linking process and reports any resolution errors automatically.
+
+### Workspace Management
+
+Langium supports multi-file projects. When used within a language server, it automatically discovers and processes all relevant DSL files within the current workspace (the project folder). It efficiently handles file additions, changes, and deletions by employing heuristics to recompute only what is necessary, ensuring good performance even in large workspaces. This workspace-wide awareness also enables cross-file references.
+
+### IDE Editing Support
+
+Langium is deeply integrated with the **Language Server Protocol (LSP)**, a standard that reduces the effort of integrating languages into IDEs. This allows Langium-based languages to work seamlessly with LSP-compatible editors like Visual Studio Code, Eclipse, and IntelliJ.
+
+Langium provides built-in support for most common LSP features, including:
+
+  * Code Completion
+  * Custom Validations and Diagnostics
+  * Find References
+  * Go to Definition
+  * Formatting
+  * Hover Information
+  * And more, with extension points for domain-specific customizations.
+
+-----
+
+## The Langium Workflow
+
+Developing a language with Langium follows a recommended step-by-step workflow, which can be divided into three main parts: initial setup, the core development cycle, and advanced customization.
+
+### Part 1: Initial Project Setup
+
+This part is performed only once per project.
+
+**1. Install Yeoman and Langium Generator**
+Yeoman is a scaffolding tool used to generate a new Langium project with a predefined structure.
+
+```bash
+npm i -g yo generator-langium
+```
+
+A working Node.js environment (version 16 or higher) is required.
+
+**2. Scaffold a New Langium Project**
+Execute the generator and answer the prompts to configure your language project.
+
+```bash
+yo langium
+```
+
+Prompts will include:
+
+  * **Extension name:** The name of the project folder and `package.json`.
+  * **Language name:** The name used for the grammar and generated services.
+  * **File extensions:** Comma-separated list of file extensions for your DSL (e.g., `.hello`).
+  * **Optional features:** Whether to include a VS Code extension, CLI, web worker support, and tests.
+
+After scaffolding, open the new project in your editor (e.g., `code hello-world`).
+
+### Part 2: Core Development Cycle
+
+This cycle is repeated for each new feature or grammar change.
+
+**3. Write the Grammar**
+The grammar is the most important part of the language, defining its syntax and structure in a `.langium` file. The Langium VS Code extension provides syntax highlighting and tooling for these files.
+
+An example grammar from the "Hello World" template:
+
+```langium
+grammar HelloWorld
+
+// Terminals define the basic tokens of the language using regex.
+// 'hidden' terminals like whitespace are parsed and discarded.
+hidden terminal WS: /\s+/;
+terminal ID: /[_a-zA-Z][\w]*/;
+
+// The 'entry' rule is the starting point for the parser.
+// Here, a Model can contain a list of persons and greetings.
+entry Model: (persons+=Person | greetings+=Greeting)*;
+
+// A Person has the keyword 'person' followed by a name (an ID).
+Person:
+    'person' name=ID;
+
+// A Greeting references a Person.
+// The brackets [] denote a cross-reference.
+Greeting:
+    'Hello' person=[Person] '!';
+```
+
+  * **Terminals**: Define tokens using regular expressions. `WS` (whitespace) is hidden, meaning it's consumed by the parser but not added to the AST. `ID` defines a valid identifier.
+  * **Parser Rules**: `Model`, `Person`, and `Greeting` define the structure.
+  * **Assignment**: `name=ID` assigns the parsed `ID` token to the `name` property of the `Person` node.
+  * **Cross-Reference**: `person=[Person]` creates a reference to a `Person` node. Langium will try to resolve this reference by looking for a `Person` whose `name` property matches the parsed text.
+
+**4. Generate the Abstract Syntax Tree (AST)**
+After defining the grammar, generate the corresponding TypeScript interfaces for the AST.
+
+```bash
+npm run langium:generate
+```
+
+This command invokes the Langium CLI, which creates several files in the `src/generated` directory, including:
+
+  * **`ast.ts`**: Contains the TypeScript interfaces for your AST nodes (e.g., `Model`, `Person`, `Greeting`).
+  * **`module.ts`**: Contains generated service modules for dependency injection.
+  * **`grammar.json`**: A JSON representation of your grammar.
+  * **Syntax highlighting files**: For TextMate, Monarch, etc.
+
+At this stage, the generated parser can create an AST from a source file, but cross-references within the AST are not yet resolved. For example, in a `Greeting`, the `person` reference is initially unresolved.
+
+**5. Resolve Cross-References**
+This step fills the gaps in the AST by linking cross-references to their target declarations. Langium uses a **Scope Provider** and **Scope Computation** to manage this.
+
+  * **Scope Computation**: Defines which AST nodes are exported to a global index (making them visible across files) and computes local scopes within a document.
+  * **Scope Provider**: For a given cross-reference, it determines the set of all possible target candidates (the "scope"). The Langium **Linker** then selects the correct candidate from this scope, typically by matching names.
+
+Langium provides default implementations that work for many cases. For more complex scenarios, you can implement a custom `ScopeProvider`.
+
+Example of a custom `ScopeProvider` for the Hello-World language:
+
+```ts
+// src/language/hello-world-scope.ts
+import { ScopeProvider, ReferenceInfo, Scope, MapScope, EMPTY_SCOPE, AstUtils } from 'langium';
+import { isGreeting, isModel } from './generated/ast.js';
+
+export class HelloWorldScopeProvider implements ScopeProvider {
+    // ... constructor ...
+    getScope(context: ReferenceInfo): Scope {
+        // We are looking for the 'person' reference inside a 'Greeting'
+        if (isGreeting(context.container) && context.property === 'person') {
+            const model = AstUtils.getContainerOfType(context.container, isModel)!;
+            // The scope for this reference consists of all persons defined in the model.
+            const persons = model.persons;
+            const descriptions = persons.map(p => this.astNodeDescriptionProvider.createDescription(p, p.name));
+            return new MapScope(descriptions);
+        }
+        return EMPTY_SCOPE;
+    }
+}
+```
+
+This custom provider must be registered in the language module file (`hello-world-module.ts`). After this step, references like `model.greetings[0].person.ref` will correctly point to the corresponding `Person` AST node.
+
+**6. Create Validations**
+With a complete and linked AST, you can now check for semantic correctness. The parser ensures syntactic correctness, while validations enforce semantic rules.
+
+For example, a rule that each person can be greeted at most once:
+
+```ts
+// src/language/hello-world-validator.ts
+import type { ValidationAcceptor, ValidationChecks } from 'langium';
+import type { HelloWorldAstType, Model, Person } from './generated/ast.js';
+
+export class HelloWorldValidator {
+    checkPersonAreGreetedAtMostOnce(model: Model, accept: ValidationAcceptor): void {
+        const counts = new Map<Person, number>();
+        model.persons.forEach(p => counts.set(p, 0));
+
+        model.greetings.forEach(g => {
+            const person = g.person.ref;
+            if (person) {
+                const newValue = (counts.get(person) ?? 0) + 1;
+                counts.set(person, newValue);
+                if (newValue > 1) {
+                    accept('error', `You can greet each person at most once!`, { node: g });
+                }
+            }
+        });
+    }
+}
+```
+
+This validation check must be registered in your validator registry, which is typically located in the same file.
+
+**7. Generate Artifacts**
+Once the AST is valid, you can use it to generate any desired output, such as source code in another language, documentation, or configuration files. This is done by traversing the AST.
+
+Example generator that creates JavaScript `console.log` statements from greetings:
+
+```ts
+// src/cli/generator.ts
+import type { Model } from '../language/generated/ast.js';
+
+export function generateJavaScript(model: Model): string {
+    return `"use strict";
+${model.greetings
+    .map(greeting => `console.log('Hello, ${greeting.person.ref?.name}!');`)
+    .join("\n")
+}`;
+}
+```
+
+This generator function would be called from the CLI action.
+
+### Part 3: Advanced Topics
+
+For more specific requirements, Langium offers advanced customization options.
+
+#### Built-in Libraries
+
+Languages often provide globally accessible features (like TypeScript's `window` object) that are not defined by the user. Langium supports this via **built-in libraries**.
+
+The process involves:
+
+1.  **Define the library source code** as a string in your language.
+2.  **Create a custom `WorkspaceManager`** that extends `DefaultWorkspaceManager`.
+3.  **Override `loadAdditionalDocuments`** to load the library string into a document with a special URI scheme, like `builtin:///`.
+4.  **Register a `FileSystemProvider`** in the VS Code extension client to handle the `builtin` scheme, allowing the editor to display the in-memory library file.
+
+#### Code Bundling
+
+For production use, especially in VS Code extensions, bundling your code is recommended to improve performance and reduce size. **esbuild** is the recommended bundler.
+
+A minimal `esbuild` configuration for a Langium extension:
+
+```ts
+// esbuild.mjs
+import * as esbuild from 'esbuild';
+
+const ctx = await esbuild.context({
+    entryPoints: ['src/extension.ts', 'src/language/main.ts'],
+    outdir: 'out',
+    bundle: true,
+    external: ['vscode'], // Exclude the vscode module
+    platform: 'node',
+    sourcemap: true,
+    minify: false
+});
+// ... logic to watch or rebuild ...
+```
+
+#### Custom Formatting
+
+Langium's formatting API allows you to create custom formatters for your language. This is done by creating a class that extends `AbstractFormatter` and implementing the `format(node: AstNode)` method.
+
+Inside the `format` method, you can use `this.getNodeFormatter(node)` to get a `NodeFormatter` instance. This helper provides methods to select parts of a node (like keywords or properties) and apply formatting rules (e.g., `prepend(Formatting.newLine())`, `surround(Formatting.oneSpace())`, `prepend(Formatting.indent())`).
+
+Example formatter snippet for an `Entity`:
+
+```ts
+if (ast.isEntity(node)) {
+    const formatter = this.getNodeFormatter(node);
+    const bracesOpen = formatter.keyword('{');
+    const bracesClose = formatter.keyword('}');
+
+    // Indent everything between the curly braces
+    formatter.interior(bracesOpen, bracesClose).prepend(Formatting.indent());
+    // Add a newline before the closing brace
+    bracesClose.prepend(Formatting.newLine());
+}
+```
+
+#### Supporting Multiple Languages
+
+Langium can manage multiple, interdependent languages within a single project. This is useful when splitting a language into different concerns (e.g., a definition language and an implementation language).
+
+The key steps are:
+
+1.  **Split the Grammar**: Create separate `.langium` files for each language. Use the `import` statement in one grammar to use rules defined in another.
+2.  **Update `langium-config.json`**: Add a separate language configuration object for each language in the `languages` array.
+3.  **Update the Module File**: In the main service creation function, create and register services for each language independently. They will share a `LangiumSharedServices` instance, which enables cross-language features.
+4.  **Update VS Code Extension**: In `package.json`, add separate entries under `contributes.languages` and `contributes.grammars` for each language. In the extension's entry point, update the `documentSelector` to include all language IDs.
+
+This setup allows for cross-language references (e.g., a file in language B referencing an element defined in a file from language A) and workspace-wide validation across different file types.
+
+-----
+
+## Example: The Requirements and Tests System
+
+A practical example of a multi-language system involves a **Requirements Language** and a **Tests Language**.
+
+  * **Architecture**:
+
+      * **Requirements Language (`.req`)**: Defines software requirements.
+      * **Tests Language (`.tst`)**: Defines test cases that must cover one or more requirements.
+      * **Shared Elements**: A `common.langium` file defines shared terminals that both languages import.
+
+  * **Grammar Structure**:
+
+      * The `tests.langium` grammar imports `requirements.langium`.
+      * The `Test` rule in the tests grammar has a cross-reference to the `Requirement` rule from the requirements grammar: `tests requirements+=[Requirement:ID]`.
+
+  * **Cross-Language Validation**:
+
+      * Since both languages are registered with the same shared services, the validator for one language can access documents from the other.
+      * A validation check in the requirements language can iterate through all test documents in the workspace to ensure every requirement is covered by at least one test.
+      * A validation check in the tests language can ensure that a test only references environments that are also applicable to the requirements it covers.
+
+This architecture enables a powerful, cohesive DSL system where different concerns are separated into distinct languages but can still interact seamlessly within the same workspace.

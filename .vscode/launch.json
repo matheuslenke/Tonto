@@ -10,6 +10,7 @@
             "type": "extensionHost",
             "sourceMaps": true,
             "request": "launch",
+            "runtimeExecutable": "${execPath}",
             "args": [
                 "${workspaceFolder}/examples/newGeneration",
                 "--extensionDevelopmentPath=${workspaceFolder}/packages/extension"
@@ -17,6 +18,10 @@
             "env": {
                 "DIAGRAM_MODE": "panel"
             },
+            "outFiles": [
+                "${workspaceFolder}/**/*.(m|c|)js",
+                "!**/node_modules/**"
+            ]
         },
         {
             "name": "CLI: GenerateModular",

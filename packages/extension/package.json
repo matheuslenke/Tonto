@@ -3,7 +3,7 @@
     "displayName": "Tonto",
     "publisher": "lenke",
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.3.12",
+    "version": "0.4.0",
     "license": "MIT",
     "type": "module",
     "repository": {
@@ -14,10 +14,14 @@
     "icon": "data/images/TontoIcon.png",
     "engines": {
         "vscode": "^1.92.0",
-        "node": ">=16"
+        "node": ">=20"
     },
     "categories": [
         "Programming Languages"
+    ],
+    "extensionKind": [
+        "ui",
+        "workspace"
     ],
     "main": "./pack/extension/main.cjs",
     "contributes": {
@@ -184,23 +188,25 @@
         "onCommand:tonto.diagram.open"
     ],
     "files": [
-        "out",
         "pack",
-        "syntaxes",
         "src/themes",
         "data",
-        "LICENSE.md"
+        "LICENSE.md",
+        "syntaxes"
     ],
-    "exports": "./pack/extension/main.cjs",
+    "vsce": {
+        "dependencies": true,
+        "yarn": true
+    },
     "scripts": {
         "copy:schema": "shx cp ../tonto/tonto-manifest-schema.json ./data",
-        "vscode:prepublish": "npm run build && npm run lint && node esbuild.mjs --minify",
-        "package": "vsce package --yarn",
-        "publish": "vsce publish --yarn",
-        "clean": "rimraf out",
+        "vscode:prepublish": "npm run build && npm run lint && node ./esbuild.mjs --minify",
+        "package": "vsce package",
+        "publish": "vsce publish",
+        "clean": "rimraf out pack node_modules",
         "lint": "eslint src --ext ts",
         "lint:fix": "eslint src --ext ts --fix",
-        "build": "tsc && node ./esbuild.mjs",
+        "build": "node ./esbuild.mjs",
         "watch": "node ./esbuild.mjs --watch",
         "coverage": "vitest run --coverage",
         "langium:generate": "langium generate",
@@ -212,15 +218,15 @@
         "chalk": "^5.3.0",
         "node-fetch-native": "^1.6.2",
         "reflect-metadata": "^0.1.14",
-        "regenerator-runtime": "^0.14.1",
         "rimraf": "^4.1.2",
         "sprotty": "1.3.0",
         "sprotty-elk": "^1.2.0",
         "sprotty-vscode": "file:../sprotty-vscode",
         "sprotty-vscode-webview": "file:../sprotty-vscode-webview",
-        "tonto-cli": "file:../tonto",
+        "tonto-cli": "^0.4.0",
         "tonto-package-manager": "~0.2.9",
         "uuid": "^9.0.1",
+        "vite": "^5.4.19",
         "vscode-languageclient": "^9.0.1",
         "vscode-languageserver": "^9.0.1",
         "vscode-languageserver-types": "^3.17.3",
@@ -233,20 +239,16 @@
         "@types/node": "^18.11.17",
         "@types/node-fetch": "^2.6.1",
         "@types/vscode": "^1.63.0",
-        "@vitest/coverage-c8": "^0.23.2",
-        "@webpack-cli/generators": "^3.0.7",
+        "@vitest/coverage-c8": "^0.33.0",
+        "@vscode/vsce": "^3.6.0",
+        "concurrently": "^8.2.2",
         "css-loader": "^6.8.1",
-        "esbuild": "^0.20.1",
-        "eslint": "^8.32.0",
-        "eslint-config-prettier": "^8.8.0",
+        "esbuild": "^0.25.8",
         "file-loader": "^6.2.0",
         "langium-cli": "^3.0.0",
         "shx": "^0.3.4",
         "source-map-loader": "^4.0.1",
         "style-loader": "^3.3.3",
-        "ts-loader": "^9.5.1",
-        "typescript": "^5.6.2",
-        "webpack": "^5.89.0",
-        "webpack-cli": "^5.1.4"
+        "ts-loader": "^9.5.1"
     }
 }

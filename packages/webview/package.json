@@ -21,8 +21,8 @@
     ],
     "exports": {
         ".": {
-            "default": "./out/webview.js",
-            "types": "./out/main.d.ts"
+            "types": "./out/main.d.ts",
+            "default": "./out/webview.js"
         }
     },
     "main": "out/webview.js",
