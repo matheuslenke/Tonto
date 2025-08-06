@@ -1,5 +1,5 @@
-export const mainTontoBlankFile = `
-package main
+export const mainTontoBlankFile = 
+`package main
 
 // 'kind' is a fundamental, rigid type.
 // 'HelloWorld' is a kind, representing a basic concept.

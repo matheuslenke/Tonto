@@ -1,5 +1,5 @@
-export const dogsTontoFile = `
-import Datatypes
+export const dogsTontoFile = 
+`import Datatypes
 import main
 
 package Dogs

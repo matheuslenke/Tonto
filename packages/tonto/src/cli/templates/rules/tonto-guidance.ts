@@ -1,5 +1,5 @@
-export const tontoGuidance = `
----
+export const tontoGuidance = 
+`---
 alwaysApply: true
 ---
 # Tonto Project Guidance
@@ -358,6 +358,72 @@ A typical Tonto project has the following structure:
 -   **\`src/\`**: The directory for all \`.tonto\` source files, which define the ontology.
 -   **\`lib/\`**: Contains external ontologies or modules, managed by the Tonto Package Manager (\`tpm\`).
 -   **\`generated/\`**: The default output directory for generated artifacts, such as JSON serializations or GUFO transformations.
+
+### 5.1. Understanding Packages in Tonto: Files, Not Folders
+
+A crucial concept in Tonto is that **a package is defined by a single \`.tonto\` file**, not by the directory it resides in. This is a significant difference from languages like Java, where the package structure mirrors the directory structure.
+
+Folders are used for organizational purposes, but they do not define the package namespace. The \`package\` declaration at the top of a \`.tonto\` file is the sole determinant of the package's identity.
+
+**Example Project Structure:**
+
+Consider the following project layout:
+
+\`\`\`
+my-ontology/
+├── src/
+│   ├── core/
+│   │   ├── persons.tonto
+│   │   └── organizations.tonto
+│   └── events/
+│       └── academic.tonto
+└── tonto.json
+\`\`\`
+
+**File Contents:**
+
+*   \`src/core/persons.tonto\`:
+    \`\`\`tonto
+    package core.persons
+
+    kind Person {
+        name: string
+    }
+    \`\`\`
+
+*   \`src/core/organizations.tonto\`:
+    \`\`\`tonto
+    package core.organizations
+
+    kind Organization {
+        legalName: string
+    }
+    \`\`\`
+
+*   \`src/events/academic.tonto\`:
+    \`\`\`tonto
+    import core.persons
+    import core.organizations
+
+    package events.academic
+
+    event Enrollment {
+        // ...
+    }
+
+    // A relation connecting classes from different packages
+    relation core.persons.Person [1] -- participatesIn -- [0..*] Enrollment
+    \`\`\`
+
+**Key Takeaways from the Example:**
+
+1.  **Packages are Files**: There are three packages: \`core.persons\`, \`core.organizations\`, and \`events.academic\`. Each corresponds to one \`.tonto\` file.
+2.  **Folders are for Organization**: The \`core/\` and \`events/\` folders help organize the files, but they do **not** create a \`core\` or \`events\` package by themselves. The package name is explicitly declared inside the file.
+3.  **Imports are Based on Package Names**: The \`academic.tonto\` file imports \`core.persons\` and \`core.organizations\` using the names declared in those files, not their file paths.
+4.  **No "Folder-Level" Package**: There is no overarching \`core\` package just because there is a \`core\` folder. If you needed to group all core concepts, you might create a \`core.tonto\` file that defines a \`package core\`.
+
+This file-centric approach provides flexibility in how you organize your project files without being constrained by namespace conventions tied to the filesystem.
+
 
 ## 6. Core Concepts
 

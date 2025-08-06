@@ -1,5 +1,5 @@
-export const tontoLLMDocumentationGuide = `
----
+export const tontoLLMDocumentationGuide = 
+`---
 alwaysApply: true
 ---
 # LLM Guidance: Writing Effective Ontology Documentation

@@ -1,5 +1,5 @@
-export const tontoLLMUnderstanding = `
----
+export const tontoLLMUnderstanding = 
+`---
 alwaysApply: true
 ---
 # LLM Guidance for Understanding and Summarizing Tonto (Textual Ontologies)

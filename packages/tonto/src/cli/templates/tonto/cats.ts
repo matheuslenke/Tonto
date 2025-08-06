@@ -1,5 +1,5 @@
-export const catsTontoFile = `
-import Datatypes
+export const catsTontoFile = 
+`import Datatypes
 import main
 package Cats
 

@@ -1,5 +1,5 @@
-export const llmGuidance = `
----
+export const llmGuidance = 
+`---
 alwaysApply: true
 ---
 # LLM Guidance for Tonto

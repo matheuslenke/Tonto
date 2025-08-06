@@ -1,5 +1,5 @@
-export const mainTontoFile = `
-import Cats
+export const mainTontoFile = 
+`import Cats
 import Dogs
 import Datatypes
     

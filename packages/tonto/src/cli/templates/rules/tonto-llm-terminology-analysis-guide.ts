@@ -1,5 +1,5 @@
-export const tontoLLMTerminologyAnalysisGuide = `
----
+export const tontoLLMTerminologyAnalysisGuide = 
+`---
 alwaysApply: true
 ---
 # LLM Guidance for Understanding Tonto and Analyzing Ontology Terminology

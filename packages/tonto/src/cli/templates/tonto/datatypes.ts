@@ -1,5 +1,5 @@
-export const datatypesTontoFile = `
-package Datatypes
+export const datatypesTontoFile = 
+`package Datatypes
 
 // An 'enum' is a datatype that consists of a set of named values.
 // 'Breed' is an enum that lists different cat and dog breeds.
