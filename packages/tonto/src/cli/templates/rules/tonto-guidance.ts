@@ -1,7 +1,5 @@
 export const tontoGuidance = 
-`---
-alwaysApply: true
----
+`
 # Tonto Project Guidance
 
 This document provides a concise orientation for an LLM working with the Tonto project. Tonto is a Domain-Specific Language (DSL) for ontological modeling, built with the Langium framework.
@@ -48,7 +46,7 @@ package CurrentPackage
 Import *always*  come before the \`package\` declaration.
 
 **2.4. Class Declarations**
-Classes are the core building blocks. They represent types of individuals.
+Classes are the core building blocks. They represent types of individuals or types of other.
 **General Syntax:**
 \`<stereotype_keyword> <ClassName> (of <ontologicalNature1>, <ontologicalNature2>, ...)? (specializes <SuperClass1>, <SuperClass2>, ...)? (instanceOf <HigherOrderType>)? {
   (label { @<lang_code> "<text>" })?
@@ -64,12 +62,12 @@ These keywords determine the ontological meta-properties of the class.
     *   \`kind\`: For substantial individuals that are functional complexes (e.g., \`kind Person\`, \`kind Car\`).
     *   \`collective\`: For collections of similar members (e.g., \`collective Flock\`).
     *   \`quantity\`: For amounts of matter (e.g., \`quantity WaterPortion\`).
-    *   \`quality\`: For qualia, values in a conceptual space (e.g., \`quality Color\`, \`quality Weight\`).
+    *   \`quality\`: Qualities are individual moments that can be mapped to some quality space, e.g., an apple’s color (quality color) which may change from green to red while maintaining its identity
     *   \`mode\`: For intrinsic, non-describable properties (e.g., \`mode Skill\`, \`mode Belief\`). Often specialized into:
         *   \`intrinsicMode\`
         *   \`extrinsicMode\`
     *   \`relator\`: For truth-makers of material relations, connecting multiple individuals (e.g., \`relator MarriageContract\`, \`relator Employment\`).
-    *   \`type\` / \`powertype\`: For higher-order types (types whose instances are types). (e.g., \`type Species\`, \`powertype CarModelRange\`).
+    *   \`type\` / \`powertype\`: For higher-ord er types (types whose instances are types). (e.g., \`type Species\`, \`powertype CarModelRange\`).
 
 *   **Sortals (specializations of Kinds, inherit identity):**
     *   \`subkind\`: Rigid specialization of a kind (e.g., \`subkind Man specializes Person\`).

@@ -3,6 +3,7 @@ import chalk from 'chalk';
 import { Command } from 'commander';
 import * as fs from 'fs';
 import * as path from 'path';
+import { cursorHeader, vscodeHeader } from '../../templates/headers.js';
 import { readmeTemplate } from '../../templates/readme.js';
 import { llmGuidance } from '../../templates/rules/llm-guidance.js';
 import { tontoGuidance } from '../../templates/rules/tonto-guidance.js';
@@ -66,6 +67,15 @@ async function initAction(options: InitOptions) {
         message: 'Author:'
     });
 
+    const editorTarget = await select({
+        message: 'Which editor do you use?',
+        choices: [
+            { name: 'Cursor', value: 'cursor', description: 'Generate guidance under .cursor/rules with .mdc files' },
+            { name: 'VS Code', value: 'vscode', description: 'Generate guidance under .github/instructions with .md files' },
+            { name: 'Both', value: 'both', description: 'Generate for both editors' }
+        ]
+    });
+
     // Ask for template selection
     const template = await select({
         message: 'Choose a project template:',
@@ -97,21 +107,44 @@ async function initAction(options: InitOptions) {
         console.log(chalk.green('tonto.json created successfully.'));
     }
 
-    const cursorDirPath = path.join(projectPath, '.cursor');
-    const rulesDirPath = path.join(cursorDirPath, 'rules');
-    if (fs.existsSync(rulesDirPath)) {
-        console.log(chalk.yellow('.cursor/rules directory already exists. Skipping creation.'));
-    } else {
-        fs.mkdirSync(rulesDirPath, { recursive: true });
-        
-        createRuleFile(tontoGuidance, rulesDirPath, 'tonto-guidance.mdc');
-        createRuleFile(llmGuidance, rulesDirPath, 'tonto_llm_guidance.mdc');
-        createRuleFile(tontoLLMCreateNewElements, rulesDirPath, 'tonto-llm-create-new-elements.mdc');
-        createRuleFile(tontoLLMTerminologyAnalysisGuide, rulesDirPath, 'tonto_llm_terminology_analysis_guide.mdc');
-        createRuleFile(tontoLLMUnderstanding, rulesDirPath, 'tonto_llm_understanding_and_summarization_guide.mdc');
-        createRuleFile(tontoLLMDocumentationGuide, rulesDirPath, 'tonto_llm_documentation_guide.mdc');
-        
-        console.log(chalk.green('.cursor/rules directory and guidance files created successfully.'));
+    const shouldCreateCursor = editorTarget === 'cursor' || editorTarget === 'both';
+    const shouldCreateVscode = editorTarget === 'vscode' || editorTarget === 'both';
+
+    if (shouldCreateCursor) {
+        const cursorDirPath = path.join(projectPath, '.cursor');
+        const rulesDirPath = path.join(cursorDirPath, 'rules');
+        if (fs.existsSync(rulesDirPath)) {
+            console.log(chalk.yellow('.cursor/rules directory already exists. Skipping creation.'));
+        } else {
+            fs.mkdirSync(rulesDirPath, { recursive: true });
+
+            createRuleFileWithHeader(tontoGuidance, rulesDirPath, 'tonto-guidance.mdc', cursorHeader);
+            createRuleFileWithHeader(llmGuidance, rulesDirPath, 'tonto_llm_guidance.mdc', cursorHeader);
+            createRuleFileWithHeader(tontoLLMCreateNewElements, rulesDirPath, 'tonto-llm-create-new-elements.mdc', cursorHeader);
+            createRuleFileWithHeader(tontoLLMTerminologyAnalysisGuide, rulesDirPath, 'tonto_llm_terminology_analysis_guide.mdc', cursorHeader);
+            createRuleFileWithHeader(tontoLLMUnderstanding, rulesDirPath, 'tonto_llm_understanding_and_summarization_guide.mdc', cursorHeader);
+            createRuleFileWithHeader(tontoLLMDocumentationGuide, rulesDirPath, 'tonto_llm_documentation_guide.mdc', cursorHeader);
+
+            console.log(chalk.green('.cursor/rules directory and guidance files created successfully.'));
+        }
+    }
+
+    if (shouldCreateVscode) {
+        const githubInstructionsPath = path.join(projectPath, '.github', 'instructions');
+        if (fs.existsSync(githubInstructionsPath)) {
+            console.log(chalk.yellow('.github/instructions directory already exists. Skipping creation.'));
+        } else {
+            fs.mkdirSync(githubInstructionsPath, { recursive: true });
+
+            createRuleFileWithHeader(tontoGuidance, githubInstructionsPath, 'tonto-guidance.md', vscodeHeader);
+            createRuleFileWithHeader(llmGuidance, githubInstructionsPath, 'tonto_llm_guidance.md', vscodeHeader);
+            createRuleFileWithHeader(tontoLLMCreateNewElements, githubInstructionsPath, 'tonto-llm-create-new-elements.md', vscodeHeader);
+            createRuleFileWithHeader(tontoLLMTerminologyAnalysisGuide, githubInstructionsPath, 'tonto_llm_terminology_analysis_guide.md', vscodeHeader);
+            createRuleFileWithHeader(tontoLLMUnderstanding, githubInstructionsPath, 'tonto_llm_understanding_and_summarization_guide.md', vscodeHeader);
+            createRuleFileWithHeader(tontoLLMDocumentationGuide, githubInstructionsPath, 'tonto_llm_documentation_guide.md', vscodeHeader);
+
+            console.log(chalk.green('.github/instructions directory and guidance files created successfully.'));
+        }
     }
 
     const srcPath = path.join(projectPath, 'src');
@@ -143,15 +176,40 @@ async function initAction(options: InitOptions) {
         copyTemplate(readmeTemplate, projectPath, 'README.md');
         console.log(chalk.green('README.md created successfully.'));
     }
+
+    // Create ignore files
+    const cursorIgnorePath = path.join(projectPath, '.cursorignore');
+    if (fs.existsSync(cursorIgnorePath)) {
+        console.log(chalk.yellow('.cursorignore already exists. Skipping creation.'));
+    } else {
+        fs.writeFileSync(cursorIgnorePath, '.github\n.tonto_modules\n', 'utf-8');
+        console.log(chalk.green('.cursorignore created successfully.'));
+    }
+
+    const gitIgnorePath = path.join(projectPath, '.gitignore');
+    if (fs.existsSync(gitIgnorePath)) {
+        console.log(chalk.yellow('.gitignore already exists. Skipping creation.'));
+    } else {
+        fs.writeFileSync(gitIgnorePath, 'tonto_modules\n', 'utf-8');
+        console.log(chalk.green('.gitignore created successfully.'));
+    }
+
+    const vscodeIgnorePath = path.join(projectPath, '.vscodeignore');
+    if (fs.existsSync(vscodeIgnorePath)) {
+        console.log(chalk.yellow('.vscodeignore already exists. Skipping creation.'));
+    } else {
+        fs.writeFileSync(vscodeIgnorePath, '.cursor\n', 'utf-8');
+        console.log(chalk.green('.vscodeignore created successfully.'));
+    }
 }
 
 function copyTemplate(templateContent: string, destinationDir: string, destinationName: string) {
     fs.writeFileSync(path.join(destinationDir, destinationName), templateContent, 'utf-8');
 }
 
-function createRuleFile(content: string, destinationDir: string, destinationName: string) {
-
-    fs.writeFileSync(path.join(destinationDir, destinationName), content);
+function createRuleFileWithHeader(content: string, destinationDir: string, destinationName: string, header: string) {
+    const fullContent = `${header}${content}`;
+    fs.writeFileSync(path.join(destinationDir, destinationName), fullContent);
 }
 
 export function initCommand(): Command {

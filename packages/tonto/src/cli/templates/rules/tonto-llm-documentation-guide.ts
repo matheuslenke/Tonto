@@ -1,7 +1,5 @@
 export const tontoLLMDocumentationGuide = 
-`---
-alwaysApply: true
----
+`
 # LLM Guidance: Writing Effective Ontology Documentation
 
 This document provides guidelines for an LLM to create high-quality, informative, and user-friendly documentation for elements within a Tonto ontology. The goal is to produce documentation that is not only descriptive but also explains the underlying ontological choices based on OntoUML principles.
