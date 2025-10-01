@@ -1,9 +1,9 @@
 import chalk from "chalk";
-import * as path from "node:path";
-import * as fs from "node:fs";
-import ora, { Ora } from "ora";
-import { TontoDependency, readTontoManifest, createDefaultTontoManifest, TontoManifest } from "tonto-cli";
 import execa from "execa";
+import * as fs from "node:fs";
+import * as path from "node:path";
+import ora, { Ora } from "ora";
+import { createDefaultTontoManifest, readTontoManifest, TontoDependency, TontoManifest } from "tonto-cli";
 
 interface InstallOptions {
   dir: string;

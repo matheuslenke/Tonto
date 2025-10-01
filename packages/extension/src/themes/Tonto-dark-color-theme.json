@@ -7,7 +7,7 @@
 		"checkbox.border": "#6b6b6b",
 		"editor.background": "#1e1e1e",
 		"editor.foreground": "#d4d4d4",
-		"editor.inactiveSelectionBackground": "#3a3d41",
+		"editor.inactiveSelectionBackground": "#2b2d3027",
 		"editor.selectionHighlightBackground": "#add6ff26",
 		"editorIndentGuide.activeBackground1": "#707070",
 		"editorIndentGuide.background1": "#404040",
@@ -681,7 +681,7 @@
 		"welcomePage.tileBackground": "#252526",
 		"welcomePage.tileBorder": "#ffffff1a",
 		"welcomePage.tileHoverBackground": "#2c2c2d",
-		"widget.shadow": "#0000005c",
+		"widget.shadow": "#0000005c"
 	},
 	"tokenColors": [
 		{

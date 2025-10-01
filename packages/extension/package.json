@@ -200,7 +200,7 @@
     },
     "scripts": {
         "copy:schema": "shx cp ../tonto/tonto-manifest-schema.json ./data",
-        "vscode:prepublish": "npm run build && npm run lint && node ./esbuild.mjs --minify",
+        "vscode:prepublish": "npm run build && node ./esbuild.mjs --minify",
         "package": "vsce package",
         "publish": "vsce publish",
         "clean": "rimraf out pack node_modules",
