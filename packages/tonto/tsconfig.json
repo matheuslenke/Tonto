@@ -7,6 +7,8 @@
     "noEmit": false,
     "sourceMap": true,
     "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false,
     "baseUrl": "src/",
     "strict": true,
     "paths": {

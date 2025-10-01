@@ -1,7 +1,7 @@
-import { TontoDependency, readTontoManifest } from "tonto-cli";
+import chalk from "chalk";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import chalk from "chalk";
+import { TontoDependency, readTontoManifest } from "tonto-cli";
 
 interface AddOptions {
   name: string;
