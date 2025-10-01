@@ -2,7 +2,28 @@ import execa from "execa";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import ora, { Ora } from "ora";
-import { createDefaultTontoManifest, readTontoManifest, TontoDependency, TontoManifest } from "tonto-cli";
+import { createDefaultTontoManifest, readTontoManifest } from "tonto-cli";
+import { TontoDependency } from "./addDependencyAction.js";
+
+export interface TontoManifest {
+  projectName: string;
+  displayName: string;
+  publisher: string;
+  version: string;
+  license: string;
+  dependencies: {
+      [key: string]: TontoDependency;
+  };
+  outFolder: string;
+  authors: Author[];
+}
+
+
+export interface Author {
+  name: string;
+  email?: string;
+  url?: string;
+}
 
 interface InstallOptions {
   dir: string;

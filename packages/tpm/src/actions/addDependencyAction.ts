@@ -1,7 +1,14 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { TontoDependency, readTontoManifest } from "tonto-cli";
+import { readTontoManifest } from "tonto-cli";
 
+
+export interface TontoDependency {
+  url: string;
+  version?: string;
+  directory?: string;
+  branch?: string;
+}
 interface AddOptions {
   name: string;
   url: string;
