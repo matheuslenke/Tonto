@@ -1,4 +1,3 @@
-import chalk from "chalk";
 import execa from "execa";
 import * as fs from "node:fs";
 import * as path from "node:path";
@@ -22,8 +21,7 @@ const installCommand = async (opts: InstallOptions): Promise<InstallResponse> =>
   const manifest = readTontoManifest(opts.dir);
 
   if (!manifest) {
-    console.log(
-      chalk.red("tonto.json manifest file not found. The manifest is required in order to manage dependencies. We created a default one")
+    console.log("tonto.json manifest file not found. The manifest is required in order to manage dependencies. We created a default one"
     );
     createDefaultManifest(opts.dir);
     return {
@@ -125,7 +123,7 @@ async function getPackageContentFromGitAndBuildDependencyMap(
     if (dependency.version) {
       const response = await execa.command(`git ls-remote --tags  ${dependency.url}`, {reject: verbose});
       if (response.failed) {
-        console.log(chalk.red("Error while getting repository tags"));
+        console.log("Error while getting repository tags");
         spinner.fail("Error while getting repository tags");
         return new Map();
       }

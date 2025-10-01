@@ -1,4 +1,3 @@
-import chalk from "chalk";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { TontoDependency, readTontoManifest } from "tonto-cli";
@@ -26,7 +25,7 @@ export const addDependencyAction = async (currentDir: string, opts: AddOptions):
     const formattedName = opts.name.trim();
     manifest.dependencies[formattedName] = dependency;
   } else {
-    console.log(chalk.red("Tonto Manifest file not found!"));
+    console.log("Tonto Manifest file not found!");
     return;
   }
 
@@ -34,5 +33,5 @@ export const addDependencyAction = async (currentDir: string, opts: AddOptions):
   const folderAbsolutePath = path.resolve(currentDir);
   const manifestPath = path.join(folderAbsolutePath, "tonto.json");
   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
-  console.log(chalk.green(`Tonto dependency "${opts.name}" added successfully.`));
+  console.log(`Tonto dependency "${opts.name}" added successfully.`);
 };
