@@ -3957,7 +3957,7 @@ sprotty-vscode-protocol@^1.0.0:
     vscode-languageserver-protocol "^3.17.5"
     vscode-messenger-common "^0.4.5"
 
-sprotty-vscode-webview@^1.0.0, "sprotty-vscode-webview@file:../sprotty-vscode-webview", "sprotty-vscode-webview@file:/Users/matheuslenke/dev/masters/tonto-repos/fork/Tonto/packages/sprotty-vscode-webview":
+sprotty-vscode-webview@^1.0.0, "sprotty-vscode-webview@file:../sprotty-vscode-webview", "sprotty-vscode-webview@file:/Users/matheuslenke/dev/masters/tonto-repos/tonto/packages/sprotty-vscode-webview":
   version "1.0.0"
   resolved "file:packages/sprotty-vscode-webview"
   dependencies:
@@ -3966,7 +3966,7 @@ sprotty-vscode-webview@^1.0.0, "sprotty-vscode-webview@file:../sprotty-vscode-we
     vscode-messenger-webview "^0.4.5"
     vscode-uri "^3.0.8"
 
-"sprotty-vscode@file:../sprotty-vscode", "sprotty-vscode@file:/Users/matheuslenke/dev/masters/tonto-repos/fork/Tonto/packages/sprotty-vscode":
+"sprotty-vscode@file:../sprotty-vscode", "sprotty-vscode@file:/Users/matheuslenke/dev/masters/tonto-repos/tonto/packages/sprotty-vscode":
   version "1.0.0"
   resolved "file:packages/sprotty-vscode"
   dependencies:
@@ -4233,7 +4233,7 @@ to-regex-range@^5.0.1:
   dependencies:
     is-number "^7.0.0"
 
-tonto-cli@^0.4.0, "tonto-cli@file:../tonto", "tonto-cli@file:/Users/matheuslenke/dev/masters/tonto-repos/fork/Tonto/packages/tonto":
+tonto-cli@^0.4.0, "tonto-cli@file:../tonto", "tonto-cli@file:/Users/matheuslenke/dev/masters/tonto-repos/tonto/packages/tonto":
   version "0.4.0"
   resolved "file:packages/tonto"
   dependencies:
@@ -4286,7 +4286,7 @@ tonto-package-manager@~0.2.9:
     ora "^5.4.1"
     tonto-cli "0.2.7"
 
-"tonto-sprotty-webview@file:/Users/matheuslenke/dev/masters/tonto-repos/fork/Tonto/packages/webview":
+"tonto-sprotty-webview@file:/Users/matheuslenke/dev/masters/tonto-repos/tonto/packages/webview":
   version "0.1.0"
   resolved "file:packages/webview"
   dependencies:
@@ -4295,7 +4295,7 @@ tonto-package-manager@~0.2.9:
     sprotty-elk "^1.2.0"
     sprotty-vscode-webview "^1.0.0"
 
-"tonto@file:/Users/matheuslenke/dev/masters/tonto-repos/fork/Tonto/packages/extension":
+"tonto@file:/Users/matheuslenke/dev/masters/tonto-repos/tonto/packages/extension":
   version "0.4.0"
   resolved "file:packages/extension"
   dependencies:
@@ -4318,7 +4318,7 @@ tonto-package-manager@~0.2.9:
     vscode-uri "^3.0.7"
     web-worker "^1.3.0"
 
-"tpm@file:/Users/matheuslenke/dev/masters/tonto-repos/fork/Tonto/packages/tpm":
+"tpm@file:/Users/matheuslenke/dev/masters/tonto-repos/tonto/packages/tpm":
   version "0.3.2"
   resolved "file:packages/tpm"
   dependencies:

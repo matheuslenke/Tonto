@@ -2,12 +2,76 @@ import * as path from "path";
 import * as vscode from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from "vscode-languageclient/node.js";
 import { createTransformToGufoSatusBarItem } from "../commands/gufoTransformCommand.js";
+import { createInitCommand } from "../commands/initCommand.js";
 import { createGenerateJsonStatusBarItem } from "../commands/JsonGenerationCommands.js";
 import { createTontoGenerationStatusBarItem } from "../commands/TontoGenerationCommand.js";
 import { createTpmInstallCommands } from "../commands/TpmInstallCommand.js";
 import { createValidationSatusBarItem } from "../commands/validationCommand.js";
 import { activateDiagram } from "../diagram/activateDiagram.js";
+import { setOutputChannel } from "./outputChannel.js";
 import { TontoLibraryFileSystemProvider } from "./TontoLibraryFileSystemProvider.js";
+
+// Commands to show inside the `tontoCommandsExplorer` view
+const TONTO_EXPLORER_COMMANDS = [
+    "tonto.generateJSON",
+    "tonto.generateTonto",
+    "tonto.validateModel",
+    "tonto.transformModel",
+    "tonto.tpm.install",
+    "tonto.initProject",
+];
+
+class TontoCommandItem extends vscode.TreeItem {
+    constructor(public override readonly id: string, label: string) {
+        super(label, vscode.TreeItemCollapsibleState.None);
+        this.contextValue = "tontoCommand";
+        this.command = {
+            command: id,
+            title: label,
+            arguments: [],
+        };
+    }
+}
+
+class TontoCommandsProvider implements vscode.TreeDataProvider<TontoCommandItem> {
+    private _onDidChangeTreeData: vscode.EventEmitter<TontoCommandItem | undefined | void> = new vscode.EventEmitter();
+    readonly onDidChangeTreeData: vscode.Event<TontoCommandItem | undefined | void> = this._onDidChangeTreeData.event;
+
+    getTreeItem(element: TontoCommandItem): vscode.TreeItem {
+        return element;
+    }
+
+    getChildren(element?: TontoCommandItem): Thenable<TontoCommandItem[]> {
+        if (element) {
+            return Promise.resolve([]);
+        }
+        const items = TONTO_EXPLORER_COMMANDS.map(cmd => new TontoCommandItem(cmd, this.titleFor(cmd)));
+        return Promise.resolve(items);
+    }
+
+    refresh(): void {
+        this._onDidChangeTreeData.fire();
+    }
+
+    private titleFor(cmd: string): string {
+        switch (cmd) {
+            case "tonto.generateJSON":
+                return "Generate JSON";
+            case "tonto.generateTonto":
+                return "Generate Tonto";
+            case "tonto.validateModel":
+                return "Validate Model";
+            case "tonto.transformModel":
+                return "Transform to GUFO";
+            case "tonto.tpm.install":
+                return "Install Packages (TPM)";
+            case "tonto.initProject":
+                return "Init new Tonto project";
+            default:
+                return cmd;
+        }
+    }
+}
 
 let languageClient: LanguageClient;
 let generateTontoStatusBarItem!: vscode.StatusBarItem;
@@ -22,7 +86,9 @@ let outputChannel!: vscode.OutputChannel;
 
 // This function is called when the extension is activated.
 export function activate(context: vscode.ExtensionContext): void {
-    outputChannel = vscode.window.createOutputChannel("Tonto: Validation output");
+    outputChannel = vscode.window.createOutputChannel("Tonto logs");
+    // expose this shared output channel to other modules
+    setOutputChannel(outputChannel);
     TontoLibraryFileSystemProvider.register(context);
     languageClient = startLanguageClient(context);
 
@@ -31,7 +97,18 @@ export function activate(context: vscode.ExtensionContext): void {
     createValidationSatusBarItem(context, validateStatusBarItem, outputChannel);
     createTransformToGufoSatusBarItem(context, transformToGufoStatusBarItem);
     createTpmInstallCommands(context, tpmInstallStatusBarItem);
+    createInitCommand(context, outputChannel);
     activateDiagram(context, languageClient);
+
+    // Register a TreeDataProvider for the `tontoCommandsExplorer` view so commands
+    // appear as items inside the primary Sidebar view instead of as top-bar buttons.
+    const commandsProvider = new TontoCommandsProvider();
+    const treeView = vscode.window.createTreeView("tontoCommandsExplorer", {
+        treeDataProvider: commandsProvider,
+        showCollapseAll: false,
+    });
+    context.subscriptions.push(treeView);
+
 }
 
 // This function is called when the extension is deactivated.
