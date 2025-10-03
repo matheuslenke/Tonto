@@ -1,6 +1,7 @@
 import * as path from "path";
 import * as vscode from "vscode";
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from "vscode-languageclient/node.js";
+import { createAddGuidancesCommand } from "../commands/addGuidancesCommand.js";
 import { createTransformToGufoSatusBarItem } from "../commands/gufoTransformCommand.js";
 import { createInitCommand } from "../commands/initCommand.js";
 import { createGenerateJsonStatusBarItem } from "../commands/JsonGenerationCommands.js";
@@ -19,6 +20,7 @@ const TONTO_EXPLORER_COMMANDS = [
     "tonto.transformModel",
     "tonto.tpm.install",
     "tonto.initProject",
+    "tonto.addGuidances",
 ];
 
 class TontoCommandItem extends vscode.TreeItem {
@@ -67,6 +69,8 @@ class TontoCommandsProvider implements vscode.TreeDataProvider<TontoCommandItem>
                 return "Install Packages (TPM)";
             case "tonto.initProject":
                 return "Init new Tonto project";
+            case "tonto.addGuidances":
+                return "Add Guidances to project (LLMs)";
             default:
                 return cmd;
         }
@@ -98,6 +102,7 @@ export function activate(context: vscode.ExtensionContext): void {
     createTransformToGufoSatusBarItem(context, transformToGufoStatusBarItem);
     createTpmInstallCommands(context, tpmInstallStatusBarItem);
     createInitCommand(context, outputChannel);
+    createAddGuidancesCommand(context, outputChannel);
     activateDiagram(context, languageClient);
 
     // Register a TreeDataProvider for the `tontoCommandsExplorer` view so commands

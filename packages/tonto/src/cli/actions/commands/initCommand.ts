@@ -323,9 +323,11 @@ export function initCommand(): Command {
     return init;
 }
 
+export type InitProjectFile = { type: 'file' | 'dir'; relativePath: string; content?: string };
+
 // Build list of files and directories to create for an init project without performing IO
-export function buildInitProjectFiles(projectName: string, options: InitOptions) {
-    const files: Array<{ type: 'file' | 'dir'; relativePath: string; content?: string }> = [];
+export function buildInitProjectFiles(projectName: string, options: InitOptions): InitProjectFile[] {
+    const files: InitProjectFile[] = [];
 
     // project dir
     files.push({ type: 'dir', relativePath: projectName });

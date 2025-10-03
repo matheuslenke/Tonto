@@ -116,43 +116,7 @@
                     "group": "navigation"
                 }
             ],
-            "view/title": [
-                {
-                    "command": "tonto.generateJSON",
-                    "when": "view == 'tontoCommandsExplorer'",
-                    "group": "navigation"
-                },
-                {
-                    "command": "tonto.generateTonto",
-                    "when": "view == 'tontoCommandsExplorer'",
-                    "group": "navigation"
-                },
-                {
-                    "command": "tonto.validateModel",
-                    "when": "view == 'tontoCommandsExplorer'",
-                    "group": "navigation"
-                },
-                {
-                    "command": "tonto.transformModel",
-                    "when": "view == 'tontoCommandsExplorer'",
-                    "group": "navigation"
-                },
-                {
-                    "command": "tonto.tpm.install",
-                    "when": "view == 'tontoCommandsExplorer'",
-                    "group": "navigation"
-                },
-                {
-                    "command": "tonto.initProject",
-                    "when": "view == 'tontoCommandsExplorer'",
-                    "group": "navigation"
-                },
-                {
-                    "command": "tonto.openSettings",
-                    "when": "view == 'tontoCommandsExplorer'",
-                    "group": "navigation"
-                }
-            ],
+            "view/title": [],
             "view/item/context": [
                 {
                     "command": "tonto.generateJSON",
@@ -185,7 +149,7 @@
                     "group": "navigation"
                 },
                 {
-                    "command": "tonto.openSettings",
+                    "command": "tonto.addGuidances",
                     "when": "view == 'tontoCommandsExplorer'",
                     "group": "navigation"
                 }
@@ -264,6 +228,11 @@
           {
               "command": "tonto.tpm.install",
               "title": "Install Packages (TPM)",
+              "category": "Tonto"
+          },
+          {
+              "command": "tonto.addGuidances",
+              "title": "Add Guidances to project (Work with LLMs)",
               "category": "Tonto"
           }
       ],
