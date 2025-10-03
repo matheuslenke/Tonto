@@ -114,6 +114,14 @@ export function activate(context: vscode.ExtensionContext): void {
     });
     context.subscriptions.push(treeView);
 
+    // Also register the same provider for the Tonto activity bar sidebar view
+    // so the Commands view appears inside the `Tonto` view container.
+    const treeViewSidebar = vscode.window.createTreeView("tontoCommands", {
+        treeDataProvider: commandsProvider,
+        showCollapseAll: false,
+    });
+    context.subscriptions.push(treeViewSidebar);
+
 }
 
 // This function is called when the extension is deactivated.

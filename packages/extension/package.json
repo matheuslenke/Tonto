@@ -3,7 +3,7 @@
     "displayName": "Tonto",
     "publisher": "lenke",
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.4.0",
+    "version": "0.4.2",
     "license": "MIT",
     "type": "module",
     "repository": {
@@ -120,37 +120,37 @@
             "view/item/context": [
                 {
                     "command": "tonto.generateJSON",
-                    "when": "view == 'tontoCommandsExplorer'",
+                    "when": "view == 'tontoCommandsExplorer' || view == 'tontoCommands'",
                     "group": "navigation"
                 },
                 {
                     "command": "tonto.generateTonto",
-                    "when": "view == 'tontoCommandsExplorer'",
+                    "when": "view == 'tontoCommandsExplorer' || view == 'tontoCommands'",
                     "group": "navigation"
                 },
                 {
                     "command": "tonto.validateModel",
-                    "when": "view == 'tontoCommandsExplorer'",
+                    "when": "view == 'tontoCommandsExplorer' || view == 'tontoCommands'",
                     "group": "navigation"
                 },
                 {
                     "command": "tonto.transformModel",
-                    "when": "view == 'tontoCommandsExplorer'",
+                    "when": "view == 'tontoCommandsExplorer' || view == 'tontoCommands'",
                     "group": "navigation"
                 },
                 {
                     "command": "tonto.tpm.install",
-                    "when": "view == 'tontoCommandsExplorer'",
+                    "when": "view == 'tontoCommandsExplorer' || view == 'tontoCommands'",
                     "group": "navigation"
                 },
                 {
                     "command": "tonto.initProject",
-                    "when": "view == 'tontoCommandsExplorer'",
+                    "when": "view == 'tontoCommandsExplorer' || view == 'tontoCommands'",
                     "group": "navigation"
                 },
                 {
                     "command": "tonto.addGuidances",
-                    "when": "view == 'tontoCommandsExplorer'",
+                    "when": "view == 'tontoCommandsExplorer' || view == 'tontoCommands'",
                     "group": "navigation"
                 }
             ]

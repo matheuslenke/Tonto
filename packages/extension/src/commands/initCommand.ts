@@ -143,6 +143,33 @@ async function initAction(context: vscode.ExtensionContext, sharedOutputChannel?
                   oc.show(true);
                   vscode.window.showInformationMessage('Tonto project initialized successfully.');
                   resolve();
+                  // After creation, ask user if they want to open the project
+                  (async () => {
+                      try {
+                          const openPick = await vscode.window.showQuickPick(['Open in current window', 'Open in new window', "Don't open"], { placeHolder: 'Open the generated project now?' });
+                          oc.appendLine(`Prompt result - openPick: ${String(openPick)}`);
+                          if (!openPick) {
+                              oc.appendLine('User cancelled open-project prompt');
+                              return;
+                          }
+
+                          const projectPath = path.resolve(root, projectName)
+
+                          if (openPick === 'Open in current window') {
+                              // Open the folder in the current window
+                              await vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(projectPath), false);
+                              oc.appendLine('Opened project in current window');
+                          } else if (openPick === 'Open in new window') {
+                              // Open the folder in a new window
+                              await vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(projectPath), true);
+                              oc.appendLine('Opened project in new window');
+                          } else {
+                              oc.appendLine('User chose not to open the project');
+                          }
+                      } catch (err) {
+                          oc.appendLine(`Error while opening project: ${String(err)}`);
+                      }
+                  })();
               })();
           });
       });
