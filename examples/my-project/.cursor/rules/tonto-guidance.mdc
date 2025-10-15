@@ -102,8 +102,8 @@ Syntax: `specializes <SuperClass1>, <SuperClass2>, ...`
 Example: `phase Adult specializes Person`
 
 **2.4.4. Instantiation (for Higher-Order Types):**
-Syntax: `instanceOf <HigherOrderType>`
-Example: `kind Dog instanceOf SpeciesType`
+Syntax: `<stereotype> <name> (instanceOf <HigherOrderType>) specializes...`
+Example: `kind Dog (instanceOf SpeciesType)`
 
 **2.4.5. Class Body (`{ ... }`):**
 Contains optional `label`, `description`, attributes, and internal relations.
@@ -122,6 +122,8 @@ Contains optional `label`, `description`, attributes, and internal relations.
 **2.5. Attributes**
 Define properties of classes.
 Syntax: `<attributeName>: <DataTypeName> [<cardinality>]? { <meta-properties> }?`
+
+The `label` and `description` keywords are reserved and attributes must have different names.
 
 *   **DataTypeName:** Can be built-in or user-defined.
     *   Built-in: `string`, `number`, `boolean`, `date`, `time`, `datetime`.
@@ -249,7 +251,7 @@ Group specializations and define properties like disjointness and completeness.
 [cite\_start]Multi-level modeling involves representing types whose instances are themselves types (e.g., "Species" is a type whose instances are "Dog", "Cat", etc., which are also types)[cite: 2028, 2035]. [cite\_start]In UFO and Tonto, this is achieved through **higher-order types**[cite: 1434, 2091]. [cite\_start]An individual (like Fido) is a 1st-order entity; a type of individual (`kind Dog`) is a 1st-order type; a type of type (`type Species`) is a 2nd-order type, and so on[cite: 2089, 2090].
 
 The link between a type and its higher-order type is made with the `instanceOf` keyword:
-`kind Dog instanceOf Species`
+`kind Dog (instanceOf Species)`
 
 The "Powertype Pattern" is a central concept in multi-level modeling. [cite\_start]The literature reveals it's not a single pattern, but primarily two distinct relationships with precise semantics[cite: 2040, 2439, 2913].
 
@@ -271,8 +273,8 @@ The "Powertype Pattern" is a central concept in multi-level modeling. [cite\_sta
     powertype CarModel of Car
 
     // Specific car models are instances of this higher-order type.
-    subkind Sedan specializes Car instanceOf CarModel
-    subkind Suv specializes Car instanceOf CarModel
+    subkind Sedan (instanceOf CarModel) specializes Car 
+    subkind Suv (instanceOf CarModel) specializes Car 
     ```
 
 ### 3.2. The `categorizes` Relation (Categorizer Type)
@@ -304,9 +306,9 @@ The "Powertype Pattern" is a central concept in multi-level modeling. [cite\_sta
     }
 
     // The specific types are instances of the categorizer.
-    subkind ElectricCar specializes Car instanceOf PropulsionType
-    subkind GasolineCar specializes Car instanceOf PropulsionType
-    subkind HybridCar specializes Car instanceOf PropulsionType
+    subkind ElectricCar (instanceOf PropulsionType) specializes Car 
+    subkind GasolineCar (instanceOf PropulsionType) specializes Car
+    subkind HybridCar (instanceOf PropulsionType) specializes Car 
     ```
 
 The `disjoint` and `complete` properties of a `genset` correspond to formal variations of the `categorizes` relation: `disjointlyCategorizes` and `completelyCategorizes`. [cite\_start]When both are used, the higher-order type **`partitions`** the base type[cite: 2477, 2480, 2488].

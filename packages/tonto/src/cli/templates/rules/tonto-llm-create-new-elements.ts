@@ -1,7 +1,5 @@
 export const tontoLLMCreateNewElements = 
-`---
-alwaysApply: true
----
+`
 # LLM Guidance for extending the Ontology
 
 ## 1. Guidelines for Extending Ontologies with Tonto

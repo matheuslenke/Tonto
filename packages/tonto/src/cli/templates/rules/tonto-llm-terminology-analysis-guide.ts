@@ -1,7 +1,5 @@
 export const tontoLLMTerminologyAnalysisGuide = 
-`---
-alwaysApply: true
----
+`
 # LLM Guidance for Understanding Tonto and Analyzing Ontology Terminology
 
 ## 1. Guidance for Terminology Analysis and Naming Suggestions in Tonto Ontologies

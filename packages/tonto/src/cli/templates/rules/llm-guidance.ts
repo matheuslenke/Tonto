@@ -1,7 +1,5 @@
 export const llmGuidance = 
-`---
-alwaysApply: true
----
+`
 # LLM Guidance for Tonto
 
 This document provides general guidance for an LLM working with the Tonto project. It outlines the workflow for using specialized rules to handle specific user requests.
