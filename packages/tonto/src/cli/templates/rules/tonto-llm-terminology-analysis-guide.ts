@@ -103,6 +103,4 @@ When providing feedback on terminology:
 *   **Current Name:** \`InfoHolder\`
 *   **Rationale:** The name \`InfoHolder\` is very generic. The class has a stereotype \`relator\` and its attributes \`startDate\`, \`endDate\` and relations to \`Person\` and \`Project\` (named \`member\` and \`assignedProject\`) suggest it represents an assignment or membership over time.
 *   **Suggestion(s):** Consider \`ProjectMembership\` or \`Assignment\`. \`ProjectMembership\` more directly reflects the role as a \`relator\` connecting a \`Person\` to a \`Project\`.
-
-By following these guidelines, an LLM can be effectively guided to understand Tonto and assist in analyzing and improving the terminology of ontologies in a well-founded manner. 
 `;

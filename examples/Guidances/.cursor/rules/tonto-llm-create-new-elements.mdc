@@ -1,6 +1,7 @@
 ---
 alwaysApply: true
 ---
+
 # LLM Guidance for extending the Ontology
 
 ## 1. Guidelines for Extending Ontologies with Tonto
@@ -166,5 +167,3 @@ Extending an existing Tonto ontology involves adding new classes, attributes, re
     *   Are there any validation errors from the Tonto tooling?
     *   Does the extension make sense in the overall context of the ontology?
 *   Refer to the `docs/tonto.md` paper and UFO literature for guidance on ontological principles.
-
-By following these guidelines, an LLM can be effectively guided to understand Tonto and assist in extending ontologies in a well-founded manner. 

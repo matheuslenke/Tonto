@@ -12,7 +12,7 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "${workspaceFolder}/examples/newGeneration",
+                "${workspaceFolder}/examples/Guidances",
                 "--extensionDevelopmentPath=${workspaceFolder}/packages/extension"
             ],
             "env": {

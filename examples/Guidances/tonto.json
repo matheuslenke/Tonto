@@ -1,0 +1,9 @@
+{
+  "name": "animal-kingdom-ontology",
+  "version": "1.0.0",
+  "description": "An ontology for the animal world based on a detailed specification.",
+  "sources": [
+    "src"
+  ],
+  "dependencies": {}
+}

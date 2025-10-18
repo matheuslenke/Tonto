@@ -1,6 +1,7 @@
 ---
-alwaysApply: true
+applyTo: "src/**/*.tonto"
 ---
+
 # LLM Guidance for Understanding and Summarizing Tonto (Textual Ontologies)
 
 ## 1. Guidance for Summarizing Tonto Ontologies
@@ -76,5 +77,3 @@ When summarizing an entire ontology, which might consist of several inter-relate
 *   **Syntax Recitation:** Do not just re-state the Tonto code. Explain the meaning.
 *   **Assumptions:** Do not infer information not present in the Tonto definitions.
 *   **Lengthy Explanations:** Keep the summary concise and to the point.
-
-By following these guidelines, an LLM can be effectively guided to understand Tonto and assist in summarizing ontologies in a well-founded manner. 

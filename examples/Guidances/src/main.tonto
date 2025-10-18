@@ -1,0 +1,10 @@
+import core.animals
+import core.enums
+import core.support
+
+package main
+
+// Entry point that imports the animal ontology packages
+kind HelloWorld {
+    message: string
+}

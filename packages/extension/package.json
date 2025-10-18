@@ -3,7 +3,7 @@
     "displayName": "Tonto",
     "publisher": "lenke",
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.4.2",
+    "version": "0.4.3",
     "license": "MIT",
     "type": "module",
     "repository": {
@@ -307,7 +307,7 @@
         "sprotty-elk": "^1.2.0",
         "sprotty-vscode": "file:../sprotty-vscode",
         "sprotty-vscode-webview": "file:../sprotty-vscode-webview",
-        "tonto-cli": "^0.4.0",
+        "tonto-cli": "^0.4.3",
         "tonto-package-manager": "~0.2.9",
         "uuid": "^9.0.1",
         "vite": "^5.4.19",

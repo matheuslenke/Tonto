@@ -1,0 +1,77 @@
+import core.enums
+import core.support
+
+package core.animals
+
+/**
+ * The root kind for animals.
+ *
+ * OntoUML: `kind` — provides identity for biological individuals.
+ */
+kind Animal {
+    label {
+        @en "Animal"
+        @pt-br "Animal"
+    }
+    description {
+        @en "A biological individual belonging to the animal kingdom."
+        @pt-br "Um indivíduo biológico pertencente ao reino animal."
+    }
+
+    commonName: string
+    scientificName: string [0..1]
+    averageLifespan: number [0..1]
+    averageWeightKg: number [0..1]
+    averageLengthM: number [0..1]
+    primaryColors: string [*]
+    isExtinct: boolean
+
+    [1] -- livesIn -- [1..*] core.support.Habitat
+    [1] -- hasDiet -- [1] core.enums.DietType
+    [1] -- reproducesBy -- [1] core.enums.ReproductionStyle
+    [1] -- hasConservationStatus -- [1] core.enums.ConservationStatus
+    [1] -- has -- [0..*] core.support.BodyPart
+    [0..*] -- preysOn -- [0..*] core.animals.Animal
+}
+
+subkind Vertebrate specializes core.animals.Animal {
+    label { @en "Vertebrate" @pt-br "Vertebrado" }
+    description { @en "An animal that possesses a vertebral column (backbone)." @pt-br "Um animal que possui coluna vertebral." }
+}
+
+subkind Invertebrate specializes core.animals.Animal {
+    label { @en "Invertebrate" @pt-br "Invertebrado" }
+    description { @en "An animal that does not possess a vertebral column." @pt-br "Um animal que não possui coluna vertebral." }
+}
+
+subkind Mammal specializes core.animals.Vertebrate {
+    label { @en "Mammal" @pt-br "Mamífero" }
+    description { @en "Warm-blooded vertebrates with hair/fur that typically nurse their young." @pt-br "Vertebrados de sangue quente com pelos/pele que normalmente amamentam seus filhotes." }
+}
+
+subkind Bird specializes core.animals.Vertebrate {
+    label { @en "Bird" @pt-br "Ave" }
+    description { @en "Warm-blooded vertebrates with feathers and wings; most lay hard-shelled eggs." @pt-br "Vertebrados de sangue quente com penas e asas; a maioria põe ovos com casca dura." }
+}
+
+subkind Fish specializes core.animals.Vertebrate {
+    label { @en "Fish" @pt-br "Peixe" }
+    description { @en "Aquatic vertebrates that breathe using gills and typically have fins and scales." @pt-br "Vertebrados aquáticos que respiram por brânquias e normalmente têm nadadeiras e escamas." }
+}
+
+subkind Reptile specializes core.animals.Vertebrate {
+    label { @en "Reptile" @pt-br "Réptil" }
+    description { @en "Cold-blooded vertebrates usually covered in scales; many lay soft-shelled eggs." @pt-br "Vertebrados de sangue frio geralmente cobertos por escamas; muitos põem ovos de casca macia." }
+}
+
+subkind Amphibian specializes core.animals.Vertebrate {
+    label { @en "Amphibian" @pt-br "Anfíbio" }
+    description { @en "Vertebrates that typically have aquatic larval stages and terrestrial adult stages; have moist skin." @pt-br "Vertebrados que tipicamente têm estágios larvais aquáticos e estágios adultos terrestres; pele úmida." }
+}
+
+// Partitions
+disjoint complete genset AnimalPartition where core.animals.Vertebrate, core.animals.Invertebrate specializes core.animals.Animal
+
+disjoint complete genset VertebrateTypes where core.animals.Mammal, core.animals.Bird, core.animals.Fish, core.animals.Reptile, core.animals.Amphibian specializes core.animals.Vertebrate
+
+
