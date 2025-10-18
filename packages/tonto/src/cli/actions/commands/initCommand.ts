@@ -7,6 +7,7 @@ import { createDefaultTontoManifest, manifestFileName, toJson } from '../../mode
 import { cursorHeader, vscodeHeader } from '../../templates/headers.js';
 import { readmeTemplate } from '../../templates/readme.js';
 import { llmGuidance } from '../../templates/rules/llm-guidance.js';
+import { tontoCardinalityGuidance } from '../../templates/rules/tonto-cardinality-guidance.js';
 import { tontoGuidance } from '../../templates/rules/tonto-guidance.js';
 import { tontoLLMCreateNewElements } from '../../templates/rules/tonto-llm-create-new-elements.js';
 import { tontoLLMDocumentationGuide } from '../../templates/rules/tonto-llm-documentation-guide.js';
@@ -149,6 +150,13 @@ async function initAction(options: InitOptions) {
                 throw err;
             }
             try {
+                createRuleFileWithHeader(tontoCardinalityGuidance, rulesDirPath, 'tonto-cardinality-guidance.mdc', cursorHeader);
+                console.log(chalk.green('Created tonto-cardinality-guidance.mdc'));
+            } catch (err) {
+                console.error(chalk.red(`Failed to create tonto-cardinality-guidance.mdc: ${String(err)}`));
+                throw err;
+            }
+            try {
                 createRuleFileWithHeader(llmGuidance, rulesDirPath, 'tonto_llm_guidance.mdc', cursorHeader);
                 console.log(chalk.green('Created tonto_llm_guidance.mdc'));
             } catch (err) {
@@ -204,42 +212,49 @@ async function initAction(options: InitOptions) {
             }
 
             try {
-                createRuleFileWithHeader(tontoGuidance, githubInstructionsPath, 'tonto-guidance.md', vscodeHeader);
-                console.log(chalk.green('Created tonto-guidance.md'));
+                createRuleFileWithHeader(tontoGuidance, githubInstructionsPath, 'tonto-guidance.instructions.md', vscodeHeader);
+                console.log(chalk.green('Created tonto-guidance.instructions.md'));
             } catch (err) {
                 console.error(chalk.red(`Failed to create tonto-guidance.md: ${String(err)}`));
                 throw err;
             }
             try {
-                createRuleFileWithHeader(llmGuidance, githubInstructionsPath, 'tonto_llm_guidance.md', vscodeHeader);
-                console.log(chalk.green('Created tonto_llm_guidance.md'));
+                createRuleFileWithHeader(tontoCardinalityGuidance, githubInstructionsPath, 'tonto-cardinality-guidance.instructions.md', vscodeHeader);
+                console.log(chalk.green('Created tonto-cardinality-guidance.instructions.md'));
             } catch (err) {
-                console.error(chalk.red(`Failed to create tonto_llm_guidance.md: ${String(err)}`));
+                console.error(chalk.red(`Failed to create tonto-cardinality-guidance.instructions.md: ${String(err)}`));
                 throw err;
             }
             try {
-                createRuleFileWithHeader(tontoLLMCreateNewElements, githubInstructionsPath, 'tonto-llm-create-new-elements.md', vscodeHeader);
-                console.log(chalk.green('Created tonto-llm-create-new-elements.md'));
+                createRuleFileWithHeader(llmGuidance, githubInstructionsPath, 'tonto_llm_guidance.instructions.md', vscodeHeader);
+                console.log(chalk.green('Created tonto_llm_guidance.instructions.md'));
             } catch (err) {
-                console.error(chalk.red(`Failed to create tonto-llm-create-new-elements.md: ${String(err)}`));
+                console.error(chalk.red(`Failed to create tonto_llm_guidance.instructions.md: ${String(err)}`));
                 throw err;
             }
             try {
-                createRuleFileWithHeader(tontoLLMTerminologyAnalysisGuide, githubInstructionsPath, 'tonto_llm_terminology_analysis_guide.md', vscodeHeader);
-                console.log(chalk.green('Created tonto_llm_terminology_analysis_guide.md'));
+                createRuleFileWithHeader(tontoLLMCreateNewElements, githubInstructionsPath, 'tonto-llm-create-new-elements.instructions.md', vscodeHeader);
+                console.log(chalk.green('Created tonto-llm-create-new-elements.instructions.md'));
             } catch (err) {
-                console.error(chalk.red(`Failed to create tonto_llm_terminology_analysis_guide.md: ${String(err)}`));
+                console.error(chalk.red(`Failed to create tonto-llm-create-new-elements.instructions.md: ${String(err)}`));
                 throw err;
             }
             try {
-                createRuleFileWithHeader(tontoLLMUnderstanding, githubInstructionsPath, 'tonto_llm_understanding_and_summarization_guide.md', vscodeHeader);
+                createRuleFileWithHeader(tontoLLMTerminologyAnalysisGuide, githubInstructionsPath, 'tonto_llm_terminology_analysis_guide.instructions.md', vscodeHeader);
+                console.log(chalk.green('Created tonto_llm_terminology_analysis_guide.instructionsmd'));
+            } catch (err) {
+                console.error(chalk.red(`Failed to create tonto_llm_terminology_analysis_guide.instructionsmd: ${String(err)}`));
+                throw err;
+            }
+            try {
+                createRuleFileWithHeader(tontoLLMUnderstanding, githubInstructionsPath, 'tonto_llm_understanding_and_summarization_guide.instructions.md', vscodeHeader);
                 console.log(chalk.green('Created tonto_llm_understanding_and_summarization_guide.md'));
             } catch (err) {
                 console.error(chalk.red(`Failed to create tonto_llm_understanding_and_summarization_guide.md: ${String(err)}`));
                 throw err;
             }
             try {
-                createRuleFileWithHeader(tontoLLMDocumentationGuide, githubInstructionsPath, 'tonto_llm_documentation_guide.md', vscodeHeader);
+                createRuleFileWithHeader(tontoLLMDocumentationGuide, githubInstructionsPath, 'tonto_llm_documentation_guide.instructions.md', vscodeHeader);
                 console.log(chalk.green('Created tonto_llm_documentation_guide.md'));
             } catch (err) {
                 console.error(chalk.red(`Failed to create tonto_llm_documentation_guide.md: ${String(err)}`));
@@ -358,6 +373,7 @@ export function buildInitProjectFiles(projectName: string, options: InitOptions)
     files.push({ type: 'dir', relativePath: cursorRulesDir });
     files.push({ type: 'file', relativePath: path.join(cursorRulesDir, 'tonto-guidance.mdc'), content: `${cursorHeader}${tontoGuidance}` });
     files.push({ type: 'file', relativePath: path.join(cursorRulesDir, 'tonto_llm_guidance.mdc'), content: `${cursorHeader}${llmGuidance}` });
+    files.push({ type: 'file', relativePath: path.join(cursorRulesDir, 'tonto-cardinality-guidance.mdc'), content: `${cursorHeader}${tontoCardinalityGuidance}` });
     files.push({ type: 'file', relativePath: path.join(cursorRulesDir, 'tonto-llm-create-new-elements.mdc'), content: `${cursorHeader}${tontoLLMCreateNewElements}` });
     files.push({ type: 'file', relativePath: path.join(cursorRulesDir, 'tonto_llm_terminology_analysis_guide.mdc'), content: `${cursorHeader}${tontoLLMTerminologyAnalysisGuide}` });
     files.push({ type: 'file', relativePath: path.join(cursorRulesDir, 'tonto_llm_understanding_and_summarization_guide.mdc'), content: `${cursorHeader}${tontoLLMUnderstanding}` });
@@ -366,12 +382,13 @@ export function buildInitProjectFiles(projectName: string, options: InitOptions)
     // .github/instructions
     const githubDir = path.join(projectName, '.github', 'instructions');
     files.push({ type: 'dir', relativePath: githubDir });
-    files.push({ type: 'file', relativePath: path.join(githubDir, 'tonto-guidance.md'), content: `${vscodeHeader}${tontoGuidance}` });
-    files.push({ type: 'file', relativePath: path.join(githubDir, 'tonto_llm_guidance.md'), content: `${vscodeHeader}${llmGuidance}` });
-    files.push({ type: 'file', relativePath: path.join(githubDir, 'tonto-llm-create-new-elements.md'), content: `${vscodeHeader}${tontoLLMCreateNewElements}` });
-    files.push({ type: 'file', relativePath: path.join(githubDir, 'tonto_llm_terminology_analysis_guide.md'), content: `${vscodeHeader}${tontoLLMTerminologyAnalysisGuide}` });
-    files.push({ type: 'file', relativePath: path.join(githubDir, 'tonto_llm_understanding_and_summarization_guide.md'), content: `${vscodeHeader}${tontoLLMUnderstanding}` });
-    files.push({ type: 'file', relativePath: path.join(githubDir, 'tonto_llm_documentation_guide.md'), content: `${vscodeHeader}${tontoLLMDocumentationGuide}` });
+    files.push({ type: 'file', relativePath: path.join(githubDir, 'tonto-guidance.instructions.md'), content: `${vscodeHeader}${tontoGuidance}` });
+    files.push({ type: 'file', relativePath: path.join(githubDir, 'tonto-cardinality-guidance.instructions.md'), content: `${vscodeHeader}${tontoCardinalityGuidance}` });
+    files.push({ type: 'file', relativePath: path.join(githubDir, 'tonto_llm_guidance.instructions.md'), content: `${vscodeHeader}${llmGuidance}` });
+    files.push({ type: 'file', relativePath: path.join(githubDir, 'tonto-llm-create-new-elements.instructions.md'), content: `${vscodeHeader}${tontoLLMCreateNewElements}` });
+    files.push({ type: 'file', relativePath: path.join(githubDir, 'tonto_llm_terminology_analysis_guide.instructions.md'), content: `${vscodeHeader}${tontoLLMTerminologyAnalysisGuide}` });
+    files.push({ type: 'file', relativePath: path.join(githubDir, 'tonto_llm_understanding_and_summarization_guide.instructions.md'), content: `${vscodeHeader}${tontoLLMUnderstanding}` });
+    files.push({ type: 'file', relativePath: path.join(githubDir, 'tonto_llm_documentation_guide.instructions.md'), content: `${vscodeHeader}${tontoLLMDocumentationGuide}` });
 
     // ignore files
     files.push({ type: 'file', relativePath: path.join(projectName, '.cursorignore'), content: '.github\n.tonto_modules\n' });

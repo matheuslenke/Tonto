@@ -1,0 +1,46 @@
+import core.animals
+import core.support
+import core.enums
+
+package core_relators
+
+/**
+ * Predation relator: represents a predation event/relationship between a predator
+ * and its prey. OntoUML: `relator` — it grounds the material relation between
+ * predator and prey and can have attributes like date, location or method.
+ */
+relator Predation {
+    eventDate: date [0..1]
+    location: string [0..1]
+
+    @mediation [1..*] -- [1] core.animals.Animal
+    @mediation [1..*] -- [1] core.animals.Animal
+}
+
+/**
+ * Symbiosis relator: captures enduring biological associations between two
+ * animals (e.g., cleaning mutualisms). OntoUML: `relator`.
+ */
+relator Symbiosis {
+    symbiosisType: core.enums.SymbiosisType
+    notes: string [0..1]
+
+    @mediation [1..*] -- [1] core.animals.Animal
+    @mediation [1..*] -- [1] core.animals.Animal
+}
+
+/**
+ * Migration relator: links animals that participate in the same migration
+ * event/route. OntoUML: `relator` because it represents a multi-party
+ * relationship grounded in an organized migration occurrence.
+ */
+relator Migration {
+    startDate: date [0..1]
+    endDate: date [0..1]
+    routeDescription: string [0..1]
+
+    @mediation [1..*] -- [1] core.animals.Animal
+    @mediation [1..*] -- [1] core.support.Habitat
+}
+
+

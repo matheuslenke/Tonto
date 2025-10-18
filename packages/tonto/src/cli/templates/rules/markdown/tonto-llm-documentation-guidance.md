@@ -1,6 +1,3 @@
----
-alwaysApply: true
----
 # LLM Guidance: Writing Effective Ontology Documentation
 
 This document provides guidelines for an LLM to create high-quality, informative, and user-friendly documentation for elements within a Tonto ontology. The goal is to produce documentation that is not only descriptive but also explains the underlying ontological choices based on OntoUML principles.
@@ -24,9 +21,11 @@ Labels are the primary, human-readable identifiers for an element.
 
 **Example:**
 ```tonto
-label {
-    @en "Class Feature"
-    @pt-br "Característica de Classe"
+class ExampleClass {
+    label {
+        @en "Class Feature"
+        @pt-br "Característica de Classe"
+    }
 }
 ```
 
@@ -40,9 +39,14 @@ Descriptions provide a summary of the element's meaning in the context of the do
 
 **Example:**
 ```tonto
-description {
-    @en "A special ability, trait, or proficiency granted by an adventuring class, often at a specific level."
-    @pt-br "Uma habilidade especial, traço ou proficiência concedida por uma classe de aventureiro, frequentemente em um nível específico."
+class Class {
+    label {
+        ...label info here
+    }
+    description {
+        @en "A special ability, trait, or proficiency granted by an adventuring class, often at a specific level."
+        @pt-br "Uma habilidade especial, traço ou proficiência concedida por uma classe de aventureiro, frequentemente em um nível específico."
+    }
 }
 ```
 
@@ -59,18 +63,6 @@ The JSDoc-style block comment (`/** ... */`) is crucial for explaining the *onto
     -   Describe the implications of this choice.
 3.  **Relationships and Constraints**: Briefly explain any critical relationships this element has with others.
 4.  **Usage Example (Optional)**: A brief example of how this element would be used in practice.
-
----
-
-### OntoUML Stereotype Cheatsheet for Documentation
-
--   **`kind`**: "This is a `kind` because it provides a principle of identity for its instances. An instance of `X` cannot stop being an `X` without ceasing to exist. For example, a `Person` is always a `Person`."
--   **`subkind`**: "This is a `subkind` because it represents a rigid specialization of a `kind`. An instance of `Y` (the subkind) is always and necessarily an instance of `X` (the kind). For example, a `Man` is always a `Person`."
--   **`phase`**: "This is a `phase` because it represents a contingent and temporary stage in the life of a `kind`. An instance can enter and leave this phase without losing its identity. For example, a `Person` can be a `Child` and later become an `Adult`."
--   **`role`**: "This is a `role` because it is a contingent classification that depends on a relationship with another entity. An instance plays this role only within a specific context. For example, a `Person` is only a `Student` in the context of being enrolled in a school."
--   **`relator`**: "This is a `relator` because it represents the truth-maker of a material relationship, connecting two or more entities. It is the relationship itself, reified as an object. For example, a `MarriageContract` is the relator that connects two `Spouses`."
--   **`type` / `powertype`**: "This is a `type` (or `powertype`) because its instances are themselves types (classes). It is a higher-order concept used for categorization. For example, `Species` is a type whose instances could be `Dog`, `Cat`, etc."
--   **`category`**: "This is a `category` because it is a rigid classification for instances of different kinds that share common properties. For example, `LivingBeing` could be a category for `Person` and `Animal`."
 
 ---
 
@@ -117,3 +109,4 @@ role Student specializes Person {
 ```
 
 In this bad example, the comment is useless, and the description is missing. It fails to explain *why* `Student` is a role from an ontological perspective.
+`;

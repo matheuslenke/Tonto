@@ -1,0 +1,36 @@
+package core.enums
+
+/**
+ * Enumerations used across the ontology.
+ */
+enum DietType {
+    Carnivore,
+    Herbivore,
+    Omnivore,
+    Insectivore,
+    Piscivore
+}
+
+enum ReproductionStyle {
+    Oviparous,
+    Viviparous,
+    Ovoviviparous,
+    Asexual
+}
+
+enum ConservationStatus {
+    LeastConcern,
+    NearThreatened,
+    Vulnerable,
+    Endangered,
+    CriticallyEndangered,
+    Extinct
+}
+
+enum SymbiosisType {
+    Mutualism,
+    Commensalism,
+    Parasitism
+}
+
+

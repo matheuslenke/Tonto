@@ -1,0 +1,19 @@
+package core.support
+
+/**
+ * Supporting kinds such as Habitat and BodyPart.
+ */
+kind Habitat {
+    label { @en "Habitat" @pt-br "Habitat" }
+    description { @en "Natural environment where an animal lives." @pt-br "Ambiente natural onde um animal vive." }
+    name: string
+    descriptionText: string [0..1]
+}
+
+kind BodyPart {
+    label { @en "Body Part" @pt-br "Parte do Corpo" }
+    description { @en "A distinct anatomical part of an animal." @pt-br "Uma parte anatômica distinta de um animal." }
+    partName: string
+}
+
+
