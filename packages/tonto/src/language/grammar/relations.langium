@@ -35,7 +35,7 @@ fragment RelationName:
 ;
 
 fragment RelationType:
- (isAssociation?='--' | isAggregation?='<>--' | isComposition?='<o>--')
+	(isAssociation?='--' | isAggregation?='<>--' | isComposition?='<o>--')
 ;
 
 fragment RelationInvertedType:
@@ -52,8 +52,8 @@ RelationMetaAttributes:
 
 RelationMetaAttribute:
 	isOrdered?='ordered' | isConst?='const' | isDerived?='derived' |
-	('subsets' subsetRelation=[ElementRelation:QualifiedName] ) |
-	('redefines' redefinesRelation=[ElementRelation:QualifiedName] )
+	('subsets' subsetRelation=[RelationMetaAttributes:QualifiedName] ) |
+	('redefines' redefinesRelation=[RelationMetaAttributes:QualifiedName] )
 ;
 
 RelationStereotype returns string:

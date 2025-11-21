@@ -2192,7 +2192,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
                 "terminal": {
                   "$type": "CrossReference",
                   "type": {
-                    "$ref": "#/rules@30"
+                    "$ref": "#/rules@37"
                   },
                   "terminal": {
                     "$type": "RuleCall",
@@ -2220,7 +2220,7 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
                 "terminal": {
                   "$type": "CrossReference",
                   "type": {
-                    "$ref": "#/rules@30"
+                    "$ref": "#/rules@37"
                   },
                   "terminal": {
                     "$type": "RuleCall",

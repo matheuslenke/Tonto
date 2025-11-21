@@ -3,6 +3,7 @@ import { AstNode, AstNodeDescription, AstUtils, DefaultScopeComputation, interru
 import { CancellationToken } from "vscode-jsonrpc";
 import {
     ContextModule,
+    ElementRelation,
     isClassDeclaration,
     isContextModule,
     isDataType,
@@ -105,6 +106,12 @@ export class TontoScopeComputation extends DefaultScopeComputation {
 
         scopes.addAll(model.module, otherAstNodeDescriptions);
 
+        // Log computed scopes
+        console.log("Computed Scopes:");
+        scopes.entries().forEach(([node, description]) => {
+            console.log(`[${description.type}] ${description.name}`);
+        });
+
         return scopes;
     }
 
@@ -125,6 +132,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
                 if (qualifiedName) {
                     const descriptionQualified = this.descriptions.createDescription(element, qualifiedName, document);
                     localDescriptions.push(descriptionQualified);
+                    this.exportRelationEnds(element, localDescriptions, document);
                 }
             }
             if (isClassDeclaration(element) || isDataType(element) || isEnumElement(element)) {
@@ -142,6 +150,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
                                 if (name) {
                                     const internalDescription = this.descriptions.createDescription(internalElement, name, document);
                                     localDescriptions.push(internalDescription);
+                                    this.exportRelationEnds(internalElement, localDescriptions, document);
                                 }
                             }
                         }
@@ -163,5 +172,21 @@ export class TontoScopeComputation extends DefaultScopeComputation {
             contextModule = contextModule.$container;
         }
         return contextModule as ContextModule;
+    }
+
+    private exportRelationEnds(relation: ElementRelation, localDescriptions: AstNodeDescription[], document: LangiumDocument) {
+        const relationName = this.qualifiedNameProvider.getQualifiedName(relation);
+        if (!relationName) return;
+
+        if (relation.firstEndMetaAttributes && relation.firstEndMetaAttributes.endName) {
+            const endName = relation.firstEndMetaAttributes.endName;
+            const qualifiedName = `${relationName}.${endName}`;
+            localDescriptions.push(this.descriptions.createDescription(relation.firstEndMetaAttributes, qualifiedName, document));
+        }
+        if (relation.secondEndMetaAttributes && relation.secondEndMetaAttributes.endName) {
+            const endName = relation.secondEndMetaAttributes.endName;
+            const qualifiedName = `${relationName}.${endName}`;
+            localDescriptions.push(this.descriptions.createDescription(relation.secondEndMetaAttributes, qualifiedName, document));
+        }
     }
 }

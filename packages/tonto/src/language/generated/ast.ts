@@ -450,8 +450,8 @@ export interface RelationMetaAttribute extends AstNode {
     isConst: boolean;
     isDerived: boolean;
     isOrdered: boolean;
-    redefinesRelation?: Reference<ElementRelation>;
-    subsetRelation?: Reference<ElementRelation>;
+    redefinesRelation?: Reference<RelationMetaAttributes>;
+    subsetRelation?: Reference<RelationMetaAttributes>;
 }
 
 export const RelationMetaAttribute = 'RelationMetaAttribute';
@@ -545,9 +545,7 @@ export class TontoAstReflection extends AbstractAstReflection {
                 return DataTypeOrClassOrRelation;
             }
             case 'ElementRelation:inverseEnd':
-            case 'ElementRelation:specializeRelation':
-            case 'RelationMetaAttribute:redefinesRelation':
-            case 'RelationMetaAttribute:subsetRelation': {
+            case 'ElementRelation:specializeRelation': {
                 return ElementRelation;
             }
             case 'GeneralizationSet:categorizerItems':
@@ -557,6 +555,10 @@ export class TontoAstReflection extends AbstractAstReflection {
             }
             case 'Import:referencedModel': {
                 return ContextModule;
+            }
+            case 'RelationMetaAttribute:redefinesRelation':
+            case 'RelationMetaAttribute:subsetRelation': {
+                return RelationMetaAttributes;
             }
             default: {
                 throw new Error(`${referenceId} is not a valid reference id.`);

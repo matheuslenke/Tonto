@@ -1,5 +1,6 @@
 import { input, select } from '@inquirer/prompts';
 import chalk from 'chalk';
+import { copilotInstructions } from 'cli/templates/copilot-instructions.js';
 import { Command } from 'commander';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -197,7 +198,8 @@ async function initAction(options: InitOptions) {
     }
 
     if (shouldCreateVscode) {
-        const githubInstructionsPath = path.join(projectPath, '.github', 'instructions');
+        const githubPath = path.join(projectPath, '.github');
+        const githubInstructionsPath = path.join(githubPath, 'instructions');
         console.log(chalk.blue(`Preparing to create VSCode instructions at ${githubInstructionsPath}`));
         if (fs.existsSync(githubInstructionsPath)) {
             console.log(chalk.yellow('.github/instructions directory already exists. Skipping creation.'));
@@ -241,9 +243,9 @@ async function initAction(options: InitOptions) {
             }
             try {
                 createRuleFileWithHeader(tontoLLMTerminologyAnalysisGuide, githubInstructionsPath, 'tonto_llm_terminology_analysis_guide.instructions.md', vscodeHeader);
-                console.log(chalk.green('Created tonto_llm_terminology_analysis_guide.instructionsmd'));
+                console.log(chalk.green('Created tonto_llm_terminology_analysis_guide.instructions.md'));
             } catch (err) {
-                console.error(chalk.red(`Failed to create tonto_llm_terminology_analysis_guide.instructionsmd: ${String(err)}`));
+                console.error(chalk.red(`Failed to create tonto_llm_terminology_analysis_guide.instructions.md: ${String(err)}`));
                 throw err;
             }
             try {
@@ -258,6 +260,14 @@ async function initAction(options: InitOptions) {
                 console.log(chalk.green('Created tonto_llm_documentation_guide.md'));
             } catch (err) {
                 console.error(chalk.red(`Failed to create tonto_llm_documentation_guide.md: ${String(err)}`));
+                throw err;
+            }
+
+            try {
+                createRuleFile(copilotInstructions, githubPath, 'copilot-instructions.md');
+                console.log(chalk.green('Created copilot-instructions.md'));
+            } catch (err) {
+                console.error(chalk.red(`Failed to create copilot-instructions.md: ${String(err)}`));
                 throw err;
             }
 
@@ -328,6 +338,10 @@ function copyTemplate(templateContent: string, destinationDir: string, destinati
 function createRuleFileWithHeader(content: string, destinationDir: string, destinationName: string, header: string) {
     const fullContent = `${header}${content}`;
     fs.writeFileSync(path.join(destinationDir, destinationName), fullContent);
+}
+
+function createRuleFile(content: string, destinationDir: string, destinationName: string) {
+    fs.writeFileSync(path.join(destinationDir, destinationName), content);
 }
 
 export function initCommand(): Command {
