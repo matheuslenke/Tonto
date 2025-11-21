@@ -37,7 +37,7 @@
   "types": "lib/index.d.ts",
   "main": "lib/index",
   "scripts": {
-    "clean": "shx rm -rf lib coverage node_modules",
+    "clean": "shx rm -rf lib coverage tsconfig.tsbuildinfo",
     "prebuild": "npm run clean",
     "build": "tsc",
     "watch": "tsc --watch",

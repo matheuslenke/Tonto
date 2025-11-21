@@ -1,10 +1,10 @@
 import { input, select } from '@inquirer/prompts';
 import chalk from 'chalk';
-import { copilotInstructions } from 'cli/templates/copilot-instructions.js';
 import { Command } from 'commander';
 import * as fs from 'fs';
 import * as path from 'path';
 import { createDefaultTontoManifest, manifestFileName, toJson } from '../../model/grammar/TontoManifest.js';
+import { copilotInstructions } from '../../templates/copilot-instructions.js';
 import { cursorHeader, vscodeHeader } from '../../templates/headers.js';
 import { readmeTemplate } from '../../templates/readme.js';
 import { llmGuidance } from '../../templates/rules/llm-guidance.js';
