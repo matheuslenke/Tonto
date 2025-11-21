@@ -10,7 +10,9 @@ import { GeneratorContext, parseProject } from "../../generators/jsonModular.gen
 import { ErrorGufoResultResponse, GufoResultResponse, TontoManifest, TransformTontoToGufo, createDefaultTontoManifest } from "../../main.js";
 
 export const transformToGufoCommand = async (
-    dirName: string
+    dirName: string,
+    label?: string,
+    description?: string
 ): Promise<GufoResultResponse | ErrorGufoResultResponse> => {
     const services = createTontoServices({ ...NodeFileSystem }).Tonto;
 
@@ -43,6 +45,8 @@ export const transformToGufoCommand = async (
         fileNode: new CompositeGeneratorNode(),
         manifest: manifest,
         folderAbsolutePath,
+        label,
+        description,
     };
 
     const project = parseProject(context);

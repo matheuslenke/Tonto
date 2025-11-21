@@ -2,8 +2,16 @@ import { Class, Package, Property } from "ontouml-js";
 import { DataType } from "../../language/generated/ast.js";
 import { setPropertyCardinality } from "./cardinality.generator.js";
 
+import { getDescription, getMultilingualText } from "./utils/labelUtils.js";
+
 export function customDataTypeGenerator(dataType: DataType, model: Package): Class {
-    const dataTypeClass = model.createDatatype(dataType.name);
+    const name = getMultilingualText(dataType.label, dataType.name);
+    const description = getDescription(dataType.description);
+
+    const dataTypeClass = model.createDatatype(name.getText());
+    if (description) {
+        dataTypeClass.description = description;
+    }
 
     return dataTypeClass;
 }

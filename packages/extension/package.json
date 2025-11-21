@@ -46,32 +46,32 @@
             }
         ],
         "viewsContainers": {
-          "activitybar": [
-              {
-                  "id": "tonto",
-                  "title": "Tonto",
-                  "icon": "$(type-hierarchy)"
-              }
-          ]
-      },
-      "views": {
-          "tonto": [
-              {
-                  "id": "tontoSidebar",
-                  "name": "Tonto sidebar"
-              },
-              {
-                  "id": "tontoCommands",
-                  "name": "Commands"
-              }
-          ],
-          "explorer": [
-              {
-                  "id": "tontoCommandsExplorer",
-                  "name": "Tonto Commands"
-              }
-          ]
-      },
+            "activitybar": [
+                {
+                    "id": "tonto",
+                    "title": "Tonto",
+                    "icon": "$(type-hierarchy)"
+                }
+            ]
+        },
+        "views": {
+            "tonto": [
+                {
+                    "id": "tontoSidebar",
+                    "name": "Tonto sidebar"
+                },
+                {
+                    "id": "tontoCommands",
+                    "name": "Commands"
+                }
+            ],
+            "explorer": [
+                {
+                    "id": "tontoCommandsExplorer",
+                    "name": "Tonto Commands"
+                }
+            ]
+        },
         "menus": {
             "commandPalette": [
                 {
@@ -155,87 +155,87 @@
                 }
             ]
         },
-      "jsonValidation": [
-          {
-              "fileMatch": "tonto.json",
-              "url": "./data/tonto-manifest-schema.json"
-          }
-      ],
-      "customEditors": [
-          {
-              "viewType": "tonto",
-              "displayName": "Tonto Diagram",
-              "selector": [
-                  {
-                      "filenamePattern": "*.tonto"
-                  }
-              ],
-              "priority": "option"
-          }
-      ],
-      "commands": [
-          {
-              "command": "tonto.diagram.open",
-              "icon": "$(symbol-structure)",
-              "title": "Open Tonto Diagram",
-              "category": "Tonto"
-          },
-          {
-              "command": "tonto.diagram.fit",
-              "title": "Fit to Screen",
-              "category": "Tonto"
-          },
-          {
-              "command": "tonto.diagram.center",
-              "title": "Center selection",
-              "category": "Tonto"
-          },
-          {
-              "command": "tonto.diagram.delete",
-              "title": "Delete selected element",
-              "category": "Tonto"
-          },
-          {
-              "command": "tonto.diagram.export",
-              "title": "Export diagram to SVG",
-              "category": "Tonto"
-          },
-          {
-              "command": "tonto.generateJSON",
-              "title": "Generate JSON",
-              "category": "Tonto"
-          },
-          {
-              "command": "tonto.initProject",
-              "title": "Init new Tonto project",
-              "category": "Tonto"
-          },
-          {
-              "command": "tonto.generateTonto",
-              "title": "Generate Tonto",
-              "category": "Tonto"
-          },
-          {
-              "command": "tonto.validateModel",
-              "title": "Validate Model",
-              "category": "Tonto"
-          },
-          {
-              "command": "tonto.transformModel",
-              "title": "Transform to GUFO",
-              "category": "Tonto"
-          },
-          {
-              "command": "tonto.tpm.install",
-              "title": "Install Packages (TPM)",
-              "category": "Tonto"
-          },
-          {
-              "command": "tonto.addGuidances",
-              "title": "Add Guidances to project (Work with LLMs)",
-              "category": "Tonto"
-          }
-      ],
+        "jsonValidation": [
+            {
+                "fileMatch": "tonto.json",
+                "url": "./data/tonto-manifest-schema.json"
+            }
+        ],
+        "customEditors": [
+            {
+                "viewType": "tonto",
+                "displayName": "Tonto Diagram",
+                "selector": [
+                    {
+                        "filenamePattern": "*.tonto"
+                    }
+                ],
+                "priority": "option"
+            }
+        ],
+        "commands": [
+            {
+                "command": "tonto.diagram.open",
+                "icon": "$(symbol-structure)",
+                "title": "Open Tonto Diagram",
+                "category": "Tonto"
+            },
+            {
+                "command": "tonto.diagram.fit",
+                "title": "Fit to Screen",
+                "category": "Tonto"
+            },
+            {
+                "command": "tonto.diagram.center",
+                "title": "Center selection",
+                "category": "Tonto"
+            },
+            {
+                "command": "tonto.diagram.delete",
+                "title": "Delete selected element",
+                "category": "Tonto"
+            },
+            {
+                "command": "tonto.diagram.export",
+                "title": "Export diagram to SVG",
+                "category": "Tonto"
+            },
+            {
+                "command": "tonto.generateJSON",
+                "title": "Transform Tonto -> JSON",
+                "category": "Tonto"
+            },
+            {
+                "command": "tonto.generateTonto",
+                "title": "Transform JSON -> Tonto",
+                "category": "Tonto"
+            },
+            {
+                "command": "tonto.initProject",
+                "title": "Init new Tonto project",
+                "category": "Tonto"
+            },
+            {
+                "command": "tonto.validateModel",
+                "title": "Validate Model",
+                "category": "Tonto"
+            },
+            {
+                "command": "tonto.transformModel",
+                "title": "Transform to GUFO",
+                "category": "Tonto"
+            },
+            {
+                "command": "tonto.tpm.install",
+                "title": "Install Packages (TPM)",
+                "category": "Tonto"
+            },
+            {
+                "command": "tonto.addGuidances",
+                "title": "Add Guidances to project (Work with LLMs)",
+                "category": "Tonto"
+            }
+        ],
         "keybindings": [
             {
                 "key": "alt+f",

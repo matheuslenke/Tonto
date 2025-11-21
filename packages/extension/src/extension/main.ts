@@ -16,8 +16,8 @@ import { TontoLibraryFileSystemProvider } from "./TontoLibraryFileSystemProvider
 const TONTO_EXPLORER_COMMANDS = [
     "tonto.generateJSON",
     "tonto.generateTonto",
-    "tonto.validateModel",
     "tonto.transformModel",
+    "tonto.validateModel",
     "tonto.tpm.install",
     "tonto.initProject",
     "tonto.addGuidances",
@@ -58,13 +58,13 @@ class TontoCommandsProvider implements vscode.TreeDataProvider<TontoCommandItem>
     private titleFor(cmd: string): string {
         switch (cmd) {
             case "tonto.generateJSON":
-                return "Generate JSON";
+                return "Transform Tonto -> JSON";
             case "tonto.generateTonto":
-                return "Generate Tonto";
+                return "Transform JSON -> Tonto";
             case "tonto.validateModel":
                 return "Validate Model";
             case "tonto.transformModel":
-                return "Transform to GUFO";
+                return "Transform Tonto -> gUFO";
             case "tonto.tpm.install":
                 return "Install Packages (TPM)";
             case "tonto.initProject":
