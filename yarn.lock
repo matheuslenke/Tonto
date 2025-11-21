@@ -3894,15 +3894,6 @@ langium-sprotty@^3.0.0:
     langium "~3.2.0"
     sprotty-protocol "^1.0.0"
 
-langium@^3.2.0, langium@~3.2.0:
-  version "3.2.0"
-  dependencies:
-    chevrotain "~11.0.3"
-    chevrotain-allstar "~0.3.0"
-    vscode-languageserver "~9.0.1"
-    vscode-languageserver-textdocument "~1.0.11"
-    vscode-uri "~3.0.8"
-
 langium@~1.2.0:
   version "1.2.1"
   resolved "https://registry.npmjs.org/langium/-/langium-1.2.1.tgz"
@@ -3913,6 +3904,15 @@ langium@~1.2.0:
     vscode-languageserver "~8.0.2"
     vscode-languageserver-textdocument "~1.0.8"
     vscode-uri "~3.0.7"
+
+langium@~3.2.0, langium@3.2.0:
+  version "3.2.0"
+  dependencies:
+    chevrotain "~11.0.3"
+    chevrotain-allstar "~0.3.0"
+    vscode-languageserver "~9.0.1"
+    vscode-languageserver-textdocument "~1.0.11"
+    vscode-uri "~3.0.8"
 
 language-subtag-registry@^0.3.20:
   version "0.3.23"
