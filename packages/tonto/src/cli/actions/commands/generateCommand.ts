@@ -19,7 +19,7 @@ export const generateCommand = async (fileName: string, destination: string): Pr
 };
 
 // TODO: Make this function generate file on folder
-export async function generateModularCommand(dir: string): Promise<string | undefined> {
+export async function generateModularCommand(dir: string, label?: string, description?: string): Promise<string | undefined> {
     const services = createTontoServices({ ...NodeFileSystem }).Tonto;
 
     let manifest: TontoManifest;
@@ -34,7 +34,7 @@ export async function generateModularCommand(dir: string): Promise<string | unde
 
         console.log(chalk.bold("tonto.json file parsed successfully."));
         folderAbsolutePath = path.resolve(dir);
-        const createdFile = await createModel(dir, manifest, services, folderAbsolutePath);
+        const createdFile = await createModel(dir, manifest, services, folderAbsolutePath, label, description);
 
         console.log(chalk.green("JSON File generated successfully: "));
         return Promise.resolve(createdFile);
@@ -48,13 +48,15 @@ async function createModel(
     dir: string,
     manifest: TontoManifest,
     services: TontoServices,
-    folderAbsolutePath: string
+    folderAbsolutePath: string,
+    label?: string,
+    description?: string
 ): Promise<string | undefined> {
     const allFiles = await glob(dir + "/**/*.tonto");
 
     const models: Model[] = await extractAllAstNodes(allFiles, services, builtInLibs, false);
 
-    generateJSONFileModular(models, manifest, folderAbsolutePath);
+    generateJSONFileModular(models, manifest, folderAbsolutePath, label, description);
 
     return `${manifest.projectName}.json`;
 }

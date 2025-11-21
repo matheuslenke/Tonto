@@ -9,13 +9,17 @@ import { GeneratedContextModuleData, contextModuleGenerateClasses, contextModule
 export function generateJSONFileModular(
     models: Model[],
     tontoManifest: TontoManifest,
-    folderAbsolutePath: string
+    folderAbsolutePath: string,
+    label?: string,
+    description?: string
 ): string {
     const ctx = <GeneratorContext>{
         models,
         manifest: tontoManifest,
         fileNode: new CompositeGeneratorNode(),
         folderAbsolutePath,
+        label,
+        description,
     };
     return generate(ctx);
 }
@@ -25,6 +29,8 @@ export interface GeneratorContext {
     manifest: TontoManifest
     fileNode: CompositeGeneratorNode
     folderAbsolutePath: string
+    label?: string
+    description?: string
 }
 
 interface GeneratedModelData {
@@ -58,11 +64,13 @@ function generate(ctx: GeneratorContext): string {
 
 export function parseProject(ctx: GeneratorContext): Project {
     const project = new Project({
-        name: new MultilingualText(ctx.manifest.projectName),
+        name: new MultilingualText(ctx.label || ctx.manifest.projectName),
+        description: ctx.description ? new MultilingualText(ctx.description) : undefined,
     });
 
     const rootPackage = project.createModel({
-        name: new MultilingualText(ctx.manifest.projectName),
+        name: new MultilingualText(ctx.label || ctx.manifest.projectName),
+        description: ctx.description ? new MultilingualText(ctx.description) : undefined,
     });
 
     const generatedModelDatas: Map<string, GeneratedModelData> = new Map();

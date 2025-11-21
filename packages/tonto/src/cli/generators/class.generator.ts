@@ -8,8 +8,14 @@ import {
     isUltimateSortalOntoCategory
 } from "../../language/models/OntologicalCategory.js";
 import { getParentNatures } from "../../language/utils/getParentNatures.js";
+import { getDescription, getMultilingualText } from "./utils/labelUtils.js";
 
 export function classElementGenerator(classElement: ClassDeclaration, packageItem: Package): Class {
+    const multiLingualName = getMultilingualText(classElement.label, classElement.name);
+    const name = multiLingualName.getText();
+    const description = getDescription(classElement.description);
+    let createdClass: Class;
+
     if (classElement?.classElementType) {
         const stereotype = classElement?.classElementType.ontologicalCategory;
         let natures: OntologicalNature[] | undefined = [];
@@ -23,113 +29,147 @@ export function classElementGenerator(classElement: ClassDeclaration, packageIte
        * Non sortals
        */
             case "category": {
-                return packageItem.createCategory(classElement.name, natures);
+                createdClass = packageItem.createCategory(name, natures);
+                break;
             }
             case "mixin": {
-                return packageItem.createMixin(classElement.name, natures);
+                createdClass = packageItem.createMixin(name, natures);
+                break;
             }
             case "phaseMixin": {
-                return packageItem.createPhaseMixin(classElement.name, natures);
+                createdClass = packageItem.createPhaseMixin(name, natures);
+                break;
             }
             case "roleMixin": {
-                return packageItem.createRoleMixin(classElement.name, natures);
+                createdClass = packageItem.createRoleMixin(name, natures);
+                break;
             }
             case "historicalRoleMixin": {
-                return packageItem.createRoleMixin(classElement.name, natures);
+                createdClass = packageItem.createRoleMixin(name, natures);
+                break;
             }
             /**
        * Non Endurants
        */
             case "event": {
-                return packageItem.createEvent(classElement.name);
+                createdClass = packageItem.createEvent(name);
+                break;
             }
             case "situation": {
-                return packageItem.createSituation(classElement.name);
+                createdClass = packageItem.createSituation(name);
+                break;
             }
             case "process": {
-                return packageItem.createEvent(classElement.name);
+                createdClass = packageItem.createEvent(name);
+                break;
             }
             /**
        * Ultimate Sortals
        */
             case "kind": {
-                return packageItem.createKind(classElement.name);
+                createdClass = packageItem.createKind(name);
+                break;
             }
             case "collective": {
-                return packageItem.createCollective(classElement.name);
+                createdClass = packageItem.createCollective(name);
+                break;
             }
             case "quantity": {
-                return packageItem.createQuantity(classElement.name);
+                createdClass = packageItem.createQuantity(name);
+                break;
             }
             case "quality": {
-                return packageItem.createQuality(classElement.name);
+                createdClass = packageItem.createQuality(name);
+                break;
             }
             case "mode": {
-                return packageItem.createClass(classElement.name, ClassStereotype.MODE, natures);
+                createdClass = packageItem.createClass(name, ClassStereotype.MODE, natures);
+                break;
             }
             case "intrinsicMode": {
-                return packageItem.createIntrinsicMode(classElement.name);
+                createdClass = packageItem.createIntrinsicMode(name);
+                break;
             }
             case "extrinsicMode": {
-                return packageItem.createExtrinsicMode(classElement.name);
+                createdClass = packageItem.createExtrinsicMode(name);
+                break;
             }
 
             /**
        * Base Sortals
        */
             case "subkind": {
-                const subkind = packageItem.createSubkind(classElement.name, firstNature);
+                const subkind = packageItem.createSubkind(name, firstNature);
                 if (!firstNature) {
                     subkind.restrictedTo = [];
                 }
-                return subkind;
+                createdClass = subkind;
+                break;
             }
             case "phase": {
-                const phase = packageItem.createPhase(classElement.name, firstNature);
+                const phase = packageItem.createPhase(name, firstNature);
                 if (!firstNature) {
                     phase.restrictedTo = [];
                 }
-                return phase;
+                createdClass = phase;
+                break;
             }
             case "role": {
-                const role = packageItem.createRole(classElement.name, firstNature);
+                const role = packageItem.createRole(name, firstNature);
                 if (!firstNature) {
                     role.restrictedTo = [];
                 }
-                return role;
+                createdClass = role;
+                break;
             }
             case "historicalRole": {
                 if (firstNature) {
-                    return packageItem.createHistoricalRole(classElement.name, { restrictedTo: [firstNature] });
+                    createdClass = packageItem.createHistoricalRole(name, { restrictedTo: [firstNature] });
                 } else {
-                    const historicalRole = packageItem.createHistoricalRole(classElement.name);
+                    const historicalRole = packageItem.createHistoricalRole(name);
                     // historicalRole.restrictedTo = [];
-                    return historicalRole;
+                    createdClass = historicalRole;
                 }
+                break;
             }
             case "relator": {
-                return packageItem.createRelator(classElement.name);
+                createdClass = packageItem.createRelator(name);
+                break;
             }
             case "type": {
-                return packageItem.createType(classElement.name);
+                createdClass = packageItem.createType(name);
+                break;
             }
             case "powertype": {
-                const powerType = packageItem.createType(classElement.name);
+                const powerType = packageItem.createType(name);
                 powerType.isPowertype = true;
-                return powerType;
+                createdClass = powerType;
+                break;
             }
             /**
        * Undefined stereotype
        */
             case "class": {
                 if (classElement.ontologicalNatures?.natures.includes("abstract-individuals")) {
-                    return packageItem.createAbstract(classElement.name, { stereotype: ClassStereotype.ABSTRACT });
+                    createdClass = packageItem.createAbstract(name, { stereotype: ClassStereotype.ABSTRACT });
+                } else {
+                    createdClass = packageItem.createClass(name, undefined, natures);
                 }
-                return packageItem.createClass(classElement.name, undefined, natures);
+                break;
             }
+            default:
+                createdClass = packageItem.createClass(name);
+                break;
         }
+    } else {
+        createdClass = packageItem.createClass(name);
     }
-    return packageItem.createClass(classElement.name);
+
+    if (description) {
+        createdClass.description = description;
+    }
+    
+    return createdClass;
 }
 
 export function generalizationGenerator(model: Package, sourceClass: Class, targetClass: Class) {

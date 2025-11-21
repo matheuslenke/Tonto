@@ -61,32 +61,172 @@ async function createStatusBarItemValidateTontoCommand(uri: vscode.Uri) {
     }
 
     if (uri) {
+        // If uri is a file, get its folder
+        try {
+            const stat = await vscode.workspace.fs.stat(uri);
+            if (stat.type === vscode.FileType.File) {
+                uri = vscode.Uri.joinPath(uri, "..");
+            }
+        } catch (e) {
+            // ignore
+        }
+
         const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
         if (workspaceFolder) {
             await transformModel(workspaceFolder.uri);
         } else {
-            vscode.window.showErrorMessage("Failed! File needs to be in a workspace");
+             // If not in workspace, try to use the folder of the file
+             let folderUri = uri;
+             try {
+                 const stat = await vscode.workspace.fs.stat(uri);
+                 if (stat.type === vscode.FileType.File) {
+                     folderUri = vscode.Uri.joinPath(uri, "..");
+                 }
+             } catch (e) {
+                 // ignore
+             }
+             await transformModel(folderUri);
         }
     }
 }
 
 async function createTransformTontoToGufoCommand() {
-    const directoryUri = await vscode.window.showOpenDialog({
-        canSelectFiles: false,
-        canSelectFolders: true,
-        canSelectMany: false,
-        openLabel: "Select Tonto Project directory",
-    });
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    let folderUri: vscode.Uri | undefined;
 
-    if (directoryUri && directoryUri[0]) {
-        const selectedFolder = directoryUri[0];
-        await transformModel(selectedFolder);
+    if (workspaceFolders && workspaceFolders.length > 0) {
+        if (workspaceFolders.length === 1) {
+             const options = [`Use Workspace Root (${workspaceFolders[0].name})`, "Select Folder..."];
+             const selection = await vscode.window.showQuickPick(options, {
+                 placeHolder: "Select how to choose the project folder"
+             });
+ 
+             if (!selection) {
+                 return;
+             }
+ 
+             if (selection.startsWith("Use Workspace Root")) {
+                 folderUri = workspaceFolders[0].uri;
+             }
+        } else {
+            // Multiple workspace folders
+            const folderItems = workspaceFolders.map(wf => ({ label: `$(root-folder) ${wf.name}`, uri: wf.uri }));
+            const options = [
+                ...folderItems,
+                { label: "$(folder) Select Folder...", uri: undefined }
+            ];
+
+            const selection = await vscode.window.showQuickPick(options, {
+                placeHolder: "Select the workspace folder or a specific folder"
+            });
+
+            if (!selection) {
+                return;
+            }
+
+            if (selection.uri) {
+                folderUri = selection.uri;
+            }
+        }
     } else {
-        vscode.window.showErrorMessage("Failed! Not a valid directory selected");
+        // No workspace folders, force select folder
+        const selection = await vscode.window.showQuickPick(["Select Folder..."], {
+            placeHolder: "No workspace open. Select a folder."
+        });
+        if (!selection) return;
+    }
+
+    // If folderUri is still undefined (user chose "Select Folder..." or we fell through)
+    if (!folderUri) {
+        const directoryUri = await vscode.window.showOpenDialog({
+            canSelectFiles: false,
+            canSelectFolders: true,
+            canSelectMany: false,
+            openLabel: "Select Tonto Project directory",
+        });
+
+        if (directoryUri && directoryUri[0]) {
+            folderUri = directoryUri[0];
+        }
+    }
+
+    if (folderUri) {
+        await transformModel(folderUri);
     }
 }
 
-async function transformModel(directoryUri: vscode.Uri) {
+async function getProjectDetails(folderUri: vscode.Uri): Promise<{ label: string, description: string } | undefined> {
+    const tontoFileUri = vscode.Uri.joinPath(folderUri, "tonto.json");
+    try {
+        const document = await vscode.workspace.openTextDocument(tontoFileUri);
+        const fileContent = document.getText();
+        const manifest = JSON.parse(fileContent);
+        if (manifest.projectName && manifest.description) {
+            return {
+                label: manifest.projectName,
+                description: manifest.description
+            };
+        } else {
+            console.warn("tonto.json found but missing projectName or description", manifest);
+        }
+    } catch (error) {
+        console.error("Error reading tonto.json at", tontoFileUri.fsPath, error);
+    }
+
+    const create = await vscode.window.showInformationMessage(
+        `tonto.json not found in ${folderUri.fsPath}. Do you want to create one?`,
+        "Yes",
+        "No"
+    );
+
+    if (create !== "Yes") {
+        return undefined;
+    }
+
+    const label = await vscode.window.showInputBox({
+        prompt: "Enter the project label",
+        placeHolder: "Project Name",
+    });
+
+    if (label === undefined) {
+        return undefined; // User cancelled
+    }
+
+    const description = await vscode.window.showInputBox({
+        prompt: "Enter the project description",
+        placeHolder: "Description...",
+    });
+
+    if (description === undefined) {
+        return undefined; // User cancelled
+    }
+
+    // Create tonto.json
+    const tontoJsonContent = {
+        projectName: label,
+        description: description,
+        outFolder: "out",
+        tontoFile: "main.tonto"
+    };
+
+    await vscode.workspace.fs.writeFile(
+        tontoFileUri,
+        new TextEncoder().encode(JSON.stringify(tontoJsonContent, null, 4))
+    );
+
+    return { label, description };
+}
+
+async function transformModel(directoryUri: vscode.Uri, label?: string, description?: string) {
+    if (!label || !description) {
+        const projectDetails = await getProjectDetails(directoryUri);
+        if (!projectDetails) {
+            return;
+        }
+        label = projectDetails.label;
+        description = projectDetails.description;
+    }
+
     await vscode.window.withProgress(
         {
             location: vscode.ProgressLocation.Notification,
@@ -94,7 +234,7 @@ async function transformModel(directoryUri: vscode.Uri) {
             cancellable: false,
         },
         async () => {
-            const response = await transformToGufoCommand(directoryUri.fsPath);
+            const response = await transformToGufoCommand(directoryUri.fsPath, label!, description!);
 
             if (isGufoResultResponse(response)) {
                 const gufoResult = response as GufoResultResponse;
