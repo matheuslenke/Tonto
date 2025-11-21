@@ -3911,7 +3911,7 @@ onetime@^6.0.0:
   dependencies:
     mimic-fn "^4.0.0"
 
-"ontouml-js@git+https://github.com/matheuslenke/ontouml-js.git#feature/include-types-in-build", "ontouml-js@github:matheuslenke/ontouml-js#feature/include-types-in-build":
+"ontouml-js@github:matheuslenke/ontouml-js#feature/include-types-in-build", "ontouml-js@https://github.com/matheuslenke/ontouml-js#feature/include-types-in-build":
   version "0.5.0"
   resolved "git+ssh://git@github.com/matheuslenke/ontouml-js.git#3ac6d342974dc0092c33f86df68f06721c29f76d"
   dependencies:
@@ -5165,7 +5165,7 @@ tonto-cli@0.2.7:
     glob "^10.2.2"
     langium "~1.2.0"
     node-fetch-native "^1.0.1"
-    ontouml-js "git+https://github.com/matheuslenke/ontouml-js.git#feature/include-types-in-build"
+    ontouml-js "https://github.com/matheuslenke/ontouml-js#feature/include-types-in-build"
     rimraf "^4.1.2"
     vscode-languageclient "~8.0.2"
     vscode-languageserver "~8.0.2"
