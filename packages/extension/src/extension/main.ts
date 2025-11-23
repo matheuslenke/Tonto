@@ -5,6 +5,7 @@ import { createAddGuidancesCommand } from "../commands/addGuidancesCommand.js";
 import { createTransformToGufoSatusBarItem } from "../commands/gufoTransformCommand.js";
 import { createInitCommand } from "../commands/initCommand.js";
 import { createGenerateJsonStatusBarItem } from "../commands/JsonGenerationCommands.js";
+import { registerPlantUMLCommands } from "../commands/plantumlCommand.js";
 import { createTontoGenerationStatusBarItem } from "../commands/TontoGenerationCommand.js";
 import { createTpmInstallCommands } from "../commands/TpmInstallCommand.js";
 import { createValidationSatusBarItem } from "../commands/validationCommand.js";
@@ -104,6 +105,7 @@ export function activate(context: vscode.ExtensionContext): void {
     createInitCommand(context, outputChannel);
     createAddGuidancesCommand(context, outputChannel);
     activateDiagram(context, languageClient);
+    registerPlantUMLCommands(context);
 
     // Register a TreeDataProvider for the `tontoCommandsExplorer` view so commands
     // appear as items inside the primary Sidebar view instead of as top-bar buttons.

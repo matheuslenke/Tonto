@@ -75,3 +75,37 @@ disjoint complete genset AnimalPartition where core.animals.Vertebrate, core.ani
 disjoint complete genset VertebrateTypes where core.animals.Mammal, core.animals.Bird, core.animals.Fish, core.animals.Reptile, core.animals.Amphibian specializes core.animals.Vertebrate
 
 
+
+// Phases
+phase Juvenile specializes core.animals.Animal {
+    label { @en "Juvenile" @pt-br "Juvenil" }
+    description { @en "An animal that has not yet reached sexual maturity." @pt-br "Um animal que ainda não atingiu a maturidade sexual." }
+}
+
+phase Adult specializes core.animals.Animal {
+    label { @en "Adult" @pt-br "Adulto" }
+    description { @en "An animal that has reached sexual maturity." @pt-br "Um animal que atingiu a maturidade sexual." }
+}
+
+disjoint complete genset AgePartition where core.animals.Juvenile, core.animals.Adult specializes core.animals.Animal
+
+// Roles
+role Pet specializes core.animals.Animal {
+    label { @en "Pet" @pt-br "Animal de Estimação" }
+    description { @en "An animal kept for companionship or pleasure." @pt-br "Um animal mantido para companhia ou prazer." }
+}
+
+role Stray specializes core.animals.Animal {
+    label { @en "Stray" @pt-br "Animal de Rua" }
+    description { @en "An animal that has no home or owner." @pt-br "Um animal que não tem casa ou dono." }
+}
+
+disjoint genset SocialStatus where core.animals.Pet, core.animals.Stray specializes core.animals.Animal
+
+// Category
+category Consumer {
+    label { @en "Consumer" @pt-br "Consumidor" }
+    description { @en "An organism that generally obtains food by feeding on other organisms or organic matter." @pt-br "Um organismo que geralmente obtém alimento alimentando-se de outros organismos ou matéria orgânica." }
+}
+
+genset ConsumerGenset where core.animals.Animal specializes core.animals.Consumer

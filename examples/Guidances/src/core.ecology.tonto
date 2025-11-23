@@ -1,0 +1,58 @@
+import core.animals
+
+package core.ecology
+
+/**
+ * Ecological concepts and collectives.
+ */
+
+// Collectives
+collective Pack specializes core.animals.Animal {
+    label { @en "Pack" @pt-br "Alcateia" }
+    description { @en "A group of animals that live and hunt together." @pt-br "Um grupo de animais que vivem e caçam juntos." }
+    
+    [1] -- hasMember -- [2..*] core.animals.Animal
+}
+
+collective Herd specializes core.animals.Animal {
+    label { @en "Herd" @pt-br "Rebanho" }
+    description { @en "A large group of animals, especially hoofed mammals, that live, feed, or migrate together." @pt-br "Um grande grupo de animais, especialmente mamíferos com cascos, que vivem, se alimentam ou migram juntos." }
+    
+    [1] -- hasMember -- [2..*] core.animals.Animal
+}
+
+collective Swarm specializes core.animals.Animal {
+    label { @en "Swarm" @pt-br "Enxame" }
+    description { @en "A large or dense group of insects, especially flying ones." @pt-br "Um grupo grande ou denso de insetos, especialmente voadores." }
+    
+    [1] -- hasMember -- [2..*] core.animals.Invertebrate
+}
+
+// Relator
+relator PredationEvent {
+    label { @en "Predation Event" @pt-br "Evento de Predação" }
+    description { @en "An interaction where one organism, the predator, kills and eats another organism, its prey." @pt-br "Uma interação onde um organismo, o predador, mata e come outro organismo, sua presa." }
+    
+    [1] -- involvesPredator -- [1] core.animals.Animal
+    [1] -- involvesPrey -- [1] core.animals.Animal
+    timestamp: string
+}
+
+// Mode
+mode Territoriality {
+    label { @en "Territoriality" @pt-br "Territorialidade" }
+    description { @en "Behavioral pattern associated with the defense of a territory." @pt-br "Padrão comportamental associado à defesa de um território." }
+    
+    [1] -- inheresIn -- [1] core.animals.Animal
+}
+
+// Quality
+quality Biomass {
+    label { @en "Biomass" @pt-br "Biomassa" }
+    description { @en "The total mass of organisms in a given area or volume." @pt-br "A massa total de organismos em uma determinada área ou volume." }
+    
+    _value: number
+    unit: string
+    
+    [1] -- inheresIn -- [1] core.ecology.Pack
+}
