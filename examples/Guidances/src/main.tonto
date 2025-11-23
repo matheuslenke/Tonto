@@ -8,3 +8,13 @@ package main
 kind HelloWorld {
     message: string
 }
+
+collective Collective
+
+mode Mode
+
+relator Relator
+
+quality Quality
+
+situation Situation specializes core.animals.Stray

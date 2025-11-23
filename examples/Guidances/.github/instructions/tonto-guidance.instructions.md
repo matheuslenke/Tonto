@@ -19,6 +19,8 @@ Tonto is a textual modeling language for creating well-founded ontologies. It en
 
 **Goal:** Facilitate high-quality, precise conceptual models by leveraging UFO's clear semantics in a user-friendly textual format.
 
+**Observation**: Tonto is only responsible for creating the *schema* of the ontology, not being able to declare individuals (instances of those types)
+
 ## 1. Quick Syntax Reference
 
 ### File Structure Pattern

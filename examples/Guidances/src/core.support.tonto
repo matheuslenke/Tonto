@@ -8,6 +8,15 @@ kind Habitat {
     description { @en "Natural environment where an animal lives." @pt-br "Ambiente natural onde um animal vive." }
     name: string
     descriptionText: string [0..1]
+    @aggregation
+    (firstEndName) [*] -- relationName -- [*] (secondEndName) BodyPart
+
+    ({subsets Habitat.relationName.firstEndName} firstEndName) [*] -- relationName2 -- [*] ({redefines Habitat.relationName2.secondEndName} secondEndName) BodyPart
+
+    <>-- aggregationRelation -- BodyPart
+    <o>-- filledDiagramRelation -- BodyPart
+    -- filledDiagramRelation2 --<> BodyPart
+    -- filledDiagramRelation3 --<o> BodyPart
 }
 
 kind BodyPart {
