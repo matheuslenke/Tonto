@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunktonto_docs=self.webpackChunktonto_docs||[]).push([[3885],{3289:o=>{o.exports=JSON.parse('{"permalink":"/tonto-docs/blog/tags/hello","page":1,"postsPerPage":10,"totalPages":1,"totalCount":2,"blogDescription":"Blog","blogTitle":"Blog"}')}}]);

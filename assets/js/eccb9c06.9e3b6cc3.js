@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunktonto_docs=self.webpackChunktonto_docs||[]).push([[3723],{1205:(e,s,c)=>{c.r(s),c.d(s,{default:()=>a});c(7294);var n=c(6040),t=c(5893);function a(){return(0,t.jsxs)(n.Z,{children:[(0,t.jsx)("h1",{children:"Tcc Page"}),(0,t.jsx)("p",{children:"This is a React page"})]})}}}]);

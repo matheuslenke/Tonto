@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunktonto_docs=self.webpackChunktonto_docs||[]).push([[3472],{2467:s=>{s.exports=JSON.parse('{"label":"docusaurus","permalink":"/tonto-docs/blog/tags/docusaurus","allTagsPath":"/tonto-docs/blog/tags","count":4,"unlisted":false}')}}]);
