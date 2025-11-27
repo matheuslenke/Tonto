@@ -10,11 +10,11 @@ function createGenerateJsonStatusBarItem(context: vscode.ExtensionContext, statu
 
     // Register the command pallete command
     context.subscriptions.push(
-    
+
         vscode.commands.registerCommand(CommandIds.generateJson, createCommandPaletteGenerateJsonCommand)
     );
 
-    return createStatusBarItem(context, statusBarItem);
+    // return createStatusBarItem(context, statusBarItem);
 }
 
 function createStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
@@ -136,18 +136,18 @@ async function createCommandPaletteGenerateJsonCommand() {
 
     if (workspaceFolders && workspaceFolders.length > 0) {
         if (workspaceFolders.length === 1) {
-             const options = [`Use Workspace Root (${workspaceFolders[0].name})`, "Select Folder..."];
-             const selection = await vscode.window.showQuickPick(options, {
-                 placeHolder: "Select how to choose the project folder"
-             });
- 
-             if (!selection) {
-                 return;
-             }
- 
-             if (selection.startsWith("Use Workspace Root")) {
-                 folderUri = workspaceFolders[0].uri;
-             }
+            const options = [`Use Workspace Root (${workspaceFolders[0].name})`, "Select Folder..."];
+            const selection = await vscode.window.showQuickPick(options, {
+                placeHolder: "Select how to choose the project folder"
+            });
+
+            if (!selection) {
+                return;
+            }
+
+            if (selection.startsWith("Use Workspace Root")) {
+                folderUri = workspaceFolders[0].uri;
+            }
         } else {
             // Multiple workspace folders
             const folderItems = workspaceFolders.map(wf => ({ label: `$(root-folder) ${wf.name}`, uri: wf.uri }));
@@ -219,35 +219,35 @@ async function createStatusBarItemGenerateJsonCommand(uri: vscode.Uri) {
         } catch (e) {
             // ignore
         }
-        
+
         // If we can't determine a folder, fallback to workspace root or ask
         // But for status bar, we usually have a context. 
         // Let's just try to use the uri as the folder if it's a folder, or parent if file.
-        
+
         // Actually, the original code did:
         // const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
         // if (workspaceFolder) { await generateJson(workspaceFolder); }
-        
+
         // We should probably stick to that logic but use our new generateJson which takes a Uri, not WorkspaceFolder
         // But wait, generateJson now expects a folder Uri.
-        
+
         const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
         if (workspaceFolder) {
-             await generateJson(workspaceFolder.uri);
+            await generateJson(workspaceFolder.uri);
         } else {
-             // If not in workspace, maybe just use the folder of the file?
-             // The original code required it to be in a workspace.
-             // Let's keep it simple and consistent with original behavior for now, 
-             // but using the new generateJson signature.
-             // However, if the user clicks the button, they might expect it to work on the current file's project.
-             
-             // Let's try to find the folder of the current file
-             let folderUri = uri;
-             const stat = await vscode.workspace.fs.stat(uri);
-             if (stat.type === vscode.FileType.File) {
-                 folderUri = vscode.Uri.joinPath(uri, "..");
-             }
-             await generateJson(folderUri);
+            // If not in workspace, maybe just use the folder of the file?
+            // The original code required it to be in a workspace.
+            // Let's keep it simple and consistent with original behavior for now, 
+            // but using the new generateJson signature.
+            // However, if the user clicks the button, they might expect it to work on the current file's project.
+
+            // Let's try to find the folder of the current file
+            let folderUri = uri;
+            const stat = await vscode.workspace.fs.stat(uri);
+            if (stat.type === vscode.FileType.File) {
+                folderUri = vscode.Uri.joinPath(uri, "..");
+            }
+            await generateJson(folderUri);
         }
     }
 }

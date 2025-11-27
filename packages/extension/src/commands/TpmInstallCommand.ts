@@ -16,7 +16,7 @@ function createTpmInstallCommands(
         )
     );
 
-    createStatusBarItem(context, statusBarItem);
+    // createStatusBarItem(context, statusBarItem);
 }
 
 function createStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {

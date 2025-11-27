@@ -13,7 +13,7 @@ function createTontoGenerationStatusBarItem(context: vscode.ExtensionContext, st
         vscode.commands.registerCommand(CommandIds.generateTonto, createCommandPaletteGenerateTontoCommand)
     );
 
-    createStatusBarItem(context, statusBarItem);
+    // createStatusBarItem(context, statusBarItem);
 }
 
 function createStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {

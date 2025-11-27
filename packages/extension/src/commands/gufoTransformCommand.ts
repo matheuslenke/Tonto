@@ -15,7 +15,7 @@ function createTransformToGufoSatusBarItem(context: vscode.ExtensionContext, sta
         vscode.commands.registerCommand(CommandIds.transformTonto, createTransformTontoToGufoCommand)
     );
 
-    createStatusBarItem(context, statusBarItem);
+    // createStatusBarItem(context, statusBarItem);
 }
 
 function createStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
@@ -75,17 +75,17 @@ async function createStatusBarItemValidateTontoCommand(uri: vscode.Uri) {
         if (workspaceFolder) {
             await transformModel(workspaceFolder.uri);
         } else {
-             // If not in workspace, try to use the folder of the file
-             let folderUri = uri;
-             try {
-                 const stat = await vscode.workspace.fs.stat(uri);
-                 if (stat.type === vscode.FileType.File) {
-                     folderUri = vscode.Uri.joinPath(uri, "..");
-                 }
-             } catch (e) {
-                 // ignore
-             }
-             await transformModel(folderUri);
+            // If not in workspace, try to use the folder of the file
+            let folderUri = uri;
+            try {
+                const stat = await vscode.workspace.fs.stat(uri);
+                if (stat.type === vscode.FileType.File) {
+                    folderUri = vscode.Uri.joinPath(uri, "..");
+                }
+            } catch (e) {
+                // ignore
+            }
+            await transformModel(folderUri);
         }
     }
 }
@@ -96,18 +96,18 @@ async function createTransformTontoToGufoCommand() {
 
     if (workspaceFolders && workspaceFolders.length > 0) {
         if (workspaceFolders.length === 1) {
-             const options = [`Use Workspace Root (${workspaceFolders[0].name})`, "Select Folder..."];
-             const selection = await vscode.window.showQuickPick(options, {
-                 placeHolder: "Select how to choose the project folder"
-             });
- 
-             if (!selection) {
-                 return;
-             }
- 
-             if (selection.startsWith("Use Workspace Root")) {
-                 folderUri = workspaceFolders[0].uri;
-             }
+            const options = [`Use Workspace Root (${workspaceFolders[0].name})`, "Select Folder..."];
+            const selection = await vscode.window.showQuickPick(options, {
+                placeHolder: "Select how to choose the project folder"
+            });
+
+            if (!selection) {
+                return;
+            }
+
+            if (selection.startsWith("Use Workspace Root")) {
+                folderUri = workspaceFolders[0].uri;
+            }
         } else {
             // Multiple workspace folders
             const folderItems = workspaceFolders.map(wf => ({ label: `$(root-folder) ${wf.name}`, uri: wf.uri }));
