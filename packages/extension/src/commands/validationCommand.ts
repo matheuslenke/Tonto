@@ -19,7 +19,7 @@ function createValidationSatusBarItem(
         })
     );
 
-    createStatusBarItem(context, statusBarItem);
+    // createStatusBarItem(context, statusBarItem);
 }
 
 function createStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
