@@ -1,5 +1,6 @@
 import { input, select } from '@inquirer/prompts';
 import chalk from 'chalk';
+import { vetvisitsTontoFile } from 'cli/templates/tonto/vetvisits.js';
 import { Command } from 'commander';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -373,6 +374,7 @@ export function buildInitProjectFiles(projectName: string, options: InitOptions)
     if (selectedTemplate === 'cat-dog') {
         files.push({ type: 'file', relativePath: path.join(projectName, 'src', 'main.tonto'), content: mainTontoFile });
         files.push({ type: 'file', relativePath: path.join(projectName, 'src', 'Cats.tonto'), content: catsTontoFile });
+        files.push({ type: 'file', relativePath: path.join(projectName, 'src', 'Vetvisits.tonto'), content: vetvisitsTontoFile });
         files.push({ type: 'file', relativePath: path.join(projectName, 'src', 'Dogs.tonto'), content: dogsTontoFile });
         files.push({ type: 'file', relativePath: path.join(projectName, 'src', 'Datatypes.tonto'), content: datatypesTontoFile });
     } else {

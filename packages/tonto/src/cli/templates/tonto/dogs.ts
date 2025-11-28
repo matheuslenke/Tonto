@@ -1,18 +1,26 @@
 export const dogsTontoFile = 
-`import Datatypes
+`
 import main
+import cats
 
-package Dogs
+package dogs
 
-
-// A 'subkind' is a rigid specialization of a 'kind'.
-// 'Dog' is a subkind of 'Animal' because a dog is always an animal.
-subkind Dog specializes main.Animal {
-    // Attributes define properties of a class.
-    breed: Datatypes.Breed
+enum DogSize {
+    Small,
+    Medium,
+    Large
 }
 
-// A 'phase' is a contingent and intrinsic specialization of a 'kind'.
-// 'Puppy' is a phase of 'Dog' because a dog is a puppy for a period of time.
-phase Puppy specializes Dog {}
+// A 'subkind' is a rigid specialization of a 'kind'.
+// 'Dog' is a subkind of 'Animal' because every dog is always a dog. And every dog is an animal.
+subkind Dog specializes main.Animal {
+    size: DogSize
+    @historicalDependence [*] -- hasFather -- [1] Dog
+    @historicalDependence [*] -- hasMother -- [1] Dog
+}
+
+// A disjoint generalization set specifies types 
+// that specialize a supertype mutually exclusively, so no Dog is a Cat and vice versa.
+disjoint genset AnimalTypes  
+    where Dog, cats.Cat specializes main.Animal
 `;
