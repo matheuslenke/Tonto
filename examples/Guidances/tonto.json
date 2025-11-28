@@ -1,12 +1,11 @@
 {
-    "projectName": "test",
-    "description": "test",
-    "outFolder": "out",
-    "tontoFile": "main.tonto",
-    "authors": [],
+    "projectName": "tonto-project",
+    "displayName": "tonto-project",
     "version": "1.0.0",
-    "dependencies": {},
-    "displayName": "Test",
+    "description": "",
+    "publisher": "",
     "license": "MIT",
-    "publisher": "default publisher"
-}
+    "dependencies": {},
+    "outFolder": "out",
+    "authors": []
+  }

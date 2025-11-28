@@ -9,18 +9,19 @@ import { extractAllAstNodes } from "../../cli-util.js";
 import { GeneratorContext, parseProject } from "../../generators/jsonModular.generator.js";
 import { createDefaultTontoManifest, ErrorResultResponse, TontoManifest, validateTontoFile, ValidationReturn } from "../../main.js";
 
-export const validateCommand = async (dirName: string, locally: boolean = false): Promise<ValidationReturn | ErrorResultResponse> => {
+export const validateCommand = async (dirName: string = "", locally: boolean = false): Promise<ValidationReturn | ErrorResultResponse> => {
     const services = createTontoServices({ ...NodeFileSystem }).Tonto;
     try {
 
         let manifest: TontoManifest | undefined;
 
-        const folderAbsolutePath = path.resolve(dirName);
+        const resolvedDirName = dirName || process.cwd();
+        const folderAbsolutePath = path.resolve(resolvedDirName);
 
         if (!fs.existsSync(path.join(folderAbsolutePath, "tonto.json"))) {
             manifest = createDefaultTontoManifest();
         } else {
-            const filePath = path.join(dirName, "tonto.json");
+            const filePath = path.join(folderAbsolutePath, "tonto.json");
 
             const tontoManifestContent = fs.readFileSync(filePath, "utf-8");
             manifest = JSON.parse(tontoManifestContent);
@@ -33,7 +34,7 @@ export const validateCommand = async (dirName: string, locally: boolean = false)
             } as ErrorResultResponse;
         }
 
-        const allFiles = await glob(dirName + "/**/*.tonto");
+        const allFiles = await glob(folderAbsolutePath + "/**/*.tonto");
 
         const models: Model[] = await extractAllAstNodes(allFiles, services, builtInLibs, false);
 
