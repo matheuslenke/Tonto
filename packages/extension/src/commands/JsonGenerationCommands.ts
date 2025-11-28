@@ -47,18 +47,9 @@ function updateJsonStatusBarItem(statusBarItem: vscode.StatusBarItem): void {
     statusBarItem.show();
 }
 
-async function generateJson(folderUri: vscode.Uri, label?: string, description?: string) {
-    if (!label || !description) {
-        const projectDetails = await getProjectDetails(folderUri);
-        if (!projectDetails) {
-            return;
-        }
-        label = projectDetails.label;
-        description = projectDetails.description;
-    }
-
+async function generateJson(folderUri: vscode.Uri) {
     try {
-        const generatedFileName = await generateModularCommand(folderUri.fsPath, label, description);
+        const generatedFileName = await generateModularCommand(folderUri.fsPath);
         if (generatedFileName) {
             vscode.window.showInformationMessage(`JSON File generated successfully with name "${generatedFileName}"`);
         }
@@ -66,68 +57,6 @@ async function generateJson(folderUri: vscode.Uri, label?: string, description?:
         vscode.window.showErrorMessage("Could not generate JSON.");
         console.error(error);
     }
-}
-
-async function getProjectDetails(folderUri: vscode.Uri): Promise<{ label: string, description: string } | undefined> {
-    const tontoFileUri = vscode.Uri.joinPath(folderUri, "tonto.json");
-    try {
-        const document = await vscode.workspace.openTextDocument(tontoFileUri);
-        const fileContent = document.getText();
-        const manifest = JSON.parse(fileContent);
-        if (manifest.projectName && manifest.description) {
-            return {
-                label: manifest.projectName,
-                description: manifest.description
-            };
-        } else {
-            console.warn("tonto.json found but missing projectName or description", manifest);
-        }
-    } catch (error) {
-        console.error("Error reading tonto.json at", tontoFileUri.fsPath, error);
-    }
-
-    const create = await vscode.window.showInformationMessage(
-        `tonto.json not found in ${folderUri.fsPath}. Do you want to create one?`,
-        "Yes",
-        "No"
-    );
-
-    if (create !== "Yes") {
-        return undefined;
-    }
-
-    const label = await vscode.window.showInputBox({
-        prompt: "Enter the project label",
-        placeHolder: "Project Name",
-    });
-
-    if (label === undefined) {
-        return undefined; // User cancelled
-    }
-
-    const description = await vscode.window.showInputBox({
-        prompt: "Enter the project description",
-        placeHolder: "Description...",
-    });
-
-    if (description === undefined) {
-        return undefined; // User cancelled
-    }
-
-    // Create tonto.json
-    const tontoJsonContent = {
-        projectName: label,
-        description: description,
-        outFolder: "out",
-        tontoFile: "main.tonto"
-    };
-
-    await vscode.workspace.fs.writeFile(
-        tontoFileUri,
-        new TextEncoder().encode(JSON.stringify(tontoJsonContent, null, 4))
-    );
-
-    return { label, description };
 }
 
 async function createCommandPaletteGenerateJsonCommand() {

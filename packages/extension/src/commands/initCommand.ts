@@ -29,24 +29,51 @@ async function initAction(context: vscode.ExtensionContext, sharedOutputChannel?
       oc.show(true);
       return;
   }
-  const version = await vscode.window.showInputBox({ prompt: 'Version', value: '0.0.1' });
+  
+  const displayName = await vscode.window.showInputBox({ prompt: 'Display name', value: projectName });
+  oc.appendLine(`Prompt result - displayName: ${String(displayName)}`);
+  if (displayName === undefined) {
+      oc.appendLine('User cancelled displayName input');
+      oc.show(true);
+      return;
+  }
+  
+  const version = await vscode.window.showInputBox({ prompt: 'Version', value: '1.0.0' });
   oc.appendLine(`Prompt result - version: ${String(version)}`);
   if (version === undefined) {
       oc.appendLine('User cancelled version input');
       oc.show(true);
       return;
   }
-  const description = await vscode.window.showInputBox({ prompt: 'Description', value: 'A new Tonto project.' });
+  
+  const description = await vscode.window.showInputBox({ prompt: 'Description', value: '' });
   oc.appendLine(`Prompt result - description: ${String(description)}`);
   if (description === undefined) {
       oc.appendLine('User cancelled description input');
       oc.show(true);
       return;
   }
-  const author = await vscode.window.showInputBox({ prompt: 'Author', value: '' });
-  oc.appendLine(`Prompt result - author: ${String(author)}`);
-  if (author === undefined) {
-      oc.appendLine('User cancelled author input');
+  
+  const license = await vscode.window.showInputBox({ prompt: 'License', value: 'MIT' });
+  oc.appendLine(`Prompt result - license: ${String(license)}`);
+  if (license === undefined) {
+      oc.appendLine('User cancelled license input');
+      oc.show(true);
+      return;
+  }
+  
+  const authorName = await vscode.window.showInputBox({ prompt: 'Author name', value: '' });
+  oc.appendLine(`Prompt result - authorName: ${String(authorName)}`);
+  if (authorName === undefined) {
+      oc.appendLine('User cancelled authorName input');
+      oc.show(true);
+      return;
+  }
+  
+  const authorEmail = await vscode.window.showInputBox({ prompt: 'Author email (optional)', value: '' });
+  oc.appendLine(`Prompt result - authorEmail: ${String(authorEmail)}`);
+  if (authorEmail === undefined) {
+      oc.appendLine('User cancelled authorEmail input');
       oc.show(true);
       return;
   }
@@ -137,6 +164,39 @@ async function initAction(context: vscode.ExtensionContext, sharedOutputChannel?
                           reject(err);
                           return;
                       }
+                  }
+                  
+                  // Create tonto.json manifest
+                  const authors = authorName ? [{
+                      name: authorName,
+                      ...(authorEmail && { email: authorEmail })
+                  }] : [];
+                  
+                  const tontoManifest = {
+                      projectName,
+                      displayName,
+                      version,
+                      description,
+                      publisher: "",
+                      license,
+                      dependencies: {},
+                      outFolder: 'out',
+                      authors
+                  };
+                  
+                  const manifestPath = path.join(root, projectName, 'tonto.json');
+                  const manifestUri = vscode.Uri.file(manifestPath);
+                  try {
+                      await vscode.workspace.fs.writeFile(
+                          manifestUri,
+                          new TextEncoder().encode(JSON.stringify(tontoManifest, null, 2))
+                      );
+                      oc.appendLine(`Wrote manifest: ${manifestPath}`);
+                  } catch (err) {
+                      oc.appendLine(`Failed writing manifest ${manifestPath}: ${String(err)}`);
+                      oc.show(true);
+                      reject(err);
+                      return;
                   }
 
                   oc.appendLine(`All files created for project '${projectName}' at ${root}`);

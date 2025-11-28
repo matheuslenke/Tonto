@@ -97,13 +97,13 @@ export function activate(context: vscode.ExtensionContext): void {
     TontoLibraryFileSystemProvider.register(context);
     languageClient = startLanguageClient(context);
 
+    createInitCommand(context, outputChannel);
+    createAddGuidancesCommand(context, outputChannel);
     createGenerateJsonStatusBarItem(context, generateJsonStatusBarItem);
     createTontoGenerationStatusBarItem(context, generateTontoStatusBarItem);
     createValidationSatusBarItem(context, validateStatusBarItem, outputChannel);
     createTransformToGufoSatusBarItem(context, transformToGufoStatusBarItem);
     createTpmInstallCommands(context, tpmInstallStatusBarItem);
-    createInitCommand(context, outputChannel);
-    createAddGuidancesCommand(context, outputChannel);
     activateDiagram(context, languageClient);
     registerPlantUMLCommands(context);
 

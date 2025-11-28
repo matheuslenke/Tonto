@@ -64,11 +64,29 @@ async function createStatusBarItemValidateTontoCommand(outputChannel: vscode.Out
     }
 
     if (uri) {
+        try {
+            const stat = await vscode.workspace.fs.stat(uri);
+            if (stat.type === vscode.FileType.File) {
+                uri = vscode.Uri.joinPath(uri, "..");
+            }
+        } catch (e) {
+            // ignore
+        }
+
         const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
         if (workspaceFolder) {
             await validateModel(workspaceFolder.uri, outputChannel);
         } else {
-            vscode.window.showErrorMessage("Failed! File needs to be in a workspace");
+            let folderUri = uri;
+            try {
+                const stat = await vscode.workspace.fs.stat(uri);
+                if (stat.type === vscode.FileType.File) {
+                    folderUri = vscode.Uri.joinPath(uri, "..");
+                }
+            } catch (e) {
+                // ignore
+            }
+            await validateModel(folderUri, outputChannel);
         }
     } else {
         vscode.window.showErrorMessage("Failed! Could not find workspace to execute validation");
@@ -76,16 +94,67 @@ async function createStatusBarItemValidateTontoCommand(outputChannel: vscode.Out
 }
 
 async function createValidateTontoCommand(outputChannel: vscode.OutputChannel) {
-    const directoryUri = await vscode.window.showOpenDialog({
-        canSelectFiles: false,
-        canSelectFolders: true,
-        canSelectMany: false,
-        openLabel: "Select Tonto Project directory",
-    });
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    let folderUri: vscode.Uri | undefined;
 
-    if (directoryUri && directoryUri[0]) {
-        const selectedFolder = directoryUri[0];
-        await validateModel(selectedFolder, outputChannel);
+    if (workspaceFolders && workspaceFolders.length > 0) {
+        if (workspaceFolders.length === 1) {
+            const options = [`Use Workspace Root (${workspaceFolders[0].name})`, "Select Folder..."];
+            const selection = await vscode.window.showQuickPick(options, {
+                placeHolder: "Select how to choose the project folder"
+            });
+
+            if (!selection) {
+                return;
+            }
+
+            if (selection.startsWith("Use Workspace Root")) {
+                folderUri = workspaceFolders[0].uri;
+            }
+        } else {
+            // Multiple workspace folders
+            const folderItems = workspaceFolders.map(wf => ({ label: `$(root-folder) ${wf.name}`, uri: wf.uri }));
+            const options = [
+                ...folderItems,
+                { label: "$(folder) Select Folder...", uri: undefined }
+            ];
+
+            const selection = await vscode.window.showQuickPick(options, {
+                placeHolder: "Select the workspace folder or a specific folder"
+            });
+
+            if (!selection) {
+                return;
+            }
+
+            if (selection.uri) {
+                folderUri = selection.uri;
+            }
+        }
+    } else {
+        // No workspace folders, force select folder
+        const selection = await vscode.window.showQuickPick(["Select Folder..."], {
+            placeHolder: "No workspace open. Select a folder."
+        });
+        if (!selection) return;
+    }
+
+    // If folderUri is still undefined (user chose "Select Folder..." or we fell through)
+    if (!folderUri) {
+        const directoryUri = await vscode.window.showOpenDialog({
+            canSelectFiles: false,
+            canSelectFolders: true,
+            canSelectMany: false,
+            openLabel: "Select Tonto Project directory",
+        });
+
+        if (directoryUri && directoryUri[0]) {
+            folderUri = directoryUri[0];
+        }
+    }
+
+    if (folderUri) {
+        await validateModel(folderUri, outputChannel);
     } else {
         vscode.window.showErrorMessage("Failed! Not a valid directory selected");
     }
