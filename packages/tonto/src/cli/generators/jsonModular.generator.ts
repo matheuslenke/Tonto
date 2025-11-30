@@ -64,12 +64,12 @@ function generate(ctx: GeneratorContext): string {
 
 export function parseProject(ctx: GeneratorContext): Project {
     const project = new Project({
-        name: new MultilingualText(ctx.label || ctx.manifest.projectName),
+        name: new MultilingualText(ctx.manifest.projectName),
         description: ctx.description ? new MultilingualText(ctx.description) : undefined,
     });
 
     const rootPackage = project.createModel({
-        name: new MultilingualText(ctx.label || ctx.manifest.projectName),
+        name: new MultilingualText(ctx.manifest.projectName),
         description: ctx.description ? new MultilingualText(ctx.description) : undefined,
     });
 

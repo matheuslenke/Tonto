@@ -1,0 +1,66 @@
+package ColorTest
+
+// --- Functional Complexes (PINK / LIGHT_PINK) ---
+
+// PINK #FF99A3
+kind Person
+collective Group
+quantity Water
+
+// LIGHT_PINK #FFDADD
+subkind Man specializes Person
+role Employee specializes Person
+category LivingThing {
+    @functional-complexes
+}
+mixin PhysicalObject {
+    @functional-complexes
+}
+
+// --- Relators (GREEN / LIGHT_GREEN) ---
+
+// GREEN #99FF99
+relator Employment
+
+// LIGHT_GREEN #D3FFD3
+subkind FullTimeEmployment specializes Employment
+
+// --- Qualities & Modes (BLUE / LIGHT_BLUE) ---
+
+// BLUE #70D7FF
+quality Weight
+mode Skill
+
+// LIGHT_BLUE #C0EDFF
+subkind TechnicalSkill specializes Skill
+category IntrinsicMoment {
+    @intrinsic-modes
+}
+
+// --- Events (YELLOW) ---
+
+// YELLOW #FCFCD4
+event Meeting
+
+// --- Situations (ORANGE) ---
+
+// ORANGE #FCE0C0
+situation Oversubscribed
+
+// --- Types (PURPLE) ---
+
+// PURPLE #D3D3FC
+type PersonType
+
+// --- Abstract Individuals (WHITE) ---
+
+// WHITE #FFFFFF
+category AbstractThing {
+    @abstract-individuals
+}
+
+// --- None (GREY) ---
+
+// GREY #E0E0E0
+// Mixin without specialization or explicit nature defaults to "none"
+mixin UnknownMixin

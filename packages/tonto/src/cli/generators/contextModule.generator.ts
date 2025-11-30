@@ -13,14 +13,34 @@ export function contextModuleGenerator(contextModule: ContextModule, packageItem
     const classes: Class[] = [];
     const dataTypes: Class[] = [];
     const relations: Relation[] = [];
-    // Creating base datatypes
 
+    // Phase 1: Create all classes and datatypes first
+    generateClassesAndDataTypes(contextModule, packageItem, classes, dataTypes);
+
+    // Phase 2: Create relations (requires all classes to exist)
+    generateInternalRelations(contextModule, classes, relations, packageItem);
+    generateExternalRelations(contextModule, classes, relations, packageItem);
+
+    // Phase 3: Create specializations and other dependent elements (requires relations to exist)
+    generateGenSets(contextModule, classes, packageItem);
+    generateSpecializations(contextModule, classes, relations, packageItem);
+    generateDataTypeSpecializations(contextModule, classes, dataTypes, packageItem);
+
+    // Phase 4: Generate instantiations (requires everything else)
+    generateInstantiations(contextModule, classes, relations, packageItem);
+}
+
+function generateClassesAndDataTypes(
+    contextModule: ContextModule,
+    packageItem: Package,
+    classes: Class[],
+    dataTypes: Class[]
+): void {
     contextModule.declarations.forEach((declaration) => {
         switch (declaration.$type) {
             case "ClassDeclaration": {
                 const classElement = declaration as ClassDeclaration;
                 const newClass = classElementGenerator(classElement, packageItem);
-                attributeGenerator(classElement, newClass, dataTypes);
                 classes.push(newClass);
                 break;
             }
@@ -32,7 +52,6 @@ export function contextModuleGenerator(contextModule: ContextModule, packageItem
                     dataTypes.push(newEnum);
                 } else {
                     const newDataType = customDataTypeGenerator(dataType, packageItem);
-                    attributeGenerator(dataType, newDataType, dataTypes);
                     dataTypes.push(newDataType);
                 }
                 break;
@@ -40,13 +59,33 @@ export function contextModuleGenerator(contextModule: ContextModule, packageItem
         }
     });
 
-    generateGenSets(contextModule, classes, packageItem);
-    generateInternalRelations(contextModule, classes, relations, packageItem);
-    generateExternalRelations(contextModule, classes, relations, packageItem);
-    generateSpecializations(contextModule, classes, relations, packageItem);
-    generateDataTypeSpecializations(contextModule, classes, dataTypes, packageItem);
+    // After all classes and datatypes are created, generate attributes
+    generateClassAttributes(contextModule, classes, dataTypes);
+    generateDataTypeAttributes(contextModule, dataTypes);
+}
 
-    generateInstantiations(contextModule, classes, relations, packageItem);
+function generateClassAttributes(contextModule: ContextModule, classes: Class[], dataTypes: Class[]): void {
+    contextModule.declarations.forEach((declaration) => {
+        if (declaration.$type === "ClassDeclaration") {
+            const classDeclaration = declaration as ClassDeclaration;
+            const createdClass = classes.find((item) => item.getName() === classDeclaration.name);
+            if (createdClass) {
+                attributeGenerator(classDeclaration, createdClass, dataTypes);
+            }
+        }
+    });
+}
+
+function generateDataTypeAttributes(contextModule: ContextModule, dataTypes: Class[]): void {
+    contextModule.declarations.forEach((declaration) => {
+        if (declaration.$type === "DataType") {
+            const dataType = declaration as DataType;
+            const createdDataType = dataTypes.find((item) => item.getNameOrId() === dataType.name);
+            if (createdDataType) {
+                attributeGenerator(dataType, createdDataType, dataTypes);
+            }
+        }
+    });
 }
 
 function generateGenSets(contextModule: ContextModule, classes: Class[], packageItem: Package) {

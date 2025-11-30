@@ -12,38 +12,80 @@ import {
 } from "../../language/generated/ast.js";
 import { tontoNatureUtils } from "../../language/utils/tontoNatureUtils.js";
 
-const colorMap: Record<string, string> = {
-    "tontoKind": "#CD6872",
-    "tontoQualityKind": "#19b0f1",
-    "tontoQuantityKind": "#CD6872",
-    "tontoCollectiveKind": "#CD6872",
-    "tontoRelatorKind": "#45e72b",
-    "tontoEvent": "#d1ca3c",
-    "tontoModeKind": "#19b0f1",
-    "tontoMode": "#19b0f1",
-    "tontoSituation": "#fca90d",
-    "tontoType": "#9b69b1",
-    "tontoObjects": "#f51212",
-    "tontoFunctionalComplex": "#CD6872",
-    "tontoQuality": "#19b0f1",
-    "tontoQuantity": "#CD6872",
-    "tontoCollective": "#CD6872",
-    "tontoRelator": "#45e72b",
-    "tontoNone": "#7f7d7d"
+const COLORS = {
+    GREEN: "#99FF99",
+    LIGHT_GREEN: "#D3FFD3",
+    PINK: "#FF99A3",
+    LIGHT_PINK: "#FFDADD",
+    BLUE: "#70D7FF",
+    LIGHT_BLUE: "#C0EDFF",
+    WHITE: "#FFFFFF",
+    YELLOW: "#FCFCD4",
+    ORANGE: "#FCE0C0",
+    PURPLE: "#D3D3FC",
+    GREY: "#E0E0E0"
 };
+
+const mainColorMap: Record<string, string> = {
+    "functional-complexes": COLORS.PINK,
+    "collectives": COLORS.PINK,
+    "quantities": COLORS.PINK,
+    "relators": COLORS.GREEN,
+    "qualities": COLORS.BLUE,
+    "modes": COLORS.BLUE,
+    "events": COLORS.YELLOW,
+    "situations": COLORS.ORANGE,
+    "types": COLORS.PURPLE,
+    "abstract-individuals": COLORS.WHITE,
+    "none": COLORS.GREY
+};
+
+const alternativeColorMap: Record<string, string> = {
+    "functional-complexes": COLORS.LIGHT_PINK,
+    "collectives": COLORS.LIGHT_PINK,
+    "quantities": COLORS.LIGHT_PINK,
+    "relators": COLORS.LIGHT_GREEN,
+    "qualities": COLORS.LIGHT_BLUE,
+    "modes": COLORS.LIGHT_BLUE,
+    "events": COLORS.YELLOW,
+    "situations": COLORS.ORANGE,
+    "types": COLORS.PURPLE,
+    "abstract-individuals": COLORS.WHITE,
+    "none": COLORS.GREY
+};
+
+function getColor(element: ClassDeclaration): string | undefined {
+    const natureResult = tontoNatureUtils.getTontoNature(element);
+    
+    if (natureResult.nature === "none") {
+        return COLORS.GREY;
+    }
+
+    if (natureResult.isKind) {
+        return mainColorMap[natureResult.nature];
+    } else {
+        return alternativeColorMap[natureResult.nature];
+    }
+}
 
 export interface PlantUMLOptions {
     showExternalReferences: boolean;
+    orthogonal?: boolean;
 }
 
-export function generatePlantUML(model: Model | ContextModule, options: PlantUMLOptions = { showExternalReferences: true }): string {
+export function generatePlantUML(model: Model | ContextModule, options: PlantUMLOptions = { showExternalReferences: true, orthogonal: false }): string {
     let puml = "@startuml\n";
     puml += "skinparam classAttributeIconSize 0\n";
-    puml += "skinparam linetype ortho\n";
+    puml += "hide empty members\n";
     puml += "skinparam nodesep 50\n";
     puml += "skinparam ranksep 50\n";
     puml += "skinparam backgroundColor white\n";
+    if (options.orthogonal) {
+        puml += "skinparam linetype ortho\n";
+    }
     puml += "hide circle\n";
+
+    const externalElements = new Set<ClassDeclaration>();
 
     function traverse(element: Model | ContextModule) {
         if (isModel(element)) {
@@ -67,6 +109,9 @@ export function generatePlantUML(model: Model | ContextModule, options: PlantUML
                                 // Check if parent is in the same module or if we show external refs
                                 if (options.showExternalReferences || parentRef.ref.$container === element) {
                                     const isExternal = parentRef.ref.$container !== element;
+                                    if (isExternal && isClassDeclaration(parentRef.ref)) {
+                                        externalElements.add(parentRef.ref);
+                                    }
                                     const arrow = isExternal ? "<|----" : "<|--";
                                     puml += `"${parentRef.ref.name}" ${arrow} "${decl.name}"\n`;
                                 }
@@ -83,15 +128,17 @@ export function generatePlantUML(model: Model | ContextModule, options: PlantUML
                     }
                     // Generate inline relations
                     if (decl.references) {
-                        for (const ref of decl.references) {
-                            puml += generateRelation(ref, element, options);
-                        }
+                        const directions = ["d", "r", "l", "u"];
+                        decl.references.forEach((ref, index) => {
+                            const direction = decl.references.length > 1 ? directions[index % directions.length] : undefined;
+                            puml += generateRelation(ref, element, options, direction, externalElements);
+                        });
                     }
                 }
 
                 for (const decl of others) {
                     if (isElementRelation(decl)) {
-                        puml += generateRelation(decl, element, options);
+                        puml += generateRelation(decl, element, options, undefined, externalElements);
                     } else if (isDataType(decl)) {
                         puml += generateDataType(decl);
                     }
@@ -101,6 +148,14 @@ export function generatePlantUML(model: Model | ContextModule, options: PlantUML
     }
 
     traverse(model);
+
+    // Generate external elements
+    if (externalElements.size > 0) {
+        puml += "\n' External Elements\n";
+        for (const element of externalElements) {
+            puml += generateClass(element);
+        }
+    }
 
     puml += "@enduml";
     return puml;
@@ -122,9 +177,8 @@ function generateClass(element: ClassDeclaration): string {
     }
 
     // Add color
-    const nature = tontoNatureUtils.getTontoNature(element);
-    const tokenType = tontoNatureUtils.getSemanticTokenFromNature(nature);
-    const color = colorMap[tokenType];
+    // Add color
+    const color = getColor(element);
     if (color) {
         classDef += ` ${color}`;
     }
@@ -169,7 +223,7 @@ function generateDataType(element: DataType): string {
     return classDef;
 }
 
-function generateRelation(element: ElementRelation, currentModule: ContextModule, options: PlantUMLOptions): string {
+function generateRelation(element: ElementRelation, currentModule: ContextModule, options: PlantUMLOptions, direction?: string, externalElements?: Set<ClassDeclaration>): string {
     let sourceName: string | undefined;
     let sourceContainer: ContextModule | undefined;
 
@@ -199,6 +253,15 @@ function generateRelation(element: ElementRelation, currentModule: ContextModule
     const isTargetExternal = targetContainer && targetContainer !== currentModule;
     const isExternal = isSourceExternal || isTargetExternal;
 
+    if (externalElements) {
+        if (isSourceExternal && element.firstEnd?.ref && isClassDeclaration(element.firstEnd.ref)) {
+            externalElements.add(element.firstEnd.ref);
+        }
+        if (isTargetExternal && target && isClassDeclaration(target)) {
+            externalElements.add(target);
+        }
+    }
+
     if (!options.showExternalReferences) {
         if (isExternal) {
             return "";
@@ -211,14 +274,14 @@ function generateRelation(element: ElementRelation, currentModule: ContextModule
     }
 
     const sourceCard = element.firstCardinality ?
-        `"${element.firstCardinality.lowerBound}..${element.firstCardinality.upperBound || '*'}"` : "";
+        (element.firstCardinality.upperBound !== undefined ? `"${element.firstCardinality.lowerBound}..${element.firstCardinality.upperBound}"` : `"${element.firstCardinality.lowerBound}"`) : "";
     const targetCard = element.secondCardinality ?
-        `"${element.secondCardinality.lowerBound}..${element.secondCardinality.upperBound || '*'}"` : "";
+        (element.secondCardinality.upperBound !== undefined ? `"${element.secondCardinality.lowerBound}..${element.secondCardinality.upperBound}"` : `"${element.secondCardinality.lowerBound}"`) : "";
 
-    const relationName = element.name ? `: <back:WhiteSmoke>${element.name}</back>` : "";
+    const relationName = element.name ? `: <back:WhiteSmoke>${element.name}</back> >` : "";
 
     // Use longer arrows for external references to push them away
-    const dash = isExternal ? "----" : "--";
+    const dash = direction ? (isExternal ? `-${direction}--` : `-${direction}-`) : (isExternal ? "----" : "--");
 
     let arrow = dash;
     if (element.isComposition) {

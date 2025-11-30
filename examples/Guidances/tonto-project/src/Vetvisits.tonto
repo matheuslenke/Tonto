@@ -1,0 +1,15 @@
+
+import main
+
+package vetvisits
+
+// 'Veterinarian' is a role of 'Person'.
+role Veterinarian specializes main.Person {}
+
+// Events are happenings or occurrences.
+// Every 'VetVisit' is an event that involves a 'Pet' and a 'Veterinarian'.
+event VetVisit {
+    // A 'participation' connects an 'event' to an object that participates in the event.
+    @participation [0..*] -- involvedPatient -- [1] main.Pet
+    @participation [0..*] -- conductedBy -- [1] Veterinarian
+}
