@@ -25,12 +25,16 @@
         },
         {
             "name": "CLI: GenerateModular",
-            "program": "${workspaceFolder}/packages/tonto/bin/cli.js",
+            "program": "${workspaceFolder}/packages/tonto/lib/cli/index.js",
             "request": "launch",
             "skipFiles": [
                 "<node_internals>/**"
             ],
             "type": "node",
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceFolder}/packages/tonto/lib/**/*.js"
+            ],
             "args": [
                 "generate",
                 "${workspaceFolder}/examples/fixingErrors"
@@ -38,12 +42,16 @@
         },
         {
             "name": "CLI: Import From JSON",
-            "program": "${workspaceFolder}/packages/tonto/bin/cli",
+            "program": "${workspaceFolder}/packages/tonto/lib/cli/index.js",
             "request": "launch",
             "skipFiles": [
                 "<node_internals>/**"
             ],
             "type": "node",
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceFolder}/packages/tonto/lib/**/*.js"
+            ],
             "args": [
                 "import",
                 "${workspaceFolder}/examples/newGeneration/ontology.json",
@@ -52,12 +60,16 @@
         },
         {
             "name": "CLI: Validate Model",
-            "program": "${workspaceFolder}/packages/tonto/bin/cli",
+            "program": "${workspaceFolder}/packages/tonto/lib/cli/index.js",
             "request": "launch",
             "skipFiles": [
                 "<node_internals>/**"
             ],
             "type": "node",
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceFolder}/packages/tonto/lib/**/*.js"
+            ],
             "args": [
                 "validate",
                 "${workspaceFolder}/examples/newGeneration",
@@ -67,12 +79,16 @@
         },
         {
             "name": "CLI: Transform to GUFO",
-            "program": "${workspaceFolder}/packages/tonto/bin/cli",
+            "program": "${workspaceFolder}/packages/tonto/lib/cli/index.js",
             "request": "launch",
             "skipFiles": [
                 "<node_internals>/**"
             ],
             "type": "node",
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceFolder}/packages/tonto/lib/**/*.js"
+            ],
             "args": [
                 "transform",
                 "${workspaceFolder}/examples/fixingErrors"
@@ -80,12 +96,16 @@
         },
         {
             "name": "TPM: Install",
-            "program": "${workspaceFolder}/packages/tpm/bin/cli",
+            "program": "${workspaceFolder}/packages/tpm/lib/cli/index.js",
             "request": "launch",
             "skipFiles": [
                 "<node_internals>/**"
             ],
             "type": "node",
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceFolder}/packages/tpm/lib/**/*.js"
+            ],
             "args": [
                 "install"
             ],
@@ -93,12 +113,16 @@
         },
         {
             "name": "TPM: Add dependency",
-            "program": "${workspaceFolder}/packages/tpm/bin/cli",
+            "program": "${workspaceFolder}/packages/tpm/lib/cli/index.js",
             "request": "launch",
             "skipFiles": [
                 "<node_internals>/**"
             ],
             "type": "node",
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceFolder}/packages/tpm/lib/**/*.js"
+            ],
             "args": [
                 "add",
                 "-n Test",

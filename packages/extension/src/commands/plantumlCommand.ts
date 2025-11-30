@@ -6,6 +6,7 @@ import { PlantUMLPanel } from '../diagram/plantuml-webview.js';
 
 export function registerPlantUMLCommands(context: vscode.ExtensionContext) {
     let showExternalReferences = true;
+    let useOrthogonalLines = false;
 
     const updateDiagram = async (documentUri: vscode.Uri) => {
         if (PlantUMLPanel.currentPanel && PlantUMLPanel.currentPanel.documentUri.toString() === documentUri.toString()) {
@@ -24,7 +25,7 @@ export function registerPlantUMLCommands(context: vscode.ExtensionContext) {
                 }
 
                 const tontoModel = parseResult.value as Model;
-                const plantuml = generatePlantUML(tontoModel, { showExternalReferences });
+                const plantuml = generatePlantUML(tontoModel, { showExternalReferences, orthogonal: useOrthogonalLines });
                 PlantUMLPanel.currentPanel.update(plantuml);
             } catch (e) {
                 console.error('Error updating diagram:', e);
@@ -61,11 +62,20 @@ export function registerPlantUMLCommands(context: vscode.ExtensionContext) {
                 }
 
                 const tontoModel = parseResult.value as Model;
-                const plantuml = generatePlantUML(tontoModel, { showExternalReferences });
+                const plantuml = generatePlantUML(tontoModel, { showExternalReferences, orthogonal: useOrthogonalLines });
                 PlantUMLPanel.createOrShow(context.extensionUri, plantuml, document.uri);
             } catch (e) {
                 console.error(e);
                 vscode.window.showErrorMessage('Error generating diagram: ' + e);
+            }
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('tonto.diagram.plantuml.toggleOrthogonalLines', async () => {
+            useOrthogonalLines = !useOrthogonalLines;
+            if (PlantUMLPanel.currentPanel) {
+                await updateDiagram(PlantUMLPanel.currentPanel.documentUri);
             }
         })
     );

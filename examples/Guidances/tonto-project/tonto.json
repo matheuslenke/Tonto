@@ -1,0 +1,11 @@
+{
+  "projectName": "tonto-project",
+  "displayName": "tonto-project",
+  "version": "1.0.0",
+  "description": "",
+  "publisher": "",
+  "license": "MIT",
+  "dependencies": {},
+  "outFolder": "out",
+  "authors": []
+}

@@ -33,6 +33,9 @@ export class PlantUMLPanel {
                     case 'toggleExternalRefs':
                         vscode.commands.executeCommand('tonto.diagram.plantuml.toggleExternalRefs');
                         break;
+                    case 'toggleOrthogonalLines':
+                        vscode.commands.executeCommand('tonto.diagram.plantuml.toggleOrthogonalLines');
+                        break;
                 }
             },
             null,
@@ -191,6 +194,7 @@ export class PlantUMLPanel {
                 <button id="zoomOut">-</button>
                 <button id="reset">Reset</button>
                 <button id="toggleRefs">Show/Hide External Refs</button>
+                <button id="toggleOrthogonal">Orthogonal</button>
                 <button id="downloadCode">Code</button>
                 <button id="downloadPng">PNG</button>
             </div>
@@ -228,6 +232,10 @@ export class PlantUMLPanel {
 
                 document.getElementById('toggleRefs').onclick = () => {
                     vscode.postMessage({ command: 'toggleExternalRefs' });
+                };
+
+                document.getElementById('toggleOrthogonal').onclick = () => {
+                    vscode.postMessage({ command: 'toggleOrthogonalLines' });
                 };
 
                 document.getElementById('downloadCode').onclick = () => {
