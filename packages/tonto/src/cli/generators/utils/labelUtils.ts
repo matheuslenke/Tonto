@@ -8,8 +8,9 @@ export function getMultilingualText(label: Label | undefined, defaultText: strin
 
     const multilingualText = new MultilingualText();
     label.labels.forEach((labelItem) => {
+        console.log(`Processing label: '${labelItem.label}', lang: '${labelItem.language}'`);
         if (labelItem.language) {
-            multilingualText.addText(labelItem.language, labelItem.label);
+            multilingualText.addText(labelItem.label, labelItem.language);
         } else {
             // If no language is specified, we might want to use a default or just add it.
             // MultilingualText usually requires a language code.
@@ -18,10 +19,10 @@ export function getMultilingualText(label: Label | undefined, defaultText: strin
             // If language is missing in Tonto, it might be an empty string or undefined depending on grammar.
             // The grammar says `language: string`.
             const lang = labelItem.language || "en";
-            multilingualText.addText(lang, labelItem.label);
+            multilingualText.addText(labelItem.label, lang);
         }
     });
-
+    console.log(`MultilingualText created. Default Text: '${multilingualText.getText()}'`);
     return multilingualText;
 }
 
@@ -33,7 +34,7 @@ export function getDescription(description: Description | undefined): Multilingu
     const multilingualText = new MultilingualText();
     description.descriptions.forEach((descItem) => {
         const lang = descItem.language || "en";
-        multilingualText.addText(lang, descItem.label);
+        multilingualText.addText(descItem.label, lang);
     });
 
     return multilingualText;

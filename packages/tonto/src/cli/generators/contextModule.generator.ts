@@ -68,7 +68,7 @@ function generateClassAttributes(contextModule: ContextModule, classes: Class[],
     contextModule.declarations.forEach((declaration) => {
         if (declaration.$type === "ClassDeclaration") {
             const classDeclaration = declaration as ClassDeclaration;
-            const createdClass = classes.find((item) => item.getName() === classDeclaration.name);
+            const createdClass = classes.find((item) => item.id === classDeclaration.name);
             if (createdClass) {
                 attributeGenerator(classDeclaration, createdClass, dataTypes);
             }

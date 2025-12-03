@@ -14,14 +14,14 @@ export function generateDataTypeSpecializations(
 
     declaratedDataTypes.forEach((declaration) => {
         const dataType = declaration as DataType;
-        const sourceDataType = dataTypes.find((item) => item.getNameOrId() === dataType.name);
+        const sourceDataType = dataTypes.find((item) => item.id === dataType.name);
         if (!sourceDataType) {
             return;
         }
         dataType.specializationEndurants.forEach((endurant) => {
-            let targetDataType = dataTypes.find((item) => item.getNameOrId() === endurant.ref?.name);
+            let targetDataType = dataTypes.find((item) => item.id === endurant.ref?.name);
             if (!targetDataType) {
-                targetDataType = classes.find((item) => item.getNameOrId() === endurant.ref?.name);
+                targetDataType = classes.find((item) => item.id === endurant.ref?.name);
             }
             if (targetDataType) {
                 generalizationGenerator(packageItem, sourceDataType, targetDataType);
@@ -47,11 +47,11 @@ export function generateSpecializations(
         if (declaration.$type === "ClassDeclaration") {
             const classElement = declaration as ClassDeclaration;
             if (classElement.specializationEndurants.length > 0) {
-                const sourceClass = classes.find((item) => item.name.getText() === classElement.name);
+                const sourceClass = classes.find((item) => item.id === classElement.name);
 
                 if (sourceClass) {
                     classElement.specializationEndurants.forEach((endurant) => {
-                        const targetClass = classes.find((item) => item.name.getText() === endurant.ref?.name);
+                        const targetClass = classes.find((item) => item.id === endurant.ref?.name);
                         if (targetClass) {
                             generalizationGenerator(packageItem, targetClass, sourceClass);
                             generateInternalRelationSpecialization(classElement, relations, packageItem);
@@ -77,9 +77,9 @@ export function generateSpecializations(
         } else if (declaration.$type === "ElementRelation") {
             const elementRelation = declaration as ElementRelation;
             if (elementRelation.specializeRelation) {
-                const elementRelationCreated = relations.find((item) => item.name.getText() === elementRelation.name);
+                const elementRelationCreated = relations.find((item) => item.id === elementRelation.name);
                 const targetRelation = relations.find(
-                    (item) => item.name.getText() === elementRelation.specializeRelation?.ref?.name
+                    (item) => item.id === elementRelation.specializeRelation?.ref?.name
                 );
 
                 if (elementRelationCreated && targetRelation) {
@@ -106,11 +106,11 @@ export function generateInternalRelationSpecialization(
         if (element.$type === "ElementRelation") {
             const elementRelation = element as ElementRelation;
             if (elementRelation.specializeRelation) {
-                const elementRelationCreated = relations.find((item) => item.name.getText() === elementRelation.name);
+                const elementRelationCreated = relations.find((item) => item.id === elementRelation.name);
 
                 if (elementRelationCreated) {
                     const targetRelation = relations.find(
-                        (item) => item.name.getText() === elementRelation.specializeRelation?.ref?.name
+                        (item) => item.id === elementRelation.specializeRelation?.ref?.name
                     );
 
                     if (targetRelation) {

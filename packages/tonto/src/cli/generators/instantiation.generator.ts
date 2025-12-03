@@ -14,10 +14,10 @@ export function generateInstantiations(
             const instanceOfClass = classElement.instanceOf?.ref;
 
             if (instanceOfClass) {
-                const sourceClass = classes.find((item) => item.name.getText() === classElement.name);
+                const sourceClass = classes.find((item) => item.id === classElement.name);
 
                 if (sourceClass) {
-                    const targetClass = classes.find((item) => item.name.getText() === instanceOfClass.name);
+                    const targetClass = classes.find((item) => item.id === instanceOfClass.name);
                     if (targetClass) {
                         createInstantiation(packageItem, targetClass, sourceClass);
                     }

@@ -1,0 +1,17 @@
+package main
+
+// 'kind' is a fundamental, rigid type.
+// 'HelloWorld' is a kind, representing a basic concept.
+kind HelloWorld {
+    label {
+        @en "Hello World"
+        @pt-br "Olá Mundo"
+        @fr "Bonjour le Monde"
+    }
+    description {
+        @en "A sample kind representing a Hello World message."
+        @pt-br "Um tipo de exemplo representando uma mensagem de Olá Mundo."
+        @fr "Un type d'exemple représentant un message Bonjour le Monde."
+    }
+    message: string
+}

@@ -3,7 +3,7 @@
     "displayName": "Tonto",
     "publisher": "lenke",
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.4.7",
+    "version": "0.4.8",
     "license": "MIT",
     "type": "module",
     "repository": {
@@ -25,6 +25,18 @@
     ],
     "main": "./pack/extension/main.cjs",
     "contributes": {
+            "themes": [
+                {
+                    "label": "Tonto Light",
+                    "uiTheme": "vs",
+                    "path": "./src/themes/Tonto-color-theme.json"
+                },
+                {
+                    "label": "Tonto Dark",
+                    "uiTheme": "vs",
+                    "path": "./src/themes/Tonto-dark-color-theme.json"
+                }
+        ],
         "languages": [
             {
                 "id": "tonto",
