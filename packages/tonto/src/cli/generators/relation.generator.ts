@@ -20,8 +20,8 @@ export function relationGenerator(
     const relationStereotype = getStereotype(relationItem.relationType);
 
     if (sourceClass && destinationClass) {
-        const sourceClassAlreadyCreated = classes.find((item) => item.name.getText() === sourceClass.name);
-        const destinationClassAlreadyCreated = classes.find((item) => item.name.getText() === destinationClass.name);
+        const sourceClassAlreadyCreated = classes.find((item) => item.id === sourceClass.name);
+        const destinationClassAlreadyCreated = classes.find((item) => item.id === destinationClass.name);
 
         if (sourceClassAlreadyCreated && destinationClassAlreadyCreated) {
             const relation = packageItem.createBinaryRelation(

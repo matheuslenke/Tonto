@@ -1,10 +1,11 @@
 import { CompositeGeneratorNode } from "langium/generate";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { MultilingualText, Package, Project } from "ontouml-js";
+import { MultilingualText, OntoumlElement, Package, Project } from "ontouml-js";
 import { Model } from "../../language/index.js";
 import { TontoManifest } from "../model/grammar/TontoManifest.js";
 import { GeneratedContextModuleData, contextModuleGenerateClasses, contextModuleGenerateRelations, contextModuleModularGenerator } from "./contextModuleModular.generator.js";
+import { generateUniqueId } from "./utils/idGenerator.js";
 
 export function generateJSONFileModular(
     models: Model[],
@@ -37,6 +38,78 @@ interface GeneratedModelData {
     package: Package
     model: Model
     generatedData: GeneratedContextModuleData
+}
+
+/**
+ * Sorts models topologically based on their import dependencies.
+ * Models with no imports (or whose dependencies are already processed) come first.
+ */
+function sortModelsTopologically(models: Model[]): Model[] {
+    const modelMap = new Map<string, Model>();
+    const dependencies = new Map<string, Set<string>>();
+    const inDegree = new Map<string, number>();
+
+    // Build model map and initialize structures
+    for (const model of models) {
+        const modelName = model.module.name;
+        modelMap.set(modelName, model);
+        dependencies.set(modelName, new Set());
+        inDegree.set(modelName, 0);
+    }
+
+    // Build dependency graph
+    for (const model of models) {
+        const modelName = model.module.name;
+        for (const imp of model.imports) {
+            const importedModule = imp.referencedModel.ref;
+            if (importedModule) {
+                const importedName = importedModule.name;
+                if (modelMap.has(importedName)) {
+                    dependencies.get(importedName)!.add(modelName);
+                    inDegree.set(modelName, (inDegree.get(modelName) || 0) + 1);
+                }
+            }
+        }
+    }
+
+    // Topological sort using Kahn's algorithm
+    const sorted: Model[] = [];
+    const queue: Model[] = [];
+
+    // Start with models that have no dependencies
+    for (const model of models) {
+        const modelName = model.module.name;
+        if (inDegree.get(modelName) === 0) {
+            queue.push(model);
+        }
+    }
+
+    while (queue.length > 0) {
+        const current = queue.shift()!;
+        sorted.push(current);
+        const currentName = current.module.name;
+
+        // Decrease in-degree for dependent models
+        for (const dependentName of dependencies.get(currentName)!) {
+            const newInDegree = (inDegree.get(dependentName) || 0) - 1;
+            inDegree.set(dependentName, newInDegree);
+            if (newInDegree === 0) {
+                const dependentModel = modelMap.get(dependentName);
+                if (dependentModel) {
+                    queue.push(dependentModel);
+                }
+            }
+        }
+    }
+
+    // If there are cycles or unresolved dependencies, add remaining models
+    for (const model of models) {
+        if (!sorted.includes(model)) {
+            sorted.push(model);
+        }
+    }
+
+    return sorted;
 }
 
 function generate(ctx: GeneratorContext): string {
@@ -73,12 +146,15 @@ export function parseProject(ctx: GeneratorContext): Project {
         description: ctx.description ? new MultilingualText(ctx.description) : undefined,
     });
 
+    // Sort models topologically to ensure dependencies are processed first
+    const sortedModels = sortModelsTopologically(ctx.models);
+
     const generatedModelDatas: Map<string, GeneratedModelData> = new Map();
 
     /**
-   * First we generate all the classes for each context module
-   */
-    for (const model of ctx.models) {
+     * First we generate all the classes for each context module
+     */
+    for (const model of sortedModels) {
         const contextModule = model.module;
 
         const createdPackage = rootPackage.createPackage(contextModule.name);
@@ -94,9 +170,9 @@ export function parseProject(ctx: GeneratorContext): Project {
     }
 
     /**
-   * Secondly, we generate all the relations for each context module
-   */
-    ctx.models.forEach((model) => {
+     * Secondly, we generate all the relations for each context module
+     */
+    sortedModels.forEach((model) => {
         const importedNames = model.imports.flatMap((e) => e.referencedModel.ref?.name).filter((e) => e !== undefined);
         const arrayOfGeneratedModelDatas = Array.from(generatedModelDatas.values());
 
@@ -118,10 +194,10 @@ export function parseProject(ctx: GeneratorContext): Project {
     });
 
     /**
-   * Then, we navigate again through the models and generate the missing elements
-   * that needed the references of the classes and relations generated in the previous step
-   */
-    ctx.models.forEach((model) => {
+     * Then, we navigate again through the models and generate the missing elements
+     * that needed the references of the classes and relations generated in the previous step
+     */
+    sortedModels.forEach((model) => {
         const importedNames = model.imports.flatMap((e) => e.referencedModel.ref?.name).filter((e) => e !== undefined);
         const arrayOfGeneratedModelDatas = Array.from(generatedModelDatas.values());
 
@@ -142,5 +218,29 @@ export function parseProject(ctx: GeneratorContext): Project {
             ]);
         }
     });
+
+    assignUniqueIdsToAllElements(project);
     return project;
+}
+
+/**
+ * Assigns a unique ID to all elements in the project.
+ * Creates a map of elements to their new IDs and updates them accordingly.
+ */
+function assignUniqueIdsToAllElements(project: Project): void {
+    const elementIdMap = new Map<OntoumlElement, string>();
+    const allPackages = project.getAllPackages();
+    
+    // First pass: generate new IDs for all elements and store in map
+    allPackages.forEach((pack) => {
+    
+    pack.getContents().forEach((element) => {
+            elementIdMap.set(element, generateUniqueId());
+        });
+    });
+    
+    // Second pass: apply the new IDs to all elements from the map
+    elementIdMap.forEach((newId, element) => {
+        Object.assign(element, { id: newId });
+    });
 }

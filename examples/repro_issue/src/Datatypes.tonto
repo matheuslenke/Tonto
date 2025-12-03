@@ -1,0 +1,53 @@
+package Datatypes
+
+enum EyeColor {
+    label {
+        @en "Eye Color"
+        @pt-br "Cor dos Olhos"
+        @fr "Couleur des Yeux"
+    }
+    description {
+        @en "The color of a person's eyes."
+        @pt-br "A cor dos olhos de uma pessoa."
+        @fr "La couleur des yeux d'une personne."
+    }
+    Black,
+    Blue,
+    Green,
+    Brown,
+    Other
+}
+
+datatype PhoneNumber {
+    label {
+        @en "Phone Number"
+        @pt-br "Número de Telefone"
+        @fr "Numéro de Téléphone"
+    }
+    description {
+        @en "A sequence of numbers used to call a telephone."
+        @pt-br "Uma sequência de números usada para chamar um telefone."
+        @fr "Une séquence de chiffres utilisée pour appeler un téléphone."
+    }
+    countryCode: number
+    number: string
+}
+
+datatype Address {
+    label {
+        @en "Address"
+        @pt-br "Endereço"
+        @fr "Adresse"
+    }
+    description {
+        @en "The particulars of the place where someone lives or an organization is situated."
+        @pt-br "Os detalhes do lugar onde alguém mora ou uma organização está situada."
+        @fr "Les coordonnées du lieu où quelqu'un vit ou où une organisation est située."
+    }
+    country: string
+    city: string
+    street: string
+    number: number
+    postalCode: string
+    complement: string
+}

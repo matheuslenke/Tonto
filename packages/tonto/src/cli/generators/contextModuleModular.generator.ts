@@ -37,8 +37,13 @@ export function contextModuleGenerateClasses(
         switch (declaration.$type) {
             case "ClassDeclaration": {
                 const classElement = declaration as ClassDeclaration;
+                // console.log(`Generating class: ${classElement.name} in ${contextModule.name}`);
                 const newClass = classElementGenerator(classElement, packageItem);
-                returnData.classes.push(newClass);
+                if (newClass) {
+                    returnData.classes.push(newClass);
+                } else {
+                    console.log(`Failed to generate class: ${classElement.name}`);
+                }
                 break;
             }
 
@@ -110,7 +115,7 @@ function generateClassDeclarationAttributes(contextModule: ContextModule, classe
         switch (declaration.$type) {
             case "ClassDeclaration": {
                 const classDeclaration = declaration as ClassDeclaration;
-                const createdClass = classes.find((item) => item.getName() === classDeclaration.name);
+                const createdClass = classes.find((item) => item.id === classDeclaration.name);
                 if (createdClass) {
                     attributeGenerator(classDeclaration, createdClass, dataTypes);
                 }

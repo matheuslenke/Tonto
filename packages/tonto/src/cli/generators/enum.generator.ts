@@ -15,5 +15,9 @@ export function enumGenerator(enumData: DataType, model: Package): Class {
     enumData.elements.forEach((element) => {
         createdEnum.createLiteral(element.name);
     });
+    createdEnum.name = name;
+
+    createdEnum.id = enumData.name;
+
     return createdEnum;
 }

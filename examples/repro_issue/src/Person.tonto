@@ -1,0 +1,134 @@
+import Datatypes
+import University
+
+package Person
+
+kind Person {
+    label {
+        @en "Person"
+        @pt-br "Pessoa"
+        @fr "Personne"
+    }
+    description {
+        @en "A human being, an individual."
+        @pt-br "Um ser humano, um indivíduo."
+        @fr "Un être humain, un individu."
+    }
+}
+
+phase Child specializes Person {
+    label {
+        @en "Child"
+        @pt-br "Criança"
+        @fr "Enfant"
+    }
+    description {
+        @en "A person who is not yet an adult."
+        @pt-br "Uma pessoa que ainda não é adulta."
+        @fr "Une personne qui n'est pas encore adulte."
+    }
+}
+
+phase Teenager specializes Person {
+    label {
+        @en "Teenager"
+        @pt-br "Adolescente"
+        @fr "Adolescent"
+    }
+    description {
+        @en "A person typically between the ages of 13 and 19."
+        @pt-br "Uma pessoa geralmente entre 13 e 19 anos de idade."
+        @fr "Une personne généralement âgée de 13 à 19 ans."
+    }
+}
+
+phase Adult specializes Person {
+    label {
+        @en "Adult"
+        @pt-br "Adulto"
+        @fr "Adulte"
+    }
+    description {
+        @en "A person who has reached full physical and intellectual maturity."
+        @pt-br "Uma pessoa que atingiu a maturidade física e intelectual completa."
+        @fr "Une personne qui a atteint sa pleine maturité physique et intellectuelle."
+    }
+}
+
+role UniversityStudent specializes Person {
+    label {
+        @en "University Student"
+        @pt-br "Estudante Universitário"
+        @fr "Étudiant Universitaire"
+    }
+    description {
+        @en "A person enrolled in a university-level educational program."
+        @pt-br "Uma pessoa matriculada em um programa educacional de nível universitário."
+        @fr "Une personne inscrite à un programme d'enseignement universitaire."
+    }
+}
+
+role FormerStudent specializes UniversityStudent {
+    label {
+        @en "Former Student"
+        @pt-br "Ex-Aluno"
+        @fr "Ancien Étudiant"
+    }
+    description {
+        @en "A person who was previously enrolled as a University Student but is no longer active."
+        @pt-br "Uma pessoa que foi anteriormente matriculada como estudante universitário, mas não está mais ativa."
+        @fr "Une personne qui était auparavant inscrite en tant qu'étudiant universitaire mais n'est plus active."
+    }
+}
+
+role ActiveStudent specializes UniversityStudent {
+    label {
+        @en "Active Student"
+        @pt-br "Estudante Ativo"
+        @fr "Étudiant Actif"
+    }
+    description {
+        @en "A person currently enrolled and actively participating as a University Student."
+        @pt-br "Uma pessoa atualmente matriculada e participando ativamente como estudante universitário."
+        @fr "Une personne actuellement inscrite et participant activement en tant qu'étudiant universitaire."
+    }
+}
+
+role Employee specializes Person {
+    label {
+        @en "Employee"
+        @pt-br "Empregado"
+        @fr "Employé"
+    }
+    description {
+        @en "A person hired to work for another person or for a business."
+        @pt-br "Uma pessoa contratada para trabalhar para outra pessoa ou para uma empresa."
+        @fr "Une personne embauchée pour travailler pour une autre personne ou pour une entreprise."
+    }
+}
+
+role UniversityProfessor specializes Employee {
+    label {
+        @en "University Professor"
+        @pt-br "Professor Universitário"
+        @fr "Professeur d'Université"
+    }
+    description {
+        @en "An employee who teaches and conducts research at a university."
+        @pt-br "Um empregado que ensina e conduz pesquisa em uma universidade."
+        @fr "Un employé qui enseigne et mène des recherches dans une université."
+    }
+}
+
+role Professor specializes Employee {
+    label {
+        @en "Professor"
+        @pt-br "Professor"
+        @fr "Professeur"
+    }
+    description {
+        @en "A senior academic rank at universities and other tertiary education and research institutions."
+        @pt-br "Um cargo acadêmico sênior em universidades e outras instituições de ensino superior e pesquisa."
+        @fr "Un rang universitaire supérieur dans les universités et autres établissements d'enseignement supérieur et de recherche."
+    }
+}

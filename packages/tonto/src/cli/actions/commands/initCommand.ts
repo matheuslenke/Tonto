@@ -1,6 +1,5 @@
 import { input, select } from '@inquirer/prompts';
 import chalk from 'chalk';
-import { vetvisitsTontoFile } from 'cli/templates/tonto/vetvisits.js';
 import { Command } from 'commander';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -20,6 +19,7 @@ import { datatypesTontoFile } from '../../templates/tonto/datatypes.js';
 import { dogsTontoFile } from '../../templates/tonto/dogs.js';
 import { mainTontoBlankFile } from '../../templates/tonto/main.blank.js';
 import { mainTontoFile } from '../../templates/tonto/main.js';
+import { vetvisitsTontoFile } from '../../templates/tonto/vetvisits.js';
 
 interface InitOptions {
     catDogExample?: boolean;

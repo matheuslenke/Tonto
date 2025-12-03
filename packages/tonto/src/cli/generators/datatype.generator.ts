@@ -12,6 +12,8 @@ export function customDataTypeGenerator(dataType: DataType, model: Package): Cla
     if (description) {
         dataTypeClass.description = description;
     }
+    dataTypeClass.name = name;
+    dataTypeClass.id = dataType.name;
 
     return dataTypeClass;
 }

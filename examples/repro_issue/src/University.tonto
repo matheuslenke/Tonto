@@ -1,0 +1,176 @@
+import Datatypes
+import Person
+
+package University
+
+category Organization {
+    label {
+        @en "Organization"
+        @pt-br "Organização"
+        @fr "Organisation"
+    }
+    description {
+        @en "An organized body of people with a particular purpose, especially a business, society, association, etc."
+        @pt-br "Um corpo organizado de pessoas com um propósito específico, especialmente um negócio, sociedade, associação, etc."
+        @fr "Un corps organisé de personnes avec un but particulier, en particulier une entreprise, une société, une association, etc."
+    }
+}
+
+kind University specializes Organization {
+    label {
+        @en "University"
+        @pt-br "Universidade"
+        @fr "Université"
+    }
+    description {
+        @en "An institution of higher education and research which awards academic degrees."
+        @pt-br "Uma instituição de ensino superior e pesquisa que concede graus acadêmicos."
+        @fr "Une institution d'enseignement supérieur et de recherche qui décerne des diplômes universitaires."
+    }
+    address: Datatypes.Address
+    @componentOf
+    [1] <>-- has -- [0..*] Classroom
+    @componentOf
+    [1] <>-- hasA -- [0..*] Department
+}
+
+kind Room {
+    label {
+        @en "Room"
+        @pt-br "Sala"
+        @fr "Salle"
+    }
+    description {
+        @en "A part or division of a building enclosed by walls, floor, and ceiling."
+        @pt-br "Uma parte ou divisão de um edifício fechada por paredes, chão e teto."
+        @fr "Une partie ou division d'un bâtiment fermée par des murs, un sol et un plafond."
+    }
+}
+
+subkind Classroom specializes Room {
+    label {
+        @en "Classroom"
+        @pt-br "Sala de Aula"
+        @fr "Salle de Classe"
+    }
+    description {
+        @en "A room in which classes are held."
+        @pt-br "Uma sala onde as aulas são realizadas."
+        @fr "Une salle où les cours ont lieu."
+    }
+}
+
+kind Department {
+    label {
+        @en "Department"
+        @pt-br "Departamento"
+        @fr "Département"
+    }
+    description {
+        @en "A division of a large organization dealing with a specific subject, commodity, or area of activity."
+        @pt-br "Uma divisão de uma grande organização lidando com um assunto, mercadoria ou área de atividade específica."
+        @fr "Une division d'une grande organisation traitant d'un sujet, d'une marchandise ou d'un domaine d'activité spécifique."
+    }
+    [1] <>-- [1] JuniorStaff
+    [1] <>-- [1] SeniorStaff
+}
+
+collective Staff {
+    label {
+        @en "Staff"
+        @pt-br "Equipe"
+        @fr "Personnel"
+    }
+    description {
+        @en "The group of people who work for an organization."
+        @pt-br "O grupo de pessoas que trabalham para uma organização."
+        @fr "Le groupe de personnes qui travaillent pour une organização."
+    }
+    [1] <o>-- hasMember -- [0..*] Person.Employee
+}
+
+subkind SeniorStaff specializes Staff {
+    label {
+        @en "Senior Staff"
+        @pt-br "Equipe Sênior"
+        @fr "Personnel Senior"
+    }
+    description {
+        @en "Staff members with higher rank or more experience."
+        @pt-br "Membros da equipe com classificação mais alta ou mais experiência."
+        @fr "Membres du personnel avec un rang plus élevé ou plus d'expérience."
+    }
+}
+
+subkind JuniorStaff specializes Staff {
+    label {
+        @en "Junior Staff"
+        @pt-br "Equipe Júnior"
+        @fr "Personnel Junior"
+    }
+    description {
+        @en "Staff members with lower rank or less experience."
+        @pt-br "Membros da equipe com classificação mais baixa ou menos experiência."
+        @fr "Membres du personnel avec un rang inférieur ou moins d'expérience."
+    }
+}
+
+relator Enrollment {
+    label {
+        @en "Enrollment"
+        @pt-br "Matrícula"
+        @fr "Inscription"
+    }
+    description {
+        @en "The act of enrolling or being enrolled."
+        @pt-br "O ato de matricular ou ser matriculado."
+        @fr "L'acte de s'inscrire ou d'être inscrit."
+    }
+    @mediation
+    [1..*] -- [1] Person.UniversityStudent
+    @mediation
+    [0..*] -- [1] University
+}
+
+relator EmploymentContract {
+    label {
+        @en "Employment Contract"
+        @pt-br "Contrato de Trabalho"
+        @fr "Contrat de Travail"
+    }
+    description {
+        @en "A legal agreement between an employer and an employee."
+        @pt-br "Um acordo legal entre um empregador e um empregado."
+        @fr "Un accord juridique entre un employeur et un employé."
+    }
+    @mediation
+    [1..*] -- [1] Person.Employee
+    @mediation
+    [1..*] -- [1] UniversityProfessor
+}
+
+roleMixin Employer {
+    label {
+        @en "Employer"
+        @pt-br "Empregador"
+        @fr "Employeur"
+    }
+    description {
+        @en "A person or organization that employs people."
+        @pt-br "Uma pessoa ou organização que emprega pessoas."
+        @fr "Une personne ou une organisation qui emploie des gens."
+    }
+}
+
+role UniversityEmployer specializes Employer, University {
+    label {
+        @en "University Employer"
+        @pt-br "Empregador Universitário"
+        @fr "Employeur Université"
+    }
+    description {
+        @en "A person who employs university professors."
+        @pt-br "Uma pessoa que contrata professores universitários."
+        @fr "Une pessoa que embauche des professeurs universitaires."
+    }
+}

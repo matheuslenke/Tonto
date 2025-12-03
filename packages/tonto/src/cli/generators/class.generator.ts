@@ -1,4 +1,4 @@
-/* eslint-disable indent */
+ 
 import { Class, ClassStereotype, OntologicalNature, Package } from "ontouml-js";
 import { ClassDeclaration, OntologicalNature as Nature } from "../../language/generated/ast.js";
 import { tontoNatureUtils } from "../../language/models/Natures.js";
@@ -13,6 +13,7 @@ import { getDescription, getMultilingualText } from "./utils/labelUtils.js";
 export function classElementGenerator(classElement: ClassDeclaration, packageItem: Package): Class {
     const multiLingualName = getMultilingualText(classElement.label, classElement.name);
     const name = multiLingualName.getText();
+    console.log(`Creating class '${classElement.name}' with name: '${name}'`);
     const description = getDescription(classElement.description);
     let createdClass: Class;
 
@@ -164,6 +165,10 @@ export function classElementGenerator(classElement: ClassDeclaration, packageIte
     } else {
         createdClass = packageItem.createClass(name);
     }
+
+    createdClass.name = multiLingualName;
+
+    createdClass.id = classElement.name;
 
     if (description) {
         createdClass.description = description;
