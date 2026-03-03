@@ -206,6 +206,14 @@ export function isSortal(item: unknown): item is Sortal {
     return item === 'subkind' || item === 'phase' || item === 'role' || item === 'historicalRole';
 }
 
+export type Statement = ContextModule | Import;
+
+export const Statement = 'Statement';
+
+export function isStatement(item: unknown): item is Statement {
+    return reflection.isInstance(item, Statement);
+}
+
 export type UltimateSortal = 'collective' | 'extrinsicMode' | 'intrinsicMode' | 'kind' | 'mode' | 'powertype' | 'quality' | 'quantity' | 'relator' | 'type';
 
 export function isUltimateSortal(item: unknown): item is UltimateSortal {
@@ -422,8 +430,7 @@ export function isLanguageLabelItem(item: unknown): item is LanguageLabelItem {
 
 export interface Model extends AstNode {
     readonly $type: 'Model';
-    imports: Array<Import>;
-    module: ContextModule;
+    statements: Array<Statement>;
 }
 
 export const Model = 'Model';
@@ -496,12 +503,13 @@ export type TontoAstType = {
     OntologicalCategory: OntologicalCategory
     RelationMetaAttribute: RelationMetaAttribute
     RelationMetaAttributes: RelationMetaAttributes
+    Statement: Statement
 }
 
 export class TontoAstReflection extends AbstractAstReflection {
 
     getAllTypes(): string[] {
-        return [Attribute, AuxiliaryDeclaration, Cardinality, ClassDeclaration, ClassDeclarationOrRelation, ContextModule, DataType, DataTypeOrClass, DataTypeOrClassOrRelation, Declaration, Description, ElementOntologicalNature, ElementRelation, EnumElement, GeneralizationSet, Import, Label, LanguageLabelItem, Model, OntologicalCategory, RelationMetaAttribute, RelationMetaAttributes];
+        return [Attribute, AuxiliaryDeclaration, Cardinality, ClassDeclaration, ClassDeclarationOrRelation, ContextModule, DataType, DataTypeOrClass, DataTypeOrClassOrRelation, Declaration, Description, ElementOntologicalNature, ElementRelation, EnumElement, GeneralizationSet, Import, Label, LanguageLabelItem, Model, OntologicalCategory, RelationMetaAttribute, RelationMetaAttributes, Statement];
     }
 
     protected override computeIsSubtype(subtype: string, supertype: string): boolean {
@@ -511,6 +519,10 @@ export class TontoAstReflection extends AbstractAstReflection {
             }
             case ClassDeclaration: {
                 return this.isSubtype(ClassDeclarationOrRelation, supertype) || this.isSubtype(DataTypeOrClass, supertype) || this.isSubtype(DataTypeOrClassOrRelation, supertype) || this.isSubtype(Declaration, supertype);
+            }
+            case ContextModule:
+            case Import: {
+                return this.isSubtype(Statement, supertype);
             }
             case DataType: {
                 return this.isSubtype(AuxiliaryDeclaration, supertype) || this.isSubtype(DataTypeOrClass, supertype) || this.isSubtype(DataTypeOrClassOrRelation, supertype);
@@ -722,8 +734,7 @@ export class TontoAstReflection extends AbstractAstReflection {
                 return {
                     name: Model,
                     properties: [
-                        { name: 'imports', defaultValue: [] },
-                        { name: 'module' }
+                        { name: 'statements', defaultValue: [] }
                     ]
                 };
             }
