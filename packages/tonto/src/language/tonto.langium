@@ -10,9 +10,11 @@ import "./grammar/datatypes"
 import "./grammar/gensets"
 
 entry Model:
-	imports+=Import*
-	module=ContextModule
+	statements+=Statement*
 ;
+
+Statement:
+	import=Import | contextModule=ContextModule;
 
 /**
  * A Package represents a namespace for organizing and grouping related model elements.
