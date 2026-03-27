@@ -1,4 +1,4 @@
-import { ClassDeclaration, ContextModule, DataType, DataTypeOrClassOrRelation, ElementRelation, Model, isClassDeclaration, isDataType, isElementRelation } from "../generated/ast.js";
+import { ClassDeclaration, ContextModule, DataType, DataTypeOrClassOrRelation, ElementRelation, isClassDeclaration, isDataType, isElementRelation } from "../generated/ast.js";
 
 export type Specialization = {
     from: ClassDeclaration;
@@ -65,12 +65,12 @@ export class TontoDiagramUtils {
                     .forEach(specialization => {
                         const ref = specialization.ref;
                         if (ref) {
-                            const model = ref.$container.$container as Model;
-                            if (model.module.name !== this.model.name) {
-                                if (!referencedModels.has(model.module)) {
-                                    referencedModels.set(model.module, []);
+                            const contextModule = ref.$container;
+                            if (contextModule.name !== this.model.name) {
+                                if (!referencedModels.has(contextModule)) {
+                                    referencedModels.set(contextModule, []);
                                 }
-                                referencedModels.get(model.module)?.push(ref);
+                                referencedModels.get(contextModule)?.push(ref);
                             }
                         }
                     });

@@ -3,6 +3,7 @@ import { describe, expect, test } from "vitest";
 import { URI } from "vscode-uri";
 import { generatePlantUML } from "../src/cli/generators/plantuml.generator.js";
 import { Model } from "../src/language/generated/ast.js";
+import { getPrimaryContextModuleOrThrow } from "../src/language/index.js";
 import { createTontoServices } from "../src/language/tonto-module.js";
 
 describe("PlantUML Generator Reproduction", () => {
@@ -62,8 +63,7 @@ describe("PlantUML Generator Reproduction", () => {
     const model = contractsDoc.parseResult.value as Model;
     
     // We want to generate PlantUML for the Contracts package
-    // In this case, the model.module IS the Contracts package
-    const contractsPackage = model.module;
+    const contractsPackage = getPrimaryContextModuleOrThrow(model);
     expect(contractsPackage).toBeDefined();
     expect(contractsPackage.name).toBe("Contracts");
 

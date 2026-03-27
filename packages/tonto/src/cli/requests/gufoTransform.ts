@@ -1,4 +1,4 @@
-import { generateUniqueId } from "cli/generators/utils/idGenerator.js";
+import { generateUniqueId } from "../generators/utils/idGenerator.js";
 import fetch from "node-fetch-native";
 import { Ontouml2Gufo, Project } from "ontouml-js";
 

@@ -6,7 +6,7 @@ import * as fs from "node:fs";
 import path from "node:path";
 import { builtInLibs, createTontoServices, Model } from "../../../index.js";
 import { extractAllAstNodes } from "../../cli-util.js";
-import { GeneratorContext, parseProject } from "../../generators/jsonModular.generator.js";
+import { ModularGeneratorContext, parseProjectModular } from "../../utils/parseProjectModular.js";
 import { createDefaultTontoManifest, ErrorResultResponse, TontoManifest, validateTontoFile, ValidationReturn } from "../../main.js";
 
 export const validateCommand = async (dirName: string = "", locally: boolean = false): Promise<ValidationReturn | ErrorResultResponse> => {
@@ -38,14 +38,14 @@ export const validateCommand = async (dirName: string = "", locally: boolean = f
 
         const models: Model[] = await extractAllAstNodes(allFiles, services, builtInLibs, false);
 
-        const context: GeneratorContext = {
+        const context: ModularGeneratorContext = {
             models,
             fileNode: new CompositeGeneratorNode(),
             manifest: manifest,
             folderAbsolutePath,
         };
 
-        const project = parseProject(context);
+        const project = parseProjectModular(context);
 
         const validationResult = await validateTontoFile(project, locally);
 

@@ -7,7 +7,7 @@ export default defineConfig({
       provider: "c8",
       reporter: ["text", "html"],
       include: ["packages/tonto/src"],
-      exclude: ["**/generated"],
+      exclude: ["**/generated", ".claude/**"],
     },
   },
 });

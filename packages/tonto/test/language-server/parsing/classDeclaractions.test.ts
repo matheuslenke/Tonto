@@ -3,6 +3,7 @@ import { expandToString as s } from "langium/generate";
 import { parseHelper } from "langium/test";
 import { beforeAll, describe, expect, test } from "vitest";
 import { isClassDeclaration } from "../../../lib/index.js";
+import { getPrimaryContextModuleOrThrow } from "../../../src/language/index.js";
 import { Model, isModel } from "../../../src/language/generated/ast.js";
 import { createTontoServices } from "../../../src/language/tonto-module.js";
 
@@ -49,7 +50,7 @@ describe("Parsing tests", () => {
         //  deacivated, find a much more human readable way below!
         // expect(document.parseResult.parserErrors).toHaveLength(0);
 
-        const classDeclarations = document.parseResult.value?.module.declarations
+        const classDeclarations = document.parseResult.value && getPrimaryContextModuleOrThrow(document.parseResult.value).declarations
             .filter(isClassDeclaration)
             .map(c => c.name);
         expect(

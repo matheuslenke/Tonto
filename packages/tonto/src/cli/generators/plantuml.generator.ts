@@ -10,6 +10,7 @@ import {
     isModel,
     Model
 } from "../../language/generated/ast.js";
+import { getModelContextModules } from "../../language/utils/modelStatements.js";
 import { tontoNatureUtils } from "../../language/utils/tontoNatureUtils.js";
 
 const COLORS = {
@@ -89,8 +90,8 @@ export function generatePlantUML(model: Model | ContextModule, options: PlantUML
 
     function traverse(element: Model | ContextModule) {
         if (isModel(element)) {
-            if (element.module) {
-                traverse(element.module);
+            for (const contextModule of getModelContextModules(element)) {
+                traverse(contextModule);
             }
         } else if (isContextModule(element)) {
             if (element.declarations) {

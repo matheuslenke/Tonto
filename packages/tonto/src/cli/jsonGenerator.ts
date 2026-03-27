@@ -1,10 +1,9 @@
 import { CompositeGeneratorNode } from "langium/generate";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { MultilingualText, Project } from "ontouml-js";
 import { Model } from "../language/index.js";
 import { extractDestinationAndName } from "./cli-util.js";
-import { contextModuleGenerator } from "./generators/contextModule.generator.js";
+import { ParseProjectContext, parseProject } from "./utils/parseProject.js";
 
 export function generateJSONFile(model: Model, filePath: string, destination: string | undefined): string {
     const data = extractDestinationAndName(filePath, destination);
@@ -19,9 +18,7 @@ export function generateJSONFile(model: Model, filePath: string, destination: st
     return generate(ctx);
 }
 
-export interface GeneratorContext {
-    model: Model
-    name: string
+export interface GeneratorContext extends ParseProjectContext {
     fileName: string
     destination: string
     fileNode: CompositeGeneratorNode
@@ -41,20 +38,4 @@ function generate(ctx: GeneratorContext): string {
     const generatedFilePath = path.join(ctx.destination, ctx.fileName);
     // fs.writeFileSync(generatedFilePath, isGeneratorNode(ctx.fileNode));
     return generatedFilePath;
-}
-
-export function parseProject(ctx: GeneratorContext): Project {
-    const project = new Project({
-        name: new MultilingualText(`${ctx.name}`),
-    }); // creates an OntoUML projects
-    const rootModel = project.createModel({
-        name: new MultilingualText("root"),
-    });
-
-    const contextModule = ctx.model.module;
-
-    const createdPackage = rootModel.createPackage(contextModule.name);
-    // Generate a contextModule
-    contextModuleGenerator(contextModule, createdPackage);
-    return project;
 }

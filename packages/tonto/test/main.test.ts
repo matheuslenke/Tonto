@@ -1,6 +1,7 @@
 import { EmptyFileSystem } from "langium";
 import { describe, expect, test } from "vitest";
 import { Model } from "../src/language/generated/ast.js";
+import { getPrimaryContextModuleOrThrow } from "../src/language/index.js";
 import { createTontoServices } from "../src/language/tonto-module.js";
 import { validationHelper } from "../src/test/tonto-test.js";
 
@@ -21,7 +22,7 @@ describe("A", () => {
 
     const model = astNode as Model;
 
-    const module = model.module;
+    const module = getPrimaryContextModuleOrThrow(model);
 
     expect(module.name).toBe("UFOS");
   });
