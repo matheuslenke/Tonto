@@ -1,13 +1,15 @@
-import { glob } from "glob";
 import { CompositeGeneratorNode } from "langium/generate";
 import { NodeFileSystem } from "langium/node";
-import * as fs from "node:fs";
-import path from "path";
-import { Model, builtInLibs } from "../../../language/index.js";
 import { createTontoServices } from "../../../language/tonto-module.js";
-import { extractAllAstNodes } from "../../cli-util.js";
 import { ModularGeneratorContext, parseProjectModular } from "../../utils/parseProjectModular.js";
-import { ErrorGufoResultResponse, GufoResultResponse, TontoManifest, TransformTontoToGufo, createDefaultTontoManifest } from "../../main.js";
+import { buildFolderDocuments } from "../../utils/buildFolderDocuments.js";
+import { readOrCreateDefaultTontoManifest } from "../../utils/readManifest.js";
+import {
+    ErrorGufoResultResponse,
+    GufoResultResponse,
+    TransformTontoToGufo,
+    createGufoErrorResponse,
+} from "../../main.js";
 
 export const transformToGufoCommand = async (
     dirName: string,
@@ -16,59 +18,30 @@ export const transformToGufoCommand = async (
 ): Promise<GufoResultResponse | ErrorGufoResultResponse> => {
     const services = createTontoServices({ ...NodeFileSystem }).Tonto;
 
-    let manifest: TontoManifest | undefined;
+    try {
+        const manifest = readOrCreateDefaultTontoManifest(dirName);
+        const { folderAbsolutePath, models } = await buildFolderDocuments(dirName, services, { manifest });
 
-    const folderAbsolutePath = path.resolve(dirName);
+        const context: ModularGeneratorContext = {
+            models,
+            fileNode: new CompositeGeneratorNode(),
+            manifest,
+            folderAbsolutePath,
+            label,
+            description,
+        };
 
-    if (!fs.existsSync(path.join(folderAbsolutePath, "tonto.json"))) {
-        manifest = createDefaultTontoManifest();
-    } else {
-        const filePath = path.join(dirName, "tonto.json");
+        const project = parseProjectModular(context);
 
-        const tontoManifestContent = fs.readFileSync(filePath, "utf-8");
-        manifest = JSON.parse(tontoManifestContent);
-    }
-
-    if (manifest === undefined) {
-        return {
-            status: 400,
-            message: "Could not find or create default tonto.json file",
-        } as ErrorGufoResultResponse;
-    }
-
-    const allFiles = await glob(dirName + "/**/*.tonto");
-
-    const models: Model[] = await extractAllAstNodes(allFiles, services, builtInLibs, false);
-
-    const context: ModularGeneratorContext = {
-        models,
-        fileNode: new CompositeGeneratorNode(),
-        manifest: manifest,
-        folderAbsolutePath,
-        label,
-        description,
-    };
-
-    const project = parseProjectModular(context);
-
-    const transformResult = TransformTontoToGufo(project);
-    if (transformResult) {
-        return transformResult;
-    } else {
-        return {
-            status: 500,
-            message: "Transformation failed",
-        } as ErrorGufoResultResponse;
+        return await TransformTontoToGufo(project);
+    } catch (error) {
+        return createGufoErrorResponse("Failed to prepare model for gUFO transformation", { error });
     }
 };
 
-export function isGufoResultResponse(value: unknown): value is GufoResultResponse | ErrorGufoResultResponse {
-    if (typeof value === "object" && value !== null) {
-        if ("result" in value) {
-            return typeof value.result === "string";
-        } else if ("info" in value) {
-            return !Array.isArray(value.info);
-        }
-    }
-    return false;
+export function isGufoResultResponse(value: unknown): value is GufoResultResponse {
+    return typeof value === "object"
+        && value !== null
+        && "result" in value
+        && typeof value.result === "string";
 }

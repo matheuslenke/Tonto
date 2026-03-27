@@ -1,14 +1,12 @@
-
 import chalk from "chalk";
-import { glob } from "glob";
 import { NodeFileSystem } from "langium/node";
-import path from "path";
-import { Model, builtInLibs } from "../../../language/index.js";
+import { Model } from "../../../language/index.js";
 import { TontoServices, createTontoServices } from "../../../language/tonto-module.js";
-import { extractAllAstNodes, extractAstNode } from "../../cli-util.js";
+import { extractAstNode } from "../../cli-util.js";
 import { generateJSONFileModular } from "../../generators/jsonModular.generator.js";
 import { generateJSONFile } from "../../jsonGenerator.js";
 import { TontoManifest } from "../../model/grammar/TontoManifest.js";
+import { buildFolderDocuments } from "../../utils/buildFolderDocuments.js";
 import { readOrCreateDefaultTontoManifest } from "../../utils/readManifest.js";
 
 export const generateCommand = async (fileName: string, destination: string): Promise<string | undefined> => {
@@ -23,8 +21,7 @@ export async function generateModularCommand(dir: string, label?: string, descri
     const services = createTontoServices({ ...NodeFileSystem }).Tonto;
 
     let manifest: TontoManifest;
-    let folderAbsolutePath: string;
-    // Find tonto.json file
+
     try {
         /**
          * Create Tonto Manifest file if it does not exist or read from an existing
@@ -33,8 +30,7 @@ export async function generateModularCommand(dir: string, label?: string, descri
         manifest = readOrCreateDefaultTontoManifest(dir);
 
         console.log(chalk.bold("tonto.json file parsed successfully."));
-        folderAbsolutePath = path.resolve(dir);
-        const createdFile = await createModel(dir, manifest, services, folderAbsolutePath, label, description);
+        const createdFile = await createModel(dir, manifest, services, label, description);
 
         console.log(chalk.green("JSON File generated successfully: "));
         return Promise.resolve(createdFile);
@@ -48,13 +44,10 @@ async function createModel(
     dir: string,
     manifest: TontoManifest,
     services: TontoServices,
-    folderAbsolutePath: string,
     label?: string,
     description?: string
 ): Promise<string | undefined> {
-    const allFiles = await glob(dir + "/**/*.tonto");
-
-    const models: Model[] = await extractAllAstNodes(allFiles, services, builtInLibs, false);
+    const { folderAbsolutePath, models } = await buildFolderDocuments(dir, services, { manifest });
 
     generateJSONFileModular(models, manifest, folderAbsolutePath, label, description);
 

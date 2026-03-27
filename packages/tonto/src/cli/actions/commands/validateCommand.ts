@@ -1,47 +1,23 @@
-
-import { glob } from "glob";
 import { CompositeGeneratorNode } from "langium/generate";
 import { NodeFileSystem } from "langium/node";
-import * as fs from "node:fs";
-import path from "node:path";
-import { builtInLibs, createTontoServices, Model } from "../../../index.js";
-import { extractAllAstNodes } from "../../cli-util.js";
+import { createTontoServices } from "../../../index.js";
 import { ModularGeneratorContext, parseProjectModular } from "../../utils/parseProjectModular.js";
-import { createDefaultTontoManifest, ErrorResultResponse, TontoManifest, validateTontoFile, ValidationReturn } from "../../main.js";
+import { buildFolderDocuments } from "../../utils/buildFolderDocuments.js";
+import { readOrCreateDefaultTontoManifest } from "../../utils/readManifest.js";
+import { ErrorResultResponse, validateTontoFile, ValidationReturn } from "../../main.js";
 
 export const validateCommand = async (dirName: string = "", locally: boolean = false): Promise<ValidationReturn | ErrorResultResponse> => {
     const services = createTontoServices({ ...NodeFileSystem }).Tonto;
+
     try {
-
-        let manifest: TontoManifest | undefined;
-
         const resolvedDirName = dirName || process.cwd();
-        const folderAbsolutePath = path.resolve(resolvedDirName);
-
-        if (!fs.existsSync(path.join(folderAbsolutePath, "tonto.json"))) {
-            manifest = createDefaultTontoManifest();
-        } else {
-            const filePath = path.join(folderAbsolutePath, "tonto.json");
-
-            const tontoManifestContent = fs.readFileSync(filePath, "utf-8");
-            manifest = JSON.parse(tontoManifestContent);
-        }
-
-        if (manifest === undefined) {
-            return {
-                status: 400,
-                message: "Could not find or create default tonto.json file",
-            } as ErrorResultResponse;
-        }
-
-        const allFiles = await glob(folderAbsolutePath + "/**/*.tonto");
-
-        const models: Model[] = await extractAllAstNodes(allFiles, services, builtInLibs, false);
+        const manifest = readOrCreateDefaultTontoManifest(resolvedDirName);
+        const { folderAbsolutePath, models } = await buildFolderDocuments(resolvedDirName, services, { manifest });
 
         const context: ModularGeneratorContext = {
             models,
             fileNode: new CompositeGeneratorNode(),
-            manifest: manifest,
+            manifest,
             folderAbsolutePath,
         };
 
@@ -70,7 +46,8 @@ export const validateCommand = async (dirName: string = "", locally: boolean = f
     } as ErrorResultResponse;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function isValidationReturn(object: any): object is ValidationReturn {
-    return "result" in object;
+function isValidationReturn(value: unknown): value is ValidationReturn {
+    return typeof value === "object"
+        && value !== null
+        && "result" in value;
 }
