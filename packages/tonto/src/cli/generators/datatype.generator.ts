@@ -3,6 +3,7 @@ import { DataType } from "../../language/generated/ast.js";
 import { setPropertyCardinality } from "./cardinality.generator.js";
 
 import { getDescription, getMultilingualText } from "./utils/labelUtils.js";
+import { findGeneratedDataType } from "./utils/findGeneratedDataType.js";
 
 export function customDataTypeGenerator(dataType: DataType, model: Package): Class {
     const name = getMultilingualText(dataType.label, dataType.name);
@@ -19,13 +20,13 @@ export function customDataTypeGenerator(dataType: DataType, model: Package): Cla
 }
 
 export function customDataTypeAttributesGenerator(dataType: DataType, dataTypes: Class[]) {
-    const dataTypeClass = dataTypes.find((item) => item.getName() === dataType.name);
+    const dataTypeClass = findGeneratedDataType(dataTypes, dataType.name);
     if (dataTypeClass) {
         dataType.attributes.forEach((element) => {
             let createdAttribute: Property | undefined;
 
             if (element.attributeTypeRef !== undefined) {
-                const customType = dataTypes.find((item) => item.getName() === element.attributeTypeRef.ref?.name);
+                const customType = findGeneratedDataType(dataTypes, element.attributeTypeRef.ref?.name);
 
                 if (customType) {
                     createdAttribute = dataTypeClass.createAttribute(customType, element.name);

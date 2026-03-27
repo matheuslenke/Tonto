@@ -1,6 +1,7 @@
 import { Class, Property } from "ontouml-js";
 import { Attribute, ClassDeclaration, DataType } from "../../language/generated/ast.js";
 import { setPropertyCardinality } from "./cardinality.generator.js";
+import { findGeneratedDataType } from "./utils/findGeneratedDataType.js";
 
 export function attributeGenerator(
     classElement: ClassDeclaration | DataType,
@@ -10,7 +11,7 @@ export function attributeGenerator(
     classElement.attributes.forEach((attribute: Attribute) => {
         let createdAttribute: Property | undefined;
         if (attribute.attributeTypeRef) {
-            const customType = dataTypes.find((item) => item.name.getText() === attribute.attributeTypeRef.ref?.name);
+            const customType = findGeneratedDataType(dataTypes, attribute.attributeTypeRef.ref?.name);
             if (customType) {
                 createdAttribute = createdClass.createAttribute(customType, attribute.name);
             }
