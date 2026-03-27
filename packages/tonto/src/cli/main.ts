@@ -80,5 +80,5 @@ export * from "./actions/index.js";
 export * from "./model/grammar/TontoManifest.js";
 export * from "./requests/gufoTransform.js";
 export * from "./requests/ontoumljsValidator.js";
+export * from "./utils/buildFolderDocuments.js";
 export * from "./utils/readManifest.js";
-

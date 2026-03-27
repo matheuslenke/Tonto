@@ -14,7 +14,7 @@ export function createTontoManifest(project: Project, destination: string) {
         license: "",
         publisher: "",
         dependencies: {},
-        outFolder: "",
+        outFolder: "out",
         authors: [],
     };
     const jsonString = toJson(manifest);
