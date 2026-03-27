@@ -1,242 +1,327 @@
-import * as path from 'path';
-import * as vscode from 'vscode';
-import { buildInitProjectFiles } from '../../../tonto/src/cli/actions/commands/initCommand.js';
-import { getOutputChannel } from '../extension/outputChannel.js';
-import { CommandIds } from './commandIds.js';
+import * as path from "node:path";
+import * as vscode from "vscode";
+import { buildInitProjectFiles } from "../../../tonto/src/cli/actions/commands/initCommand.js";
+import { getOutputChannel } from "../extension/outputChannel.js";
+import { CommandIds } from "./commandIds.js";
+import {
+    EditorChoice,
+    materializeInitProjectFiles,
+    promptEditorChoice,
+    shouldIncludeTemplatePathForEditor,
+} from "./init-project-files.js";
+import {
+    getPrimaryWorkspaceFolderOrShowError,
+    promptForWorkspaceTargetFolder,
+} from "./project-location.js";
+
+const PROJECT_TEMPLATE_CHOICES = ["Blank", "Cat and Dog example"] as const;
+const PROJECT_OPEN_CHOICES = ["Open in current window", "Open in new window", "Don't open"] as const;
+
+type ProjectTemplateChoice = (typeof PROJECT_TEMPLATE_CHOICES)[number];
+
+type InitProjectAnswers = {
+    projectName: string;
+    displayName: string;
+    version: string;
+    description: string;
+    license: string;
+    authorName: string;
+    authorEmail: string;
+    editorChoice: EditorChoice;
+    templateChoice: ProjectTemplateChoice;
+};
 
 function createInitCommand(context: vscode.ExtensionContext, sharedOutputChannel?: vscode.OutputChannel) {
-    context.subscriptions.push(vscode.commands.registerCommand(CommandIds.initProject, () => initAction(context, sharedOutputChannel)));
+    context.subscriptions.push(
+        vscode.commands.registerCommand(CommandIds.initProject, () => initAction(context, sharedOutputChannel))
+    );
 }
 
-async function initAction(context: vscode.ExtensionContext, sharedOutputChannel?: vscode.OutputChannel) {
-  const oc = sharedOutputChannel ?? getOutputChannel();
-  oc.appendLine('[Tonto: Init new project command] Init command invoked');
-  if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
-      oc.appendLine('No workspace open');
-      vscode.window.showErrorMessage('No workspace open to initialize project.');
-      oc.show(true);
-      return;
-  }
+async function initAction(_context: vscode.ExtensionContext, sharedOutputChannel?: vscode.OutputChannel) {
+    const outputChannel = sharedOutputChannel ?? getOutputChannel();
+    outputChannel.appendLine("[Tonto: Init new project command] Init command invoked");
 
-  const workspaceFolder = vscode.workspace.workspaceFolders[0];
-  oc.appendLine(`Workspace root: ${workspaceFolder.uri.fsPath}`);
+    const workspaceFolder = getPrimaryWorkspaceFolderOrShowError(
+        "No workspace open to initialize project.",
+        outputChannel
+    );
+    if (!workspaceFolder) {
+        return;
+    }
 
-  // Prompt the user for fields
-  const projectName = await vscode.window.showInputBox({ prompt: 'Project name', value: 'tonto-project', validateInput: v => v && v.trim() ? undefined : 'Enter a project name' });
-  oc.appendLine(`Prompt result - projectName: ${String(projectName)}`);
-  if (!projectName) {
-      oc.appendLine('User cancelled projectName input');
-      oc.show(true);
-      return;
-  }
-  
-  const displayName = await vscode.window.showInputBox({ prompt: 'Display name', value: projectName });
-  oc.appendLine(`Prompt result - displayName: ${String(displayName)}`);
-  if (displayName === undefined) {
-      oc.appendLine('User cancelled displayName input');
-      oc.show(true);
-      return;
-  }
-  
-  const version = await vscode.window.showInputBox({ prompt: 'Version', value: '1.0.0' });
-  oc.appendLine(`Prompt result - version: ${String(version)}`);
-  if (version === undefined) {
-      oc.appendLine('User cancelled version input');
-      oc.show(true);
-      return;
-  }
-  
-  const description = await vscode.window.showInputBox({ prompt: 'Description', value: '' });
-  oc.appendLine(`Prompt result - description: ${String(description)}`);
-  if (description === undefined) {
-      oc.appendLine('User cancelled description input');
-      oc.show(true);
-      return;
-  }
-  
-  const license = await vscode.window.showInputBox({ prompt: 'License', value: 'MIT' });
-  oc.appendLine(`Prompt result - license: ${String(license)}`);
-  if (license === undefined) {
-      oc.appendLine('User cancelled license input');
-      oc.show(true);
-      return;
-  }
-  
-  const authorName = await vscode.window.showInputBox({ prompt: 'Author name', value: '' });
-  oc.appendLine(`Prompt result - authorName: ${String(authorName)}`);
-  if (authorName === undefined) {
-      oc.appendLine('User cancelled authorName input');
-      oc.show(true);
-      return;
-  }
-  
-  const authorEmail = await vscode.window.showInputBox({ prompt: 'Author email (optional)', value: '' });
-  oc.appendLine(`Prompt result - authorEmail: ${String(authorEmail)}`);
-  if (authorEmail === undefined) {
-      oc.appendLine('User cancelled authorEmail input');
-      oc.show(true);
-      return;
-  }
-  const editorPick = await vscode.window.showQuickPick(['Cursor', 'VS Code', 'Both'], { placeHolder: 'Which editor do you use?' });
-  oc.appendLine(`Prompt result - editorPick: ${String(editorPick)}`);
-  if (!editorPick) {
-      oc.appendLine('User cancelled editor pick');
-      oc.show(true);
-      return;
-  }
-  const templatePick = await vscode.window.showQuickPick(['Blank', 'Cat and Dog example'], { placeHolder: 'Choose a project template' });
-  oc.appendLine(`Prompt result - templatePick: ${String(templatePick)}`);
-  if (!templatePick) {
-      oc.appendLine('User cancelled template pick');
-      oc.show(true);
-      return;
-  }
+    outputChannel.appendLine(`Workspace root: ${workspaceFolder.uri.fsPath}`);
 
-  // Prompt for target folder at the end: offer workspace root or allow choosing a folder
-  const defaultRoot = workspaceFolder.uri.fsPath;
-  const folderChoice = await vscode.window.showQuickPick([defaultRoot, 'Choose a folder...'], { placeHolder: 'Select folder to generate the project in' });
-  oc.appendLine(`Prompt result - folderChoice: ${String(folderChoice)}`);
-  if (!folderChoice) {
-      oc.appendLine('User cancelled folder choice');
-      oc.show(true);
-      return;
-  }
-  let root = defaultRoot;
-  if (folderChoice === 'Choose a folder...') {
-      const picked = await vscode.window.showOpenDialog({
-          canSelectFiles: false,
-          canSelectFolders: true,
-          canSelectMany: false,
-          defaultUri: workspaceFolder.uri,
-          openLabel: 'Select target folder'
-      });
-      if (!picked || !picked[0]) {
-          oc.appendLine('User cancelled folder picker');
-          oc.show(true);
-          return;
-      }
-      root = picked[0].fsPath;
-      oc.appendLine(`User picked folder: ${root}`);
-  } else {
-      root = folderChoice;
-      oc.appendLine(`Using folder: ${root}`);
-  }
+    const answers = await promptInitProjectAnswers(outputChannel);
+    if (!answers) {
+        return;
+    }
 
-  try {
-      await vscode.window.withProgress({
-          location: vscode.ProgressLocation.Notification,
-          title: 'Initializing Tonto project',
-          cancellable: false
-      }, () => {
-          return new Promise<void>((resolve, reject) => {
-              const options: { catDogExample?: boolean } = { catDogExample: templatePick === 'Cat and Dog example' };
-              oc.appendLine(`Building file list for projectName='${projectName}' options=${JSON.stringify(options)}`);
-              const files = buildInitProjectFiles(projectName, options);
-              oc.appendLine(`Files to create: ${files.length}`);
+    const targetRootUri = await promptForWorkspaceTargetFolder(workspaceFolder);
+    outputChannel.appendLine(`Prompt result - targetRoot: ${String(targetRootUri?.fsPath)}`);
+    if (!targetRootUri) {
+        outputChannel.appendLine("User cancelled folder choice");
+        outputChannel.show(true);
+        return;
+    }
 
-              // Create directories first
-              (async () => {
-                  for (const f of files.filter(x => x.type === 'dir')) {
-                      const dirPath = path.join(root, f.relativePath);
-                      const uri = vscode.Uri.file(dirPath);
-                      try {
-                          await vscode.workspace.fs.createDirectory(uri);
-                          oc.appendLine(`Created directory: ${dirPath}`);
-                      } catch (err) {
-                          oc.appendLine(`Failed creating directory ${dirPath}: ${String(err)}`);
-                          oc.show(true);
-                          reject(err);
-                          return;
-                      }
-                  }
+    try {
+        await vscode.window.withProgress(
+            {
+                location: vscode.ProgressLocation.Notification,
+                title: "Initializing Tonto project",
+                cancellable: false,
+            },
+            async () => {
+                const initOptions = {
+                    catDogExample: answers.templateChoice === "Cat and Dog example",
+                };
+                outputChannel.appendLine(
+                    `Building file list for projectName='${answers.projectName}' options=${JSON.stringify(initOptions)}`
+                );
 
-                  // Create files
-                  for (const f of files.filter(x => x.type === 'file')) {
-                      const filePath = path.join(root, f.relativePath);
-                      const uri = vscode.Uri.file(filePath);
-                      const content = f.content ?? '';
-                      try {
-                          await vscode.workspace.fs.writeFile(uri, new TextEncoder().encode(content));
-                          oc.appendLine(`Wrote file: ${filePath}`);
-                      } catch (err) {
-                          oc.appendLine(`Failed writing file ${filePath}: ${String(err)}`);
-                          oc.show(true);
-                          reject(err);
-                          return;
-                      }
-                  }
-                  
-                  // Create tonto.json manifest
-                  const authors = authorName ? [{
-                      name: authorName,
-                      ...(authorEmail && { email: authorEmail })
-                  }] : [];
-                  
-                  const tontoManifest = {
-                      projectName,
-                      displayName,
-                      version,
-                      description,
-                      publisher: "",
-                      license,
-                      dependencies: {},
-                      outFolder: 'out',
-                      authors
-                  };
-                  
-                  const manifestPath = path.join(root, projectName, 'tonto.json');
-                  const manifestUri = vscode.Uri.file(manifestPath);
-                  try {
-                      await vscode.workspace.fs.writeFile(
-                          manifestUri,
-                          new TextEncoder().encode(JSON.stringify(tontoManifest, null, 2))
-                      );
-                      oc.appendLine(`Wrote manifest: ${manifestPath}`);
-                  } catch (err) {
-                      oc.appendLine(`Failed writing manifest ${manifestPath}: ${String(err)}`);
-                      oc.show(true);
-                      reject(err);
-                      return;
-                  }
+                const files = buildInitProjectFiles(answers.projectName, initOptions);
+                outputChannel.appendLine(`Files to create: ${files.length}`);
 
-                  oc.appendLine(`All files created for project '${projectName}' at ${root}`);
-                  oc.show(true);
-                  vscode.window.showInformationMessage('Tonto project initialized successfully.');
-                  resolve();
-                  // After creation, ask user if they want to open the project
-                  (async () => {
-                      try {
-                          const openPick = await vscode.window.showQuickPick(['Open in current window', 'Open in new window', "Don't open"], { placeHolder: 'Open the generated project now?' });
-                          oc.appendLine(`Prompt result - openPick: ${String(openPick)}`);
-                          if (!openPick) {
-                              oc.appendLine('User cancelled open-project prompt');
-                              return;
-                          }
+                await materializeInitProjectFiles(targetRootUri, files, {
+                    outputChannel,
+                    filterEntry: (_file, relativePath) =>
+                        shouldIncludeTemplatePathForEditor(answers.editorChoice, relativePath),
+                });
+                await writeManifestFile(targetRootUri, answers, outputChannel);
 
-                          const projectPath = path.resolve(root, projectName)
+                outputChannel.appendLine(
+                    `All files created for project '${answers.projectName}' at ${targetRootUri.fsPath}`
+                );
+                outputChannel.show(true);
+                vscode.window.showInformationMessage("Tonto project initialized successfully.");
+            }
+        );
 
-                          if (openPick === 'Open in current window') {
-                              // Open the folder in the current window
-                              await vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(projectPath), false);
-                              oc.appendLine('Opened project in current window');
-                          } else if (openPick === 'Open in new window') {
-                              // Open the folder in a new window
-                              await vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(projectPath), true);
-                              oc.appendLine('Opened project in new window');
-                          } else {
-                              oc.appendLine('User chose not to open the project');
-                          }
-                      } catch (err) {
-                          oc.appendLine(`Error while opening project: ${String(err)}`);
-                      }
-                  })();
-              })();
-          });
-      });
-  } catch (err) {
-      console.error(err);
-  }
+        await promptToOpenGeneratedProject(targetRootUri.fsPath, answers.projectName, outputChannel);
+    } catch (error) {
+        console.error(error);
+        outputChannel.appendLine(`Error while initializing project: ${String(error)}`);
+        outputChannel.show(true);
+    }
 }
+
+async function promptInitProjectAnswers(
+    outputChannel: vscode.OutputChannel
+): Promise<InitProjectAnswers | undefined> {
+    const projectName = await promptTextValue(
+        outputChannel,
+        "projectName",
+        {
+            prompt: "Project name",
+            value: "tonto-project",
+            validateInput: (value) => (value && value.trim() ? undefined : "Enter a project name"),
+        },
+        { allowEmpty: false }
+    );
+    if (projectName === undefined) {
+        return undefined;
+    }
+
+    const displayName = await promptTextValue(outputChannel, "displayName", {
+        prompt: "Display name",
+        value: projectName,
+    });
+    if (displayName === undefined) {
+        return undefined;
+    }
+
+    const version = await promptTextValue(outputChannel, "version", {
+        prompt: "Version",
+        value: "1.0.0",
+    });
+    if (version === undefined) {
+        return undefined;
+    }
+
+    const description = await promptTextValue(outputChannel, "description", {
+        prompt: "Description",
+        value: "",
+    });
+    if (description === undefined) {
+        return undefined;
+    }
+
+    const license = await promptTextValue(outputChannel, "license", {
+        prompt: "License",
+        value: "MIT",
+    });
+    if (license === undefined) {
+        return undefined;
+    }
+
+    const authorName = await promptTextValue(outputChannel, "authorName", {
+        prompt: "Author name",
+        value: "",
+    });
+    if (authorName === undefined) {
+        return undefined;
+    }
+
+    const authorEmail = await promptTextValue(outputChannel, "authorEmail", {
+        prompt: "Author email (optional)",
+        value: "",
+    });
+    if (authorEmail === undefined) {
+        return undefined;
+    }
+
+    const editorChoice = await promptEditorChoice();
+    outputChannel.appendLine(`Prompt result - editorChoice: ${String(editorChoice)}`);
+    if (!editorChoice) {
+        outputChannel.appendLine("User cancelled editor pick");
+        outputChannel.show(true);
+        return undefined;
+    }
+
+    const templateChoice = await promptSelection(
+        outputChannel,
+        "templateChoice",
+        PROJECT_TEMPLATE_CHOICES,
+        {
+            placeHolder: "Choose a project template",
+        }
+    );
+    if (!templateChoice) {
+        return undefined;
+    }
+
+    return {
+        projectName,
+        displayName,
+        version,
+        description,
+        license,
+        authorName,
+        authorEmail,
+        editorChoice,
+        templateChoice,
+    };
+}
+
+async function promptTextValue(
+    outputChannel: vscode.OutputChannel,
+    fieldName: string,
+    options: vscode.InputBoxOptions,
+    config: { allowEmpty?: boolean } = {}
+): Promise<string | undefined> {
+    const value = await vscode.window.showInputBox(options);
+    outputChannel.appendLine(`Prompt result - ${fieldName}: ${String(value)}`);
+
+    if (value === undefined || (!config.allowEmpty && value.trim() === "")) {
+        outputChannel.appendLine(`User cancelled ${fieldName} input`);
+        outputChannel.show(true);
+        return undefined;
+    }
+
+    return value;
+}
+
+async function promptSelection<T extends string>(
+    outputChannel: vscode.OutputChannel,
+    fieldName: string,
+    options: readonly T[],
+    quickPickOptions: vscode.QuickPickOptions
+): Promise<T | undefined> {
+    const items = options.map((option) => ({
+        label: option,
+        value: option,
+    }));
+    const selection = await vscode.window.showQuickPick(items, quickPickOptions);
+    outputChannel.appendLine(`Prompt result - ${fieldName}: ${String(selection?.value)}`);
+
+    if (!selection) {
+        outputChannel.appendLine(`User cancelled ${fieldName} pick`);
+        outputChannel.show(true);
+        return undefined;
+    }
+
+    return selection.value;
+}
+
+async function writeManifestFile(
+    targetRootUri: vscode.Uri,
+    answers: InitProjectAnswers,
+    outputChannel: vscode.OutputChannel
+): Promise<void> {
+    const manifestPath = path.join(targetRootUri.fsPath, answers.projectName, "tonto.json");
+    const manifestUri = vscode.Uri.file(manifestPath);
+
+    try {
+        await vscode.workspace.fs.writeFile(
+            manifestUri,
+            new TextEncoder().encode(buildManifestContent(answers))
+        );
+        outputChannel.appendLine(`Wrote manifest: ${manifestPath}`);
+    } catch (error) {
+        outputChannel.appendLine(`Failed writing manifest ${manifestPath}: ${String(error)}`);
+        outputChannel.show(true);
+        throw error;
+    }
+}
+
+function buildManifestContent(answers: InitProjectAnswers): string {
+    const authors = answers.authorName
+        ? [
+            {
+                name: answers.authorName,
+                ...(answers.authorEmail ? { email: answers.authorEmail } : {}),
+            },
+        ]
+        : [];
+
+    return JSON.stringify(
+        {
+            projectName: answers.projectName,
+            displayName: answers.displayName,
+            version: answers.version,
+            description: answers.description,
+            publisher: "",
+            license: answers.license,
+            dependencies: {},
+            outFolder: "out",
+            authors,
+        },
+        null,
+        2
+    );
+}
+
+async function promptToOpenGeneratedProject(
+    targetRootPath: string,
+    projectName: string,
+    outputChannel: vscode.OutputChannel
+): Promise<void> {
+    const openChoice = await promptSelection(outputChannel, "openChoice", PROJECT_OPEN_CHOICES, {
+        placeHolder: "Open the generated project now?",
+    });
+    if (!openChoice) {
+        return;
+    }
+
+    const projectPath = path.resolve(targetRootPath, projectName);
+
+    try {
+        if (openChoice === "Open in current window") {
+            await vscode.commands.executeCommand("vscode.openFolder", vscode.Uri.file(projectPath), false);
+            outputChannel.appendLine("Opened project in current window");
+            return;
+        }
+
+        if (openChoice === "Open in new window") {
+            await vscode.commands.executeCommand("vscode.openFolder", vscode.Uri.file(projectPath), true);
+            outputChannel.appendLine("Opened project in new window");
+            return;
+        }
+
+        outputChannel.appendLine("User chose not to open the project");
+    } catch (error) {
+        outputChannel.appendLine(`Error while opening project: ${String(error)}`);
+    }
+}
+
 export { createInitCommand };
-
-
