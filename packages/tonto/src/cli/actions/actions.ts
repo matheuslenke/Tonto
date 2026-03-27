@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import * as fs from "node:fs";
 import path from "path";
-import { ErrorGufoResultResponse, GufoResultResponse } from "../requests/gufoTransform.js";
+import { ErrorGufoResultResponse, GufoResultResponse, formatGufoErrorMessage } from "../requests/gufoTransform.js";
 import { ErrorResultResponse, ValidationReturn } from "../requests/ontoumljsValidator.js";
 import { readOrCreateDefaultTontoManifest } from "../utils/readManifest.js";
 import { generateModularCommand } from "./commands/generateCommand.js";
@@ -73,10 +73,16 @@ export class TontoActions {
                 fs.writeFileSync(path.join(dirName, manifest.outFolder, manifest.projectName), resultResponse.result);
             } else {
                 const errorResponse = response as ErrorGufoResultResponse;
-                errorResponse.info.forEach((errorInfo) => {
-                    console.log(chalk.bold.redBright(`[${errorInfo.severity}] ${errorInfo.title}:`));
-                    console.log(chalk.red(errorInfo.description));
-                });
+                const details = errorResponse.info ?? [];
+
+                if (details.length > 0) {
+                    details.forEach((errorInfo) => {
+                        console.log(chalk.bold.redBright(`[${errorInfo.severity}] ${errorInfo.title}:`));
+                        console.log(chalk.red(errorInfo.description));
+                    });
+                } else {
+                    console.log(chalk.red(formatGufoErrorMessage(errorResponse)));
+                }
             }
             console.log(chalk.bold.green("Transformation to Gufo finished"));
         } catch (error) {
