@@ -11,22 +11,14 @@ export function registerPlantUMLCommands(context: vscode.ExtensionContext) {
     const updateDiagram = async (documentUri: vscode.Uri) => {
         if (PlantUMLPanel.currentPanel && PlantUMLPanel.currentPanel.documentUri.toString() === documentUri.toString()) {
             const document = await vscode.workspace.openTextDocument(documentUri);
-            const text = document.getText();
-            const uri = URI.parse(document.uri.toString());
-
             try {
-                const services = createTontoServices(NodeFileSystem).Tonto;
-                const langiumDoc = await services.shared.workspace.LangiumDocumentFactory.fromString(text, uri);
-                await services.shared.workspace.DocumentBuilder.build([langiumDoc]);
-
-                const parseResult = langiumDoc.parseResult;
-                if (parseResult.parserErrors.length > 0) {
-                    return;
+                const plantuml = await buildPlantUmlForDocument(document, {
+                    showExternalReferences,
+                    useOrthogonalLines,
+                });
+                if (plantuml) {
+                    PlantUMLPanel.currentPanel.update(plantuml);
                 }
-
-                const tontoModel = parseResult.value as Model;
-                const plantuml = generatePlantUML(tontoModel, { showExternalReferences, orthogonal: useOrthogonalLines });
-                PlantUMLPanel.currentPanel.update(plantuml);
             } catch (e) {
                 console.error('Error updating diagram:', e);
             }
@@ -35,34 +27,21 @@ export function registerPlantUMLCommands(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand('tonto.diagram.plantuml.open', async () => {
-            const editor = vscode.window.activeTextEditor;
-            if (!editor) {
-                vscode.window.showErrorMessage('No active Tonto editor found.');
+            const document = getActiveTontoDocument();
+            if (!document) {
                 return;
             }
-
-            const document = editor.document;
-            if (document.languageId !== 'tonto') {
-                vscode.window.showErrorMessage('Active file is not a Tonto file.');
-                return;
-            }
-
-            const text = document.getText();
-            const uri = URI.parse(document.uri.toString());
 
             try {
-                const services = createTontoServices(NodeFileSystem).Tonto;
-                const langiumDoc = await services.shared.workspace.LangiumDocumentFactory.fromString(text, uri);
-                await services.shared.workspace.DocumentBuilder.build([langiumDoc]);
-
-                const parseResult = langiumDoc.parseResult;
-                if (parseResult.parserErrors.length > 0) {
+                const plantuml = await buildPlantUmlForDocument(document, {
+                    showExternalReferences,
+                    useOrthogonalLines,
+                });
+                if (!plantuml) {
                     vscode.window.showErrorMessage('Please fix syntax errors before generating diagram.');
                     return;
                 }
 
-                const tontoModel = parseResult.value as Model;
-                const plantuml = generatePlantUML(tontoModel, { showExternalReferences, orthogonal: useOrthogonalLines });
                 PlantUMLPanel.createOrShow(context.extensionUri, plantuml, document.uri);
             } catch (e) {
                 console.error(e);
@@ -99,34 +78,17 @@ export function registerPlantUMLCommands(context: vscode.ExtensionContext) {
 
     context.subscriptions.push(
         vscode.commands.registerCommand('tonto.diagram.plantuml.export', async () => {
-            const editor = vscode.window.activeTextEditor;
-            if (!editor) {
-                vscode.window.showErrorMessage('No active Tonto editor found.');
+            const document = getActiveTontoDocument();
+            if (!document) {
                 return;
             }
-
-            const document = editor.document;
-            if (document.languageId !== 'tonto') {
-                vscode.window.showErrorMessage('Active file is not a Tonto file.');
-                return;
-            }
-
-            const text = document.getText();
-            const uri = URI.parse(document.uri.toString());
 
             try {
-                const services = createTontoServices(NodeFileSystem).Tonto;
-                const langiumDoc = await services.shared.workspace.LangiumDocumentFactory.fromString(text, uri);
-                await services.shared.workspace.DocumentBuilder.build([langiumDoc]);
-
-                const parseResult = langiumDoc.parseResult;
-                if (parseResult.parserErrors.length > 0) {
+                const plantuml = await buildPlantUmlForDocument(document);
+                if (!plantuml) {
                     vscode.window.showErrorMessage('Please fix syntax errors before exporting.');
                     return;
                 }
-
-                const tontoModel = parseResult.value as Model;
-                const plantuml = generatePlantUML(tontoModel);
 
                 const fileUri = await vscode.window.showSaveDialog({
                     defaultUri: vscode.Uri.file(document.uri.fsPath.replace('.tonto', '.puml')),
@@ -145,4 +107,45 @@ export function registerPlantUMLCommands(context: vscode.ExtensionContext) {
             }
         })
     );
+}
+
+function getActiveTontoDocument(): vscode.TextDocument | undefined {
+    const document = vscode.window.activeTextEditor?.document;
+    if (!document) {
+        vscode.window.showErrorMessage('No active Tonto editor found.');
+        return undefined;
+    }
+
+    if (document.languageId !== 'tonto') {
+        vscode.window.showErrorMessage('Active file is not a Tonto file.');
+        return undefined;
+    }
+
+    return document;
+}
+
+async function buildPlantUmlForDocument(
+    document: vscode.TextDocument,
+    options: { showExternalReferences?: boolean; useOrthogonalLines?: boolean } = {}
+): Promise<string | undefined> {
+    const services = createTontoServices(NodeFileSystem).Tonto;
+    const langiumDoc = await services.shared.workspace.LangiumDocumentFactory.fromString(
+        document.getText(),
+        URI.parse(document.uri.toString())
+    );
+    await services.shared.workspace.DocumentBuilder.build([langiumDoc]);
+
+    if (langiumDoc.parseResult.parserErrors.length > 0) {
+        return undefined;
+    }
+
+    const plantUmlOptions =
+        options.showExternalReferences === undefined && options.useOrthogonalLines === undefined
+            ? undefined
+            : {
+                showExternalReferences: options.showExternalReferences ?? true,
+                orthogonal: options.useOrthogonalLines ?? false,
+            };
+
+    return generatePlantUML(langiumDoc.parseResult.value as Model, plantUmlOptions);
 }

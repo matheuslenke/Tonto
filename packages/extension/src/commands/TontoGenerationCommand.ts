@@ -16,23 +16,6 @@ function createTontoGenerationStatusBarItem(context: vscode.ExtensionContext, st
     // createStatusBarItem(context, statusBarItem);
 }
 
-function createStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
-    // create a new status bar item that we can now manage
-    statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 49);
-    statusBarItem.command = CommandIds.generateTontoFromButton;
-    context.subscriptions.push(statusBarItem);
-
-    // register some listener that make sure the status bar
-    // item always up-to-date
-    context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(() => updateTontoStatusBarItem(statusBarItem)));
-    context.subscriptions.push(
-        vscode.window.onDidChangeTextEditorSelection(() => updateTontoStatusBarItem(statusBarItem))
-    );
-
-    // update status bar item once at start
-    updateTontoStatusBarItem(statusBarItem);
-}
-
 async function createCommandPaletteGenerateTontoCommand() {
     const fileUri = await vscode.window.showOpenDialog({
         canSelectFiles: true,
@@ -72,29 +55,23 @@ async function createStatusBarItemGenerateTontoCommand(uri: vscode.Uri) {
     }
 }
 
-function updateTontoStatusBarItem(statusBarItem: vscode.StatusBarItem): void {
-    statusBarItem.text = "$(keybindings-sort) JSON -> Tonto";
-    statusBarItem.show();
-}
-
 async function generateTonto(uri: vscode.Uri, generatedDirectoryName: string) {
     if (uri.scheme == "file") {
-        vscode.workspace.openTextDocument(uri).then(async (document) => {
-            if (document.languageId === "json") {
-                const destination = path.join(path.dirname(uri.fsPath), generatedDirectoryName);
-                const result = await importCommand({
-                    fileName: document.fileName,
-                    destination: destination,
-                });
-                if (result.success) {
-                    vscode.window.showInformationMessage(`Success! ${result.message}`);
-                } else {
-                    vscode.window.showInformationMessage(`Error! ${result.message}`);
-                }
+        const document = await vscode.workspace.openTextDocument(uri);
+        if (document.languageId === "json") {
+            const destination = path.join(path.dirname(uri.fsPath), generatedDirectoryName);
+            const result = await importCommand({
+                fileName: document.fileName,
+                destination: destination,
+            });
+            if (result.success) {
+                vscode.window.showInformationMessage(`Success! ${result.message}`);
             } else {
-                vscode.window.showInformationMessage("Failed! File is not a JSON");
+                vscode.window.showInformationMessage(`Error! ${result.message}`);
             }
-        });
+        } else {
+            vscode.window.showInformationMessage("Failed! File is not a JSON");
+        }
     }
 }
 
