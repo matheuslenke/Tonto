@@ -1,6 +1,10 @@
 import { generateModularCommand } from "tonto-cli";
 import * as vscode from "vscode";
 import { CommandIds } from "./commandIds.js";
+import {
+    promptForProjectFolder,
+    resolveCommandFolderFromContext,
+} from "./project-location.js";
 
 function createGenerateJsonStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
     // Register the status bar item command
@@ -17,36 +21,6 @@ function createGenerateJsonStatusBarItem(context: vscode.ExtensionContext, statu
     // return createStatusBarItem(context, statusBarItem);
 }
 
-function createStatusBarItem(context: vscode.ExtensionContext, statusBarItem: vscode.StatusBarItem) {
-    // create a new status bar item that we can now manage
-    statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-    statusBarItem.command = CommandIds.generateJsonFromButton;
-    context.subscriptions.push(statusBarItem);
-
-    // register some listener that make sure the status bar
-    // item always up-to-date
-    context.subscriptions.push(
-        vscode.window.onDidChangeActiveTextEditor(() => {
-            updateJsonStatusBarItem(statusBarItem);
-        })
-    );
-    context.subscriptions.push(
-        vscode.window.onDidChangeTextEditorSelection(() => {
-            updateJsonStatusBarItem(statusBarItem);
-        })
-    );
-
-    // update status bar item once at start
-    updateJsonStatusBarItem(statusBarItem);
-
-    return statusBarItem;
-}
-
-function updateJsonStatusBarItem(statusBarItem: vscode.StatusBarItem): void {
-    statusBarItem.text = "$(bracket-dot) Tonto -> JSON";
-    statusBarItem.show();
-}
-
 async function generateJson(folderUri: vscode.Uri) {
     try {
         const generatedFileName = await generateModularCommand(folderUri.fsPath);
@@ -60,124 +34,21 @@ async function generateJson(folderUri: vscode.Uri) {
 }
 
 async function createCommandPaletteGenerateJsonCommand() {
-    const workspaceFolders = vscode.workspace.workspaceFolders;
-    let folderUri: vscode.Uri | undefined;
-
-    if (workspaceFolders && workspaceFolders.length > 0) {
-        if (workspaceFolders.length === 1) {
-            const options = [`Use Workspace Root (${workspaceFolders[0].name})`, "Select Folder..."];
-            const selection = await vscode.window.showQuickPick(options, {
-                placeHolder: "Select how to choose the project folder"
-            });
-
-            if (!selection) {
-                return;
-            }
-
-            if (selection.startsWith("Use Workspace Root")) {
-                folderUri = workspaceFolders[0].uri;
-            }
-        } else {
-            // Multiple workspace folders
-            const folderItems = workspaceFolders.map(wf => ({ label: `$(root-folder) ${wf.name}`, uri: wf.uri }));
-            const options = [
-                ...folderItems,
-                { label: "$(folder) Select Folder...", uri: undefined }
-            ];
-
-            const selection = await vscode.window.showQuickPick(options, {
-                placeHolder: "Select the workspace folder or a specific folder"
-            });
-
-            if (!selection) {
-                return;
-            }
-
-            if (selection.uri) {
-                folderUri = selection.uri;
-            }
-        }
-    } else {
-        // No workspace folders, force select folder
-        const selection = await vscode.window.showQuickPick(["Select Folder..."], {
-            placeHolder: "No workspace open. Select a folder."
-        });
-        if (!selection) return;
-    }
-
-    // If folderUri is still undefined (user chose "Select Folder..." or we fell through)
-    if (!folderUri) {
-        const directoryUri = await vscode.window.showOpenDialog({
-            canSelectFiles: false,
-            canSelectFolders: true,
-            canSelectMany: false,
-            openLabel: "Select Tonto Project directory",
-        });
-
-        if (directoryUri && directoryUri[0]) {
-            folderUri = directoryUri[0];
-        }
-    }
+    const folderUri = await promptForProjectFolder();
 
     if (folderUri) {
         await generateJson(folderUri);
     }
 }
 
-async function createStatusBarItemGenerateJsonCommand(uri: vscode.Uri) {
-    const editor = vscode.window.activeTextEditor;
-    if (!uri) {
-        const documentUri = editor?.document.uri;
-        if (documentUri) {
-            uri = documentUri;
-        } else {
-            const currentRoot = vscode.workspace.workspaceFolders?.[0]?.uri;
-            if (currentRoot) {
-                uri = currentRoot;
-            }
-        }
-    }
+async function createStatusBarItemGenerateJsonCommand(uri?: vscode.Uri) {
+    const folderUri = await resolveCommandFolderFromContext({
+        uri,
+        missingContextMessage: "Failed! Could not find a folder to generate JSON from",
+    });
 
-    if (uri) {
-        // If uri is a file, get its folder
-        try {
-            const stat = await vscode.workspace.fs.stat(uri);
-            if (stat.type === vscode.FileType.File) {
-                uri = vscode.Uri.joinPath(uri, "..");
-            }
-        } catch (e) {
-            // ignore
-        }
-
-        // If we can't determine a folder, fallback to workspace root or ask
-        // But for status bar, we usually have a context. 
-        // Let's just try to use the uri as the folder if it's a folder, or parent if file.
-
-        // Actually, the original code did:
-        // const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
-        // if (workspaceFolder) { await generateJson(workspaceFolder); }
-
-        // We should probably stick to that logic but use our new generateJson which takes a Uri, not WorkspaceFolder
-        // But wait, generateJson now expects a folder Uri.
-
-        const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
-        if (workspaceFolder) {
-            await generateJson(workspaceFolder.uri);
-        } else {
-            // If not in workspace, maybe just use the folder of the file?
-            // The original code required it to be in a workspace.
-            // Let's keep it simple and consistent with original behavior for now, 
-            // but using the new generateJson signature.
-            // However, if the user clicks the button, they might expect it to work on the current file's project.
-
-            // Let's try to find the folder of the current file
-            let folderUri = uri;
-            const stat = await vscode.workspace.fs.stat(uri);
-            if (stat.type === vscode.FileType.File) {
-                folderUri = vscode.Uri.joinPath(uri, "..");
-            }
-            await generateJson(folderUri);
-        }
+    if (folderUri) {
+        await generateJson(folderUri);
     }
 }
 
