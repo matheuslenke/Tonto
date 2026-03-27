@@ -43,18 +43,28 @@ export const TontoGrammar = (): Grammar => loadedTontoGrammar ?? (loadedTontoGra
         "$type": "Alternatives",
         "elements": [
           {
-            "$type": "RuleCall",
-            "rule": {
-              "$ref": "#/rules@3"
-            },
-            "arguments": []
+            "$type": "Assignment",
+            "feature": "import",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@3"
+              },
+              "arguments": []
+            }
           },
           {
-            "$type": "RuleCall",
-            "rule": {
-              "$ref": "#/rules@2"
-            },
-            "arguments": []
+            "$type": "Assignment",
+            "feature": "contextModule",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@2"
+              },
+              "arguments": []
+            }
           }
         ]
       },

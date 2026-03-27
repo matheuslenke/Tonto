@@ -3,6 +3,7 @@ import { SCompartment, SEdge, SGraph, SLabel, SModelRoot, SNode } from "sprotty-
 import { CancellationToken } from "vscode-languageserver";
 import { URI } from "vscode-uri";
 import { ClassDeclaration, ContextModule, DataTypeOrClassOrRelation, Model } from "../generated/ast.js";
+import { getPrimaryContextModuleOrThrow } from "../utils/modelStatements.js";
 import { TontoDiagramUtils } from "../utils/tontoDiagramUtils.js";
 import { generateEdge } from "./generate-edge.js";
 import { generateNode } from "./generate-node.js";
@@ -30,8 +31,8 @@ export class TontoDiagramGenerator extends LangiumDiagramGenerator {
 
     protected generateRoot(args: GeneratorContext<Model>): SModelRoot {
         const { document } = args;
-        const model = document.parseResult.value.module;
-        const tontoUtils = new TontoDiagramUtils(model);
+        const contextModule = getPrimaryContextModuleOrThrow(document.parseResult.value);
+        const tontoUtils = new TontoDiagramUtils(contextModule);
 
         const classDeclarations = tontoUtils.getClassDeclarations()
             .flatMap(d => generateNode(d, args) ?? []);
@@ -45,7 +46,7 @@ export class TontoDiagramGenerator extends LangiumDiagramGenerator {
         //     this.generateExternalPackages(args, tontoUtils.getReferencedClasses()) : [];
         const dataTypes = tontoUtils.getDatatypes().flatMap(d => generateNode(d, args) ?? []);
 
-        const packageId = args.idCache.uniqueId(model.name + "_package");
+        const packageId = args.idCache.uniqueId(contextModule.name + "_package");
 
         const graph: SGraph = {
             type: "graph",

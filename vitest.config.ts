@@ -15,6 +15,7 @@ export default defineConfig({
         deps: {
             interopDefault: true
         },
-        include: ["**/**/*.test.ts"]
+        include: ["**/test/**/*.test.ts"],
+        exclude: [".claude/**", "**/node_modules"]
     }
 });

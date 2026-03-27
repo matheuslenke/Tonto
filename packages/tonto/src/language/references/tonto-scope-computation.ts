@@ -12,6 +12,7 @@ import {
     isGeneralizationSet,
     Model,
 } from "../generated/ast.js";
+import { getModelImports, getPrimaryContextModule } from "../utils/modelStatements.js";
 import { TontoServices } from "../tonto-module.js";
 import { TontoQualifiedNameProvider } from "./tonto-name-provider.js";
 
@@ -86,25 +87,30 @@ export class TontoScopeComputation extends DefaultScopeComputation {
     ): Promise<PrecomputedScopes> {
         const model = document.parseResult.value as Model;
         const scopes = new MultiMap<AstNode, AstNodeDescription>();
+        const contextModule = getPrimaryContextModule(model);
 
-        for (const importItem of model.imports) {
+        if (!contextModule) {
+            return scopes;
+        }
+
+        for (const importItem of getModelImports(model)) {
             const contextModule = importItem.referencedModel?.ref;
             if (contextModule) {
                 await this.processContainer(contextModule, scopes, document, cancelToken);
             }
         }
-        await this.processContainer(model.module, scopes, document, cancelToken);
+        await this.processContainer(contextModule, scopes, document, cancelToken);
 
         const otherAstNodeDescriptions: AstNodeDescription[] = [];
         scopes.forEach((scope, key) => {
             if (isContextModule(key)) {
-                if (key.name !== model.module.name) {
+                if (key.name !== contextModule.name) {
                     otherAstNodeDescriptions.push(scope);
                 }
             }
         });
 
-        scopes.addAll(model.module, otherAstNodeDescriptions);
+        scopes.addAll(contextModule, otherAstNodeDescriptions);
 
         // Log computed scopes
         console.log("Computed Scopes:");

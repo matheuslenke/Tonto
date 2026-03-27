@@ -3,6 +3,7 @@ import { expandToString as s } from "langium/generate";
 import { parseHelper } from "langium/test";
 import { beforeAll, describe, expect, test } from "vitest";
 import { isClassDeclaration, isElementRelation } from "../../../lib/index.js";
+import { getPrimaryContextModuleOrThrow } from "../../../src/language/index.js";
 import { Cardinality, Model, isModel } from "../../../src/language/generated/ast.js";
 import { createTontoServices } from "../../../src/language/tonto-module.js";
 
@@ -34,10 +35,10 @@ describe("Parsing tests of Relations", () => {
         // check for absensce of parser errors the classic way:
         //  deacivated, find a much more human readable way below!
         // expect(document.parseResult.parserErrors).toHaveLength(0);
-        const externalRelations = document.parseResult.value?.module.declarations
+        const externalRelations = document.parseResult.value && getPrimaryContextModuleOrThrow(document.parseResult.value).declarations
             .filter(isElementRelation)
             .map(r => r.name ?? "");
-        const relations = document.parseResult.value?.module.declarations
+        const relations = document.parseResult.value && getPrimaryContextModuleOrThrow(document.parseResult.value).declarations
         .filter(isClassDeclaration)
         .flatMap(item => item.references)
         .map(c => c.$container.name + "." + (c.name ?? "unamed"));
@@ -71,7 +72,7 @@ describe("Parsing tests of Relations", () => {
             relation Doctor (endA) [2] -- treats3 -- (endB) Person
             relation Doctor (endA) [1..2] -- treats4 -- [1..*] (endB) Person
         `);
-        const externalRelations = document.parseResult.value?.module.declarations
+        const externalRelations = document.parseResult.value && getPrimaryContextModuleOrThrow(document.parseResult.value).declarations
             .filter(isElementRelation)
             .map(r => `${r.name} [${cardinalityToString(r.firstCardinality)}] [${cardinalityToString(r.secondCardinality)}]` ?? "");
 

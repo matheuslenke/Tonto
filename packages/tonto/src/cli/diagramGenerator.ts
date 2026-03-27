@@ -1,12 +1,6 @@
-import { Class, Generalization, GeneralizationSet, MultilingualText, Package, Project, Relation } from "ontouml-js";
-import { contextModuleGenerator } from "../cli/generators/contextModule.generator.js";
+import { Class, Generalization, GeneralizationSet, Package, Relation } from "ontouml-js";
 import { Model } from "../language/index.js";
-
-
-interface GeneratorContext {
-    model: Model;
-    name: string;
-}
+import { ParseProjectContext, parseProject } from "./utils/parseProject.js";
 
 export interface diagramContent {
     packages: Package,
@@ -17,14 +11,14 @@ export interface diagramContent {
 }
 
 export function extractContent(model: Model, name: string | undefined): diagramContent {
-    const ctx = <GeneratorContext>{
+    const ctx = <ParseProjectContext>{
         model,
         name,
     };
     return generate(ctx);
 }
 
-function generate(ctx: GeneratorContext): diagramContent {
+function generate(ctx: ParseProjectContext): diagramContent {
     // Every OntoUML element can be created from a constructor that can receive a partial object
     // as references for its creation
     const project = parseProject(ctx);
@@ -47,20 +41,4 @@ function generate(ctx: GeneratorContext): diagramContent {
         });
     });
     return content;
-}
-
-function parseProject(ctx: GeneratorContext): Project {
-    const project = new Project({
-        name: new MultilingualText(`${ctx.name}`),
-    }); // creates an OntoUML projects
-    const rootModel = project.createModel({
-        name: new MultilingualText("root"),
-    });
-
-    const contextModule = ctx.model.module;
-
-    const createdPackage = rootModel.createPackage(contextModule.name);
-    // Generate a contextModule
-    contextModuleGenerator(contextModule, createdPackage);
-    return project;
 }

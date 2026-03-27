@@ -206,14 +206,6 @@ export function isSortal(item: unknown): item is Sortal {
     return item === 'subkind' || item === 'phase' || item === 'role' || item === 'historicalRole';
 }
 
-export type Statement = ContextModule | Import;
-
-export const Statement = 'Statement';
-
-export function isStatement(item: unknown): item is Statement {
-    return reflection.isInstance(item, Statement);
-}
-
 export type UltimateSortal = 'collective' | 'extrinsicMode' | 'intrinsicMode' | 'kind' | 'mode' | 'powertype' | 'quality' | 'quantity' | 'relator' | 'type';
 
 export function isUltimateSortal(item: unknown): item is UltimateSortal {
@@ -277,7 +269,7 @@ export function isClassDeclaration(item: unknown): item is ClassDeclaration {
 }
 
 export interface ContextModule extends AstNode {
-    readonly $container: Model;
+    readonly $container: Statement;
     readonly $type: 'ContextModule';
     declarations: Array<Declaration>;
     isGlobal: boolean;
@@ -391,7 +383,7 @@ export function isGeneralizationSet(item: unknown): item is GeneralizationSet {
 }
 
 export interface Import extends AstNode {
-    readonly $container: Model;
+    readonly $container: Statement;
     readonly $type: 'Import';
     packageAlias?: string;
     referencedModel: Reference<ContextModule>;
@@ -480,6 +472,19 @@ export function isRelationMetaAttributes(item: unknown): item is RelationMetaAtt
     return reflection.isInstance(item, RelationMetaAttributes);
 }
 
+export interface Statement extends AstNode {
+    readonly $container: Model;
+    readonly $type: 'Statement';
+    contextModule?: ContextModule;
+    import?: Import;
+}
+
+export const Statement = 'Statement';
+
+export function isStatement(item: unknown): item is Statement {
+    return reflection.isInstance(item, Statement);
+}
+
 export type TontoAstType = {
     Attribute: Attribute
     AuxiliaryDeclaration: AuxiliaryDeclaration
@@ -519,10 +524,6 @@ export class TontoAstReflection extends AbstractAstReflection {
             }
             case ClassDeclaration: {
                 return this.isSubtype(ClassDeclarationOrRelation, supertype) || this.isSubtype(DataTypeOrClass, supertype) || this.isSubtype(DataTypeOrClassOrRelation, supertype) || this.isSubtype(Declaration, supertype);
-            }
-            case ContextModule:
-            case Import: {
-                return this.isSubtype(Statement, supertype);
             }
             case DataType: {
                 return this.isSubtype(AuxiliaryDeclaration, supertype) || this.isSubtype(DataTypeOrClass, supertype) || this.isSubtype(DataTypeOrClassOrRelation, supertype);
@@ -764,6 +765,15 @@ export class TontoAstReflection extends AbstractAstReflection {
                     properties: [
                         { name: 'endMetaAttributes', defaultValue: [] },
                         { name: 'endName' }
+                    ]
+                };
+            }
+            case Statement: {
+                return {
+                    name: Statement,
+                    properties: [
+                        { name: 'contextModule' },
+                        { name: 'import' }
                     ]
                 };
             }

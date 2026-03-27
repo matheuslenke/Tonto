@@ -6,7 +6,7 @@ import path from "path";
 import { Model, builtInLibs } from "../../../language/index.js";
 import { createTontoServices } from "../../../language/tonto-module.js";
 import { extractAllAstNodes } from "../../cli-util.js";
-import { GeneratorContext, parseProject } from "../../generators/jsonModular.generator.js";
+import { ModularGeneratorContext, parseProjectModular } from "../../utils/parseProjectModular.js";
 import { ErrorGufoResultResponse, GufoResultResponse, TontoManifest, TransformTontoToGufo, createDefaultTontoManifest } from "../../main.js";
 
 export const transformToGufoCommand = async (
@@ -40,7 +40,7 @@ export const transformToGufoCommand = async (
 
     const models: Model[] = await extractAllAstNodes(allFiles, services, builtInLibs, false);
 
-    const context: GeneratorContext = {
+    const context: ModularGeneratorContext = {
         models,
         fileNode: new CompositeGeneratorNode(),
         manifest: manifest,
@@ -49,7 +49,7 @@ export const transformToGufoCommand = async (
         description,
     };
 
-    const project = parseProject(context);
+    const project = parseProjectModular(context);
 
     const transformResult = TransformTontoToGufo(project);
     if (transformResult) {
