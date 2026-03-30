@@ -4,6 +4,7 @@ import { Command } from 'commander';
 import * as fs from 'fs';
 import * as path from 'path';
 import { createDefaultTontoManifest, manifestFileName, toJson } from '../../model/grammar/TontoManifest.js';
+import { agentFolderGuidanceFiles } from '../../templates/agent-guidance.js';
 import { copilotInstructions } from '../../templates/copilot-instructions.js';
 import { cursorHeader, vscodeHeader } from '../../templates/headers.js';
 import { readmeTemplate } from '../../templates/readme.js';
@@ -26,6 +27,166 @@ interface InitOptions {
     template?: string;
 }
 
+export type InitProjectFile = { type: 'file' | 'dir'; relativePath: string; content?: string };
+
+export const GUIDANCE_TARGET_OPTIONS = [
+    {
+        label: 'Cursor',
+        value: 'cursor',
+        description: 'Generate guidance under .cursor/rules with .mdc files'
+    },
+    {
+        label: 'VS Code',
+        value: 'vscode',
+        description: 'Generate guidance under .github/instructions for Copilot and VS Code'
+    },
+    {
+        label: 'Codex',
+        value: 'codex',
+        description: 'Generate guidance under .codex with markdown files'
+    },
+    {
+        label: 'Claude Code',
+        value: 'claude',
+        description: 'Generate guidance under .claude with markdown files'
+    },
+    {
+        label: 'Google (Gemini / Antigravity)',
+        value: 'google',
+        description: 'Generate guidance under .agents with markdown files for Gemini-based tools such as Antigravity'
+    },
+    {
+        label: 'All',
+        value: 'all',
+        description: 'Generate guidance for every supported editor and agentic IDE'
+    }
+] as const;
+
+export type GuidanceTargetChoice = (typeof GUIDANCE_TARGET_OPTIONS)[number]['value'];
+
+type GuidanceTemplateEntry = InitProjectFile & {
+    target: Exclude<GuidanceTargetChoice, 'all'>;
+};
+
+const CURSOR_RULES_DIR = path.join('.cursor', 'rules');
+const VSCODE_INSTRUCTIONS_DIR = path.join('.github', 'instructions');
+const CODEX_GUIDANCE_DIR = '.codex';
+const CLAUDE_GUIDANCE_DIR = '.claude';
+const GOOGLE_GUIDANCE_DIR = '.agents';
+
+function buildAgentFolderTemplateEntries(
+    folderPath: string,
+    target: Exclude<GuidanceTargetChoice, 'all'>
+): GuidanceTemplateEntry[] {
+    return [
+        { type: 'dir', relativePath: folderPath, target },
+        ...agentFolderGuidanceFiles.map(({ fileName, content }) => ({
+            type: 'file' as const,
+            relativePath: path.join(folderPath, fileName),
+            content,
+            target
+        }))
+    ];
+}
+
+const GUIDANCE_TEMPLATE_ENTRIES: readonly GuidanceTemplateEntry[] = [
+    { type: 'dir', relativePath: CURSOR_RULES_DIR, target: 'cursor' },
+    {
+        type: 'file',
+        relativePath: path.join(CURSOR_RULES_DIR, 'tonto-guidance.mdc'),
+        content: `${cursorHeader}${tontoGuidance}`,
+        target: 'cursor'
+    },
+    {
+        type: 'file',
+        relativePath: path.join(CURSOR_RULES_DIR, 'tonto_llm_guidance.mdc'),
+        content: `${cursorHeader}${llmGuidance}`,
+        target: 'cursor'
+    },
+    {
+        type: 'file',
+        relativePath: path.join(CURSOR_RULES_DIR, 'tonto-cardinality-guidance.mdc'),
+        content: `${cursorHeader}${tontoCardinalityGuidance}`,
+        target: 'cursor'
+    },
+    {
+        type: 'file',
+        relativePath: path.join(CURSOR_RULES_DIR, 'tonto-llm-create-new-elements.mdc'),
+        content: `${cursorHeader}${tontoLLMCreateNewElements}`,
+        target: 'cursor'
+    },
+    {
+        type: 'file',
+        relativePath: path.join(CURSOR_RULES_DIR, 'tonto_llm_terminology_analysis_guide.mdc'),
+        content: `${cursorHeader}${tontoLLMTerminologyAnalysisGuide}`,
+        target: 'cursor'
+    },
+    {
+        type: 'file',
+        relativePath: path.join(CURSOR_RULES_DIR, 'tonto_llm_understanding_and_summarization_guide.mdc'),
+        content: `${cursorHeader}${tontoLLMUnderstanding}`,
+        target: 'cursor'
+    },
+    {
+        type: 'file',
+        relativePath: path.join(CURSOR_RULES_DIR, 'tonto_llm_documentation_guide.mdc'),
+        content: `${cursorHeader}${tontoLLMDocumentationGuide}`,
+        target: 'cursor'
+    },
+    { type: 'dir', relativePath: VSCODE_INSTRUCTIONS_DIR, target: 'vscode' },
+    {
+        type: 'file',
+        relativePath: path.join(VSCODE_INSTRUCTIONS_DIR, 'tonto-guidance.instructions.md'),
+        content: `${vscodeHeader}${tontoGuidance}`,
+        target: 'vscode'
+    },
+    {
+        type: 'file',
+        relativePath: path.join(VSCODE_INSTRUCTIONS_DIR, 'tonto-cardinality-guidance.instructions.md'),
+        content: `${vscodeHeader}${tontoCardinalityGuidance}`,
+        target: 'vscode'
+    },
+    {
+        type: 'file',
+        relativePath: path.join(VSCODE_INSTRUCTIONS_DIR, 'tonto_llm_guidance.instructions.md'),
+        content: `${vscodeHeader}${llmGuidance}`,
+        target: 'vscode'
+    },
+    {
+        type: 'file',
+        relativePath: path.join(VSCODE_INSTRUCTIONS_DIR, 'tonto-llm-create-new-elements.instructions.md'),
+        content: `${vscodeHeader}${tontoLLMCreateNewElements}`,
+        target: 'vscode'
+    },
+    {
+        type: 'file',
+        relativePath: path.join(VSCODE_INSTRUCTIONS_DIR, 'tonto_llm_terminology_analysis_guide.instructions.md'),
+        content: `${vscodeHeader}${tontoLLMTerminologyAnalysisGuide}`,
+        target: 'vscode'
+    },
+    {
+        type: 'file',
+        relativePath: path.join(VSCODE_INSTRUCTIONS_DIR, 'tonto_llm_understanding_and_summarization_guide.instructions.md'),
+        content: `${vscodeHeader}${tontoLLMUnderstanding}`,
+        target: 'vscode'
+    },
+    {
+        type: 'file',
+        relativePath: path.join(VSCODE_INSTRUCTIONS_DIR, 'tonto_llm_documentation_guide.instructions.md'),
+        content: `${vscodeHeader}${tontoLLMDocumentationGuide}`,
+        target: 'vscode'
+    },
+    {
+        type: 'file',
+        relativePath: path.join('.github', 'copilot-instructions.md'),
+        content: copilotInstructions,
+        target: 'vscode'
+    },
+    ...buildAgentFolderTemplateEntries(CODEX_GUIDANCE_DIR, 'codex'),
+    ...buildAgentFolderTemplateEntries(CLAUDE_GUIDANCE_DIR, 'claude'),
+    ...buildAgentFolderTemplateEntries(GOOGLE_GUIDANCE_DIR, 'google')
+] as const;
+
 // Validation function for project name
 function validateProjectName(inputValue: string): boolean | string {
     if (!/^[\w-]+$/.test(inputValue)) {
@@ -35,6 +196,82 @@ function validateProjectName(inputValue: string): boolean | string {
         return `A directory named '${inputValue}' already exists in the current directory.`;
     }
     return true;
+}
+
+export function buildGuidanceProjectFiles(projectName: string): InitProjectFile[] {
+    return GUIDANCE_TEMPLATE_ENTRIES.map(({ target: _target, ...entry }) => ({
+        ...entry,
+        relativePath: joinProjectRelativePath(projectName, entry.relativePath)
+    }));
+}
+
+export function shouldIncludeTemplatePathForGuidanceTarget(
+    guidanceTarget: GuidanceTargetChoice,
+    relativePath: string
+): boolean {
+    if (guidanceTarget === 'all') {
+        return true;
+    }
+
+    if (isCursorGuidancePath(relativePath)) {
+        return guidanceTarget === 'cursor';
+    }
+
+    if (isVscodeGuidancePath(relativePath)) {
+        return guidanceTarget === 'vscode';
+    }
+
+    if (isCodexGuidancePath(relativePath)) {
+        return guidanceTarget === 'codex';
+    }
+
+    if (isClaudeGuidancePath(relativePath)) {
+        return guidanceTarget === 'claude';
+    }
+
+    if (isGoogleGuidancePath(relativePath)) {
+        return guidanceTarget === 'google';
+    }
+
+    return true;
+}
+
+function joinProjectRelativePath(projectName: string, relativePath: string): string {
+    return projectName ? path.join(projectName, relativePath) : relativePath;
+}
+
+function isCursorGuidancePath(relativePath: string): boolean {
+    return pathContainsDirectory(relativePath, '.cursor');
+}
+
+function isVscodeGuidancePath(relativePath: string): boolean {
+    return pathContainsDirectory(relativePath, '.github');
+}
+
+function isCodexGuidancePath(relativePath: string): boolean {
+    return pathContainsDirectory(relativePath, CODEX_GUIDANCE_DIR);
+}
+
+function isClaudeGuidancePath(relativePath: string): boolean {
+    return pathContainsDirectory(relativePath, CLAUDE_GUIDANCE_DIR);
+}
+
+function isGoogleGuidancePath(relativePath: string): boolean {
+    return pathContainsDirectory(relativePath, GOOGLE_GUIDANCE_DIR);
+}
+
+function pathContainsDirectory(relativePath: string, directoryName: string): boolean {
+    const normalizedPath = normalizeRelativePath(relativePath);
+    return (
+        normalizedPath === directoryName ||
+        normalizedPath.startsWith(`${directoryName}/`) ||
+        normalizedPath.includes(`/${directoryName}/`) ||
+        normalizedPath.endsWith(`/${directoryName}`)
+    );
+}
+
+function normalizeRelativePath(relativePath: string): string {
+    return relativePath.split(path.sep).join('/');
 }
 
 async function initAction(options: InitOptions) {
@@ -62,13 +299,13 @@ async function initAction(options: InitOptions) {
         message: 'Author:'
     });
 
-    const editorTarget = await select({
-        message: 'Which editor do you use?',
-        choices: [
-            { name: 'Cursor', value: 'cursor', description: 'Generate guidance under .cursor/rules with .mdc files' },
-            { name: 'VS Code', value: 'vscode', description: 'Generate guidance under .github/instructions with .md files' },
-            { name: 'Both', value: 'both', description: 'Generate for both editors' }
-        ]
+    const guidanceTarget = await select({
+        message: 'Which editor or agentic IDE do you use?',
+        choices: GUIDANCE_TARGET_OPTIONS.map(({ label, value, description }) => ({
+            name: label,
+            value,
+            description
+        }))
     });
 
     // Ask for template selection
@@ -125,169 +362,21 @@ async function initAction(options: InitOptions) {
         }
     }
 
-    const shouldCreateCursor = editorTarget === 'cursor' || editorTarget === 'both';
-    const shouldCreateVscode = editorTarget === 'vscode' || editorTarget === 'both';
-
-    if (shouldCreateCursor) {
-        const cursorDirPath = path.join(projectPath, '.cursor');
-        const rulesDirPath = path.join(cursorDirPath, 'rules');
-        console.log(chalk.blue(`Preparing to create Cursor rules at ${rulesDirPath}`));
-        if (fs.existsSync(rulesDirPath)) {
-            console.log(chalk.yellow('.cursor/rules directory already exists. Skipping creation.'));
-        } else {
-            console.log(chalk.blue(`Creating directory ${rulesDirPath}`));
-            try {
-                fs.mkdirSync(rulesDirPath, { recursive: true });
-                console.log(chalk.blue('Creating .cursor rule files...'));
-            } catch (err) {
-                console.error(chalk.red(`Failed to create directory ${rulesDirPath}: ${String(err)}`));
-                throw err;
-            }
-
-            try {
-                createRuleFileWithHeader(tontoGuidance, rulesDirPath, 'tonto-guidance.mdc', cursorHeader);
-                console.log(chalk.green('Created tonto-guidance.mdc'));
-            } catch (err) {
-                console.error(chalk.red(`Failed to create tonto-guidance.mdc: ${String(err)}`));
-                throw err;
-            }
-            try {
-                createRuleFileWithHeader(tontoCardinalityGuidance, rulesDirPath, 'tonto-cardinality-guidance.mdc', cursorHeader);
-                console.log(chalk.green('Created tonto-cardinality-guidance.mdc'));
-            } catch (err) {
-                console.error(chalk.red(`Failed to create tonto-cardinality-guidance.mdc: ${String(err)}`));
-                throw err;
-            }
-            try {
-                createRuleFileWithHeader(llmGuidance, rulesDirPath, 'tonto_llm_guidance.mdc', cursorHeader);
-                console.log(chalk.green('Created tonto_llm_guidance.mdc'));
-            } catch (err) {
-                console.error(chalk.red(`Failed to create tonto_llm_guidance.mdc: ${String(err)}`));
-                throw err;
-            }
-            try {
-                createRuleFileWithHeader(tontoLLMCreateNewElements, rulesDirPath, 'tonto-llm-create-new-elements.mdc', cursorHeader);
-                console.log(chalk.green('Created tonto-llm-create-new-elements.mdc'));
-            } catch (err) {
-                console.error(chalk.red(`Failed to create tonto-llm-create-new-elements.mdc: ${String(err)}`));
-                throw err;
-            }
-            try {
-                createRuleFileWithHeader(tontoLLMTerminologyAnalysisGuide, rulesDirPath, 'tonto_llm_terminology_analysis_guide.mdc', cursorHeader);
-                console.log(chalk.green('Created tonto_llm_terminology_analysis_guide.mdc'));
-            } catch (err) {
-                console.error(chalk.red(`Failed to create tonto_llm_terminology_analysis_guide.mdc: ${String(err)}`));
-                throw err;
-            }
-            try {
-                createRuleFileWithHeader(tontoLLMUnderstanding, rulesDirPath, 'tonto_llm_understanding_and_summarization_guide.mdc', cursorHeader);
-                console.log(chalk.green('Created tonto_llm_understanding_and_summarization_guide.mdc'));
-            } catch (err) {
-                console.error(chalk.red(`Failed to create tonto_llm_understanding_and_summarization_guide.mdc: ${String(err)}`));
-                throw err;
-            }
-            try {
-                createRuleFileWithHeader(tontoLLMDocumentationGuide, rulesDirPath, 'tonto_llm_documentation_guide.mdc', cursorHeader);
-                console.log(chalk.green('Created tonto_llm_documentation_guide.mdc'));
-            } catch (err) {
-                console.error(chalk.red(`Failed to create tonto_llm_documentation_guide.mdc: ${String(err)}`));
-                throw err;
-            }
-
-            console.log(chalk.green('.cursor/rules directory and guidance files created successfully.'));
-        }
-    }
-
-    if (shouldCreateVscode) {
-        const githubPath = path.join(projectPath, '.github');
-        const githubInstructionsPath = path.join(githubPath, 'instructions');
-        console.log(chalk.blue(`Preparing to create VSCode instructions at ${githubInstructionsPath}`));
-        if (fs.existsSync(githubInstructionsPath)) {
-            console.log(chalk.yellow('.github/instructions directory already exists. Skipping creation.'));
-        } else {
-            console.log(chalk.blue(`Creating directory ${githubInstructionsPath}`));
-            try {
-                fs.mkdirSync(githubInstructionsPath, { recursive: true });
-                console.log(chalk.blue('Creating .github instruction files...'));
-            } catch (err) {
-                console.error(chalk.red(`Failed to create directory ${githubInstructionsPath}: ${String(err)}`));
-                throw err;
-            }
-
-            try {
-                createRuleFileWithHeader(tontoGuidance, githubInstructionsPath, 'tonto-guidance.instructions.md', vscodeHeader);
-                console.log(chalk.green('Created tonto-guidance.instructions.md'));
-            } catch (err) {
-                console.error(chalk.red(`Failed to create tonto-guidance.md: ${String(err)}`));
-                throw err;
-            }
-            try {
-                createRuleFileWithHeader(tontoCardinalityGuidance, githubInstructionsPath, 'tonto-cardinality-guidance.instructions.md', vscodeHeader);
-                console.log(chalk.green('Created tonto-cardinality-guidance.instructions.md'));
-            } catch (err) {
-                console.error(chalk.red(`Failed to create tonto-cardinality-guidance.instructions.md: ${String(err)}`));
-                throw err;
-            }
-            try {
-                createRuleFileWithHeader(llmGuidance, githubInstructionsPath, 'tonto_llm_guidance.instructions.md', vscodeHeader);
-                console.log(chalk.green('Created tonto_llm_guidance.instructions.md'));
-            } catch (err) {
-                console.error(chalk.red(`Failed to create tonto_llm_guidance.instructions.md: ${String(err)}`));
-                throw err;
-            }
-            try {
-                createRuleFileWithHeader(tontoLLMCreateNewElements, githubInstructionsPath, 'tonto-llm-create-new-elements.instructions.md', vscodeHeader);
-                console.log(chalk.green('Created tonto-llm-create-new-elements.instructions.md'));
-            } catch (err) {
-                console.error(chalk.red(`Failed to create tonto-llm-create-new-elements.instructions.md: ${String(err)}`));
-                throw err;
-            }
-            try {
-                createRuleFileWithHeader(tontoLLMTerminologyAnalysisGuide, githubInstructionsPath, 'tonto_llm_terminology_analysis_guide.instructions.md', vscodeHeader);
-                console.log(chalk.green('Created tonto_llm_terminology_analysis_guide.instructions.md'));
-            } catch (err) {
-                console.error(chalk.red(`Failed to create tonto_llm_terminology_analysis_guide.instructions.md: ${String(err)}`));
-                throw err;
-            }
-            try {
-                createRuleFileWithHeader(tontoLLMUnderstanding, githubInstructionsPath, 'tonto_llm_understanding_and_summarization_guide.instructions.md', vscodeHeader);
-                console.log(chalk.green('Created tonto_llm_understanding_and_summarization_guide.md'));
-            } catch (err) {
-                console.error(chalk.red(`Failed to create tonto_llm_understanding_and_summarization_guide.md: ${String(err)}`));
-                throw err;
-            }
-            try {
-                createRuleFileWithHeader(tontoLLMDocumentationGuide, githubInstructionsPath, 'tonto_llm_documentation_guide.instructions.md', vscodeHeader);
-                console.log(chalk.green('Created tonto_llm_documentation_guide.md'));
-            } catch (err) {
-                console.error(chalk.red(`Failed to create tonto_llm_documentation_guide.md: ${String(err)}`));
-                throw err;
-            }
-
-            try {
-                createRuleFile(copilotInstructions, githubPath, 'copilot-instructions.md');
-                console.log(chalk.green('Created copilot-instructions.md'));
-            } catch (err) {
-                console.error(chalk.red(`Failed to create copilot-instructions.md: ${String(err)}`));
-                throw err;
-            }
-
-            console.log(chalk.green('.github/instructions directory and guidance files created successfully.'));
-        }
-    }
+    materializeSelectedGuidanceFiles(projectPath, guidanceTarget);
 
     const srcPath = path.join(projectPath, 'src');
     if (fs.existsSync(srcPath)) {
         console.log(chalk.yellow('src directory already exists. Skipping creation.'));
     } else {
         fs.mkdirSync(srcPath, { recursive: true });
-        
+
         // Use template selection or fallback to command line option
         const selectedTemplate = answers.template || (options.catDogExample ? 'cat-dog' : 'blank');
-        
+
         if (selectedTemplate === 'cat-dog') {
             copyTemplate(mainTontoFile, srcPath, 'main.tonto');
             copyTemplate(catsTontoFile, srcPath, 'Cats.tonto');
+            copyTemplate(vetvisitsTontoFile, srcPath, 'Vetvisits.tonto');
             copyTemplate(dogsTontoFile, srcPath, 'Dogs.tonto');
             copyTemplate(datatypesTontoFile, srcPath, 'Datatypes.tonto');
             console.log(chalk.green('Cat and Dog example files created successfully.'));
@@ -332,17 +421,40 @@ async function initAction(options: InitOptions) {
     }
 }
 
+function materializeSelectedGuidanceFiles(projectPath: string, guidanceTarget: GuidanceTargetChoice): void {
+    const guidanceFiles = buildGuidanceProjectFiles('').filter((file) =>
+        shouldIncludeTemplatePathForGuidanceTarget(guidanceTarget, file.relativePath)
+    );
+    const createdDirectoryPaths = new Set<string>();
+
+    console.log(chalk.blue(`Creating guidance files for target '${guidanceTarget}'`));
+
+    for (const directoryEntry of guidanceFiles.filter((file): file is InitProjectFile & { type: 'dir' } => file.type === 'dir')) {
+        ensureDirectorySync(path.join(projectPath, directoryEntry.relativePath), createdDirectoryPaths);
+    }
+
+    for (const fileEntry of guidanceFiles.filter((file): file is InitProjectFile & { type: 'file' } => file.type === 'file')) {
+        const targetPath = path.join(projectPath, fileEntry.relativePath);
+        ensureDirectorySync(path.dirname(targetPath), createdDirectoryPaths);
+        fs.writeFileSync(targetPath, fileEntry.content ?? '', 'utf-8');
+        console.log(chalk.green(`Created ${fileEntry.relativePath}`));
+    }
+}
+
+function ensureDirectorySync(directoryPath: string, createdDirectoryPaths: Set<string>): void {
+    if (createdDirectoryPaths.has(directoryPath)) {
+        return;
+    }
+
+    if (!fs.existsSync(directoryPath)) {
+        fs.mkdirSync(directoryPath, { recursive: true });
+    }
+
+    createdDirectoryPaths.add(directoryPath);
+}
+
 function copyTemplate(templateContent: string, destinationDir: string, destinationName: string) {
     fs.writeFileSync(path.join(destinationDir, destinationName), templateContent, 'utf-8');
-}
-
-function createRuleFileWithHeader(content: string, destinationDir: string, destinationName: string, header: string) {
-    const fullContent = `${header}${content}`;
-    fs.writeFileSync(path.join(destinationDir, destinationName), fullContent);
-}
-
-function createRuleFile(content: string, destinationDir: string, destinationName: string) {
-    fs.writeFileSync(path.join(destinationDir, destinationName), content);
 }
 
 export function initCommand(): Command {
@@ -352,8 +464,6 @@ export function initCommand(): Command {
         .action(initAction);
     return init;
 }
-
-export type InitProjectFile = { type: 'file' | 'dir'; relativePath: string; content?: string };
 
 // Build list of files and directories to create for an init project without performing IO
 export function buildInitProjectFiles(projectName: string, options: InitOptions): InitProjectFile[] {
@@ -384,27 +494,7 @@ export function buildInitProjectFiles(projectName: string, options: InitOptions)
     // README
     files.push({ type: 'file', relativePath: path.join(projectName, 'README.md'), content: readmeTemplate });
 
-    // .cursor/rules
-    const cursorRulesDir = path.join(projectName, '.cursor', 'rules');
-    files.push({ type: 'dir', relativePath: cursorRulesDir });
-    files.push({ type: 'file', relativePath: path.join(cursorRulesDir, 'tonto-guidance.mdc'), content: `${cursorHeader}${tontoGuidance}` });
-    files.push({ type: 'file', relativePath: path.join(cursorRulesDir, 'tonto_llm_guidance.mdc'), content: `${cursorHeader}${llmGuidance}` });
-    files.push({ type: 'file', relativePath: path.join(cursorRulesDir, 'tonto-cardinality-guidance.mdc'), content: `${cursorHeader}${tontoCardinalityGuidance}` });
-    files.push({ type: 'file', relativePath: path.join(cursorRulesDir, 'tonto-llm-create-new-elements.mdc'), content: `${cursorHeader}${tontoLLMCreateNewElements}` });
-    files.push({ type: 'file', relativePath: path.join(cursorRulesDir, 'tonto_llm_terminology_analysis_guide.mdc'), content: `${cursorHeader}${tontoLLMTerminologyAnalysisGuide}` });
-    files.push({ type: 'file', relativePath: path.join(cursorRulesDir, 'tonto_llm_understanding_and_summarization_guide.mdc'), content: `${cursorHeader}${tontoLLMUnderstanding}` });
-    files.push({ type: 'file', relativePath: path.join(cursorRulesDir, 'tonto_llm_documentation_guide.mdc'), content: `${cursorHeader}${tontoLLMDocumentationGuide}` });
-
-    // .github/instructions
-    const githubDir = path.join(projectName, '.github', 'instructions');
-    files.push({ type: 'dir', relativePath: githubDir });
-    files.push({ type: 'file', relativePath: path.join(githubDir, 'tonto-guidance.instructions.md'), content: `${vscodeHeader}${tontoGuidance}` });
-    files.push({ type: 'file', relativePath: path.join(githubDir, 'tonto-cardinality-guidance.instructions.md'), content: `${vscodeHeader}${tontoCardinalityGuidance}` });
-    files.push({ type: 'file', relativePath: path.join(githubDir, 'tonto_llm_guidance.instructions.md'), content: `${vscodeHeader}${llmGuidance}` });
-    files.push({ type: 'file', relativePath: path.join(githubDir, 'tonto-llm-create-new-elements.instructions.md'), content: `${vscodeHeader}${tontoLLMCreateNewElements}` });
-    files.push({ type: 'file', relativePath: path.join(githubDir, 'tonto_llm_terminology_analysis_guide.instructions.md'), content: `${vscodeHeader}${tontoLLMTerminologyAnalysisGuide}` });
-    files.push({ type: 'file', relativePath: path.join(githubDir, 'tonto_llm_understanding_and_summarization_guide.instructions.md'), content: `${vscodeHeader}${tontoLLMUnderstanding}` });
-    files.push({ type: 'file', relativePath: path.join(githubDir, 'tonto_llm_documentation_guide.instructions.md'), content: `${vscodeHeader}${tontoLLMDocumentationGuide}` });
+    files.push(...buildGuidanceProjectFiles(projectName));
 
     // ignore files
     files.push({ type: 'file', relativePath: path.join(projectName, '.cursorignore'), content: '.github\n.tonto_modules\n' });

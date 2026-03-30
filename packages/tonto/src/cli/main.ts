@@ -1,6 +1,7 @@
 import { Command } from "commander";
 import { TontoLanguageMetaData } from "../language/index.js";
 import { TontoActions } from "./actions/actions.js";
+import { addSkillCommand } from "./actions/commands/addSkillCommand.js";
 
 export const cliVersion = "0.4.0";
 
@@ -72,6 +73,8 @@ export default function (): void {
         .option("-d, --destination <dir>", "Destination directory of generating")
         .option("-t, --template <template>", "Template to use for the project")
         .action(actions.initAction);
+
+    program.addCommand(addSkillCommand());
 
     program.parseAsync(process.argv);
 }

@@ -4,10 +4,10 @@ import { buildInitProjectFiles } from "../../../tonto/src/cli/actions/commands/i
 import { getOutputChannel } from "../extension/outputChannel.js";
 import { CommandIds } from "./commandIds.js";
 import {
-    EditorChoice,
+    type GuidanceTargetChoice,
     materializeInitProjectFiles,
-    promptEditorChoice,
-    shouldIncludeTemplatePathForEditor,
+    promptGuidanceTargetChoice,
+    shouldIncludeTemplatePathForGuidanceTarget,
 } from "./init-project-files.js";
 import {
     getPrimaryWorkspaceFolderOrShowError,
@@ -27,7 +27,7 @@ type InitProjectAnswers = {
     license: string;
     authorName: string;
     authorEmail: string;
-    editorChoice: EditorChoice;
+    guidanceTarget: GuidanceTargetChoice;
     templateChoice: ProjectTemplateChoice;
 };
 
@@ -85,7 +85,7 @@ async function initAction(_context: vscode.ExtensionContext, sharedOutputChannel
                 await materializeInitProjectFiles(targetRootUri, files, {
                     outputChannel,
                     filterEntry: (_file, relativePath) =>
-                        shouldIncludeTemplatePathForEditor(answers.editorChoice, relativePath),
+                        shouldIncludeTemplatePathForGuidanceTarget(answers.guidanceTarget, relativePath),
                 });
                 await writeManifestFile(targetRootUri, answers, outputChannel);
 
@@ -170,10 +170,10 @@ async function promptInitProjectAnswers(
         return undefined;
     }
 
-    const editorChoice = await promptEditorChoice();
-    outputChannel.appendLine(`Prompt result - editorChoice: ${String(editorChoice)}`);
-    if (!editorChoice) {
-        outputChannel.appendLine("User cancelled editor pick");
+    const guidanceTarget = await promptGuidanceTargetChoice();
+    outputChannel.appendLine(`Prompt result - guidanceTarget: ${String(guidanceTarget)}`);
+    if (!guidanceTarget) {
+        outputChannel.appendLine("User cancelled guidance target pick");
         outputChannel.show(true);
         return undefined;
     }
@@ -198,7 +198,7 @@ async function promptInitProjectAnswers(
         license,
         authorName,
         authorEmail,
-        editorChoice,
+        guidanceTarget,
         templateChoice,
     };
 }

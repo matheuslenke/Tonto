@@ -12,7 +12,8 @@ export enum CommandIds {
     tpmInstall = "tonto.tpm.install",
     tpmInstallFromButton = "tonto.tpm.installFromButton",
     initProject = "tonto.initProject",
-    addGuidances = "tonto.addGuidances"
+    addGuidances = "tonto.addGuidances",
+    addSkill = "tonto.addSkill"
 }
 
 export const commandPalletteIds = [
@@ -24,5 +25,6 @@ export const commandPalletteIds = [
     CommandIds.tpmInstall,
     CommandIds.tpmInstallFromButton,
     CommandIds.addGuidances,
+    CommandIds.addSkill,
     CommandIds.initProject,
 ];

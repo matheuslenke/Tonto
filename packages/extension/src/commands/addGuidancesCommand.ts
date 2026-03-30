@@ -4,8 +4,8 @@ import { CommandIds } from "./commandIds.js";
 import {
     buildGuidanceTemplateFiles,
     materializeInitProjectFiles,
-    promptEditorChoice,
-    shouldIncludeTemplatePathForEditor,
+    promptGuidanceTargetChoice,
+    shouldIncludeTemplatePathForGuidanceTarget,
 } from "./init-project-files.js";
 import { getPrimaryWorkspaceFolderOrShowError } from "./project-location.js";
 
@@ -27,10 +27,10 @@ async function addGuidances(_context: vscode.ExtensionContext, sharedOutputChann
         return;
     }
 
-    const editorChoice = await promptEditorChoice();
-    outputChannel.appendLine(`Prompt result - editorChoice: ${String(editorChoice)}`);
-    if (!editorChoice) {
-        outputChannel.appendLine("User cancelled editor pick");
+    const guidanceTarget = await promptGuidanceTargetChoice();
+    outputChannel.appendLine(`Prompt result - guidanceTarget: ${String(guidanceTarget)}`);
+    if (!guidanceTarget) {
+        outputChannel.appendLine("User cancelled guidance target pick");
         outputChannel.show(true);
         return;
     }
@@ -46,7 +46,8 @@ async function addGuidances(_context: vscode.ExtensionContext, sharedOutputChann
                 const guidanceFiles = buildGuidanceTemplateFiles();
                 await materializeInitProjectFiles(workspaceFolder.uri, guidanceFiles, {
                     outputChannel,
-                    filterEntry: (_file, relativePath) => shouldIncludeTemplatePathForEditor(editorChoice, relativePath),
+                    filterEntry: (_file, relativePath) =>
+                        shouldIncludeTemplatePathForGuidanceTarget(guidanceTarget, relativePath),
                 });
 
                 outputChannel.appendLine(`Guidance files added to project at ${workspaceFolder.uri.fsPath}`);
@@ -60,4 +61,3 @@ async function addGuidances(_context: vscode.ExtensionContext, sharedOutputChann
 }
 
 export { createAddGuidancesCommand };
-

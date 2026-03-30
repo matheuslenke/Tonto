@@ -176,6 +176,11 @@
                     "group": "navigation"
                 },
                 {
+                    "command": "tonto.addSkill",
+                    "when": "view == 'tontoCommandsExplorer' || view == 'tontoCommands'",
+                    "group": "navigation"
+                },
+                {
                     "command": "tonto.diagram.plantuml.open",
                     "when": "view == 'tontoCommandsExplorer' || view == 'tontoCommands'",
                     "group": "navigation"
@@ -265,6 +270,11 @@
             {
                 "command": "tonto.addGuidances",
                 "title": "Add Guidances to project (Work with LLMs)",
+                "category": "Tonto"
+            },
+            {
+                "command": "tonto.addSkill",
+                "title": "Add Tonto Skill to project",
                 "category": "Tonto"
             },
             {
