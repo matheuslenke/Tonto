@@ -12,7 +12,7 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "${workspaceFolder}/../university-experiment",
+                "${workspaceFolder}/../university-ontology",
                 "--extensionDevelopmentPath=${workspaceFolder}/packages/extension"
             ],
             "env": {
