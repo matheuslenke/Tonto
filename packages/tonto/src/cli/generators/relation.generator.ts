@@ -8,6 +8,48 @@ import {
 import { RelationTypes } from "../../language/models/RelationType.js";
 import { setPropertyCardinality } from "./cardinality.generator.js";
 
+export function getElementRelationLookupKey(
+    relationItem: ElementRelation,
+    sourceClassIncoming?: ClassDeclaration
+): string | undefined {
+    if (!relationItem.name) {
+        return undefined;
+    }
+
+    if (sourceClassIncoming) {
+        return `${sourceClassIncoming.name}.${relationItem.name}`;
+    }
+
+    const relationContainer = relationItem.$container;
+    if (relationContainer.$type === "ClassDeclaration") {
+        return `${relationContainer.name}.${relationItem.name}`;
+    }
+
+    const sourceElement = relationItem.firstEnd?.ref;
+    if (sourceElement && "name" in sourceElement && typeof sourceElement.name === "string") {
+        return `${sourceElement.name}.${relationItem.name}`;
+    }
+
+    return relationItem.name;
+}
+
+export function findGeneratedRelation(
+    relations: Relation[],
+    relationItem: ElementRelation | undefined,
+    sourceClassIncoming?: ClassDeclaration
+): Relation | undefined {
+    if (!relationItem) {
+        return undefined;
+    }
+
+    const lookupKey = getElementRelationLookupKey(relationItem, sourceClassIncoming);
+    if (!lookupKey) {
+        return undefined;
+    }
+
+    return relations.find((relation) => relation.id === lookupKey);
+}
+
 export function relationGenerator(
     relationItem: ElementRelation,
     packageItem: Package,
@@ -30,6 +72,10 @@ export function relationGenerator(
                 relationItem.name,
                 relationStereotype
             );
+            const lookupKey = getElementRelationLookupKey(relationItem, sourceClassIncoming);
+            if (lookupKey) {
+                relation.id = lookupKey;
+            }
 
             const sourceEnd = relation.getSourceEnd();
             const targetEnd = relation.getTargetEnd();

@@ -3,6 +3,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { Model } from "../language/index.js";
 import { extractDestinationAndName } from "./cli-util.js";
+import { serializeProject } from "./utils/serializeProject.js";
 import { ParseProjectContext, parseProject } from "./utils/parseProject.js";
 
 export function generateJSONFile(model: Model, filePath: string, destination: string | undefined): string {
@@ -29,7 +30,7 @@ function generate(ctx: GeneratorContext): string {
     // as references for its creation
     const project = parseProject(ctx);
 
-    const projectSerialization = JSON.stringify(project, null, 2);
+    const projectSerialization = serializeProject(project);
     ctx.fileNode.append(projectSerialization);
 
     if (!fs.existsSync(ctx.destination)) {

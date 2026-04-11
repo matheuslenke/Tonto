@@ -4,7 +4,6 @@ import * as fs from "node:fs";
 import path from "node:path";
 import { Project, serializationUtils } from "ontouml-js";
 import { generateTontoFile } from "../../constructors/index.js";
-import { TontoProject } from "../../model/grammar/ProjectItem.js";
 
 export type ImportOptions = {
     fileName: string;
@@ -76,9 +75,5 @@ export const newImportCommand = async (opts: ImportOptions): Promise<void> => {
         throw new Error("Model invalid");
     }
 
-    const tontoProject = new TontoProject(project,
-        opts.fileName,
-        opts.destination ?? "generated");
-
-    tontoProject.writeProject(opts.destination ?? "./generated");
+    generateTontoFile(project, opts.fileName, opts.destination);
 };

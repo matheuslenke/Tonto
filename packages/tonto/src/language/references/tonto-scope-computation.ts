@@ -112,12 +112,6 @@ export class TontoScopeComputation extends DefaultScopeComputation {
 
         scopes.addAll(contextModule, otherAstNodeDescriptions);
 
-        // Log computed scopes
-        console.log("Computed Scopes:");
-        scopes.entries().forEach(([node, description]) => {
-            console.log(`[${description.type}] ${description.name}`);
-        });
-
         return scopes;
     }
 
@@ -135,6 +129,11 @@ export class TontoScopeComputation extends DefaultScopeComputation {
             await interruptAndCheck(cancelToken);
             if (isElementRelation(element)) {
                 const qualifiedName = this.qualifiedNameProvider.getQualifiedName(element);
+                const name = this.qualifiedNameProvider.getName(element);
+                if (name) {
+                    const description = this.descriptions.createDescription(element, name, document);
+                    localDescriptions.push(description);
+                }
                 if (qualifiedName) {
                     const descriptionQualified = this.descriptions.createDescription(element, qualifiedName, document);
                     localDescriptions.push(descriptionQualified);
@@ -152,9 +151,14 @@ export class TontoScopeComputation extends DefaultScopeComputation {
                     if (isClassDeclaration(element) && element.references.length > 0) {
                         for (const internalElement of element.references) {
                             if (isElementRelation(internalElement)) {
-                                const name = this.qualifiedNameProvider.getQualifiedName(internalElement);
+                                const qualifiedName = this.qualifiedNameProvider.getQualifiedName(internalElement);
+                                const name = this.qualifiedNameProvider.getName(internalElement);
                                 if (name) {
                                     const internalDescription = this.descriptions.createDescription(internalElement, name, document);
+                                    localDescriptions.push(internalDescription);
+                                }
+                                if (qualifiedName) {
+                                    const internalDescription = this.descriptions.createDescription(internalElement, qualifiedName, document);
                                     localDescriptions.push(internalDescription);
                                     this.exportRelationEnds(internalElement, localDescriptions, document);
                                 }
@@ -186,11 +190,13 @@ export class TontoScopeComputation extends DefaultScopeComputation {
 
         if (relation.firstEndMetaAttributes && relation.firstEndMetaAttributes.endName) {
             const endName = relation.firstEndMetaAttributes.endName;
+            localDescriptions.push(this.descriptions.createDescription(relation.firstEndMetaAttributes, endName, document));
             const qualifiedName = `${relationName}.${endName}`;
             localDescriptions.push(this.descriptions.createDescription(relation.firstEndMetaAttributes, qualifiedName, document));
         }
         if (relation.secondEndMetaAttributes && relation.secondEndMetaAttributes.endName) {
             const endName = relation.secondEndMetaAttributes.endName;
+            localDescriptions.push(this.descriptions.createDescription(relation.secondEndMetaAttributes, endName, document));
             const qualifiedName = `${relationName}.${endName}`;
             localDescriptions.push(this.descriptions.createDescription(relation.secondEndMetaAttributes, qualifiedName, document));
         }

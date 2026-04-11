@@ -1,8 +1,8 @@
 import chalk from "chalk";
-import { Class, Package, Relation } from "ontouml-js";
-import { ClassDeclaration, ContextModule, DataType, ElementRelation } from "../../language/index.js";
+import { Class, Package, Property, Relation } from "ontouml-js";
+import { ClassDeclaration, ContextModule, DataType, ElementRelation, RelationMetaAttributes } from "../../language/index.js";
 import { generalizationGenerator } from "./class.generator.js";
-import { relationGeneralizationGenerator } from "./relation.generator.js";
+import { findGeneratedRelation, relationGeneralizationGenerator } from "./relation.generator.js";
 
 export function generateDataTypeSpecializations(
     contextModule: ContextModule,
@@ -54,7 +54,6 @@ export function generateSpecializations(
                         const targetClass = classes.find((item) => item.id === endurant.ref?.name);
                         if (targetClass) {
                             generalizationGenerator(packageItem, targetClass, sourceClass);
-                            generateInternalRelationSpecialization(classElement, relations, packageItem);
                         } else {
                             console.log(
                                 chalk.yellow(
@@ -73,17 +72,17 @@ export function generateSpecializations(
                     );
                 }
             }
+            generateInternalRelationSpecialization(classElement, relations, packageItem);
+            generateInternalRelationEndReferences(classElement, relations);
             // Generate external ElementRelation specializations
         } else if (declaration.$type === "ElementRelation") {
             const elementRelation = declaration as ElementRelation;
             if (elementRelation.specializeRelation) {
-                const elementRelationCreated = relations.find((item) => item.id === elementRelation.name);
-                const targetRelation = relations.find(
-                    (item) => item.id === elementRelation.specializeRelation?.ref?.name
-                );
+                const elementRelationCreated = findGeneratedRelation(relations, elementRelation);
+                const targetRelation = findGeneratedRelation(relations, elementRelation.specializeRelation.ref);
 
                 if (elementRelationCreated && targetRelation) {
-                    relationGeneralizationGenerator(packageItem, elementRelationCreated, targetRelation);
+                    relationGeneralizationGenerator(packageItem, targetRelation, elementRelationCreated);
                 } else {
                     console.log(
                         chalk.yellow(
@@ -93,6 +92,8 @@ export function generateSpecializations(
                     );
                 }
             }
+
+            generateRelationEndReferences(elementRelation, relations);
         }
     });
 }
@@ -106,18 +107,97 @@ export function generateInternalRelationSpecialization(
         if (element.$type === "ElementRelation") {
             const elementRelation = element as ElementRelation;
             if (elementRelation.specializeRelation) {
-                const elementRelationCreated = relations.find((item) => item.id === elementRelation.name);
+                const elementRelationCreated = findGeneratedRelation(relations, element, classElement);
 
                 if (elementRelationCreated) {
-                    const targetRelation = relations.find(
-                        (item) => item.id === elementRelation.specializeRelation?.ref?.name
-                    );
+                    const targetRelation = findGeneratedRelation(relations, elementRelation.specializeRelation.ref);
 
                     if (targetRelation) {
-                        relationGeneralizationGenerator(packageItem, elementRelationCreated, targetRelation);
+                        relationGeneralizationGenerator(packageItem, targetRelation, elementRelationCreated);
                     }
                 }
             }
         }
     });
+}
+
+function generateInternalRelationEndReferences(classElement: ClassDeclaration, relations: Relation[]) {
+    classElement.references.forEach((element) => {
+        if (element.$type === "ElementRelation") {
+            generateRelationEndReferences(element, relations, classElement);
+        }
+    });
+}
+
+function generateRelationEndReferences(
+    elementRelation: ElementRelation,
+    relations: Relation[],
+    sourceClassIncoming?: ClassDeclaration
+) {
+    const createdRelation = findGeneratedRelation(relations, elementRelation, sourceClassIncoming);
+    if (!createdRelation) {
+        return;
+    }
+
+    assignRelationEndOverrides(elementRelation.firstEndMetaAttributes, createdRelation, relations);
+    assignRelationEndOverrides(elementRelation.secondEndMetaAttributes, createdRelation, relations);
+}
+
+function assignRelationEndOverrides(
+    metaAttributes: RelationMetaAttributes | undefined,
+    createdRelation: Relation,
+    relations: Relation[]
+) {
+    if (!metaAttributes) {
+        return;
+    }
+
+    const createdProperty = getCreatedPropertyFromMetaAttributes(createdRelation, metaAttributes);
+    if (!createdProperty) {
+        return;
+    }
+
+    metaAttributes.endMetaAttributes.forEach((metaAttribute) => {
+        const subsettedProperty = findReferencedProperty(metaAttribute.subsetRelation?.ref, relations);
+        if (subsettedProperty && !createdProperty.subsettedProperties.some((property) => property.id === subsettedProperty.id)) {
+            createdProperty.subsettedProperties.push(subsettedProperty);
+        }
+
+        const redefinedProperty = findReferencedProperty(metaAttribute.redefinesRelation?.ref, relations);
+        if (redefinedProperty && !createdProperty.redefinedProperties.some((property) => property.id === redefinedProperty.id)) {
+            createdProperty.redefinedProperties.push(redefinedProperty);
+        }
+    });
+}
+
+function findReferencedProperty(
+    metaAttributes: RelationMetaAttributes | undefined,
+    relations: Relation[]
+): Property | undefined {
+    if (!metaAttributes) {
+        return undefined;
+    }
+
+    const referencedRelation = findGeneratedRelation(relations, metaAttributes.$container);
+    if (!referencedRelation) {
+        return undefined;
+    }
+
+    return getCreatedPropertyFromMetaAttributes(referencedRelation, metaAttributes);
+}
+
+function getCreatedPropertyFromMetaAttributes(
+    relation: Relation,
+    metaAttributes: RelationMetaAttributes
+): Property | undefined {
+    const relationDeclaration = metaAttributes.$container;
+    if (relationDeclaration.firstEndMetaAttributes === metaAttributes) {
+        return relation.getSourceEnd();
+    }
+
+    if (relationDeclaration.secondEndMetaAttributes === metaAttributes) {
+        return relation.getTargetEnd();
+    }
+
+    return undefined;
 }

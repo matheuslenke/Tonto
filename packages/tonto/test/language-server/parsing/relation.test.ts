@@ -2,8 +2,7 @@ import { EmptyFileSystem, type LangiumDocument } from "langium";
 import { expandToString as s } from "langium/generate";
 import { parseHelper } from "langium/test";
 import { beforeAll, describe, expect, test } from "vitest";
-import { isClassDeclaration, isElementRelation } from "../../../lib/index.js";
-import { getPrimaryContextModuleOrThrow } from "../../../src/language/index.js";
+import { getPrimaryContextModuleOrThrow, isClassDeclaration, isElementRelation } from "../../../src/language/index.js";
 import { Cardinality, Model, isModel } from "../../../src/language/generated/ast.js";
 import { createTontoServices } from "../../../src/language/tonto-module.js";
 
@@ -87,6 +86,39 @@ describe("Parsing tests of Relations", () => {
                 treats2 [] [2]
                 treats3 [2] []
                 treats4 [1..2] [1..*]
+        `);
+    });
+
+    test("parse relation specialization and end overrides with simple references", async () => {
+        document = await parse(`
+            package Tonto
+            kind Person {
+                [1] -- associates -- [*] ({ ordered } contacts) Person
+            }
+            kind Professor specializes Person {
+                [1] -- colleagues -- [*] ({ subsets contacts, redefines contacts } peers) Professor specializes associates
+            }
+        `);
+
+        const professor = document.parseResult.value && getPrimaryContextModuleOrThrow(document.parseResult.value).declarations
+            .filter(isClassDeclaration)
+            .find((declaration) => declaration.name === "Professor");
+        const colleagues = professor?.references[0];
+        const metaAttributes = colleagues?.secondEndMetaAttributes?.endMetaAttributes ?? [];
+
+        expect(
+            checkDocumentValid(document) || s`
+                Specializes:
+                    ${colleagues?.specializeRelation?.ref?.name}
+                End overrides:
+                    ${metaAttributes.map((metaAttribute) => `${metaAttribute.subsetRelation?.ref?.endName ?? ""}/${metaAttribute.redefinesRelation?.ref?.endName ?? ""}`).join("\n")}
+            `
+        ).toBe(s`
+            Specializes:
+                associates
+            End overrides:
+                contacts/
+                /contacts
         `);
     });
 });

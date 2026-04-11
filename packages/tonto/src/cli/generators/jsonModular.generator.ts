@@ -3,6 +3,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { Model } from "../../language/index.js";
 import { TontoManifest } from "../model/grammar/TontoManifest.js";
+import { serializeProject } from "../utils/serializeProject.js";
 import { ModularGeneratorContext, parseProjectModular } from "../utils/parseProjectModular.js";
 
 export function generateJSONFileModular(
@@ -35,7 +36,7 @@ function generate(ctx: ModularGeneratorContext): string {
     const destinationFolder = path.join(ctx.folderAbsolutePath, ctx.manifest.outFolder);
     const destinationFile = path.join(destinationFolder, project.name.getText() + ".json");
 
-    const projectSerialization = JSON.stringify(project, null, 2);
+    const projectSerialization = serializeProject(project);
     ctx.fileNode.append(projectSerialization);
 
     if (!fs.existsSync(destinationFolder)) {

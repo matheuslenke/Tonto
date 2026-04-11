@@ -13,10 +13,14 @@ export function createTontoImports(actualPackage: Package, fileNode: CompositeGe
     // Getting containers from relation specializations
     const relationSpecializationContainers: Package[] = getContainersFromRelationSpecializations(actualPackage);
 
+    // Getting containers from relation-end subsets and redefinitions
+    const relationEndOverrideContainers: Package[] = getContainersFromRelationEndOverrides(actualPackage);
+
     const uniqueContainers = new Set([
         ...relationContainers,
         ...generalizationContainers,
         ...relationSpecializationContainers,
+        ...relationEndOverrideContainers,
     ]);
     const externalPackages: OntoumlElement[] = [];
 
@@ -75,4 +79,35 @@ function getContainersFromRelationSpecializations(actualPackage: Package): Packa
         .flatMap((item) => item.container as Package)
         .filter((item: Package) => item !== undefined || item !== null);
     return generalizationContainers;
+}
+
+function getContainersFromRelationEndOverrides(actualPackage: Package): Package[] {
+    return actualPackage
+        .getContents()
+        .filter((item: OntoumlElement) => item.type === OntoumlType.RELATION_TYPE)
+        .map((item: OntoumlElement) => item as Relation)
+        .flatMap((relation: Relation) => relation.properties as Property[])
+        .flatMap((property: Property) => [...property.subsettedProperties, ...property.redefinedProperties])
+        .map((property: Property) => resolvePropertyReference(actualPackage, property))
+        .flatMap((property: Property) => {
+            const container = property.container;
+            if (container instanceof Relation) {
+                return container.container;
+            }
+            return [];
+        })
+        .filter((item): item is Package => item instanceof Package);
+}
+
+function resolvePropertyReference(actualPackage: Package, referencedProperty: Property): Property {
+    if (referencedProperty.container) {
+        return referencedProperty;
+    }
+
+    const resolvedProperty = actualPackage
+        .getModelOrRootPackage()
+        .getAllContents()
+        .find((item) => item.type === OntoumlType.PROPERTY_TYPE && item.id === referencedProperty.id);
+
+    return resolvedProperty instanceof Property ? resolvedProperty : referencedProperty;
 }
