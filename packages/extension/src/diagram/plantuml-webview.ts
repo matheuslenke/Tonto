@@ -8,7 +8,6 @@ export class PlantUMLPanel {
     public static currentPanel: PlantUMLPanel | undefined;
     public static readonly viewType = 'tontoPlantUML';
     private readonly _panel: vscode.WebviewPanel;
-    private readonly _extensionUri: vscode.Uri;
     public documentUri: vscode.Uri;
     private _disposables: vscode.Disposable[] = [];
 
@@ -16,7 +15,6 @@ export class PlantUMLPanel {
 
     private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, documentUri: vscode.Uri) {
         this._panel = panel;
-        this._extensionUri = extensionUri;
         this.documentUri = documentUri;
 
         this._panel.onDidDispose(() => this.dispose(), null, this._disposables);

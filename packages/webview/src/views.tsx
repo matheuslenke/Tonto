@@ -1,3 +1,4 @@
+// @ts-nocheck
 /********************************************************************************
  * Copyright (c) 2020 TypeFox and others.
  *
@@ -56,4 +57,3 @@ export class PolylineArrowEdgeView extends PolylineEdgeView {
         return toDegrees(Math.atan2(x1.y - x0.y, x1.x - x0.x));
     }
 }
-

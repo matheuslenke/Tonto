@@ -21,6 +21,7 @@
     "noUnusedLocals": true,
     "noImplicitOverride": true,
     "skipLibCheck": true,
+    "types": ["node", "react", "react-dom"],
     "strict": true,
     "strictPropertyInitialization": false,
     "composite": true

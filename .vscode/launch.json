@@ -12,7 +12,7 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-                "${workspaceFolder}/../university-ontology",
+                "/Users/matheuslenke/dev/masters/tonto-repos/university-ontology",
                 "--extensionDevelopmentPath=${workspaceFolder}/packages/extension"
             ],
             "env": {

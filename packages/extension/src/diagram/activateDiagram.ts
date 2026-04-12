@@ -16,12 +16,10 @@ export function activateDiagram(
     throw new Error("The environment variable 'DIAGRAM_MODE' must be set to 'panel', 'editor' or 'view'.");
   }
   const extensionPath = context.extensionUri.fsPath;
-  const localResourceRoots = [createFileUri(extensionPath, "pack", "diagram")];
-  const test = createFileUri(extensionPath, "pack", "diagram", "main.js");
-  console.log(test);
+  const localResourceRoots = [createFileUri(extensionPath, "pack", "webview")];
   const createWebviewHtml = (identifier: SprottyDiagramIdentifier, container: WebviewContainer) => doCreateWebviewHtml(identifier, container, {
-    scriptUri: createFileUri(extensionPath, "pack", "diagram", "main.js"),
-    cssUri: createFileUri(extensionPath, "pack", "diagram", "main.css")
+    scriptUri: createFileUri(extensionPath, "pack", "webview", "sprotty.js"),
+    cssUri: createFileUri(extensionPath, "pack", "webview", "style.css")
   });
   const configureEndpoint = (endpoint: WebviewEndpoint) => {
     addWorkspaceEditActionHandler(endpoint as LspWebviewEndpoint);

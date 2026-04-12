@@ -9,10 +9,10 @@ export * from "./cli/requests/ontoumljsValidator.js";
 
 export * from "./language/lsp/semantic-token-types.js";
 export * from "./language/lsp/tonto-language-server.js";
+export * from "./diagram-spec/index.js";
 
 import type { Model } from "./language/generated/ast.js";
 import * as GrammarAST from "./language/generated/ast.js";
 
 export * from "./cli/generators/plantuml.generator.js";
 export { GrammarAST, Model };
-

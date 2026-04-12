@@ -1,0 +1,86 @@
+import * as vscode from "vscode";
+
+const COMMAND_ID = "tonto.diagram.createFile";
+
+export function registerCreateTontoDiagramCommand(context: vscode.ExtensionContext): void {
+    context.subscriptions.push(
+        vscode.commands.registerCommand(COMMAND_ID, async (resource?: vscode.Uri) => {
+            const sourceDocument = await resolveSourceDocument(resource);
+            if (!sourceDocument) {
+                return;
+            }
+
+            if (sourceDocument.uri.scheme !== "file") {
+                vscode.window.showErrorMessage("Tonto diagram files can only be created from files on disk.");
+                return;
+            }
+
+            const targetUri = sourceDocument.uri.with({
+                path: sourceDocument.uri.path.replace(/\.tonto$/i, ".tontodiagram"),
+            });
+
+            const diagramContents = createDiagramTemplate(sourceDocument);
+
+            try {
+                await vscode.workspace.fs.stat(targetUri);
+            } catch {
+                await vscode.workspace.fs.writeFile(targetUri, Buffer.from(diagramContents, "utf8"));
+            }
+
+            const targetDocument = await vscode.workspace.openTextDocument(targetUri);
+            await vscode.window.showTextDocument(targetDocument, {
+                preview: false,
+            });
+        }),
+    );
+}
+
+async function resolveSourceDocument(resource?: vscode.Uri): Promise<vscode.TextDocument | undefined> {
+    if (resource) {
+        const document = await vscode.workspace.openTextDocument(resource);
+        if (document.languageId === "tonto") {
+            return document;
+        }
+    }
+
+    const activeDocument = vscode.window.activeTextEditor?.document;
+    if (activeDocument?.languageId === "tonto") {
+        return activeDocument;
+    }
+
+    vscode.window.showErrorMessage("Open a `.tonto` file to scaffold a diagram.");
+    return undefined;
+}
+
+function createDiagramTemplate(document: vscode.TextDocument): string {
+    const packageName = document.getText().match(/\bpackage\s+([A-Za-z_][\w.]*)/)?.[1];
+    const fileName = document.uri.path.split("/").pop()?.replace(/\.tonto$/i, "") ?? "diagram";
+    const title = toTitleCase(fileName);
+
+    return `diagram "${title} Diagram" {
+  source "./${fileName}.tonto"
+${packageName ? `  module ${packageName}\n` : ""}
+  filter {
+    external false
+    datatypes true
+  }
+
+  presentation {
+    theme tonto-uml
+    direction LR
+    stereotypes true
+    attributes true
+  }
+
+  viewport { x 0 y 0 zoom 1 }
+}
+`;
+}
+
+function toTitleCase(value: string): string {
+    return value
+        .split(/[-_.]/)
+        .filter(Boolean)
+        .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1))
+        .join(" ");
+}
