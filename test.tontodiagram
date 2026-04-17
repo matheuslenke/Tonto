@@ -1,0 +1,26 @@
+diagram "Person Overview" {
+  source "./Person.tonto"
+  import Person
+
+  include Person, Child, Teenager, Adult, UniversityStudent, FormerStudent, ActiveStudent, Employee, UniversityProfessor, Professor
+  relations specializes
+
+  direction LR
+  stereotypes true
+  attributes true
+  external false
+  datatypes false
+
+  node Child { x 80 y 60 }
+  node Teenager { x 80 y 180 }
+  node Adult { x 80 y 300 }
+  node Person { x 360 y 180 }
+  node UniversityStudent { x 680 y 60 }
+  node ActiveStudent { x 980 y 20 }
+  node FormerStudent { x 980 y 120 }
+  node Employee { x 680 y 300 }
+  node UniversityProfessor { x 980 y 240 }
+  node Professor { x 980 y 360 }
+
+  viewport { x 0 y 0 zoom 0.85 }
+}

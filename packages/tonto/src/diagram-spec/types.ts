@@ -1,17 +1,15 @@
 export type TontoDiagramDirection = "LR" | "RL" | "TB" | "BT";
 
-export type TontoDiagramTheme = "tonto-uml";
-
 export type TontoDiagramSeverity = "error" | "warning";
 
 export type TontoDiagramFilter = {
     include: string[];
+    relations: string[];
     external: boolean;
     datatypes: boolean;
 };
 
 export type TontoDiagramPresentation = {
-    theme: TontoDiagramTheme;
     direction: TontoDiagramDirection;
     stereotypes: boolean;
     attributes: boolean;
@@ -32,7 +30,7 @@ export type TontoDiagramViewport = {
 export type TontoDiagramSpec = {
     title: string;
     source: string;
-    module?: string;
+    imports: string[];
     filter: TontoDiagramFilter;
     presentation: TontoDiagramPresentation;
     nodes: TontoDiagramLayout[];
@@ -124,9 +122,38 @@ export type TontoDiagramEdge = {
 export type TontoDiagramGraph = {
     title: string;
     source: string;
-    module: string;
+    packages: string[];
+    presentation: TontoDiagramPresentation;
     viewport: TontoDiagramViewport;
     nodes: TontoDiagramNode[];
     edges: TontoDiagramEdge[];
     issues: TontoDiagramIssue[];
+};
+
+export type TontoDiagramPackageContext = {
+    name: string;
+    sourcePath: string;
+};
+
+export type TontoDiagramElementContext = {
+    name: string;
+    qualifiedName: string;
+    packageName: string;
+    kind: TontoDiagramNodeKind;
+};
+
+export type TontoDiagramRelationContext = {
+    id: string;
+    name?: string;
+    packageName: string;
+    source: string;
+    target: string;
+    stereotype?: string;
+};
+
+export type TontoDiagramWorkspaceContext = {
+    sourcePath: string;
+    packages: TontoDiagramPackageContext[];
+    elements: TontoDiagramElementContext[];
+    relations: TontoDiagramRelationContext[];
 };

@@ -9,7 +9,6 @@ import {
 } from "./types.js";
 
 const DEFAULT_PRESENTATION: TontoDiagramPresentation = {
-    theme: "tonto-uml",
     direction: "LR",
     stereotypes: true,
     attributes: true,
@@ -22,9 +21,10 @@ const DEFAULT_VIEWPORT: TontoDiagramViewport = {
 };
 
 const DEFAULT_SPEC: Omit<TontoDiagramSpec, "title" | "source"> = {
-    module: undefined,
+    imports: [],
     filter: {
         include: [],
+        relations: [],
         external: false,
         datatypes: true,
     },
@@ -42,6 +42,7 @@ type BlockMatch = {
 type LineMatch = {
     value: string;
     index: number;
+    length: number;
 };
 
 export function parseTontoDiagramSpec(sourceText: string): TontoDiagramParseResult {
@@ -64,6 +65,20 @@ export function parseTontoDiagramSpec(sourceText: string): TontoDiagramParseResu
     const title = diagramMatch[3] ?? diagramMatch[4] ?? "";
     const body = diagramMatch[5] ?? "";
     const sourceMatch = findLineValue(body, /(^|\n)\s*source\s+("([^"]+)"|'([^']+)')/);
+    const importMatches = findLineValues(body, /(^|\n)\s*import\s+([A-Za-z_][\w.-]*)/g);
+    const legacyModuleMatch = findLineValue(body, /(^|\n)\s*module\s+([A-Za-z_][\w.-]*)/);
+    const includeMatches = [
+        ...findLineValues(body, /(^|\n)\s*include\s+([^\n]+)/g),
+        ...findLineValues(body, /(^|\n)\s*show\s+([A-Za-z_][\w.-]*)/g),
+    ];
+    const relationMatches = [
+        ...findLineValues(body, /(^|\n)\s*relations\s+([^\n]+)/g),
+        ...findLineValues(body, /(^|\n)\s*show\s+relation\s+([^\n]+)/g),
+    ];
+    const filterBlock = findNamedBlock(body, "filter");
+    const presentationBlock = findNamedBlock(body, "presentation");
+    const viewportBlock = findNamedBlock(body, "viewport");
+    const nodeMatches = [...body.matchAll(/\bnode\s+([A-Za-z_][\w.-]*)\s*\{\s*x\s+(-?\d+(?:\.\d+)?)\s+y\s+(-?\d+(?:\.\d+)?)\s*\}/g)];
 
     if (!sourceMatch) {
         issues.push({
@@ -73,18 +88,28 @@ export function parseTontoDiagramSpec(sourceText: string): TontoDiagramParseResu
         });
     }
 
-    const moduleMatch = findLineValue(body, /(^|\n)\s*module\s+([A-Za-z_][\w.-]*)/);
-    const filterBlock = findNamedBlock(body, "filter");
-    const presentationBlock = findNamedBlock(body, "presentation");
-    const viewportBlock = findNamedBlock(body, "viewport");
-    const nodeMatches = [...body.matchAll(/\bnode\s+([A-Za-z_][\w.-]*)\s*\{\s*x\s+(-?\d+(?:\.\d+)?)\s+y\s+(-?\d+(?:\.\d+)?)\s*\}/g)];
+    const imports = dedupeAndSort([
+        ...importMatches.map((match) => match.value),
+        ...(legacyModuleMatch ? [legacyModuleMatch.value] : []),
+    ]);
 
     const parsedSpec: TontoDiagramSpec = {
         title,
         source: sourceMatch?.value ?? "",
-        module: moduleMatch?.value,
-        filter: parseFilterBlock(filterBlock, sourceText, issues),
-        presentation: parsePresentationBlock(presentationBlock, sourceText, issues),
+        imports,
+        filter: {
+            include: dedupeAndSort([
+                ...includeMatches.flatMap((match) => splitCsv(match.value)),
+                ...parseListSetting(filterBlock?.body, "include"),
+            ]),
+            relations: dedupeAndSort([
+                ...relationMatches.flatMap((match) => splitCsv(match.value)),
+                ...parseListSetting(filterBlock?.body, "relations"),
+            ]),
+            external: parseBooleanSetting(body, filterBlock?.body, "external", sourceText, filterBlock?.index, issues, DEFAULT_SPEC.filter.external),
+            datatypes: parseBooleanSetting(body, filterBlock?.body, "datatypes", sourceText, filterBlock?.index, issues, DEFAULT_SPEC.filter.datatypes),
+        },
+        presentation: parsePresentation(body, presentationBlock?.body, sourceText, presentationBlock?.index, issues),
         nodes: parseNodeLayouts(nodeMatches, sourceText, issues),
         viewport: parseViewportBlock(viewportBlock, sourceText, issues),
     };
@@ -95,9 +120,16 @@ export function parseTontoDiagramSpec(sourceText: string): TontoDiagramParseResu
 
     const strayContent = getStrayContent(body, [
         sourceMatch.index,
-        sourceMatch.index + sourceMatch.value.length,
-        moduleMatch ? moduleMatch.index : undefined,
-        moduleMatch ? moduleMatch.index + moduleMatch.value.length : undefined,
+        sourceMatch.index + sourceMatch.length,
+        ...importMatches.flatMap((match) => [match.index, match.index + match.length]),
+        legacyModuleMatch ? legacyModuleMatch.index : undefined,
+        legacyModuleMatch ? legacyModuleMatch.index + legacyModuleMatch.length : undefined,
+        ...includeMatches.flatMap((match) => [match.index, match.index + match.length]),
+        ...relationMatches.flatMap((match) => [match.index, match.index + match.length]),
+        ...findLineValues(body, /(^|\n)\s*(direction|stereotypes|attributes|external|datatypes)\s+[^\n]+/g)
+            .flatMap((match) => [match.index, match.index + match.length]),
+        ...findLineValues(body, /(^|\n)\s*theme\s+[^\n]+/g)
+            .flatMap((match) => [match.index, match.index + match.length]),
         filterBlock?.index,
         filterBlock?.endIndex,
         presentationBlock?.index,
@@ -124,62 +156,29 @@ export function parseTontoDiagramSpec(sourceText: string): TontoDiagramParseResu
     };
 }
 
-function parseFilterBlock(
-    block: BlockMatch | undefined,
+function parsePresentation(
+    body: string,
+    block: string | undefined,
     sourceText: string,
-    issues: TontoDiagramIssue[]
-): TontoDiagramSpec["filter"] {
-    if (!block) {
-        return DEFAULT_SPEC.filter;
-    }
-
-    const include = findLineValue(block.body, /(^|\n)\s*include\s+([^\n]+)/)?.value
-        ?.split(",")
-        .map((item) => item.trim())
-        .filter(Boolean) ?? [];
-    const external = parseBooleanSetting(block.body, "external", sourceText, block.index, issues, DEFAULT_SPEC.filter.external);
-    const datatypes = parseBooleanSetting(block.body, "datatypes", sourceText, block.index, issues, DEFAULT_SPEC.filter.datatypes);
-
-    return {
-        include,
-        external,
-        datatypes,
-    };
-}
-
-function parsePresentationBlock(
-    block: BlockMatch | undefined,
-    sourceText: string,
+    blockIndex: number | undefined,
     issues: TontoDiagramIssue[]
 ): TontoDiagramPresentation {
-    if (!block) {
-        return DEFAULT_SPEC.presentation;
-    }
-
-    const theme = findLineValue(block.body, /(^|\n)\s*theme\s+([A-Za-z_][\w-]*)/)?.value ?? DEFAULT_PRESENTATION.theme;
-    const directionValue = findLineValue(block.body, /(^|\n)\s*direction\s+([A-Z]{2})/)?.value ?? DEFAULT_PRESENTATION.direction;
-
-    if (theme !== "tonto-uml") {
-        issues.push({
-            severity: "error",
-            message: `Unsupported diagram theme \`${theme}\`.`,
-            line: lineNumberForIndex(sourceText, block.index),
-        });
-    }
+    const directionValue = findLineValue(body, /(^|\n)\s*direction\s+([A-Z]{2})/)?.value
+        ?? findLineValue(block ?? "", /(^|\n)\s*direction\s+([A-Z]{2})/)?.value
+        ?? DEFAULT_PRESENTATION.direction;
 
     if (!isDirection(directionValue)) {
         issues.push({
             severity: "error",
             message: `Unsupported diagram direction \`${directionValue}\`.`,
-            line: lineNumberForIndex(sourceText, block.index),
+            line: lineNumberForIndex(sourceText, blockIndex ?? 0),
         });
     }
 
     return {
-        theme: "tonto-uml",
         direction: isDirection(directionValue) ? directionValue : DEFAULT_PRESENTATION.direction,
-        stereotypes: parseBooleanSetting(block.body, "stereotypes", sourceText, block.index, issues, DEFAULT_PRESENTATION.stereotypes),
-        attributes: parseBooleanSetting(block.body, "attributes", sourceText, block.index, issues, DEFAULT_PRESENTATION.attributes),
+        stereotypes: parseBooleanSetting(body, block, "stereotypes", sourceText, blockIndex, issues, DEFAULT_PRESENTATION.stereotypes),
+        attributes: parseBooleanSetting(body, block, "attributes", sourceText, blockIndex, issues, DEFAULT_PRESENTATION.attributes),
     };
 }
 
@@ -259,14 +258,16 @@ function parseViewportBlock(
 }
 
 function parseBooleanSetting(
-    block: string,
+    body: string,
+    block: string | undefined,
     setting: string,
     sourceText: string,
-    blockIndex: number,
+    blockIndex: number | undefined,
     issues: TontoDiagramIssue[],
     fallback: boolean
 ): boolean {
-    const match = findLineValue(block, new RegExp(`(^|\\n)\\s*${setting}\\s+(true|false)`));
+    const match = findLineValue(body, new RegExp(`(^|\\n)\\s*${setting}\\s+(true|false)`))
+        ?? findLineValue(block ?? "", new RegExp(`(^|\\n)\\s*${setting}\\s+(true|false)`));
 
     if (!match) {
         return fallback;
@@ -277,12 +278,28 @@ function parseBooleanSetting(
         issues.push({
             severity: "error",
             message: `Expected boolean value for \`${setting}\`.`,
-            line: lineNumberForIndex(sourceText, blockIndex + match.index),
+            line: lineNumberForIndex(sourceText, (blockIndex ?? 0) + match.index),
         });
         return fallback;
     }
 
     return value === "true";
+}
+
+function parseListSetting(block: string | undefined, setting: string): string[] {
+    return findLineValues(block ?? "", new RegExp(`(^|\\n)\\s*${setting}\\s+([^\\n]+)`, "g"))
+        .flatMap((match) => splitCsv(match.value));
+}
+
+function splitCsv(value: string): string[] {
+    return value
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean);
+}
+
+function dedupeAndSort(values: string[]): string[] {
+    return [...new Set(values)].sort((left, right) => left.localeCompare(right));
 }
 
 function findNamedBlock(input: string, name: string): BlockMatch | undefined {
@@ -322,25 +339,40 @@ function findMatchingBrace(input: string, startIndex: number): number {
 }
 
 function findLineValue(input: string, expression: RegExp): LineMatch | undefined {
-    const match = expression.exec(input);
-    if (!match || match.index === undefined) {
-        return undefined;
+    const matches = findLineValues(input, expression);
+    return matches[0];
+}
+
+function findLineValues(input: string, expression: RegExp): LineMatch[] {
+    const flags = expression.flags.includes("g") ? expression.flags : `${expression.flags}g`;
+    const matcher = new RegExp(expression.source, flags);
+    const matches: LineMatch[] = [];
+
+    for (const match of input.matchAll(matcher)) {
+        if (match.index === undefined) {
+            continue;
+        }
+
+        let candidate: string | undefined;
+        for (let index = match.length - 1; index >= 1; index -= 1) {
+            if (match[index] !== undefined) {
+                candidate = match[index];
+                break;
+            }
+        }
+
+        if (!candidate) {
+            continue;
+        }
+
+        matches.push({
+            value: candidate,
+            index: match.index,
+            length: match[0].length,
+        });
     }
 
-    let candidate: string | undefined;
-    for (let index = match.length - 1; index >= 1; index -= 1) {
-        if (match[index] !== undefined) {
-            candidate = match[index];
-            break;
-        }
-    }
-    if (!candidate) {
-        return undefined;
-    }
-    return {
-        value: candidate,
-        index: match.index,
-    };
+    return matches;
 }
 
 function getStrayContent(input: string, ranges: Array<number | undefined>): string {

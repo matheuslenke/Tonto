@@ -48,5 +48,31 @@ export class TontoLanguageServer extends DefaultLanguageServer {
 }
 
 function isOperationCancelledSymbol(error: unknown): boolean {
-    return typeof error === "symbol" && error.description === OPERATION_CANCELLED_DESCRIPTION;
+    if (typeof error === "symbol") {
+        return error.description === OPERATION_CANCELLED_DESCRIPTION || String(error) === `Symbol(${OPERATION_CANCELLED_DESCRIPTION})`;
+    }
+
+    if (error && typeof error === "object") {
+        const candidate = error as {
+            cause?: unknown;
+            description?: unknown;
+            message?: unknown;
+            name?: unknown;
+            toString?: () => string;
+        };
+
+        if (candidate.description === OPERATION_CANCELLED_DESCRIPTION || candidate.name === OPERATION_CANCELLED_DESCRIPTION || candidate.message === OPERATION_CANCELLED_DESCRIPTION) {
+            return true;
+        }
+
+        if (candidate.toString?.() === `Symbol(${OPERATION_CANCELLED_DESCRIPTION})`) {
+            return true;
+        }
+
+        if (candidate.cause) {
+            return isOperationCancelledSymbol(candidate.cause);
+        }
+    }
+
+    return String(error) === `Symbol(${OPERATION_CANCELLED_DESCRIPTION})`;
 }

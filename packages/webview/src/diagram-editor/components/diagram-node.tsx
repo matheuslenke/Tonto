@@ -5,6 +5,8 @@ import { cn } from "../lib/cn";
 
 type DiagramNodeData = {
     node: TontoDiagramNode;
+    showAttributes: boolean;
+    showStereotypes: boolean;
 };
 
 const PALETTE_BY_TOKEN = {
@@ -26,15 +28,16 @@ export function DiagramNode(props: NodeProps) {
     if (!diagramNode) {
         return null;
     }
-    const palette = PALETTE_BY_TOKEN[diagramNode.appearance.palette];
+    const { node, showAttributes, showStereotypes } = diagramNode;
+    const palette = PALETTE_BY_TOKEN[node.appearance.palette];
 
     return (
         <div
             className={cn(
                 "relative min-w-[16rem] overflow-hidden rounded-2xl border bg-white/90 shadow-diagram backdrop-blur-sm",
-                diagramNode.appearance.rigidity === "anti-rigid" && "border-dashed",
-                diagramNode.appearance.rigidity !== "anti-rigid" && "border-solid",
-                diagramNode.appearance.external && "opacity-80",
+                node.appearance.rigidity === "anti-rigid" && "border-dashed",
+                node.appearance.rigidity !== "anti-rigid" && "border-solid",
+                node.appearance.external && "opacity-80",
             )}
             style={{
                 borderColor: palette.edge,
@@ -47,8 +50,8 @@ export function DiagramNode(props: NodeProps) {
             <div
                 className={cn(
                     "flex items-start justify-between gap-3 px-4 py-3 text-slate-900",
-                    diagramNode.appearance.accent === "non-sortal" && "border-b-4",
-                    diagramNode.appearance.accent !== "non-sortal" && "border-b-2",
+                    node.appearance.accent === "non-sortal" && "border-b-4",
+                    node.appearance.accent !== "non-sortal" && "border-b-2",
                 )}
                 style={{
                     borderColor: palette.accent,
@@ -56,17 +59,17 @@ export function DiagramNode(props: NodeProps) {
                 }}
             >
                 <div>
-                    {diagramNode.stereotype ? (
+                    {showStereotypes && node.stereotype ? (
                         <div className="font-mono text-[11px] uppercase tracking-[0.24em] text-slate-700">
-                            {`<<${diagramNode.stereotype}>>`}
+                            {`<<${node.stereotype}>>`}
                         </div>
                     ) : null}
-                    <div className="font-display text-xl leading-tight">{diagramNode.label}</div>
+                    <div className="font-display text-xl leading-tight">{node.label}</div>
                     <div className="mt-1 font-mono text-[11px] uppercase tracking-[0.24em] text-slate-600">
-                        {diagramNode.module}
+                        {node.module}
                     </div>
                 </div>
-                {diagramNode.appearance.external ? (
+                {node.appearance.external ? (
                     <span className="rounded-full border border-slate-700/20 bg-white/70 px-2 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-slate-700">
                         External
                     </span>
@@ -74,8 +77,8 @@ export function DiagramNode(props: NodeProps) {
             </div>
 
             <div className="space-y-2 px-4 py-3 font-mono text-[12px] text-slate-800">
-                {diagramNode.attributes.length > 0 ? (
-                    diagramNode.attributes.map((attribute) => (
+                {showAttributes && node.attributes.length > 0 ? (
+                    node.attributes.map((attribute) => (
                         <div key={`${attribute.name}:${attribute.type}`} className="flex items-baseline justify-between gap-4">
                             <span className="truncate">{attribute.name}</span>
                             <span className="truncate text-slate-500">
@@ -84,19 +87,19 @@ export function DiagramNode(props: NodeProps) {
                             </span>
                         </div>
                     ))
-                ) : (
-                    <div className="text-slate-500">{diagramNode.isEnum ? "No enum values" : "No attributes"}</div>
-                )}
+                ) : <div className="text-slate-500">
+                    {showAttributes ? (node.isEnum ? "No enum values" : "No attributes") : "Attributes hidden"}
+                </div>}
             </div>
         </div>
     );
 }
 
-function readDiagramNode(data: unknown): TontoDiagramNode | undefined {
-    if (!data || typeof data !== "object" || !("node" in data)) {
+function readDiagramNode(data: unknown): DiagramNodeData | undefined {
+    if (!data || typeof data !== "object" || !("node" in data) || !("showAttributes" in data) || !("showStereotypes" in data)) {
         return undefined;
     }
 
     const payload = data as DiagramNodeData;
-    return payload.node;
+    return payload;
 }

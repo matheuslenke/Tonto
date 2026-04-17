@@ -20,6 +20,7 @@ describe("tontodiagram projection", () => {
         temporaryDirectories.push(temporaryDirectory);
 
         const sourcePath = path.join(temporaryDirectory, "people.tonto");
+        const hrSourcePath = path.join(temporaryDirectory, "hr.tonto");
         const diagramPath = path.join(temporaryDirectory, "people.tontodiagram");
 
         await writeFile(sourcePath, `package people
@@ -34,22 +35,23 @@ relator Employment
 
 @mediation relation Employment [1] -- employee -- [1] Person
 `, "utf8");
+        await writeFile(hrSourcePath, `import people
+
+package hr
+
+relator Contract
+@mediation relation Contract [1] -- contractor -- [1] people.Person
+`, "utf8");
 
         const parsed = parseTontoDiagramSpec(`diagram "People Overview" {
   source "./people.tonto"
-  module people
-
-  filter {
-    external false
-    datatypes false
-  }
-
-  presentation {
-    theme tonto-uml
-    direction LR
-    stereotypes true
-    attributes true
-  }
+  import people
+  import hr
+  direction LR
+  stereotypes true
+  attributes true
+  external false
+  datatypes false
 
   node Child { x 360 y 120 }
 
@@ -60,20 +62,22 @@ relator Employment
 
         const graph = await buildTontoDiagramGraph(parsed.spec!, diagramPath);
 
-        expect(graph.module).toBe("people");
+        expect(graph.packages).toEqual(["hr", "people"]);
         expect(graph.nodes.map((node) => node.id)).toEqual(expect.arrayContaining([
             "people.Person",
             "people.Child",
             "people.Employment",
+            "hr.Contract",
         ]));
         expect(graph.edges.map((edge) => edge.id)).toEqual(expect.arrayContaining([
             "people.Child::specializes::people.Person",
             "people.Employment::employee::people.Person",
+            "hr.Contract::contractor::people.Person",
         ]));
         expect(graph.nodes.find((node) => node.id === "people.Child")?.position).toEqual({ x: 360, y: 120 });
     });
 
-    test("applies include filters using edge labels", async () => {
+    test("applies relation filters using edge labels", async () => {
         const temporaryDirectory = await mkdtemp(path.join(os.tmpdir(), "tonto-diagram-"));
         temporaryDirectories.push(temporaryDirectory);
 
@@ -89,19 +93,13 @@ relator Employment
 
         const parsed = parseTontoDiagramSpec(`diagram "Filtered" {
   source "./people.tonto"
-
-  filter {
-    include employee
-    external false
-    datatypes false
-  }
-
-  presentation {
-    theme tonto-uml
-    direction LR
-    stereotypes true
-    attributes true
-  }
+  import people
+  relations employee
+  direction LR
+  stereotypes true
+  attributes true
+  external false
+  datatypes false
 
   viewport { x 0 y 0 zoom 1 }
 }`);

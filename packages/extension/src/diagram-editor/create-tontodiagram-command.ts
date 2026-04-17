@@ -59,18 +59,12 @@ function createDiagramTemplate(document: vscode.TextDocument): string {
 
     return `diagram "${title} Diagram" {
   source "./${fileName}.tonto"
-${packageName ? `  module ${packageName}\n` : ""}
-  filter {
-    external false
-    datatypes true
-  }
-
-  presentation {
-    theme tonto-uml
-    direction LR
-    stereotypes true
-    attributes true
-  }
+${packageName ? `  import ${packageName}\n` : ""}
+  direction LR
+  stereotypes true
+  attributes true
+  external false
+  datatypes true
 
   viewport { x 0 y 0 zoom 1 }
 }

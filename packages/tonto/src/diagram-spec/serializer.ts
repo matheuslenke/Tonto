@@ -6,26 +6,24 @@ export function serializeTontoDiagramSpec(spec: TontoDiagramSpec): string {
     lines.push(`diagram "${spec.title}" {`);
     lines.push(`  source "${spec.source}"`);
 
-    if (spec.module) {
-        lines.push(`  module ${spec.module}`);
+    for (const packageName of [...spec.imports].sort((left, right) => left.localeCompare(right))) {
+        lines.push(`  import ${packageName}`);
     }
 
-    lines.push("");
-    lines.push("  filter {");
     if (spec.filter.include.length > 0) {
-        lines.push(`    include ${spec.filter.include.join(", ")}`);
+        lines.push("");
+        lines.push(`  include ${[...spec.filter.include].sort((left, right) => left.localeCompare(right)).join(", ")}`);
     }
-    lines.push(`    external ${spec.filter.external ? "true" : "false"}`);
-    lines.push(`    datatypes ${spec.filter.datatypes ? "true" : "false"}`);
-    lines.push("  }");
+    if (spec.filter.relations.length > 0) {
+        lines.push(`  relations ${[...spec.filter.relations].sort((left, right) => left.localeCompare(right)).join(", ")}`);
+    }
 
     lines.push("");
-    lines.push("  presentation {");
-    lines.push(`    theme ${spec.presentation.theme}`);
-    lines.push(`    direction ${spec.presentation.direction}`);
-    lines.push(`    stereotypes ${spec.presentation.stereotypes ? "true" : "false"}`);
-    lines.push(`    attributes ${spec.presentation.attributes ? "true" : "false"}`);
-    lines.push("  }");
+    lines.push(`  direction ${spec.presentation.direction}`);
+    lines.push(`  stereotypes ${spec.presentation.stereotypes ? "true" : "false"}`);
+    lines.push(`  attributes ${spec.presentation.attributes ? "true" : "false"}`);
+    lines.push(`  external ${spec.filter.external ? "true" : "false"}`);
+    lines.push(`  datatypes ${spec.filter.datatypes ? "true" : "false"}`);
 
     if (spec.nodes.length > 0) {
         lines.push("");

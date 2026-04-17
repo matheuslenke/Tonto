@@ -6,7 +6,7 @@ export function RelationEdge(props: EdgeProps) {
     const sourceCardinality = typeof props.data?.sourceCardinality === "string" ? props.data.sourceCardinality : undefined;
     const targetCardinality = typeof props.data?.targetCardinality === "string" ? props.data.targetCardinality : undefined;
     const stereotype = typeof props.data?.stereotype === "string" ? props.data.stereotype : undefined;
-    const markerEnd = resolveMarkerEnd(props.data?.connector);
+    const { markerEnd, markerStart } = resolveMarkers(props.data?.connector);
 
     return (
         <>
@@ -18,7 +18,7 @@ export function RelationEdge(props: EdgeProps) {
                     <path d="M 0 5 L 5 0 L 10 5 L 5 10 Z" fill="#273449" stroke="#273449" strokeWidth="1.2" />
                 </marker>
             </defs>
-            <BaseEdge path={edgePath} markerEnd={markerEnd} style={{ stroke: "#273449", strokeWidth: 1.8 }} />
+            <BaseEdge path={edgePath} markerEnd={markerEnd} markerStart={markerStart} style={{ stroke: "#273449", strokeWidth: 1.8 }} />
             <EdgeLabelRenderer>
                 <div
                     className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full border border-slate-300/80 bg-white/90 px-3 py-1 font-mono text-[11px] text-slate-700 shadow-sm"
@@ -54,14 +54,22 @@ export function RelationEdge(props: EdgeProps) {
     );
 }
 
-function resolveMarkerEnd(connector: unknown): string | undefined {
-    if (connector === "aggregation" || connector === "aggregation-inverted") {
-        return "url(#tonto-diamond-open)";
+function resolveMarkers(connector: unknown): { markerEnd?: string; markerStart?: string } {
+    if (connector === "aggregation") {
+        return { markerEnd: "url(#tonto-diamond-open)" };
     }
 
-    if (connector === "composition" || connector === "composition-inverted") {
-        return "url(#tonto-diamond-solid)";
+    if (connector === "aggregation-inverted") {
+        return { markerStart: "url(#tonto-diamond-open)" };
     }
 
-    return undefined;
+    if (connector === "composition") {
+        return { markerEnd: "url(#tonto-diamond-solid)" };
+    }
+
+    if (connector === "composition-inverted") {
+        return { markerStart: "url(#tonto-diamond-solid)" };
+    }
+
+    return {};
 }

@@ -1,24 +1,23 @@
 import ElkConstructor from "elkjs";
-import { NodeFileSystem } from "langium/node";
-import { access } from "node:fs/promises";
-import path from "node:path";
-import { createTontoServices } from "../language/tonto-module.js";
 import {
     Attribute,
     ClassDeclaration,
     ContextModule,
     DataType,
     ElementRelation,
-    Model,
     isClassDeclaration,
     isDataType,
     isElementRelation
 } from "../language/generated/ast.js";
-import { getModelContextModules, getPrimaryContextModuleOrThrow } from "../language/utils/modelStatements.js";
+import { getPrimaryContextModuleOrThrow } from "../language/utils/modelStatements.js";
 import { isAntiRigidStereotype, isRigidStereotype, isSemiRigidStereotype } from "../language/models/StereotypeUtils.js";
 import { isNonSortalOntoCategory } from "../language/models/OntologicalCategory.js";
 import { TontoNatureResult, tontoNatureUtils } from "../language/utils/tontoNatureUtils.js";
-import { buildFolderDocuments } from "../cli/utils/buildFolderDocuments.js";
+import {
+    loadTontoDiagramWorkspace,
+    resolveRequestedPackages,
+    resolveTontoDiagramSourcePath
+} from "./context.js";
 import {
     TontoDiagramAttribute,
     TontoDiagramConnector,
@@ -55,35 +54,36 @@ export async function buildTontoDiagramGraph(
     spec: TontoDiagramSpec,
     diagramPath: string
 ): Promise<TontoDiagramGraph> {
-    const sourcePath = resolveDiagramSourcePath(spec.source, diagramPath);
-    const projectRoot = await findTontoProjectRoot(path.dirname(sourcePath));
-    const services = createTontoServices({ ...NodeFileSystem }).Tonto;
-    const builtDocuments = await buildFolderDocuments(projectRoot, services, { validation: false });
-    const sourceModel = findModelForPath(builtDocuments.models, sourcePath);
+    const workspace = await loadTontoDiagramWorkspace(spec.source, diagramPath);
+    const fallbackPackage = getPrimaryContextModuleOrThrow(workspace.sourceModel).name;
+    const requestedPackages = spec.imports.length > 0 ? spec.imports : [fallbackPackage];
+    const resolvedPackages = resolveRequestedPackages(workspace.models, requestedPackages);
 
-    if (!sourceModel) {
-        throw new Error(`Could not resolve Tonto source file at ${sourcePath}.`);
+    if (resolvedPackages.packages.length === 0) {
+        throw new Error(`Could not resolve any imported package from ${requestedPackages.join(", ")}.`);
     }
 
-    const contextModule = resolveTargetModule(sourceModel, builtDocuments.models, spec.module);
-    if (!contextModule) {
-        throw new Error(`Could not resolve Tonto module \`${spec.module}\`.`);
-    }
+    const visiblePackageNames = new Set(resolvedPackages.packages.map((contextModule) => contextModule.name));
+    const graphIssues: TontoDiagramIssue[] = resolvedPackages.missing.map((packageName) => ({
+        severity: "warning",
+        message: `Imported package \`${packageName}\` could not be resolved.`,
+    }));
 
-    const graphIssues: TontoDiagramIssue[] = [];
-    const nodes = collectNodes(contextModule, spec.filter.datatypes);
-    const edgeCollection = collectEdges(contextModule, spec.filter.external);
+    const nodes = collectNodes(resolvedPackages.packages, spec.filter.datatypes);
+    const edgeCollection = collectEdges(resolvedPackages.packages, visiblePackageNames, spec.filter.external);
     const nodesById = new Map(nodes.map((node) => [node.id, node]));
+
     for (const externalNode of edgeCollection.externalNodes) {
         if (!nodesById.has(externalNode.id)) {
             nodesById.set(externalNode.id, externalNode);
         }
     }
+
     const edges = edgeCollection.edges;
     nodes.splice(0, nodes.length, ...nodesById.values());
 
-    if (spec.filter.include.length > 0) {
-        applyIncludeFilter(nodes, edges, spec.filter.include, graphIssues);
+    if (spec.filter.include.length > 0 || spec.filter.relations.length > 0) {
+        applyVisibilityFilter(nodes, edges, spec.filter.include, spec.filter.relations, graphIssues);
     }
 
     const layoutTargets = await computeFallbackLayout(
@@ -111,8 +111,9 @@ export async function buildTontoDiagramGraph(
 
     return {
         title: spec.title,
-        source: sourcePath,
-        module: contextModule.name,
+        source: workspace.sourcePath,
+        packages: [...visiblePackageNames].sort((left, right) => left.localeCompare(right)),
+        presentation: spec.presentation,
         viewport: spec.viewport,
         nodes: nodes.sort((left, right) => left.id.localeCompare(right.id)),
         edges: edges.sort((left, right) => left.id.localeCompare(right.id)),
@@ -120,94 +121,77 @@ export async function buildTontoDiagramGraph(
     };
 }
 
-export function resolveDiagramSourcePath(source: string, diagramPath: string): string {
-    return path.resolve(path.dirname(diagramPath), source);
-}
+export { resolveTontoDiagramSourcePath as resolveDiagramSourcePath };
 
-function findModelForPath(models: Model[], filePath: string): Model | undefined {
-    const normalizedPath = path.resolve(filePath);
+function collectNodes(contextModules: ContextModule[], includeDatatypes: boolean): TontoDiagramNode[] {
+    const nodes = new Map<string, TontoDiagramNode>();
 
-    return models.find((model) => model.$document?.uri.fsPath === normalizedPath);
-}
-
-function resolveTargetModule(sourceModel: Model, models: Model[], requestedModule: string | undefined): ContextModule | undefined {
-    if (!requestedModule) {
-        return getPrimaryContextModuleOrThrow(sourceModel);
-    }
-
-    for (const model of models) {
-        const contextModule = getModelContextModules(model).find((candidate) => candidate.name === requestedModule);
-        if (contextModule) {
-            return contextModule;
+    for (const contextModule of contextModules) {
+        for (const declaration of contextModule.declarations) {
+            if (isClassDeclaration(declaration)) {
+                const node = createClassNode(declaration, false);
+                nodes.set(node.id, node);
+            } else if (includeDatatypes && isDataType(declaration)) {
+                const node = createDatatypeNode(declaration, false);
+                nodes.set(node.id, node);
+            }
         }
     }
 
-    return undefined;
-}
-
-function collectNodes(contextModule: ContextModule, includeDatatypes: boolean): TontoDiagramNode[] {
-    const nodes: TontoDiagramNode[] = [];
-
-    for (const declaration of contextModule.declarations) {
-        if (isClassDeclaration(declaration)) {
-            nodes.push(createClassNode(declaration, false));
-        }
-        if (includeDatatypes && isDataType(declaration)) {
-            nodes.push(createDatatypeNode(declaration, false));
-        }
-    }
-
-    return nodes;
+    return [...nodes.values()];
 }
 
 function collectEdges(
-    contextModule: ContextModule,
+    contextModules: ContextModule[],
+    visiblePackageNames: Set<string>,
     includeExternal: boolean
 ): { edges: TontoDiagramEdge[]; externalNodes: TontoDiagramNode[] } {
     const edges: TontoDiagramEdge[] = [];
     const externalNodes = new Map<string, TontoDiagramNode>();
 
-    for (const declaration of contextModule.declarations) {
-        if (isClassDeclaration(declaration)) {
-            for (const relation of declaration.references) {
-                const edge = createRelationEdge(contextModule, relation, includeExternal);
+    for (const contextModule of contextModules) {
+        for (const declaration of contextModule.declarations) {
+            if (isClassDeclaration(declaration)) {
+                for (const relation of declaration.references) {
+                    const edge = createRelationEdge(relation, declaration, visiblePackageNames, includeExternal);
+                    if (edge) {
+                        edges.push(edge.edge);
+                        for (const externalNode of edge.externalNodes) {
+                            externalNodes.set(externalNode.id, externalNode);
+                        }
+                    }
+                }
+
+                for (const specialization of declaration.specializationEndurants) {
+                    const target = specialization.ref;
+                    if (!target) {
+                        continue;
+                    }
+
+                    const targetPackageName = target.$container.name;
+                    const isExternal = !visiblePackageNames.has(targetPackageName);
+                    if (isExternal && !includeExternal) {
+                        continue;
+                    }
+
+                    if (isExternal) {
+                        externalNodes.set(getNodeId(targetPackageName, target.name), createClassNode(target, true));
+                    }
+
+                    edges.push({
+                        id: `${getNodeId(declaration.$container.name, declaration.name)}::specializes::${getNodeId(targetPackageName, target.name)}`,
+                        kind: "specialization",
+                        source: getNodeId(declaration.$container.name, declaration.name),
+                        target: getNodeId(targetPackageName, target.name),
+                    });
+                }
+            } else if (isElementRelation(declaration)) {
+                const edge = createRelationEdge(declaration, undefined, visiblePackageNames, includeExternal);
                 if (edge) {
                     edges.push(edge.edge);
                     for (const externalNode of edge.externalNodes) {
                         externalNodes.set(externalNode.id, externalNode);
                     }
-                }
-            }
-
-            for (const specialization of declaration.specializationEndurants) {
-                const target = specialization.ref;
-                if (!target) {
-                    continue;
-                }
-                const isExternal = target.$container.name !== contextModule.name;
-                if (isExternal && !includeExternal) {
-                    continue;
-                }
-
-                if (isExternal) {
-                    externalNodes.set(getNodeId(target.$container.name, target.name), createClassNode(target, true));
-                }
-
-                edges.push({
-                    id: `${getNodeId(declaration.$container.name, declaration.name)}::specializes::${getNodeId(target.$container.name, target.name)}`,
-                    kind: "specialization",
-                    source: getNodeId(declaration.$container.name, declaration.name),
-                    target: getNodeId(target.$container.name, target.name),
-                });
-            }
-        }
-
-        if (isElementRelation(declaration)) {
-            const edge = createRelationEdge(contextModule, declaration, includeExternal);
-            if (edge) {
-                edges.push(edge.edge);
-                for (const externalNode of edge.externalNodes) {
-                    externalNodes.set(externalNode.id, externalNode);
                 }
             }
         }
@@ -220,11 +204,12 @@ function collectEdges(
 }
 
 function createRelationEdge(
-    contextModule: ContextModule,
     relation: ElementRelation,
+    owningDeclaration: ClassDeclaration | undefined,
+    visiblePackageNames: Set<string>,
     includeExternal: boolean
 ): { edge: TontoDiagramEdge; externalNodes: TontoDiagramNode[] } | undefined {
-    const sourceElement = relation.firstEnd?.ref ?? (isClassDeclaration(relation.$container) ? relation.$container : undefined);
+    const sourceElement = relation.firstEnd?.ref ?? owningDeclaration;
     const targetElement = relation.secondEnd.ref;
 
     if (!sourceElement || !targetElement) {
@@ -235,19 +220,21 @@ function createRelationEdge(
         return undefined;
     }
 
-    const sourceModule = sourceElement.$container;
-    const targetModule = targetElement.$container;
-    const isExternal = sourceModule.name !== contextModule.name || targetModule.name !== contextModule.name;
+    const sourcePackageName = sourceElement.$container.name;
+    const targetPackageName = targetElement.$container.name;
+    const sourceVisible = visiblePackageNames.has(sourcePackageName);
+    const targetVisible = visiblePackageNames.has(targetPackageName);
+    const isExternal = !sourceVisible || !targetVisible;
     if (isExternal && !includeExternal) {
         return undefined;
     }
 
-    const edgeId = `${getNodeId(sourceModule.name, sourceElement.name)}::${relation.name ?? relation.relationType ?? "unnamed"}::${getNodeId(targetModule.name, targetElement.name)}`;
+    const edgeId = `${getNodeId(sourcePackageName, sourceElement.name)}::${relation.name ?? relation.relationType ?? "unnamed"}::${getNodeId(targetPackageName, targetElement.name)}`;
     const edge: TontoDiagramEdge = {
         id: edgeId,
         kind: "relation",
-        source: getNodeId(sourceModule.name, sourceElement.name),
-        target: getNodeId(targetModule.name, targetElement.name),
+        source: getNodeId(sourcePackageName, sourceElement.name),
+        target: getNodeId(targetPackageName, targetElement.name),
         label: relation.name,
         stereotype: relation.relationType,
         connector: getConnector(relation),
@@ -257,7 +244,7 @@ function createRelationEdge(
 
     const externalNodes: TontoDiagramNode[] = [];
 
-    if (sourceModule.name !== contextModule.name) {
+    if (!sourceVisible) {
         externalNodes.push(
             isClassDeclaration(sourceElement)
                 ? createClassNode(sourceElement, true)
@@ -265,7 +252,7 @@ function createRelationEdge(
         );
     }
 
-    if (targetModule.name !== contextModule.name) {
+    if (!targetVisible) {
         externalNodes.push(
             isClassDeclaration(targetElement)
                 ? createClassNode(targetElement, true)
@@ -425,25 +412,27 @@ function dedupeEdges(edges: TontoDiagramEdge[]): TontoDiagramEdge[] {
     return [...seen.values()];
 }
 
-function applyIncludeFilter(
+function applyVisibilityFilter(
     nodes: TontoDiagramNode[],
     edges: TontoDiagramEdge[],
     include: string[],
+    relationFilters: string[],
     issues: TontoDiagramIssue[]
 ): void {
-    const includeSet = new Set(include);
+    const nodeFilterSet = new Set(include);
+    const relationFilterSet = new Set(relationFilters);
     const includedNodeIds = new Set<string>();
     const includedEdgeIds = new Set<string>();
-    const nodeLookup = new Map(nodes.map((node) => [node.id, node]));
 
     for (const node of nodes) {
-        if (includeSet.has(node.label) || includeSet.has(node.id) || includeSet.has(node.specifier)) {
+        if (matchesNodeFilter(node, nodeFilterSet)) {
             includedNodeIds.add(node.id);
         }
     }
 
     for (const edge of edges) {
-        if (includeSet.has(edge.label ?? "") || includeSet.has(edge.id)) {
+        const edgeMatches = matchesEdgeFilter(edge, nodeFilterSet) || matchesEdgeFilter(edge, relationFilterSet);
+        if (edgeMatches) {
             includedEdgeIds.add(edge.id);
             includedNodeIds.add(edge.source);
             includedNodeIds.add(edge.target);
@@ -453,7 +442,7 @@ function applyIncludeFilter(
     if (includedNodeIds.size === 0 && includedEdgeIds.size === 0) {
         issues.push({
             severity: "warning",
-            message: "Include filter did not match any diagram elements.",
+            message: "Diagram filters did not match any visible element.",
         });
         return;
     }
@@ -470,25 +459,42 @@ function applyIncludeFilter(
     nodes.splice(0, nodes.length, ...filteredNodes);
     edges.splice(0, edges.length, ...filteredEdges);
 
-    for (const includeItem of includeSet) {
-        const matched = filteredNodes.some((node) => node.id === includeItem || node.label === includeItem || node.specifier === includeItem)
-            || filteredEdges.some((edge) => edge.id === includeItem || edge.label === includeItem);
+    for (const includeEntry of nodeFilterSet) {
+        const matched = filteredNodes.some((node) => matchesNodeFilter(node, new Set([includeEntry])))
+            || filteredEdges.some((edge) => matchesEdgeFilter(edge, new Set([includeEntry])));
         if (!matched) {
             issues.push({
                 severity: "warning",
-                message: `Include entry \`${includeItem}\` did not resolve to a visible element.`,
+                message: `Include entry \`${includeEntry}\` did not resolve to a visible element.`,
             });
         }
     }
 
-    for (const node of filteredNodes) {
-        if (!nodeLookup.has(node.id)) {
+    for (const relationEntry of relationFilterSet) {
+        const matched = filteredEdges.some((edge) => matchesEdgeFilter(edge, new Set([relationEntry])));
+        if (!matched) {
             issues.push({
                 severity: "warning",
-                message: `Node \`${node.id}\` resolved unexpectedly.`,
+                message: `Relation entry \`${relationEntry}\` did not resolve to a visible relation.`,
             });
         }
     }
+}
+
+function matchesNodeFilter(node: TontoDiagramNode, filters: Set<string>): boolean {
+    return filters.has(node.label) || filters.has(node.id) || filters.has(node.specifier);
+}
+
+function matchesEdgeFilter(edge: TontoDiagramEdge, filters: Set<string>): boolean {
+    const candidates = new Set<string>([
+        edge.id,
+        edge.kind === "specialization" ? "specializes" : "",
+        edge.label ?? "",
+        edge.stereotype ?? "",
+        `${edge.source}->${edge.target}`,
+    ]);
+
+    return [...candidates].some((candidate) => candidate.length > 0 && filters.has(candidate));
 }
 
 function resolveSavedLayouts(spec: TontoDiagramSpec, nodes: TontoDiagramNode[]): Map<string, { x: number; y: number }> {
@@ -543,22 +549,4 @@ async function computeFallbackLayout(
     }
 
     return positions;
-}
-
-async function findTontoProjectRoot(startDirectory: string): Promise<string> {
-    let currentDirectory = path.resolve(startDirectory);
-
-    while (true) {
-        const manifestPath = path.join(currentDirectory, "tonto.json");
-        try {
-            await access(manifestPath);
-            return currentDirectory;
-        } catch {
-            const parentDirectory = path.dirname(currentDirectory);
-            if (parentDirectory === currentDirectory) {
-                return startDirectory;
-            }
-            currentDirectory = parentDirectory;
-        }
-    }
 }
