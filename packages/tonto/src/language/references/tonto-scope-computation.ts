@@ -1,23 +1,35 @@
 
-import { AstNode, AstNodeDescription, AstUtils, DefaultScopeComputation, interruptAndCheck, LangiumDocument, MultiMap, PrecomputedScopes } from "langium";
+import {
+    AstNode,
+    AstNodeDescription,
+    AstUtils,
+    DefaultScopeComputation,
+    interruptAndCheck,
+    LangiumDocument,
+    MultiMap,
+    PrecomputedScopes,
+} from "langium";
 import { CancellationToken } from "vscode-jsonrpc";
 import {
+    ClassDeclaration,
     ContextModule,
+    DataType,
     ElementRelation,
+    GeneralizationSet,
     isClassDeclaration,
     isContextModule,
     isDataType,
     isElementRelation,
-    isEnumElement,
     isGeneralizationSet,
     Model,
+    RelationMetaAttributes,
 } from "../generated/ast.js";
 import { getModelImports, getPrimaryContextModule } from "../utils/modelStatements.js";
 import { TontoServices } from "../tonto-module.js";
 import { TontoQualifiedNameProvider } from "./tonto-name-provider.js";
 
 export class TontoScopeComputation extends DefaultScopeComputation {
-    qualifiedNameProvider: TontoQualifiedNameProvider;
+    private readonly qualifiedNameProvider: TontoQualifiedNameProvider;
 
     constructor(services: TontoServices) {
         super(services);
@@ -25,180 +37,197 @@ export class TontoScopeComputation extends DefaultScopeComputation {
     }
 
     /**
-   * Computes all scopes for the given document in order to export it globally. In Tonto,
-   * this is done only for ContextModules that are global
-   * @param document
-   * @param cancelToken
-   * @returns An array of AstNodeDescriptions
-   */
+     * Publishes globally visible symbols for the current document.
+     *
+     * Non-global context modules are exported so `import package.name` can resolve.
+     * Declarations inside global context modules are exported by both simple and
+     * qualified names so they remain accessible without imports.
+     */
     override async computeExports(
         document: LangiumDocument,
         cancelToken = CancellationToken.None
     ): Promise<AstNodeDescription[]> {
-        const descr: AstNodeDescription[] = [];
+        const descriptions: AstNodeDescription[] = [];
         for (const childNode of AstUtils.streamAllContents(document.parseResult.value)) {
             await interruptAndCheck(cancelToken);
-
-            /**
-             * Export element Relations with their qualified name if they are in a
-             * ContextModule and the ContextModule is global.
-             */
-            if (isElementRelation(childNode)) {
-                const contextModule = this.getContextModuleFromContainer(childNode);
-                let name: string | undefined;
-
-                if (isClassDeclaration(childNode.$container) || isElementRelation(childNode.$container)) {
-                    name = this.qualifiedNameProvider.getName(childNode);
-                } else {
-                    name = childNode.name;
-                }
-                if (name && contextModule.isGlobal) descr.push(this.descriptions.createDescription(childNode, name, document));
-            }
-
-            if (
-                isClassDeclaration(childNode) ||
-                isDataType(childNode) ||
-                isContextModule(childNode) ||
-                isGeneralizationSet(childNode)
-            ) {
-                if (isContextModule(childNode.$container) && childNode.$container.isGlobal) {
-                    descr.push(this.descriptions.createDescription(childNode, childNode.name, document));
-                } else if (isContextModule(childNode) && !childNode.isGlobal) {
-                    if (childNode.name !== undefined) {
-                        const fullyQualifiedName = this.qualifiedNameProvider.getName(childNode);
-
-                        descr.push(this.descriptions.createDescription(childNode, fullyQualifiedName, document));
-                    }
-                }
-            }
+            this.exportNode(childNode, descriptions, document);
         }
-        return descr;
+        return descriptions;
     }
 
     /**
-   * Compute all the local scopes for the given document
-   * @param document the current document
-   * @param cancelToken
-   * @returns PrecomputedScopes
-   */
+     * Precomputes the symbols visible from the current document.
+     *
+     * Imported context modules are processed first so their declarations become
+     * visible at the primary context module level alongside local declarations.
+     */
     override async computeLocalScopes(
         document: LangiumDocument<AstNode>,
         cancelToken = CancellationToken.None
     ): Promise<PrecomputedScopes> {
         const model = document.parseResult.value as Model;
         const scopes = new MultiMap<AstNode, AstNodeDescription>();
-        const contextModule = getPrimaryContextModule(model);
+        const primaryContextModule = getPrimaryContextModule(model);
 
-        if (!contextModule) {
+        if (!primaryContextModule) {
             return scopes;
         }
 
+        const importedContextModules = new Set<ContextModule>();
         for (const importItem of getModelImports(model)) {
-            const contextModule = importItem.referencedModel?.ref;
-            if (contextModule) {
-                await this.processContainer(contextModule, scopes, document, cancelToken);
+            const importedContextModule = importItem.referencedModel?.ref;
+            if (importedContextModule && !importedContextModules.has(importedContextModule)) {
+                importedContextModules.add(importedContextModule);
+                await this.processContainer(importedContextModule, scopes, cancelToken);
             }
         }
-        await this.processContainer(contextModule, scopes, document, cancelToken);
+        await this.processContainer(primaryContextModule, scopes, cancelToken);
 
-        const otherAstNodeDescriptions: AstNodeDescription[] = [];
-        scopes.forEach((scope, key) => {
-            if (isContextModule(key)) {
-                if (key.name !== contextModule.name) {
-                    otherAstNodeDescriptions.push(scope);
-                }
+        const importedDescriptions: AstNodeDescription[] = [];
+        scopes.forEach((description, key) => {
+            if (isContextModule(key) && key !== primaryContextModule) {
+                importedDescriptions.push(description);
             }
         });
 
-        scopes.addAll(contextModule, otherAstNodeDescriptions);
+        if (importedDescriptions.length > 0) {
+            scopes.addAll(primaryContextModule, importedDescriptions);
+        }
 
         return scopes;
+    }
+
+    protected override exportNode(node: AstNode, exports: AstNodeDescription[], document: LangiumDocument): void {
+        if (isElementRelation(node)) {
+            const contextModule = this.findOwningContextModule(node);
+            if (contextModule?.isGlobal) {
+                this.addDescription(exports, node, this.qualifiedNameProvider.getName(node), document);
+            }
+            return;
+        }
+
+        if (this.isGlobalContextModuleDeclaration(node)) {
+            this.addSimpleAndQualifiedDescriptions(exports, node, document);
+            return;
+        }
+
+        if (isContextModule(node) && !node.isGlobal) {
+            this.addDescription(exports, node, node.name, document);
+        }
     }
 
     private async processContainer(
         container: ContextModule,
         scopes: PrecomputedScopes,
-        document: LangiumDocument,
         cancelToken: CancellationToken
-    ): Promise<AstNodeDescription[]> {
+    ): Promise<void> {
         const localDescriptions: AstNodeDescription[] = [];
-        if (!container) {
-            return localDescriptions;
-        }
-        for (const element of container.declarations) {
+        for (const declaration of container.declarations) {
             await interruptAndCheck(cancelToken);
-            if (isElementRelation(element)) {
-                const qualifiedName = this.qualifiedNameProvider.getQualifiedName(element);
-                const name = this.qualifiedNameProvider.getName(element);
-                if (name) {
-                    const description = this.descriptions.createDescription(element, name, document);
-                    localDescriptions.push(description);
-                }
-                if (qualifiedName) {
-                    const descriptionQualified = this.descriptions.createDescription(element, qualifiedName, document);
-                    localDescriptions.push(descriptionQualified);
-                    this.exportRelationEnds(element, localDescriptions, document);
-                }
-            }
-            if (isClassDeclaration(element) || isDataType(element) || isEnumElement(element)) {
-                if (element.name !== undefined) {
-                    const qualifiedName = this.qualifiedNameProvider.getQualifiedName(element);
-                    const name = this.qualifiedNameProvider.getName(element);
-                    const description = this.descriptions.createDescription(element, name, document);
-                    const descriptionQualified = this.descriptions.createDescription(element, qualifiedName, document);
-                    localDescriptions.push(description);
-                    localDescriptions.push(descriptionQualified);
-                    if (isClassDeclaration(element) && element.references.length > 0) {
-                        for (const internalElement of element.references) {
-                            if (isElementRelation(internalElement)) {
-                                const qualifiedName = this.qualifiedNameProvider.getQualifiedName(internalElement);
-                                const name = this.qualifiedNameProvider.getName(internalElement);
-                                if (name) {
-                                    const internalDescription = this.descriptions.createDescription(internalElement, name, document);
-                                    localDescriptions.push(internalDescription);
-                                }
-                                if (qualifiedName) {
-                                    const internalDescription = this.descriptions.createDescription(internalElement, qualifiedName, document);
-                                    localDescriptions.push(internalDescription);
-                                    this.exportRelationEnds(internalElement, localDescriptions, document);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            this.processDeclaration(declaration, localDescriptions);
         }
         scopes.addAll(container, localDescriptions);
-        return localDescriptions;
     }
 
-    private getContextModuleFromContainer(element: AstNode): ContextModule {
-        let contextModule: AstNode;
-        contextModule = element;
-        while (contextModule.$type !== "ContextModule") {
-            if (contextModule.$container === undefined) {
-                break;
+    private processDeclaration(
+        declaration: ContextModule["declarations"][number],
+        descriptions: AstNodeDescription[]
+    ): void {
+        if (isElementRelation(declaration)) {
+            this.addSimpleAndQualifiedDescriptions(descriptions, declaration);
+            this.addRelationEndDescriptions(descriptions, declaration);
+            return;
+        }
+
+        if (!this.isLocalScopeDeclaration(declaration)) {
+            return;
+        }
+
+        this.addSimpleAndQualifiedDescriptions(descriptions, declaration);
+
+        if (isClassDeclaration(declaration)) {
+            for (const relation of declaration.references) {
+                this.addSimpleAndQualifiedDescriptions(descriptions, relation);
+                this.addRelationEndDescriptions(descriptions, relation);
             }
-            contextModule = contextModule.$container;
+        } else if (isDataType(declaration)) {
+            for (const enumElement of declaration.elements) {
+                this.addSimpleAndQualifiedDescriptions(descriptions, enumElement);
+            }
         }
-        return contextModule as ContextModule;
     }
 
-    private exportRelationEnds(relation: ElementRelation, localDescriptions: AstNodeDescription[], document: LangiumDocument) {
+    private addRelationEndDescriptions(descriptions: AstNodeDescription[], relation: ElementRelation): void {
         const relationName = this.qualifiedNameProvider.getQualifiedName(relation);
-        if (!relationName) return;
+        if (!relationName) {
+            return;
+        }
 
-        if (relation.firstEndMetaAttributes && relation.firstEndMetaAttributes.endName) {
-            const endName = relation.firstEndMetaAttributes.endName;
-            localDescriptions.push(this.descriptions.createDescription(relation.firstEndMetaAttributes, endName, document));
-            const qualifiedName = `${relationName}.${endName}`;
-            localDescriptions.push(this.descriptions.createDescription(relation.firstEndMetaAttributes, qualifiedName, document));
+        this.addRelationEndDescription(descriptions, relation.firstEndMetaAttributes, relationName);
+        this.addRelationEndDescription(descriptions, relation.secondEndMetaAttributes, relationName);
+    }
+
+    private addRelationEndDescription(
+        descriptions: AstNodeDescription[],
+        relationEnd: RelationMetaAttributes | undefined,
+        relationName: string
+    ): void {
+        const endName = relationEnd?.endName;
+        if (!relationEnd || !endName) {
+            return;
         }
-        if (relation.secondEndMetaAttributes && relation.secondEndMetaAttributes.endName) {
-            const endName = relation.secondEndMetaAttributes.endName;
-            localDescriptions.push(this.descriptions.createDescription(relation.secondEndMetaAttributes, endName, document));
-            const qualifiedName = `${relationName}.${endName}`;
-            localDescriptions.push(this.descriptions.createDescription(relation.secondEndMetaAttributes, qualifiedName, document));
+
+        this.addDescription(descriptions, relationEnd, endName);
+        this.addDescription(descriptions, relationEnd, `${relationName}.${endName}`);
+    }
+
+    private addSimpleAndQualifiedDescriptions(
+        descriptions: AstNodeDescription[],
+        node: AstNode,
+        document?: LangiumDocument
+    ): void {
+        const simpleName = this.qualifiedNameProvider.getName(node);
+        this.addDescription(descriptions, node, simpleName, document);
+
+        const qualifiedName = this.qualifiedNameProvider.getQualifiedName(node);
+        if (qualifiedName && qualifiedName !== simpleName) {
+            this.addDescription(descriptions, node, qualifiedName, document);
         }
+    }
+
+    private addDescription(
+        descriptions: AstNodeDescription[],
+        node: AstNode,
+        name: string | undefined,
+        document?: LangiumDocument
+    ): void {
+        if (!name) {
+            return;
+        }
+        descriptions.push(this.descriptions.createDescription(node, name, document));
+    }
+
+    private findOwningContextModule(node: AstNode): ContextModule | undefined {
+        let currentNode: AstNode | undefined = node;
+        while (currentNode && !isContextModule(currentNode)) {
+            currentNode = currentNode.$container;
+        }
+        return currentNode;
+    }
+
+    private isGlobalContextModuleDeclaration(
+        node: AstNode
+    ): node is ClassDeclaration | DataType | GeneralizationSet {
+        return (
+            (isClassDeclaration(node) || isDataType(node) || isGeneralizationSet(node)) &&
+            isContextModule(node.$container) &&
+            node.$container.isGlobal
+        );
+    }
+
+    private isLocalScopeDeclaration(
+        node: ContextModule["declarations"][number]
+    ): node is ClassDeclaration | DataType | GeneralizationSet {
+        return isClassDeclaration(node) || isDataType(node) || isGeneralizationSet(node);
     }
 }
