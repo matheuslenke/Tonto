@@ -1,23 +1,32 @@
 import { CompositeGeneratorNode, NL } from "langium/generate";
-import { Property } from "ontouml-js";
+import { Class, Property } from "ontouml-js";
 import { isReservedKeyword } from "../../language/utils/isReservedKeyword.js";
-import { formatForId } from "../utils/replaceWhitespace.js";
 import { constructCardinality } from "./cardinality.constructor.js";
+import {
+    formatElementReference,
+    formatTontoIdentifier,
+    getContainingPackageName,
+    getRenderableElementName,
+    isDefaultCardinality,
+} from "./renderUtils.js";
 
-export function constructAttributes(attributes: Property[], fileNode: CompositeGeneratorNode) {
+export function constructAttributes(attributes: Property[], fileNode: CompositeGeneratorNode, owner: Class) {
+    const currentPackageName = getContainingPackageName(owner);
     attributes.forEach((attribute) => {
-        let name = attribute.getNameOrId();
+        let name = getRenderableElementName(attribute) ?? attribute.getNameOrId();
         if (isReservedKeyword(attribute.getNameOrId())) {
             name = name + "_";
         }
 
-        const propertyType = attribute.propertyType?.getName();
+        const propertyType = attribute.propertyType
+            ? formatElementReference(attribute.propertyType, currentPackageName)
+            : undefined;
 
         if (propertyType) {
 
-            fileNode.append(`${formatForId(name)} : ${propertyType}`);
+            fileNode.append(`${formatTontoIdentifier(name)} : ${propertyType}`);
 
-            if (attribute.cardinality) {
+            if (attribute.cardinality && !isDefaultCardinality(attribute.cardinality)) {
                 constructCardinality(attribute.cardinality, fileNode);
             }
 
@@ -31,7 +40,7 @@ export function constructAttributes(attributes: Property[], fileNode: CompositeG
 
             fileNode.append(NL);
         } else {
-            fileNode.append(`${formatForId(name)} : undefined`, NL);
+            fileNode.append(`${formatTontoIdentifier(name)} : undefined`, NL);
         }
     });
 }

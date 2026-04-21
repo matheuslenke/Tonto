@@ -4,6 +4,7 @@ export * from "./language/index.js";
 export { Configuration } from "./utils/extensionConfig.js";
 
 export * from "./cli/requests/gufoTransform.js";
+export * from "./cli/requests/jsonGeneration.js";
 export * from "./cli/requests/ontoumljsValidator.js";
 
 

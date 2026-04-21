@@ -37,9 +37,10 @@ export class TontoQualifiedNameProvider extends DefaultNameProvider {
             }
             const parent = node.$container;
             if (isClassDeclaration(parent)) {
-                return `${parent.name}.${node.name}`;
+                return toQualifiedName(parent, node.name);
             } else if (isContextModule(parent)) {
-                return `${node.firstEnd?.$refText}.${node.name}`;
+                const firstEndQualifier = node.firstEnd?.$refText;
+                return firstEndQualifier ? `${firstEndQualifier}.${node.name}` : node.name;
             }
             return node.name;
         }

@@ -1,4 +1,4 @@
-import { generateModularCommand } from "tonto-cli";
+import { formatJsonGenerationErrorMessage, generateModularCommand } from "tonto-cli";
 import * as vscode from "vscode";
 import { CommandIds } from "./commandIds.js";
 import {
@@ -28,7 +28,7 @@ async function generateJson(folderUri: vscode.Uri) {
             vscode.window.showInformationMessage(`JSON File generated successfully with name "${generatedFileName}"`);
         }
     } catch (error) {
-        vscode.window.showErrorMessage("Could not generate JSON.");
+        vscode.window.showErrorMessage(formatJsonGenerationErrorMessage(error), { modal: true });
         console.error(error);
     }
 }

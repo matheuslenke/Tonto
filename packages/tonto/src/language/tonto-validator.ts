@@ -37,6 +37,10 @@ export class TontoValidationRegistry extends ValidationRegistry {
                 validator.ComplexDataTypeValidator.checkCompatibleNatures,
                 validator.ComplexDataTypeValidator.checkSpecialization,
             ],
+            RelationMetaAttribute: [
+                validator.RelationMetaAttributeValidator.checkRelationEndOverrideUsesNamedEnd,
+                validator.RelationMetaAttributeValidator.checkRelationEndDoesNotRedefineItself,
+            ],
         };
         this.register(checks, validator);
     }

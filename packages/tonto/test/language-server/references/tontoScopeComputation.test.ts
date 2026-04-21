@@ -1,4 +1,5 @@
 import { EmptyFileSystem } from "langium";
+import { replaceIndices } from "langium/test";
 import { describe, expect, it } from "vitest";
 import { URI } from "vscode-uri";
 import { Model } from "../../../src/language/generated/ast.js";
@@ -10,6 +11,7 @@ function createTestEnvironment() {
   const documentBuilder = services.shared.workspace.DocumentBuilder;
   const documentFactory = services.shared.workspace.LangiumDocumentFactory;
   const langiumDocuments = services.shared.workspace.LangiumDocuments;
+  const completionProvider = services.Tonto.lsp.CompletionProvider;
   const fileExtension = services.Tonto.LanguageMetaData.fileExtensions[0];
 
   function createDocument(input: string, fileName: string) {
@@ -20,6 +22,7 @@ function createTestEnvironment() {
   }
 
   return {
+    completionProvider,
     createDocument,
     documentBuilder,
   };
@@ -98,5 +101,109 @@ describe("TontoScopeComputation", () => {
 
     expect(scopeNames).toContain("PersonGenset");
     expect(scopeNames).toContain("ScopePackage.PersonGenset");
+  });
+
+  it("resolves fully qualified internal relation references from imported packages", async () => {
+    const { createDocument, documentBuilder } = createTestEnvironment();
+    const peopleDocument = createDocument(`
+      package People
+      kind Person {
+        [1] -- associates -- [*] ({ ordered } contacts) Person
+      }
+    `, "People");
+    const universityDocument = createDocument(`
+      import People
+      package University
+
+      role Professor specializes People.Person {
+        [1] -- colleagues -- [*] ({ subsets People.Person.associates.contacts } peers) Professor specializes People.Person.associates
+      }
+    `, "University");
+
+    await documentBuilder.build([peopleDocument, universityDocument]);
+
+    const importedRelationReference = universityDocument.references.find(
+      (reference) => reference.$refText === "People.Person.associates"
+    );
+    const importedRelationEndReference = universityDocument.references.find(
+      (reference) => reference.$refText === "People.Person.associates.contacts"
+    );
+
+    expect(importedRelationReference?.ref?.$type).toBe("ElementRelation");
+    expect(importedRelationReference?.$nodeDescription?.documentUri.toString()).toBe(
+      peopleDocument.uri.toString()
+    );
+    expect(importedRelationEndReference?.ref?.$type).toBe("RelationMetaAttributes");
+    expect(importedRelationEndReference?.$nodeDescription?.documentUri.toString()).toBe(
+      peopleDocument.uri.toString()
+    );
+  });
+
+  it("resolves global relation and relation-end references for subsets and redefines", async () => {
+    const { createDocument, documentBuilder } = createTestEnvironment();
+    const ontologyDocument = createDocument(`
+      global package People
+      kind Person {
+        [1] -- associates -- [*] ({ ordered } contacts) Person
+      }
+    `, "People");
+    const universityDocument = createDocument(`
+      package University
+
+      role Professor specializes People.Person {
+        [1] -- colleagues -- [*] ({ subsets People.Person.associates.contacts, redefines People.Person.associates.contacts } peers) Professor specializes People.Person.associates
+      }
+    `, "University");
+
+    await documentBuilder.build([ontologyDocument, universityDocument]);
+
+    const globalRelationReference = universityDocument.references.find(
+      (reference) => reference.$refText === "People.Person.associates"
+    );
+    const globalRelationEndReferences = universityDocument.references.filter(
+      (reference) => reference.$refText === "People.Person.associates.contacts"
+    );
+
+    expect(globalRelationReference?.ref?.$type).toBe("ElementRelation");
+    expect(globalRelationReference?.$nodeDescription?.documentUri.toString()).toBe(
+      ontologyDocument.uri.toString()
+    );
+    expect(globalRelationEndReferences).toHaveLength(2);
+    expect(globalRelationEndReferences.every((reference) => reference.ref?.$type === "RelationMetaAttributes")).toBe(true);
+    expect(globalRelationEndReferences.every(
+      (reference) => reference.$nodeDescription?.documentUri.toString() === ontologyDocument.uri.toString()
+    )).toBe(true);
+  });
+
+  it("offers global relation-end completions for subsets and redefines", async () => {
+    const { completionProvider, createDocument, documentBuilder } = createTestEnvironment();
+    const ontologyDocument = createDocument(`
+      global package People
+      kind Person {
+        [1] -- associates -- [*] ({ ordered } contacts) Person
+      }
+    `, "People");
+    const { output, indices } = replaceIndices({
+      text: `
+        package University
+
+        role Professor specializes People.Person {
+          [1] -- colleagues -- [*] ({ subsets <|> } peers) Professor specializes People.Person.associates
+        }
+      `,
+    });
+    const universityDocument = createDocument(output, "University");
+
+    await documentBuilder.build([ontologyDocument, universityDocument]);
+
+    const completions = await completionProvider?.getCompletion(universityDocument, {
+      textDocument: { uri: universityDocument.textDocument.uri },
+      position: universityDocument.textDocument.positionAt(indices[0]),
+    });
+    const labels = completions?.items.map((item) => item.label) ?? [];
+
+    expect(labels).toContain("contacts");
+    expect(labels).toContain("Person.associates.contacts");
+    expect(labels).toContain("People.Person.associates.contacts");
   });
 });

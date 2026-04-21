@@ -8,6 +8,11 @@ import { generalizationSetGenerator } from "./genset.generator.js";
 import { generateInstantiations } from "./instantiation.generator.js";
 import { relationGenerator } from "./relation.generator.js";
 import { generateDataTypeSpecializations, generateSpecializations } from "./specialization.generator.js";
+import {
+    JSON_GENERATION_STEPS,
+    createJsonGenerationError,
+    createJsonGenerationNodeInfo,
+} from "../requests/jsonGeneration.js";
 
 export function contextModuleGenerator(contextModule: ContextModule, packageItem: Package): void {
     const classes: Class[] = [];
@@ -69,9 +74,20 @@ function generateClassAttributes(contextModule: ContextModule, classes: Class[],
         if (declaration.$type === "ClassDeclaration") {
             const classDeclaration = declaration as ClassDeclaration;
             const createdClass = classes.find((item) => item.id === classDeclaration.name);
-            if (createdClass) {
-                attributeGenerator(classDeclaration, createdClass, dataTypes);
+            if (!createdClass) {
+                throw createJsonGenerationError(`Could not generate attributes for class "${classDeclaration.name}".`, {
+                    step: JSON_GENERATION_STEPS.attributeGeneration,
+                    info: [
+                        createJsonGenerationNodeInfo(classDeclaration, {
+                            code: "missing_generated_class",
+                            title: "Class was not generated",
+                            description: `Class "${classDeclaration.name}" was not available in the generated OntoUML model before its attributes were processed.`,
+                        }),
+                    ],
+                });
             }
+
+            attributeGenerator(classDeclaration, createdClass, dataTypes);
         }
     });
 }
@@ -81,9 +97,20 @@ function generateDataTypeAttributes(contextModule: ContextModule, dataTypes: Cla
         if (declaration.$type === "DataType") {
             const dataType = declaration as DataType;
             const createdDataType = dataTypes.find((item) => item.getNameOrId() === dataType.name);
-            if (createdDataType) {
-                attributeGenerator(dataType, createdDataType, dataTypes);
+            if (!createdDataType) {
+                throw createJsonGenerationError(`Could not generate attributes for datatype "${dataType.name}".`, {
+                    step: JSON_GENERATION_STEPS.attributeGeneration,
+                    info: [
+                        createJsonGenerationNodeInfo(dataType, {
+                            code: "missing_generated_datatype",
+                            title: "Datatype was not generated",
+                            description: `Datatype "${dataType.name}" was not available in the generated OntoUML model before its attributes were processed.`,
+                        }),
+                    ],
+                });
             }
+
+            attributeGenerator(dataType, createdDataType, dataTypes);
         }
     });
 }

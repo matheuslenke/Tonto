@@ -3,6 +3,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { Model } from "../language/index.js";
 import { extractDestinationAndName } from "./cli-util.js";
+import { JSON_GENERATION_STEPS, normalizeJsonGenerationError } from "./requests/jsonGeneration.js";
 import { serializeProject } from "./utils/serializeProject.js";
 import { ParseProjectContext, parseProject } from "./utils/parseProject.js";
 
@@ -28,15 +29,44 @@ export interface GeneratorContext extends ParseProjectContext {
 function generate(ctx: GeneratorContext): string {
     // Every OntoUML element can be created from a constructor that can receive a partial object
     // as references for its creation
-    const project = parseProject(ctx);
+    const project = (() => {
+        try {
+            return parseProject(ctx);
+        } catch (error) {
+            throw normalizeJsonGenerationError(
+                error,
+                `Could not create the OntoUML project for "${ctx.name}".`,
+                JSON_GENERATION_STEPS.projectCreation
+            );
+        }
+    })();
 
-    const projectSerialization = serializeProject(project);
+    const projectSerialization = (() => {
+        try {
+            return serializeProject(project);
+        } catch (error) {
+            throw normalizeJsonGenerationError(
+                error,
+                `Could not serialize the generated OntoUML project for "${ctx.name}".`,
+                JSON_GENERATION_STEPS.serialization
+            );
+        }
+    })();
+
     ctx.fileNode.append(projectSerialization);
 
-    if (!fs.existsSync(ctx.destination)) {
-        fs.mkdirSync(ctx.destination, { recursive: true });
+    try {
+        if (!fs.existsSync(ctx.destination)) {
+            fs.mkdirSync(ctx.destination, { recursive: true });
+        }
+        const generatedFilePath = path.join(ctx.destination, ctx.fileName);
+        fs.writeFileSync(generatedFilePath, projectSerialization);
+        return generatedFilePath;
+    } catch (error) {
+        throw normalizeJsonGenerationError(
+            error,
+            `Could not write the generated JSON file "${ctx.fileName}".`,
+            JSON_GENERATION_STEPS.fileWriting
+        );
     }
-    const generatedFilePath = path.join(ctx.destination, ctx.fileName);
-    // fs.writeFileSync(generatedFilePath, isGeneratorNode(ctx.fileNode));
-    return generatedFilePath;
 }

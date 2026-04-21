@@ -1,9 +1,10 @@
 import { EmptyFileSystem, type LangiumDocument } from "langium";
 import { CompositeGeneratorNode, toString } from "langium/generate";
 import { parseHelper } from "langium/test";
-import { Project, serializationUtils } from "ontouml-js";
+import { MultilingualText, Project, serializationUtils } from "ontouml-js";
 import { beforeAll, describe, expect, it } from "vitest";
 import { constructClassElement } from "../../../src/cli/constructors/classElement.constructor.js";
+import { isJsonGenerationError } from "../../../src/cli/requests/jsonGeneration.js";
 import { serializeProject } from "../../../src/cli/utils/serializeProject.js";
 import { parseProject } from "../../../src/cli/utils/parseProject.js";
 import { Model } from "../../../src/language/index.js";
@@ -74,6 +75,59 @@ describe("Relation round-trip support", () => {
         expect(rendered).toContain("specializes Person.associates");
         expect(rendered).toContain("subsets Person.associates.contacts");
         expect(rendered).toContain("redefines Person.associates.contacts");
+    });
+
+    it("should serialize self-referential end override arrays as plain references", () => {
+        const project = new Project({ name: new MultilingualText("Test Project") });
+        const model = project.createModel({ name: new MultilingualText("Test Model") });
+        const person = model.createKind("Person");
+        person.id = "Person";
+        const organization = model.createKind("Organization");
+        organization.id = "Organization";
+        const relation = model.createBinaryRelation(person, organization, "worksAt");
+        relation.id = "worksAt";
+
+        const employee = relation.getSourceEnd();
+        employee.id = "employee";
+        employee.setName("employee");
+        employee.redefinedProperties.push(employee);
+
+        const serialized = JSON.parse(serializeProject(project));
+        const serializedEmployee = findSerializedPropertyByName(serialized, "employee");
+
+        expect(serializedEmployee?.redefinedProperties).toEqual([
+            { type: "Property", id: "employee" },
+        ]);
+    });
+
+    it("should throw a semantic generation error when a relation end redefines itself", async () => {
+        const selfRedefinitionModelText = `
+            package Tonto
+            kind Person {
+                [1] -- associates -- [*] ({ redefines contacts } contacts) Person
+            }
+        `;
+
+        const document = await parse(selfRedefinitionModelText);
+        throwIfParserHasErrors(document);
+
+        let thrownError: unknown;
+        try {
+            parseProject({
+                model: document.parseResult.value,
+                name: "Self Redefinition",
+            });
+        } catch (error) {
+            thrownError = error;
+        }
+
+        expect(isJsonGenerationError(thrownError)).toBe(true);
+        if (!isJsonGenerationError(thrownError)) {
+            throw new Error("Expected a JsonGenerationError");
+        }
+
+        expect(thrownError.info[0]?.code).toBe("self_redefined_property");
+        expect(thrownError.info[0]?.description).toContain("cannot redefine itself");
     });
 });
 

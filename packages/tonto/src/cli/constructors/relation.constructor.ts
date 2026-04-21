@@ -1,8 +1,12 @@
 import { CompositeGeneratorNode, NL } from "langium/generate";
-import { AggregationKind, Class, Generalization, OntoumlElement, OntoumlType, Property, Relation } from "ontouml-js";
+import { AggregationKind, Class, Generalization, OntoumlType, Property, Relation } from "ontouml-js";
 import { notEmpty } from "../../utils/isEmpty.js";
-import { formatForId } from "../utils/replaceWhitespace.js";
 import { constructCardinality } from "./cardinality.constructor.js";
+import {
+    formatElementReference,
+    formatTontoIdentifier,
+    getContainingPackageName,
+} from "./renderUtils.js";
 
 export function constructInternalRelations(element: Class, relations: Relation[], fileNode: CompositeGeneratorNode) {
     relations
@@ -32,24 +36,19 @@ function constructRelation(
     const generalizations = relation.getGeneralizationsWhereSpecific();
     const currentPackageName = getContainingPackageName(relation);
 
-    const sourceClassPackage = getContainingPackage(sourceElement);
-    const sourceName = sourceClassPackage?.getName();
-    const targetClassPackage = getContainingPackage(targetClass);
-    const targetName = targetClassPackage?.getName();
-
     if (relation.stereotype) {
-        fileNode.append(`@${formatForId(relation.stereotype)}`, NL);
+        fileNode.append(`@${formatTontoIdentifier(relation.stereotype)}`, NL);
     }
 
     if (options.external && sourceElement) {
         fileNode.append(`relation ${formatElementReference(sourceElement, currentPackageName)} `);
     }
 
-    const firstEndName = formatForId(sourceProperty.getName());
+    const firstEndName = formatTontoIdentifier(sourceProperty.getName());
     constructEndMetaAttributes(firstEndName, sourceProperty, currentPackageName, fileNode);
     constructCardinality(sourceProperty.cardinality, fileNode);
 
-    const relationName = formatForId(relation.getName());
+    const relationName = formatTontoIdentifier(relation.getName());
 
     if (sourceProperty.aggregationKind === AggregationKind.SHARED) {
         fileNode.append("<>-- ");
@@ -87,14 +86,9 @@ function constructRelation(
 
     constructCardinality(targetProperty.cardinality, fileNode);
 
-    const secondEndName = formatForId(targetProperty.getName());
-    let targetClassName = targetClass.getName();
-    if (targetName && sourceName && targetName !== sourceName) {
-        targetClassName = `${targetClassPackage?.getName()}.${targetClass.getName()}`;
-    }
-
-    fileNode.append(" ", formatForId(targetClassName));
+    const secondEndName = formatTontoIdentifier(targetProperty.getName());
     constructEndMetaAttributes(secondEndName, targetProperty, currentPackageName, fileNode);
+    fileNode.append(" ", formatElementReference(targetClass, currentPackageName));
 
     constructRelationSpecializations(generalizations, currentPackageName, fileNode);
     fileNode.append(NL);
@@ -123,18 +117,21 @@ function constructEndMetaAttributes(
         ...redefinedProperties,
     ].filter(notEmpty);
 
-    if (metaAttributes.length === 0) {
+    if (metaAttributes.length === 0 && !endName) {
         return;
     }
 
-    fileNode.append("( {");
-    metaAttributes.forEach((metaAttribute, index) => {
-        fileNode.append(metaAttribute);
-        if (index < metaAttributes.length - 1) {
-            fileNode.append(", ");
-        }
-    });
-    fileNode.append(" }");
+    fileNode.append("(");
+    if (metaAttributes.length > 0) {
+        fileNode.append(" {");
+        metaAttributes.forEach((metaAttribute, index) => {
+            fileNode.append(metaAttribute);
+            if (index < metaAttributes.length - 1) {
+                fileNode.append(", ");
+            }
+        });
+        fileNode.append(" }");
+    }
     if (endName) {
         fileNode.append(` ${endName}`);
     }
@@ -198,7 +195,7 @@ function formatEndOverrideReference(
         return null;
     }
 
-    return `${keyword} ${relationReference}.${formatForId(propertyName)}`;
+    return `${keyword} ${relationReference}.${formatTontoIdentifier(propertyName)}`;
 }
 
 function formatRelationReference(relation: Relation, currentPackageName: string | undefined): string | undefined {
@@ -208,39 +205,5 @@ function formatRelationReference(relation: Relation, currentPackageName: string 
     }
 
     const sourceReference = formatElementReference(relation.getSource(), currentPackageName);
-    return sourceReference ? `${sourceReference}.${formatForId(relationName)}` : formatForId(relationName);
-}
-
-function formatElementReference(
-    element: OntoumlElement | { getName?: () => string | null },
-    currentPackageName: string | undefined
-): string {
-    const elementName = element.getName?.();
-    if (!elementName) {
-        return "";
-    }
-
-    const ownerPackageName = element instanceof OntoumlElement ? getContainingPackageName(element) : undefined;
-    const formattedName = formatForId(elementName);
-
-    if (ownerPackageName && currentPackageName && ownerPackageName !== currentPackageName) {
-        return `${formatForId(ownerPackageName)}.${formattedName}`;
-    }
-
-    return formattedName;
-}
-
-function getContainingPackage(element: OntoumlElement | undefined): OntoumlElement | undefined {
-    let current = element?.container;
-
-    while (current && current.type !== OntoumlType.PACKAGE_TYPE) {
-        current = current.container;
-    }
-
-    return current;
-}
-
-function getContainingPackageName(element: OntoumlElement | undefined): string | undefined {
-    const containerPackage = getContainingPackage(element);
-    return containerPackage?.getName?.();
+    return sourceReference ? `${sourceReference}.${formatTontoIdentifier(relationName)}` : formatTontoIdentifier(relationName);
 }

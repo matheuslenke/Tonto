@@ -101,7 +101,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
         if (isElementRelation(node)) {
             const contextModule = this.findOwningContextModule(node);
             if (contextModule?.isGlobal) {
-                this.addDescription(exports, node, this.qualifiedNameProvider.getName(node), document);
+                this.addRelationDescriptions(exports, node, document);
             }
             return;
         }
@@ -134,8 +134,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
         descriptions: AstNodeDescription[]
     ): void {
         if (isElementRelation(declaration)) {
-            this.addSimpleAndQualifiedDescriptions(descriptions, declaration);
-            this.addRelationEndDescriptions(descriptions, declaration);
+            this.addRelationDescriptions(descriptions, declaration);
             return;
         }
 
@@ -147,8 +146,7 @@ export class TontoScopeComputation extends DefaultScopeComputation {
 
         if (isClassDeclaration(declaration)) {
             for (const relation of declaration.references) {
-                this.addSimpleAndQualifiedDescriptions(descriptions, relation);
-                this.addRelationEndDescriptions(descriptions, relation);
+                this.addRelationDescriptions(descriptions, relation);
             }
         } else if (isDataType(declaration)) {
             for (const enumElement of declaration.elements) {
@@ -157,28 +155,53 @@ export class TontoScopeComputation extends DefaultScopeComputation {
         }
     }
 
-    private addRelationEndDescriptions(descriptions: AstNodeDescription[], relation: ElementRelation): void {
-        const relationName = this.qualifiedNameProvider.getQualifiedName(relation);
-        if (!relationName) {
-            return;
+    private addRelationDescriptions(
+        descriptions: AstNodeDescription[],
+        relation: ElementRelation,
+        document?: LangiumDocument
+    ): void {
+        this.addSimpleAndQualifiedDescriptions(descriptions, relation, document);
+
+        const legacyQualifiedRelationName = this.getLegacyQualifiedRelationName(relation);
+        const qualifiedRelationName = this.qualifiedNameProvider.getQualifiedName(relation);
+        if (legacyQualifiedRelationName && legacyQualifiedRelationName !== qualifiedRelationName) {
+            this.addDescription(descriptions, relation, legacyQualifiedRelationName, document);
         }
 
-        this.addRelationEndDescription(descriptions, relation.firstEndMetaAttributes, relationName);
-        this.addRelationEndDescription(descriptions, relation.secondEndMetaAttributes, relationName);
+        this.addRelationEndDescriptions(descriptions, relation, document);
+    }
+
+    private addRelationEndDescriptions(
+        descriptions: AstNodeDescription[],
+        relation: ElementRelation,
+        document?: LangiumDocument
+    ): void {
+        const relationName = this.qualifiedNameProvider.getQualifiedName(relation);
+        const legacyRelationName = this.getLegacyQualifiedRelationName(relation);
+
+        this.addRelationEndDescription(descriptions, relation.firstEndMetaAttributes, relationName, legacyRelationName, document);
+        this.addRelationEndDescription(descriptions, relation.secondEndMetaAttributes, relationName, legacyRelationName, document);
     }
 
     private addRelationEndDescription(
         descriptions: AstNodeDescription[],
         relationEnd: RelationMetaAttributes | undefined,
-        relationName: string
+        relationName: string | undefined,
+        legacyRelationName: string | undefined,
+        document?: LangiumDocument
     ): void {
         const endName = relationEnd?.endName;
         if (!relationEnd || !endName) {
             return;
         }
 
-        this.addDescription(descriptions, relationEnd, endName);
-        this.addDescription(descriptions, relationEnd, `${relationName}.${endName}`);
+        this.addDescription(descriptions, relationEnd, endName, document);
+        if (relationName) {
+            this.addDescription(descriptions, relationEnd, `${relationName}.${endName}`, document);
+        }
+        if (legacyRelationName && legacyRelationName !== relationName) {
+            this.addDescription(descriptions, relationEnd, `${legacyRelationName}.${endName}`, document);
+        }
     }
 
     private addSimpleAndQualifiedDescriptions(
@@ -205,6 +228,21 @@ export class TontoScopeComputation extends DefaultScopeComputation {
             return;
         }
         descriptions.push(this.descriptions.createDescription(node, name, document));
+    }
+
+    private getLegacyQualifiedRelationName(relation: ElementRelation): string | undefined {
+        if (!relation.name) {
+            return undefined;
+        }
+
+        const parent = relation.$container;
+        if (isClassDeclaration(parent)) {
+            return `${parent.name}.${relation.name}`;
+        }
+        if (isContextModule(parent)) {
+            return relation.firstEnd?.$refText ? `${relation.firstEnd.$refText}.${relation.name}` : relation.name;
+        }
+        return relation.name;
     }
 
     private findOwningContextModule(node: AstNode): ContextModule | undefined {

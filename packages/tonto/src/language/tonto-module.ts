@@ -68,7 +68,7 @@ export const TontoModule: Module<TontoServices, PartialLangiumServices & TontoAd
     },
     validation: {
         ValidationRegistry: (services: TontoServices) => new TontoValidationRegistry(services),
-        TontoValidator: () => new TontoValidator(),
+        TontoValidator: (services: TontoServices) => new TontoValidator(services),
     },
     lsp: {
         CodeActionProvider: () => new TontoActionProvider(),

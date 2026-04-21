@@ -6,6 +6,11 @@ import * as path from "node:path";
 import { Diagnostic } from "vscode-languageserver-types";
 import { URI } from "vscode-uri";
 import { BuiltInLib } from "./model/BuiltInLib.js";
+import {
+    JSON_GENERATION_STEPS,
+    createJsonGenerationError,
+    getJsonGenerationDiagnosticInfos,
+} from "./requests/jsonGeneration.js";
 
 export async function extractAllDocuments(
     fileNames: string[],
@@ -60,8 +65,15 @@ export async function extractDocument(fileName: string, services: LangiumService
     // }
 
     if (!fs.existsSync(fileName)) {
-        console.error(chalk.red(`File ${fileName} does not exist.`));
-        process.exit(1);
+        throw createJsonGenerationError(`Could not load Tonto source file "${fileName}".`, {
+            step: JSON_GENERATION_STEPS.sourceLoading,
+            info: [{
+                severity: "error",
+                title: "Source file not found",
+                description: `File "${fileName}" does not exist.`,
+                filePath: fileName,
+            }],
+        });
     }
 
     const document = await services.shared.workspace.LangiumDocuments.getOrCreateDocument(URI.file(path.resolve(fileName)));
@@ -81,7 +93,11 @@ export async function extractDocument(fileName: string, services: LangiumService
                 )
             );
         }
-        process.exit(1);
+
+        throw createJsonGenerationError("Could not generate JSON because the Tonto source file contains syntax or validation errors.", {
+            step: JSON_GENERATION_STEPS.documentValidation,
+            info: getJsonGenerationDiagnosticInfos(document),
+        });
     }
 
     return document;

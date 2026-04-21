@@ -1,4 +1,4 @@
-import { Project } from "ontouml-js";
+import { MultilingualText, Project } from "ontouml-js";
 
 type SerializedOntoumlElement = {
     id?: string;
@@ -8,34 +8,25 @@ type SerializedOntoumlElement = {
     [key: string]: unknown;
 };
 
+const PROPERTY_REFERENCE_KEYS = new Set(["subsettedProperties", "redefinedProperties"]);
+
 export function serializeProject(project: Project): string {
-    const serializedProject = JSON.parse(JSON.stringify(project)) as SerializedOntoumlElement;
-    normalizePropertyReferenceArrays(serializedProject);
-    return JSON.stringify(serializedProject, null, 2);
-}
+    const originalToJSON = MultilingualText.prototype.toJSON;
+    MultilingualText.prototype.toJSON = function(this: MultilingualText): unknown {
+        return serializeMultilingualText(this);
+    };
 
-function normalizePropertyReferenceArrays(element: unknown): void {
-    if (!element || typeof element !== "object") {
-        return;
+    try {
+        return JSON.stringify(project, (key, value) => {
+            if (PROPERTY_REFERENCE_KEYS.has(key) && Array.isArray(value)) {
+                return value.map((element) => toReference(element as SerializedOntoumlElement));
+            }
+
+            return value;
+        }, 2);
+    } finally {
+        MultilingualText.prototype.toJSON = originalToJSON;
     }
-
-    const serializedElement = element as SerializedOntoumlElement;
-
-    if (Array.isArray(serializedElement.subsettedProperties)) {
-        serializedElement.subsettedProperties = serializedElement.subsettedProperties.map(toReference);
-    }
-
-    if (Array.isArray(serializedElement.redefinedProperties)) {
-        serializedElement.redefinedProperties = serializedElement.redefinedProperties.map(toReference);
-    }
-
-    Object.values(serializedElement).forEach((value) => {
-        if (Array.isArray(value)) {
-            value.forEach((item) => normalizePropertyReferenceArrays(item));
-        } else {
-            normalizePropertyReferenceArrays(value);
-        }
-    });
 }
 
 function toReference(element: SerializedOntoumlElement): SerializedOntoumlElement {
@@ -43,4 +34,21 @@ function toReference(element: SerializedOntoumlElement): SerializedOntoumlElemen
         type: element.type,
         id: element.id,
     };
+}
+
+function serializeMultilingualText(text: MultilingualText): string | Record<string, string> | null {
+    const entries = text
+        .entries()
+        .filter((entry): entry is [string, string] => typeof entry[0] === "string" && typeof entry[1] === "string");
+
+    if (entries.length === 0) {
+        return null;
+    }
+
+    if (entries.length === 1) {
+        const [language, value] = entries[0];
+        return language === "en" ? value : { [language]: value };
+    }
+
+    return Object.fromEntries(entries);
 }

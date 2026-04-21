@@ -4,6 +4,7 @@ import * as fs from "node:fs";
 import path from "node:path";
 import { Project, serializationUtils } from "ontouml-js";
 import { generateTontoFile } from "../../constructors/index.js";
+import { parseSerializedProject } from "../../utils/parseSerializedProject.js";
 
 export type ImportOptions = {
     fileName: string;
@@ -20,17 +21,18 @@ export const importCommand = async (opts: ImportOptions): Promise<ImportReturn> 
     try {
         const data = fs.readFileSync(opts.fileName, { encoding: "utf8" });
 
-        const project: Project = serializationUtils.parse(data, true) as Project;
+        const isValid = serializationUtils.validate(data);
         /**
          * First we validate the imported model
          */
-        const isValid = serializationUtils.validate(project);
-        if (isValid) {
+        if (isValid === true) {
             console.log(chalk.bold("Model is valid. Proceding to generate tonto project..."));
         } else {
             console.log(chalk.red("Model is not valid. Aborting..."));
             throw new Error("Model invalid");
         }
+
+        const project: Project = parseSerializedProject(data);
 
         /**
          * Creating the directory to hold the generated files
@@ -62,18 +64,18 @@ export const importCommand = async (opts: ImportOptions): Promise<ImportReturn> 
 export const newImportCommand = async (opts: ImportOptions): Promise<void> => {
     const data = fs.readFileSync(opts.fileName, { encoding: "utf8" });
 
-    const project: Project = serializationUtils.parse(data, true) as Project;
-
     /**
    * First we validate if the imported model is valid
    */
-    const isValid = serializationUtils.validate(project);
-    if (isValid) {
+    const isValid = serializationUtils.validate(data);
+    if (isValid === true) {
         console.log(chalk.bold("Model is valid. Proceding to generate tonto project..."));
     } else {
         console.log(chalk.red("Model is not valid. Aborting..."));
         throw new Error("Model invalid");
     }
+
+    const project: Project = parseSerializedProject(data);
 
     generateTontoFile(project, opts.fileName, opts.destination);
 };

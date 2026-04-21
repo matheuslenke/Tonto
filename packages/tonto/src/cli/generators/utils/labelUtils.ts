@@ -8,7 +8,6 @@ export function getMultilingualText(label: Label | undefined, defaultText: strin
 
     const multilingualText = new MultilingualText();
     label.labels.forEach((labelItem) => {
-        console.log(`Processing label: '${labelItem.label}', lang: '${labelItem.language}'`);
         if (labelItem.language) {
             multilingualText.addText(labelItem.label, labelItem.language);
         } else {
@@ -22,7 +21,6 @@ export function getMultilingualText(label: Label | undefined, defaultText: strin
             multilingualText.addText(labelItem.label, lang);
         }
     });
-    console.log(`MultilingualText created. Default Text: '${multilingualText.getText()}'`);
     return multilingualText;
 }
 
