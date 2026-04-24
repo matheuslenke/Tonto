@@ -1,0 +1,301 @@
+{
+  "name": "tonto-minimal-diagram-layout",
+  "version": "1.0.0",
+  "intent": "Minimal VS Code webview layout for rendering a Tonto diagram next to an existing syntax editor",
+  "design_principles": [
+    "extremely simple",
+    "minimal visual noise",
+    "canvas-first",
+    "only essential controls",
+    "optimized for VS Code webview"
+  ],
+  "assumptions": {
+    "syntax_panel_position": "left",
+    "syntax_panel_exists_already": true,
+    "diagram_panel_position": "right",
+    "source_of_truth": "textual syntax",
+    "diagram_updates_from_syntax": true,
+    "target_platform": "VS Code webview"
+  },
+  "features": {
+    "enabled": [
+      "zoom_in",
+      "zoom_out",
+      "export_image",
+      "render_uml_boxes",
+      "render_relations",
+      "show_imported_packages_from_syntax"
+    ],
+    "disabled": [
+      "right_inspector",
+      "floating_toolbars",
+      "minimap",
+      "grid_controls",
+      "shape_palette",
+      "collaboration",
+      "search",
+      "properties_panel",
+      "complex_menus",
+      "multi_mode_toolbar",
+      "theme_switcher",
+      "library_panel"
+    ]
+  },
+  "layout": {
+    "type": "two-pane-horizontal",
+    "regions": [
+      {
+        "id": "syntax-pane",
+        "position": "left",
+        "width": "38%",
+        "min_width": 320,
+        "resizable": true,
+        "visible": true,
+        "owned_by_this_spec": false,
+        "purpose": "Displays and edits the textual Tonto diagram syntax"
+      },
+      {
+        "id": "diagram-pane",
+        "position": "right",
+        "width": "62%",
+        "min_width": 420,
+        "resizable": true,
+        "visible": true,
+        "purpose": "Displays rendered UML diagram from syntax"
+      }
+    ]
+  },
+  "diagram_pane": {
+    "background": {
+      "style": "solid",
+      "color_token": "editor.background",
+      "show_grid": false,
+      "show_dots": false
+    },
+    "chrome": {
+      "border_left": true,
+      "padding": 0,
+      "corner_radius": 0,
+      "shadow": false
+    },
+    "header": {
+      "visible": true,
+      "height": 40,
+      "style": "minimal",
+      "content": [
+        {
+          "id": "diagram-title",
+          "type": "text",
+          "value_binding": "diagram.name",
+          "fallback": "Diagram"
+        },
+        {
+          "id": "spacer",
+          "type": "flex-spacer"
+        },
+        {
+          "id": "package-summary",
+          "type": "text",
+          "value_binding": "source.module",
+          "prefix": "Module: "
+        },
+        {
+          "id": "export-image",
+          "type": "button",
+          "label": "Export Image",
+          "icon": "download",
+          "priority": "high"
+        }
+      ]
+    },
+    "canvas": {
+      "type": "infinite-like-surface",
+      "interaction_model": "read-mostly-with-basic-pan-and-zoom",
+      "default_cursor": "grab",
+      "supports_pan": true,
+      "supports_zoom": true,
+      "supports_select": true,
+      "supports_direct_edit": false,
+      "viewport_source": "syntax.viewport",
+      "content_alignment": "top-left",
+      "padding": 32
+    },
+    "overlay_controls": {
+      "visible": true,
+      "position": "bottom-right",
+      "layout": "vertical",
+      "controls": [
+        {
+          "id": "zoom-in",
+          "type": "icon-button",
+          "icon": "plus",
+          "tooltip": "Zoom in"
+        },
+        {
+          "id": "zoom-level",
+          "type": "label",
+          "value_binding": "viewport.zoom_percent"
+        },
+        {
+          "id": "zoom-out",
+          "type": "icon-button",
+          "icon": "minus",
+          "tooltip": "Zoom out"
+        }
+      ]
+    }
+  },
+  "syntax_mapping": {
+    "diagram_title": {
+      "from": "diagram \"People Overview\"",
+      "to": "header.diagram-title"
+    },
+    "module_label": {
+      "from": "module people",
+      "to": "header.package-summary"
+    },
+    "source_file": {
+      "from": "source \"./src/people.tonto\"",
+      "to": "imported-packages.source_path"
+    },
+    "included_elements": {
+      "from": "filter.include",
+      "to": "rendered_nodes_and_relations"
+    },
+    "presentation": {
+      "from": "presentation",
+      "to": "diagram_render_rules"
+    },
+    "node_positions": {
+      "from": "node Person { x 80 y 120 } and node Child { x 360 y 120 }",
+      "to": "canvas.node_coordinates"
+    },
+    "viewport": {
+      "from": "viewport { x 0 y 0 zoom 1 }",
+      "to": "canvas.initial_viewport"
+    }
+  },
+  "imported_packages": {
+    "visible": true,
+    "position": "top-left-inside-canvas",
+    "style": "subtle-inline-list",
+    "label": "Imported",
+    "items_source": [
+      {
+        "type": "source-path",
+        "value": "./src/people.tonto"
+      },
+      {
+        "type": "module",
+        "value": "people"
+      }
+    ],
+    "display_mode": "compact",
+    "interaction": {
+      "click_to_highlight_related_nodes": true,
+      "editable_here": false
+    }
+  },
+  "rendering_rules": {
+    "theme": "tonto-uml",
+    "direction": "LR",
+    "stereotypes": true,
+    "attributes": true,
+    "external_elements": false,
+    "datatypes": true
+  },
+  "uml_elements": {
+    "node_style": {
+      "shape": "uml-rectangle",
+      "border": "1px solid",
+      "border_color_token": "panel.border",
+      "background_token": "editorWidget.background",
+      "title_alignment": "center",
+      "stereotype_position": "top",
+      "attribute_section_visible": true,
+      "method_section_visible": false,
+      "padding": 12
+    },
+    "relation_style": {
+      "line_width": 1,
+      "arrow_style": "uml-default",
+      "label_visibility": true,
+      "orthogonal_routing": false
+    }
+  },
+  "content_from_example_syntax": {
+    "diagram_name": "People Overview",
+    "source": "./src/people.tonto",
+    "module": "people",
+    "included_elements": [
+      "Person",
+      "Child",
+      "Employment"
+    ],
+    "external": false,
+    "datatypes": true,
+    "theme": "tonto-uml",
+    "direction": "LR",
+    "stereotypes": true,
+    "attributes": true,
+    "nodes": [
+      {
+        "name": "Person",
+        "x": 80,
+        "y": 120
+      },
+      {
+        "name": "Child",
+        "x": 360,
+        "y": 120
+      }
+    ],
+    "viewport": {
+      "x": 0,
+      "y": 0,
+      "zoom": 1
+    }
+  },
+  "user_actions": {
+    "primary": [
+      "zoom in",
+      "zoom out",
+      "pan canvas",
+      "export image"
+    ],
+    "secondary": [
+      "click imported package badge",
+      "select UML node",
+      "select relation"
+    ]
+  },
+  "keyboard_shortcuts": {
+    "zoom_in": "Ctrl/Cmd + =",
+    "zoom_out": "Ctrl/Cmd + -",
+    "export_image": "Ctrl/Cmd + Shift + E"
+  },
+  "responsive_behavior": {
+    "when_narrow": {
+      "syntax_pane_width": "45%",
+      "diagram_pane_width": "55%",
+      "hide_package_summary_in_header": false,
+      "keep_overlay_controls": true
+    }
+  },
+  "visual_style": {
+    "density": "compact",
+    "ornamentation": "minimal",
+    "accent_usage": "very low",
+    "icon_style": "simple-outline",
+    "panel_separation": "single subtle divider",
+    "text_style": "small and clear"
+  },
+  "implementation_notes": [
+    "Do not add a left tool rail inside the diagram pane.",
+    "Do not add a right properties sidebar.",
+    "Do not add a floating multi-action toolbar like Excalidraw.",
+    "Keep only one header row and one zoom control cluster.",
+    "The diagram pane should feel quieter than Excalidraw.",
+    "The syntax on the left remains the main editing surface; the right side is the clean visual projection."
+  ]
+}

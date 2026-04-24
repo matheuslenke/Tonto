@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Handle, NodeProps, Position } from "@xyflow/react";
 import type { TontoDiagramNode } from "tonto-cli";
-import { cn } from "../lib/cn";
+import { cn } from "../utils/cn";
 
 type DiagramNodeData = {
     node: TontoDiagramNode;
