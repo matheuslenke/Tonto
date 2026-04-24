@@ -1,11 +1,12 @@
 
 import { CompositeGeneratorNode, NL } from "langium/generate";
-import { Class, GeneralizationSet, OntoumlElement, OntoumlType } from "ontouml-js";
-import { formatForId } from "../utils/replaceWhitespace.js";
+import { Class, GeneralizationSet, OntoumlElement, OntoumlType, Relation } from "ontouml-js";
 import { constructClassElement } from "./classElement.constructor.js";
+import { formatTontoQualifiedName } from "./renderUtils.js";
 
 import { Generated, expandToNode, joinToNode } from "langium/generate";
 import { constructGenSet } from "./genset.constructor.js";
+import { constructExternalRelations } from "./relation.constructor.js";
 
 /**
  * This function is the entry point for creating a Tonto Model based on an OntoUML
@@ -16,7 +17,12 @@ import { constructGenSet } from "./genset.constructor.js";
  */
 export function createTontoPackage(packageItem: OntoumlElement, fileNode: CompositeGeneratorNode): Generated {
     // return generateTonto(element);
-    fileNode.append(`package ${formatForId(packageItem.getNameOrId())}`, NL, NL);
+    fileNode.append(`package ${formatTontoQualifiedName(packageItem.getNameOrId())}`, NL, NL);
+    const classes = packageItem
+        .getContents()
+        .filter((item) => item.type === OntoumlType.CLASS_TYPE)
+        .map((item) => item as Class);
+
     packageItem.getContents().forEach((content) => {
         if (content.type === OntoumlType.CLASS_TYPE) {
             const classItem = content as Class;
@@ -27,6 +33,18 @@ export function createTontoPackage(packageItem: OntoumlElement, fileNode: Compos
             constructGenSet(genSet, fileNode);
         }
     });
+
+    const localClassIds = new Set(classes.map((classItem) => classItem.id));
+    const residualExternalRelations = packageItem
+        .getContents()
+        .filter((item) => item.type === OntoumlType.RELATION_TYPE)
+        .map((item) => item as Relation)
+        .filter((relation) => {
+            const source = relation.getSource();
+            return !(source instanceof Class) || !localClassIds.has(source.id);
+        });
+
+    constructExternalRelations(residualExternalRelations, fileNode);
     fileNode.append(NL);
     return fileNode;
 }
@@ -41,7 +59,7 @@ export function generateTonto(element: OntoumlElement): Generated {
         .filter((item) => item.type === OntoumlType.CLASS_TYPE)
         .map((item) => item as Class);
     return expandToNode`
-    package ${formatForId(element.getNameOrId())}
+    package ${formatTontoQualifiedName(element.getNameOrId())}
 
     ${joinWithExtraNL(classes, (classItem) => `${classItem.getName()}`)}
   `;

@@ -1,5 +1,6 @@
 import { generateUniqueId } from "../generators/utils/idGenerator.js";
 import { Class, Ontouml2Gufo, Project } from "ontouml-js";
+import { isJsonGenerationError } from "./jsonGeneration.js";
 
 export interface GufoResultResponse {
     id?: string
@@ -41,7 +42,7 @@ export function createGufoErrorResponse(
     message: string,
     options: { error?: unknown; info?: GufoErrorInfo[]; status?: number } = {}
 ): ErrorGufoResultResponse {
-    const info = options.info ?? (options.error ? [getGufoErrorInfo(options.error)] : []);
+    const info = options.info ?? getGufoErrorInfos(options.error);
 
     return {
         id: generateUniqueId(),
@@ -67,6 +68,19 @@ function getElementLabel(element: { id?: string; getName?: () => string | null }
     }
 
     return element.getName?.() || element.id || "(unknown)";
+}
+
+function getGufoErrorInfos(error: unknown): GufoErrorInfo[] {
+    if (isJsonGenerationError(error)) {
+        return error.info.map((info) => ({
+            code: info.code,
+            severity: info.severity,
+            title: info.title,
+            description: info.description,
+        }));
+    }
+
+    return error ? [getGufoErrorInfo(error)] : [];
 }
 
 function describeClassifierKind(classifier: Class): string {

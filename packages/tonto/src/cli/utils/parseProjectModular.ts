@@ -4,6 +4,13 @@ import { Model, getModelImports, getPrimaryContextModuleOrThrow } from "../../la
 import { TontoManifest } from "../model/grammar/TontoManifest.js";
 import { GeneratedContextModuleData, contextModuleGenerateClasses, contextModuleGenerateRelations, contextModuleModularGenerator } from "../generators/contextModuleModular.generator.js";
 import { generateUniqueId } from "../generators/utils/idGenerator.js";
+import { setTontoSourceImports } from "./tontoMetadata.js";
+import {
+    JSON_GENERATION_STEPS,
+    createJsonGenerationError,
+    createJsonGenerationNodeInfo,
+    normalizeJsonGenerationError,
+} from "../requests/jsonGeneration.js";
 
 export interface ModularGeneratorContext {
     models: Model[]
@@ -21,12 +28,42 @@ interface GeneratedModelData {
 }
 
 function getContextModule(model: Model) {
-    return getPrimaryContextModuleOrThrow(model);
+    try {
+        return getPrimaryContextModuleOrThrow(model);
+    } catch (error) {
+        throw createJsonGenerationError("Could not generate JSON because one of the model files has no package declaration.", {
+            step: JSON_GENERATION_STEPS.projectCreation,
+            error,
+            info: [
+                createJsonGenerationNodeInfo(model, {
+                    code: "missing_package_declaration",
+                    title: "Missing package declaration",
+                    description: "Every Tonto source file must declare a package before modular JSON generation can continue.",
+                }),
+            ],
+        });
+    }
 }
 
 function getImportedNames(model: Model): string[] {
     return getModelImports(model)
         .flatMap((item) => item.referencedModel.ref?.name ? [item.referencedModel.ref.name] : []);
+}
+
+function getImportedTexts(model: Model): string[] {
+    return getModelImports(model)
+        .flatMap((item) => {
+            const referencedName = item.referencedModel.ref?.name;
+            if (!referencedName) {
+                return [];
+            }
+
+            if (item.packageAlias) {
+                return [`${referencedName} as ${item.packageAlias}`];
+            }
+
+            return [referencedName];
+        });
 }
 
 /**
@@ -122,10 +159,27 @@ export function parseProjectModular(ctx: ModularGeneratorContext): Project {
      */
     for (const model of sortedModels) {
         const contextModule = getContextModule(model);
+        let createdPackage: Package;
+        let generatedContextModuleData: GeneratedContextModuleData;
 
-        const createdPackage = rootPackage.createPackage(contextModule.name);
-
-        const generatedContextModuleData = contextModuleGenerateClasses(contextModule, createdPackage);
+        try {
+            createdPackage = rootPackage.createPackage(contextModule.name);
+            setTontoSourceImports(createdPackage, getImportedTexts(model));
+            generatedContextModuleData = contextModuleGenerateClasses(contextModule, createdPackage);
+        } catch (error) {
+            throw normalizeJsonGenerationError(
+                error,
+                `Could not generate classes for package "${contextModule.name}".`,
+                JSON_GENERATION_STEPS.classGeneration,
+                [
+                    createJsonGenerationNodeInfo(contextModule, {
+                        code: "class_generation_failed",
+                        title: "Class generation failed",
+                        description: `The JSON generator could not create the classes and datatypes for package "${contextModule.name}".`,
+                    }),
+                ]
+            );
+        }
 
         const generatedModelData: GeneratedModelData = {
             package: createdPackage,
@@ -153,10 +207,25 @@ export function parseProjectModular(ctx: ModularGeneratorContext): Project {
         const createdPackage = generatedModelDatas.get(contextModule.name)?.package;
         const generatedContextModelData = generatedModelDatas.get(contextModule.name)?.generatedData;
         if (createdPackage && generatedContextModelData) {
-            contextModuleGenerateRelations(contextModule, createdPackage, generatedContextModelData, [
-                ...importedDataTypes,
-                ...globalDataTypes,
-            ]);
+            try {
+                contextModuleGenerateRelations(contextModule, createdPackage, generatedContextModelData, [
+                    ...importedDataTypes,
+                    ...globalDataTypes,
+                ]);
+            } catch (error) {
+                throw normalizeJsonGenerationError(
+                    error,
+                    `Could not generate relations for package "${contextModule.name}".`,
+                    JSON_GENERATION_STEPS.relationGeneration,
+                    [
+                        createJsonGenerationNodeInfo(contextModule, {
+                            code: "relation_generation_failed",
+                            title: "Relation generation failed",
+                            description: `The JSON generator could not create all relations for package "${contextModule.name}".`,
+                        }),
+                    ]
+                );
+            }
         }
     });
 
@@ -180,10 +249,25 @@ export function parseProjectModular(ctx: ModularGeneratorContext): Project {
         const generatedContextModelData = generatedModelDatas.get(contextModule.name)?.generatedData;
 
         if (createdPackage && generatedContextModelData) {
-            contextModuleModularGenerator(contextModule, generatedContextModelData, createdPackage, [
-                ...importedDataTypes,
-                ...globalDataTypes,
-            ]);
+            try {
+                contextModuleModularGenerator(contextModule, generatedContextModelData, createdPackage, [
+                    ...importedDataTypes,
+                    ...globalDataTypes,
+                ]);
+            } catch (error) {
+                throw normalizeJsonGenerationError(
+                    error,
+                    `Could not finish semantic generation for package "${contextModule.name}".`,
+                    JSON_GENERATION_STEPS.projectCreation,
+                    [
+                        createJsonGenerationNodeInfo(contextModule, {
+                            code: "semantic_generation_failed",
+                            title: "Semantic generation failed",
+                            description: `The JSON generator could not finish the dependent semantic elements for package "${contextModule.name}".`,
+                        }),
+                    ]
+                );
+            }
         }
     });
 

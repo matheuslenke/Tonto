@@ -3,6 +3,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { OntoumlElement } from "ontouml-js";
 import { createTontoPackage } from "./constructors/package.constructor.js";
+import { normalizeTontoGenerationError, TONTO_GENERATION_STEPS } from "./requests/tontoGeneration.js";
 
 export function generateTontoFile(
     ontoumlElements: OntoumlElement[],
@@ -29,16 +30,41 @@ interface GeneratorContext {
 }
 
 function generate(ctx: GeneratorContext): string {
-    ctx.ontoumlElements.forEach((ontoumlElement) => {
-        createTontoPackage(ontoumlElement, ctx.fileNode);
-    });
-
-    if (!fs.existsSync(ctx.destination)) {
-        fs.mkdirSync(ctx.destination, { recursive: true });
+    try {
+        ctx.ontoumlElements.forEach((ontoumlElement) => {
+            createTontoPackage(ontoumlElement, ctx.fileNode);
+        });
+    } catch (error) {
+        throw normalizeTontoGenerationError(
+            error,
+            `Could not generate the Tonto source for "${ctx.name}".`,
+            TONTO_GENERATION_STEPS.packageGeneration
+        );
     }
-    const generatedFilePath = path.join(ctx.destination, ctx.fileName);
-    // fs.writeFileSync(generatedFilePath, isGeneratorNode(ctx.fileNode));
-    return generatedFilePath;
+
+    try {
+        if (!fs.existsSync(ctx.destination)) {
+            fs.mkdirSync(ctx.destination, { recursive: true });
+        }
+    } catch (error) {
+        throw normalizeTontoGenerationError(
+            error,
+            `Could not create the destination folder for "${ctx.name}".`,
+            TONTO_GENERATION_STEPS.fileWriting
+        );
+    }
+
+    try {
+        const generatedFilePath = path.join(ctx.destination, ctx.fileName);
+        // fs.writeFileSync(generatedFilePath, isGeneratorNode(ctx.fileNode));
+        return generatedFilePath;
+    } catch (error) {
+        throw normalizeTontoGenerationError(
+            error,
+            `Could not prepare the generated Tonto file "${ctx.fileName}".`,
+            TONTO_GENERATION_STEPS.fileWriting
+        );
+    }
 }
 
 interface FilePathData {

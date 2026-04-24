@@ -2,8 +2,7 @@ import { EmptyFileSystem, type LangiumDocument } from "langium";
 import { expandToString as s } from "langium/generate";
 import { parseHelper } from "langium/test";
 import { beforeAll, describe, expect, test } from "vitest";
-import { isClassDeclaration } from "../../../lib/index.js";
-import { getPrimaryContextModuleOrThrow } from "../../../src/language/index.js";
+import { getPrimaryContextModuleOrThrow, isClassDeclaration } from "../../../src/language/index.js";
 import { Model, isModel } from "../../../src/language/generated/ast.js";
 import { createTontoServices } from "../../../src/language/tonto-module.js";
 

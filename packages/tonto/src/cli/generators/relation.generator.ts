@@ -1,92 +1,167 @@
-import chalk from "chalk";
 import { AggregationKind, Class, Package, Property, Relation, RelationStereotype } from "ontouml-js";
 import {
     ClassDeclaration,
     ElementRelation,
+    isClassDeclaration,
     RelationMetaAttributes
 } from "../../language/generated/ast.js";
 import { RelationTypes } from "../../language/models/RelationType.js";
+import {
+    JSON_GENERATION_STEPS,
+    createJsonGenerationError,
+    createJsonGenerationNodeInfo,
+} from "../requests/jsonGeneration.js";
 import { setPropertyCardinality } from "./cardinality.generator.js";
+
+export function getElementRelationLookupKey(
+    relationItem: ElementRelation,
+    sourceClassIncoming?: ClassDeclaration
+): string | undefined {
+    if (!relationItem.name) {
+        return undefined;
+    }
+
+    if (sourceClassIncoming) {
+        return `${sourceClassIncoming.name}.${relationItem.name}`;
+    }
+
+    const relationContainer = relationItem.$container;
+    if (relationContainer.$type === "ClassDeclaration") {
+        return `${relationContainer.name}.${relationItem.name}`;
+    }
+
+    const sourceElement = relationItem.firstEnd?.ref;
+    if (sourceElement && "name" in sourceElement && typeof sourceElement.name === "string") {
+        return `${sourceElement.name}.${relationItem.name}`;
+    }
+
+    return relationItem.name;
+}
+
+export function findGeneratedRelation(
+    relations: Relation[],
+    relationItem: ElementRelation | undefined,
+    sourceClassIncoming?: ClassDeclaration,
+    resolveRelation?: (relationItem: ElementRelation | undefined) => Relation | undefined
+): Relation | undefined {
+    const resolvedRelation = resolveRelation?.(relationItem);
+    if (resolvedRelation) {
+        return resolvedRelation;
+    }
+
+    if (!relationItem) {
+        return undefined;
+    }
+
+    const lookupKey = getElementRelationLookupKey(relationItem, sourceClassIncoming);
+    if (!lookupKey) {
+        return undefined;
+    }
+
+    return relations.find((relation) => relation.id === lookupKey);
+}
 
 export function relationGenerator(
     relationItem: ElementRelation,
     packageItem: Package,
     classes: Class[],
-    sourceClassIncoming?: ClassDeclaration
+    sourceClassIncoming?: ClassDeclaration,
+    resolveClass?: (classDeclaration: ClassDeclaration | undefined) => Class | undefined
 ): Relation | undefined {
     const sourceClass = sourceClassIncoming ?? relationItem.firstEnd?.ref;
     const destinationClass = relationItem.secondEnd?.ref;
 
     const relationStereotype = getStereotype(relationItem.relationType);
 
-    if (sourceClass && destinationClass) {
-        const sourceClassAlreadyCreated = classes.find((item) => item.id === sourceClass.name);
-        const destinationClassAlreadyCreated = classes.find((item) => item.id === destinationClass.name);
-
-        if (sourceClassAlreadyCreated && destinationClassAlreadyCreated) {
-            const relation = packageItem.createBinaryRelation(
-                sourceClassAlreadyCreated,
-                destinationClassAlreadyCreated,
-                relationItem.name,
-                relationStereotype
-            );
-
-            const sourceEnd = relation.getSourceEnd();
-            const targetEnd = relation.getTargetEnd();
-
-            setMetaAttributes(sourceEnd, relationItem.firstEndMetaAttributes);
-            setMetaAttributes(targetEnd, relationItem.secondEndMetaAttributes);
-
-            relationItem.firstEndMetaAttributes &&
-        relationItem.firstEndMetaAttributes.endName &&
-        sourceEnd.setName(relationItem.firstEndMetaAttributes.endName);
-            relationItem.secondEndMetaAttributes &&
-        relationItem.secondEndMetaAttributes.endName &&
-        targetEnd.setName(relationItem.secondEndMetaAttributes.endName);
-
-            setPropertyCardinality(relationItem.firstCardinality, sourceEnd);
-            setPropertyCardinality(relationItem.secondCardinality, targetEnd);
-
-            if (relationItem.relationType === RelationTypes.SUBQUANTITY_OF) {
-                relation.getSourceEnd().aggregationKind = AggregationKind.COMPOSITE;
-                relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
-            } else if (relationItem.isAggregation) {
-                /**
-         * Based on relation type, set aggregation kind
-         * Aggregation: <>--
-         * Association: --
-         * Composition: <o>--
-         */
-                relation.getSourceEnd().aggregationKind = AggregationKind.SHARED;
-                relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
-            } else if (relationItem.isComposition) {
-                relation.getSourceEnd().aggregationKind = AggregationKind.COMPOSITE;
-                relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
-            } 
-            // else if (relationItem.isCompositionInverted) {
-            //   relation.getSourceEnd().aggregationKind = AggregationKind.NONE;
-            //   relation.getTargetEnd().aggregationKind = AggregationKind.COMPOSITE;
-            // } else if (relationItem.isAggregationInverted) {
-            //   relation.getSourceEnd().aggregationKind = AggregationKind.NONE;
-            //   relation.getTargetEnd().aggregationKind = AggregationKind.SHARED;
-            // } 
-            else if (relationItem.isAssociation) {
-                relation.getSourceEnd().aggregationKind = AggregationKind.NONE;
-                relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
-            }
-
-            return relation;
-        } else {
-            console.log(
-                chalk.yellow(
-                    `Could not create relation named (${relationItem.name ?? "(No name)"}) between ${sourceClass.name} and ${
-                        destinationClass.name
-                    } because one or both of them was not created.`
-                )
-            );
-        }
+    if (!sourceClass || !destinationClass) {
+        throw createJsonGenerationError(`Could not generate relation ${getRelationLabel(relationItem)}.`, {
+            step: JSON_GENERATION_STEPS.relationGeneration,
+            info: [
+                createJsonGenerationNodeInfo(relationItem, {
+                    code: "missing_relation_endpoint_reference",
+                    title: "Missing relation endpoint reference",
+                    description: `Relation ${getRelationLabel(relationItem)} must declare both source and target class references before JSON generation can continue.`,
+                }),
+            ],
+        });
     }
-    return undefined;
+
+    const sourceClassAlreadyCreated = isClassDeclaration(sourceClass)
+        ? (resolveClass?.(sourceClass) ?? classes.find((item) => item.id === sourceClass.name))
+        : classes.find((item) => item.id === sourceClass.name);
+    const destinationClassAlreadyCreated = isClassDeclaration(destinationClass)
+        ? (resolveClass?.(destinationClass) ?? classes.find((item) => item.id === destinationClass.name))
+        : classes.find((item) => item.id === destinationClass.name);
+
+    if (!sourceClassAlreadyCreated || !destinationClassAlreadyCreated) {
+        throw createJsonGenerationError(`Could not generate relation ${getRelationLabel(relationItem)}.`, {
+            step: JSON_GENERATION_STEPS.relationGeneration,
+            info: [
+                createJsonGenerationNodeInfo(relationItem, {
+                    code: "unresolved_relation_endpoint",
+                    title: "Unresolved relation endpoint",
+                    description: `Relation ${getRelationLabel(relationItem)} refers to "${getClassReferenceName(sourceClass)}" -> "${getClassReferenceName(destinationClass)}", but one or both endpoint classes were not generated. Check the declarations and imported packages for those classes.`,
+                }),
+            ],
+        });
+    }
+
+    const relation = packageItem.createBinaryRelation(
+        sourceClassAlreadyCreated,
+        destinationClassAlreadyCreated,
+        relationItem.name,
+        relationStereotype
+    );
+    const lookupKey = getElementRelationLookupKey(relationItem, sourceClassIncoming);
+    if (lookupKey) {
+        relation.id = lookupKey;
+    }
+
+    const sourceEnd = relation.getSourceEnd();
+    const targetEnd = relation.getTargetEnd();
+
+    setMetaAttributes(sourceEnd, relationItem.firstEndMetaAttributes);
+    setMetaAttributes(targetEnd, relationItem.secondEndMetaAttributes);
+
+    relationItem.firstEndMetaAttributes &&
+    relationItem.firstEndMetaAttributes.endName &&
+    sourceEnd.setName(relationItem.firstEndMetaAttributes.endName);
+    relationItem.secondEndMetaAttributes &&
+    relationItem.secondEndMetaAttributes.endName &&
+    targetEnd.setName(relationItem.secondEndMetaAttributes.endName);
+
+    setPropertyCardinality(relationItem.firstCardinality, sourceEnd);
+    setPropertyCardinality(relationItem.secondCardinality, targetEnd);
+
+    if (relationItem.relationType === RelationTypes.SUBQUANTITY_OF) {
+        relation.getSourceEnd().aggregationKind = AggregationKind.COMPOSITE;
+        relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
+    } else if (relationItem.isAggregation) {
+        /**
+     * Based on relation type, set aggregation kind
+     * Aggregation: <>--
+     * Association: --
+     * Composition: <o>--
+     */
+        relation.getSourceEnd().aggregationKind = AggregationKind.SHARED;
+        relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
+    } else if (relationItem.isComposition) {
+        relation.getSourceEnd().aggregationKind = AggregationKind.COMPOSITE;
+        relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
+    }
+    // else if (relationItem.isCompositionInverted) {
+    //   relation.getSourceEnd().aggregationKind = AggregationKind.NONE;
+    //   relation.getTargetEnd().aggregationKind = AggregationKind.COMPOSITE;
+    // } else if (relationItem.isAggregationInverted) {
+    //   relation.getSourceEnd().aggregationKind = AggregationKind.NONE;
+    //   relation.getTargetEnd().aggregationKind = AggregationKind.SHARED;
+    // }
+    else if (relationItem.isAssociation) {
+        relation.getSourceEnd().aggregationKind = AggregationKind.NONE;
+        relation.getTargetEnd().aggregationKind = AggregationKind.NONE;
+    }
+
+    return relation;
 }
 
 function setMetaAttributes(end: Property, metaAttributes: RelationMetaAttributes | undefined) {
@@ -148,6 +223,14 @@ function getStereotype(relationType: string | undefined): RelationStereotype | u
             // Qual seria o default?
             return undefined;
     }
+}
+
+function getRelationLabel(relationItem: ElementRelation): string {
+    return relationItem.name ? `"${relationItem.name}"` : "(unnamed relation)";
+}
+
+function getClassReferenceName(reference: { name?: string } | undefined): string {
+    return reference?.name ?? "(unknown class)";
 }
 
 /* Não existentes?

@@ -2,6 +2,8 @@ import chalk from "chalk";
 import * as fs from "node:fs";
 import path from "path";
 import { ErrorGufoResultResponse, GufoResultResponse, formatGufoErrorMessage } from "../requests/gufoTransform.js";
+import { formatJsonGenerationErrorMessage } from "../requests/jsonGeneration.js";
+import { formatTontoGenerationErrorMessage } from "../requests/tontoGeneration.js";
 import { ErrorResultResponse, ValidationReturn } from "../requests/ontoumljsValidator.js";
 import { readOrCreateDefaultTontoManifest } from "../utils/readManifest.js";
 import { generateModularCommand } from "./commands/generateCommand.js";
@@ -28,10 +30,14 @@ export class TontoActions {
    */
     async importAction(fileName: string, dir?: ImportOptions): Promise<void> {
         console.log("Importing JSON!");
-        await newImportCommand({
-            fileName: fileName,
-            destination: dir?.destination
-        });
+        try {
+            await newImportCommand({
+                fileName: fileName,
+                destination: dir?.destination
+            });
+        } catch (error) {
+            console.log(chalk.red(formatTontoGenerationErrorMessage(error)));
+        }
         // if (result.success) {
         //   console.log(`Generated .tonto file at ${result.filePath}`);
         // } else {
@@ -47,7 +53,7 @@ export class TontoActions {
                     console.log(chalk.green(`JSON File generated successfully: ${generatedFile}`));
                 }
             } catch (error) {
-                console.log(chalk.red(error));
+                console.log(chalk.red(formatJsonGenerationErrorMessage(error)));
             }
         }
 

@@ -11,6 +11,10 @@ import { createTontoGenerationStatusBarItem } from "../commands/TontoGenerationC
 import { createTpmInstallCommands } from "../commands/TpmInstallCommand.js";
 import { createValidationSatusBarItem } from "../commands/validationCommand.js";
 import { activateDiagram } from "../diagram/activateDiagram.js";
+import { registerAutoOpenTontoDiagramPreview } from "../diagram-editor/auto-open-tontodiagram-preview.js";
+import { registerCreateTontoDiagramCommand } from "../diagram-editor/create-tontodiagram-command.js";
+import { registerTontoDiagramCompletionProvider } from "../diagram-editor/tontodiagram-completion-provider.js";
+import { TontoDiagramEditorProvider } from "../diagram-editor/tonto-diagram-editor-provider.js";
 import { setOutputChannel } from "./outputChannel.js";
 import { TontoLibraryFileSystemProvider } from "./TontoLibraryFileSystemProvider.js";
 
@@ -109,8 +113,12 @@ export function activate(context: vscode.ExtensionContext): void {
     createValidationSatusBarItem(context, validateStatusBarItem, outputChannel);
     createTransformToGufoSatusBarItem(context, transformToGufoStatusBarItem);
     createTpmInstallCommands(context, tpmInstallStatusBarItem);
+    registerCreateTontoDiagramCommand(context);
     activateDiagram(context, languageClient);
     registerPlantUMLCommands(context);
+    context.subscriptions.push(TontoDiagramEditorProvider.register(context));
+    registerAutoOpenTontoDiagramPreview(context);
+    registerTontoDiagramCompletionProvider(context);
 
     // Register a TreeDataProvider for the `tontoCommandsExplorer` view so commands
     // appear as items inside the primary Sidebar view instead of as top-bar buttons.

@@ -1,0 +1,60 @@
+@import "sprotty/css/sprotty.css";
+@import "../css/diagram.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --editor-bg: var(--vscode-editor-background, #f8fafc);
+        --panel-bg: rgba(255, 255, 255, 0.72);
+        --panel-line: rgba(148, 163, 184, 0.34);
+        --panel-accent: rgba(15, 23, 42, 0.85);
+        color-scheme: light;
+    }
+
+    html,
+    body,
+    #root {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        overflow: hidden;
+    }
+
+    body {
+        font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+}
+
+@layer components {
+    .react-flow__pane {
+        cursor: grab;
+    }
+
+    .react-flow__pane.dragging {
+        cursor: grabbing;
+    }
+
+    .react-flow__controls {
+        border-radius: 1rem;
+        overflow: hidden;
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        box-shadow: 0 16px 32px rgba(15, 23, 42, 0.14);
+    }
+
+    .react-flow__controls button {
+        border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        background: rgba(255, 255, 255, 0.94);
+        color: #0f172a;
+    }
+
+    .react-flow__controls button:hover {
+        background: rgba(241, 245, 249, 1);
+    }
+}

@@ -1,7 +1,7 @@
 {
     "name": "tonto-sprotty-webview",
     "version": "0.1.0",
-    "description": "Example of a Sprotty diagram in a VS Code extensions (WebView part)",
+    "description": "Tonto VS Code webviews for diagram preview and tontodiagram editing",
     "private": true,
     "license": "(EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0)",
     "keywords": [
@@ -27,23 +27,30 @@
     },
     "main": "out/webview.js",
     "dependencies": {
+        "@xyflow/react": "^12.8.5",
+        "clsx": "^2.1.1",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1",
+        "react-resizable-panels": "^2.1.7",
         "reflect-metadata": "^0.1.14",
         "sprotty": "^1.2.0",
         "sprotty-elk": "^1.2.0",
-        "sprotty-vscode-webview": "^1.0.0"
+        "sprotty-vscode-webview": "^1.0.0",
+        "tailwind-merge": "^2.5.2",
+        "tonto-cli": "file:../tonto"
     },
     "devDependencies": {
-        "css-loader": "^6.8.1",
-        "file-loader": "^6.2.0",
-        "source-map-loader": "^4.0.1",
-        "style-loader": "^3.3.3",
-        "ts-loader": "^9.4.2",
-        "webpack": "^5.89.0",
-        "webpack-cli": "^5.1.4"
+        "@types/react": "^18.3.5",
+        "@types/react-dom": "^18.3.0",
+        "@vitejs/plugin-react": "^4.3.1",
+        "autoprefixer": "^10.4.20",
+        "postcss": "^8.4.45",
+        "tailwindcss": "^3.4.13",
+        "vite": "^5.4.8"
     },
     "scripts": {
-        "clean": "shx rm -fr out",
-        "build": "webpack --mode=development",
-        "watch": "webpack --mode=development --watch"
+        "clean": "shx rm -fr ../extension/pack/webview out",
+        "build": "vite build",
+        "watch": "vite build --watch"
     }
 }

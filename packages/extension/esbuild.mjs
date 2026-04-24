@@ -44,30 +44,11 @@ const nodeContext = await esbuild.context({
     plugins,
 });
 
-const browserContext = await esbuild.context({
-    entryPoints: ["../webview/src/main.ts"],
-    outdir: "pack/diagram",
-    bundle: true,
-    target: "es6",
-    loader: { ".ts": "ts", ".css": "css" },
-    platform: "browser",
-    sourcemap: !options.minify,
-    minify: options.minify,
-    plugins,
-});
-
 if (options.watch) {
-    await Promise.all([
-        nodeContext.watch(),
-        browserContext.watch()
-    ]);
+    await nodeContext.watch();
 } else {
-    await Promise.all([
-        nodeContext.rebuild(),
-        browserContext.rebuild()
-    ]);
+    await nodeContext.rebuild();
     nodeContext.dispose();
-    browserContext.dispose();
 }
 
 function getTime() {

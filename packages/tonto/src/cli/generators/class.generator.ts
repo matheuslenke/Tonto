@@ -8,12 +8,12 @@ import {
     isUltimateSortalOntoCategory
 } from "../../language/models/OntologicalCategory.js";
 import { getParentNatures } from "../../language/utils/getParentNatures.js";
+import { setTontoSourceName } from "../utils/tontoMetadata.js";
 import { getDescription, getMultilingualText } from "./utils/labelUtils.js";
 
 export function classElementGenerator(classElement: ClassDeclaration, packageItem: Package): Class {
     const multiLingualName = getMultilingualText(classElement.label, classElement.name);
     const name = multiLingualName.getText();
-    console.log(`Creating class '${classElement.name}' with name: '${name}'`);
     const description = getDescription(classElement.description);
     let createdClass: Class;
 
@@ -46,7 +46,7 @@ export function classElementGenerator(classElement: ClassDeclaration, packageIte
                 break;
             }
             case "historicalRoleMixin": {
-                createdClass = packageItem.createRoleMixin(name, natures);
+                createdClass = packageItem.createHistoricalRoleMixin(name, natures);
                 break;
             }
             /**
@@ -61,6 +61,7 @@ export function classElementGenerator(classElement: ClassDeclaration, packageIte
                 break;
             }
             case "process": {
+                // Compatibility mapping: OntoUML process currently serializes through event in this pipeline.
                 createdClass = packageItem.createEvent(name);
                 break;
             }
@@ -169,11 +170,12 @@ export function classElementGenerator(classElement: ClassDeclaration, packageIte
     createdClass.name = multiLingualName;
 
     createdClass.id = classElement.name;
+    setTontoSourceName(createdClass, classElement.name);
 
     if (description) {
         createdClass.description = description;
     }
-    
+
     return createdClass;
 }
 
@@ -182,8 +184,7 @@ export function generalizationGenerator(model: Package, sourceClass: Class, targ
 }
 
 export function createInstantiation(_model: Package, _sourceClass: Class, _targetClass: Class) {
-    // TODO: Waiting for ontouml-js to implement instantiation
-    // model.createInstantiationRelation(sourceClass, targetClass);
+    _model.createInstantiationRelation(_sourceClass, _targetClass);
 }
 
 function getOntoUMLNatures(classDeclaration: ClassDeclaration, natures: Nature[]): OntologicalNature[] | undefined {
@@ -219,7 +220,7 @@ function getOntoUMLNatures(classDeclaration: ClassDeclaration, natures: Nature[]
                 return tontoNatureUtils.getNatureFromAst(nature);
             });
         } else {
-            tontoNatureUtils.getDefaultNatureFromNonSortal(classDeclaration);
+            return tontoNatureUtils.getDefaultNatureFromNonSortal(classDeclaration);
         }
     }
     return undefined;

@@ -1,9 +1,14 @@
 
 import { CompositeGeneratorNode, NL } from "langium/generate";
 import { Class, ClassStereotype, Property } from "ontouml-js";
-import { formatForId } from "../utils/replaceWhitespace.js";
 import { constructAttributes } from "./attributes.constructor.js";
 import { createInstantiation } from "./instantiation.constructor.js";
+import {
+    appendLabelAndDescription,
+    formatTontoIdentifier,
+    getRenderableElementName,
+    hasRenderableDocumentation,
+} from "./renderUtils.js";
 import { constructInternalRelations } from "./relation.constructor.js";
 import { createSpecializations } from "./specialization.constructor.js";
 
@@ -15,7 +20,8 @@ export function constructClassElement(element: Class, fileNode: CompositeGenerat
     } else if (element.stereotype === ClassStereotype.DATATYPE) {
         createDatatype(element, fileNode);
     } else {
-        fileNode.append(`${stereotypeWord} ${formatForId(element.getName())} `);
+        const identifier = formatTontoIdentifier(getRenderableElementName(element));
+        fileNode.append(`${stereotypeWord} ${identifier}`);
 
         // Construct Nature restrictions
         createNatures(element, fileNode);
@@ -27,10 +33,12 @@ export function constructClassElement(element: Class, fileNode: CompositeGenerat
 
         const relations = element.getOwnOutgoingRelations();
         const attributes: Property[] = element.getOwnAttributes();
-        if (relations.length > 0 || attributes.length > 0) {
-            fileNode.append("{", NL);
+        const hasBody = hasRenderableDocumentation(element, identifier) || relations.length > 0 || attributes.length > 0;
+        if (hasBody) {
+            fileNode.append(" {", NL);
             fileNode.indent((ident) => {
-                constructAttributes(attributes, ident);
+                appendLabelAndDescription(element, identifier, ident);
+                constructAttributes(attributes, ident, element);
             });
             fileNode.indent((ident) => {
                 constructInternalRelations(element, relations, ident);
@@ -42,38 +50,47 @@ export function constructClassElement(element: Class, fileNode: CompositeGenerat
 }
 
 function createEnumeration(element: Class, fileNode: CompositeGeneratorNode) {
-    fileNode.append(`enum ${formatForId(element.getName())} {`, NL);
+    const identifier = formatTontoIdentifier(getRenderableElementName(element));
+    fileNode.append(`enum ${identifier}`);
+    createSpecializations(element, fileNode);
 
     const literals = element.getOwnLiterals();
-    fileNode.indent((ident) => {
-        literals.forEach((literal, index) => {
-            if (index < literals.length - 1) {
-                ident.append(formatForId(literal.getNameOrId()), ",", NL);
-            } else {
-                ident.append(formatForId(literal.getNameOrId()), NL);
-            }
-        });
-    });
-
-    fileNode.append("}", NL);
-}
-
-function createDatatype(element: Class, fileNode: CompositeGeneratorNode) {
-    fileNode.append(`datatype ${formatForId(element.getName())}`);
-
-    const literals = element.getOwnAttributes();
-
-    if (literals.length > 0) {
+    const hasBody = hasRenderableDocumentation(element, identifier) || literals.length > 0;
+    if (hasBody) {
         fileNode.append(" {", NL);
 
         fileNode.indent((ident) => {
-            literals.forEach((literal) => {
-                const propertyType = literal.propertyType;
-                if (propertyType) {
-                    ident.append(formatForId(literal.getNameOrId()), " : ", propertyType.getNameOrId(), NL);
+            appendLabelAndDescription(element, identifier, ident);
+            literals.forEach((literal, index) => {
+                if (index < literals.length - 1) {
+                    ident.append(formatTontoIdentifier(getRenderableElementName(literal)), ",", NL);
                 } else {
-                    // TODO: Add literal without propertyType
+                    ident.append(formatTontoIdentifier(getRenderableElementName(literal)), NL);
                 }
+            });
+        });
+
+        fileNode.append("}", NL);
+    } else {
+        fileNode.appendNewLine();
+    }
+}
+
+function createDatatype(element: Class, fileNode: CompositeGeneratorNode) {
+    const identifier = formatTontoIdentifier(getRenderableElementName(element));
+    fileNode.append(`datatype ${identifier}`);
+    createSpecializations(element, fileNode);
+
+    const literals = element.getOwnAttributes();
+
+    const hasBody = hasRenderableDocumentation(element, identifier) || literals.length > 0;
+    if (hasBody) {
+        fileNode.append(" {", NL);
+
+        fileNode.indent((ident) => {
+            appendLabelAndDescription(element, identifier, ident);
+            literals.forEach((literal) => {
+                constructAttributes([literal], ident, element);
             });
         });
 
@@ -85,7 +102,7 @@ function createDatatype(element: Class, fileNode: CompositeGeneratorNode) {
 
 function createNatures(element: Class, fileNode: CompositeGeneratorNode) {
     if (element.stereotype === ClassStereotype.ABSTRACT) {
-        fileNode.append("of abstract-individuals");
+        fileNode.append(" of abstract-individuals");
     }
 }
 

@@ -1,5 +1,5 @@
 import * as path from "path";
-import { importCommand } from "tonto-cli";
+import { formatTontoGenerationErrorMessage, importCommand } from "tonto-cli";
 import * as vscode from "vscode";
 import { CommandIds } from "./commandIds.js";
 
@@ -28,14 +28,15 @@ async function createCommandPaletteGenerateTontoCommand() {
         const selectedFile = fileUri[0];
 
         const generatedDirectoryName = await vscode.window.showInputBox({
-            prompt: "Enter the name of the directory to hold the generated model",
+            prompt: "Enter the name of the directory to hold the generated model. Leave blank to use 'generated'",
             value: "generated",
         });
-        if (generatedDirectoryName) {
-            await generateTonto(selectedFile, generatedDirectoryName);
-        } else {
-            vscode.window.showErrorMessage("Failed! Not a valid name provided for directory");
+
+        if (generatedDirectoryName === undefined) {
+            return;
         }
+
+        await generateTonto(selectedFile, normalizeGeneratedDirectoryName(generatedDirectoryName));
     } else {
         vscode.window.showErrorMessage("Failed! Not a valid file selected");
     }
@@ -60,19 +61,35 @@ async function generateTonto(uri: vscode.Uri, generatedDirectoryName: string) {
         const document = await vscode.workspace.openTextDocument(uri);
         if (document.languageId === "json") {
             const destination = path.join(path.dirname(uri.fsPath), generatedDirectoryName);
-            const result = await importCommand({
-                fileName: document.fileName,
-                destination: destination,
-            });
-            if (result.success) {
-                vscode.window.showInformationMessage(`Success! ${result.message}`);
-            } else {
-                vscode.window.showInformationMessage(`Error! ${result.message}`);
+            try {
+                const result = await importCommand({
+                    fileName: document.fileName,
+                    destination: destination,
+                });
+
+                if (result.success) {
+                    vscode.window.showInformationMessage(`Success! ${result.message}`);
+                    return;
+                }
+
+                vscode.window.showErrorMessage(
+                    result.error ? formatTontoGenerationErrorMessage(result.error) : result.message,
+                    { modal: true }
+                );
+                console.error(result.error ?? result.message);
+            } catch (error) {
+                vscode.window.showErrorMessage(formatTontoGenerationErrorMessage(error), { modal: true });
+                console.error(error);
             }
         } else {
-            vscode.window.showInformationMessage("Failed! File is not a JSON");
+            vscode.window.showErrorMessage("Failed! File is not a JSON");
         }
     }
+}
+
+function normalizeGeneratedDirectoryName(generatedDirectoryName: string): string {
+    const normalizedDirectoryName = generatedDirectoryName.trim();
+    return normalizedDirectoryName.length > 0 ? normalizedDirectoryName : "generated";
 }
 
 export { createTontoGenerationStatusBarItem };

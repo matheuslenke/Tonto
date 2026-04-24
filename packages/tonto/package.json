@@ -1,82 +1,82 @@
 {
-  "name": "tonto-cli",
-  "displayName": "Tonto CLI",
-  "publisher": "Lenke",
-  "author": {
-    "name": "Matheus Lenke Coutinho",
-    "email": "matheuslenke@gmail.com"
-  },
-  "type": "module",
-  "description": "Tonto is a DSL for creating OntoUML models",
-  "version": "0.4.3",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/matheuslenke/Tonto.git",
-    "directory": "packages/tonto"
-  },
-  "engines": {
-    "node": ">= 16"
-  },
-  "categories": [
-    "Programming Languages"
-  ],
-  "files": [
-    "lib",
-    "lib/cli",
-    "src",
-    "tonto-manifest-schema.json"
-  ],
-  "bin": {
-    "tonto-cli": "bin/cli.js"
-  },
-  "exports": {
-    ".": "./lib/index.js",
-    "./lib/*": "./lib/*"
-  },
-  "types": "lib/index.d.ts",
-  "main": "lib/index",
-  "scripts": {
-    "clean": "shx rm -rf lib coverage tsconfig.tsbuildinfo",
-    "prebuild": "npm run clean",
-    "build": "tsc",
-    "watch": "tsc --watch",
-    "test": "vitest",
-    "test-ui": "vitest --ui",
-    "lint": "eslint src test --ext .ts",
-    "lint:fix": "eslint src --fix --ext ts",
-    "langium:generate": "langium generate",
-    "langium:watch": "langium generate --watch",
-    "publish": "npm publish",
-    "publish:latest": "npm publish --tag latest"
-  },
-  "dependencies": {
-    "@inquirer/prompts": "^7.8.6",
-    "@vscode/vsce": "3.3.2",
-    "chalk": "^5.6.2",
-    "chevrotain": "^11.0.3",
-    "concurrently": "3.5.1",
-    "elkjs": "^0.10.0",
-    "glob": "^10.2.2",
-    "langium-sprotty": "^3.0.0",
-    "node-fetch-native": "^1.0.1",
-    "ontouml-js": "github:matheuslenke/ontouml-js#feature/include-types-in-build",
-    "reflect-metadata": "^0.2.2",
-    "rimraf": "^4.1.2",
-    "sprotty": "^1.2.0",
-    "sprotty-elk": "^1.2.0",
-    "uuid": "^9.0.1",
-    "vscode-languageclient": "~9.0.1",
-    "vscode-languageserver": "~9.0.1",
-    "vscode-languageserver-types": "^3.17.3",
-    "vscode-uri": "^3.0.7"
-  },
-  "devDependencies": {
-    "@types/jest": "^29.2.3",
-    "@types/node": "^18.11.17",
-    "@types/node-fetch": "^2.6.1",
-    "@types/uuid": "^9.0.8",
-    "@types/vscode": "^1.63.0",
-    "@vitest/coverage-c8": "^0.33.0"
-  }
+    "name": "tonto-cli",
+    "displayName": "Tonto CLI",
+    "publisher": "Lenke",
+    "author": {
+        "name": "Matheus Lenke Coutinho",
+        "email": "matheuslenke@gmail.com"
+    },
+    "type": "module",
+    "description": "Tonto is a DSL for creating OntoUML models",
+    "version": "0.4.9",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/matheuslenke/Tonto.git",
+        "directory": "packages/tonto"
+    },
+    "engines": {
+        "node": ">= 16"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "files": [
+        "lib",
+        "lib/cli",
+        "src",
+        "tonto-manifest-schema.json"
+    ],
+    "bin": {
+        "tonto-cli": "bin/cli.js"
+    },
+    "exports": {
+        ".": "./lib/index.js",
+        "./lib/*": "./lib/*"
+    },
+    "types": "lib/index.d.ts",
+    "main": "lib/index",
+    "scripts": {
+        "clean": "shx rm -rf lib coverage tsconfig.tsbuildinfo",
+        "prebuild": "npm run clean",
+        "build": "tsc",
+        "watch": "tsc --watch",
+        "test": "vitest",
+        "test-ui": "vitest --ui",
+        "lint": "eslint src test --ext .ts",
+        "lint:fix": "eslint src --fix --ext ts",
+        "langium:generate": "langium generate",
+        "langium:watch": "langium generate --watch",
+        "publish": "npm publish",
+        "publish:latest": "npm publish --tag latest"
+    },
+    "dependencies": {
+        "@inquirer/prompts": "^7.8.6",
+        "@vscode/vsce": "3.3.2",
+        "chalk": "^5.6.2",
+        "chevrotain": "^11.0.3",
+        "concurrently": "3.5.1",
+        "elkjs": "^0.10.0",
+        "glob": "^10.2.2",
+        "langium-sprotty": "^3.0.0",
+        "node-fetch-native": "^1.0.1",
+        "ontouml-js": "github:matheuslenke/ontouml-js#feature/include-types-in-build",
+        "reflect-metadata": "^0.2.2",
+        "rimraf": "^4.1.2",
+        "sprotty": "^1.2.0",
+        "sprotty-elk": "^1.2.0",
+        "uuid": "^9.0.1",
+        "vscode-languageclient": "~9.0.1",
+        "vscode-languageserver": "~9.0.1",
+        "vscode-languageserver-types": "^3.17.3",
+        "vscode-uri": "^3.0.7"
+    },
+    "devDependencies": {
+        "@types/jest": "^29.2.3",
+        "@types/node": "^18.11.17",
+        "@types/node-fetch": "^2.6.1",
+        "@types/uuid": "^9.0.8",
+        "@types/vscode": "^1.63.0",
+        "@vitest/coverage-c8": "^0.33.0"
+    }
 }

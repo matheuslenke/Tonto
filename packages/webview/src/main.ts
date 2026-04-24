@@ -19,9 +19,13 @@ import { Container } from "inversify";
 import "reflect-metadata";
 import { configureModelElement } from "sprotty";
 import { SprottyDiagramIdentifier } from "sprotty-vscode-webview";
-import { PaletteButton, SprottyLspEditStarter } from "sprotty-vscode-webview/lib/lsp/editing";
+import * as sprottyPalette from "sprotty-vscode-webview/lib/lsp/editing/code-action-popup-palette.js";
+import * as sprottyStarter from "sprotty-vscode-webview/lib/lsp/editing/sprotty-lsp-edit-starter.js";
 import { createTontoDiagramContainer } from "./di.config";
 import { PaletteButtonView } from "./html-views";
+
+const PaletteButton = sprottyPalette.PaletteButton;
+const SprottyLspEditStarter = sprottyStarter.SprottyLspEditStarter;
 
 export class TontoSprottyStarter extends SprottyLspEditStarter {
 

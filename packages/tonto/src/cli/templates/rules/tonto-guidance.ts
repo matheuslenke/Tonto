@@ -653,8 +653,8 @@ For relations with a mereological stereotype (e.g. @componentOf, @memberOf, @sub
 - \`ordered\` - End forms an ordered collection
 - \`const\` - Immutable after creation
 - \`derived\` - Computed/derived relation
-- \`subsets <RelationName>\` - This relation is a subset of another
-- \`redefines <RelationName>\` - This relation redefines another
+- \`subsets <RelationEndQualifiedName>\` - This relation end is a subset of another named relation end
+- \`redefines <RelationEndQualifiedName>\` - This relation end redefines another named relation end
 
 **Examples:**
 \`\`\`tonto
@@ -664,9 +664,12 @@ kind Person {
   
   // Derived relation
   [1] -- ({ derived } ancestors) -- [*] Person
+
+  // Base relation with a named end
+  [1] -- knows -- [*] (contacts) Person
   
-  // Subsets another relation
-  [1] -- closeAssociates -- [*] ({ subsets knows } bestFriends) Person
+  // Subsets another named relation end
+  [1] -- closeAssociates -- [*] ({ subsets Person.knows.contacts } bestFriends) Person
 }
 \`\`\`
 

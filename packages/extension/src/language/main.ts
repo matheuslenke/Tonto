@@ -10,12 +10,16 @@ import { TontoGrammarWorkspaceManager } from "./tonto-workspace-manager.js";
 // Create a connection to the client
 const connection = createConnection(ProposedFeatures.all);
 
-export const TontoSharedModule: Module<TontoSharedServices, PartialLangiumSharedServices> = {
+type ExtensionSharedModule = Module<TontoSharedServices, PartialLangiumSharedServices>;
+type StartLanguageServerServices = Parameters<typeof startLanguageServer>[0];
+type DiagramHandlerServices = Parameters<typeof addDiagramHandler>[1];
+
+export const TontoSharedModule: ExtensionSharedModule = {
     workspace: {
-        WorkspaceManager: (services) => new TontoGrammarWorkspaceManager(services),
+        WorkspaceManager: (services) => new TontoGrammarWorkspaceManager(services as unknown as ConstructorParameters<typeof TontoGrammarWorkspaceManager>[0]),
     },
     lsp: {
-        LanguageServer: (services) => new TontoLanguageServer(services)
+        LanguageServer: (services) => new TontoLanguageServer(services as unknown as ConstructorParameters<typeof TontoLanguageServer>[0]),
     }
 };
 
@@ -23,8 +27,8 @@ export const TontoSharedModule: Module<TontoSharedServices, PartialLangiumShared
 const { shared } = createTontoServices({
     connection,
     ...NodeFileSystem
-}, TontoSharedModule);
+}, TontoSharedModule as unknown as Parameters<typeof createTontoServices>[1]);
 
 // Start the language server with the shared services
-startLanguageServer(shared);
-addDiagramHandler(connection, shared);
+startLanguageServer(shared as unknown as StartLanguageServerServices);
+addDiagramHandler(connection, shared as unknown as DiagramHandlerServices);

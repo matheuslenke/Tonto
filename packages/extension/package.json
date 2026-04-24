@@ -3,7 +3,7 @@
     "displayName": "Tonto",
     "publisher": "lenke",
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.4.8",
+    "version": "0.4.9",
     "license": "MIT",
     "type": "module",
     "repository": {
@@ -25,18 +25,6 @@
     ],
     "main": "./pack/extension/main.cjs",
     "contributes": {
-            "themes": [
-                {
-                    "label": "Tonto Light",
-                    "uiTheme": "vs",
-                    "path": "./src/themes/Tonto-color-theme.json"
-                },
-                {
-                    "label": "Tonto Dark",
-                    "uiTheme": "vs",
-                    "path": "./src/themes/Tonto-dark-color-theme.json"
-                }
-        ],
         "languages": [
             {
                 "id": "tonto",
@@ -48,6 +36,17 @@
                     ".tonto"
                 ],
                 "configuration": "./data/language-configuration.json"
+            },
+            {
+                "id": "tontodiagram",
+                "aliases": [
+                    "Tonto Diagram",
+                    "tontodiagram"
+                ],
+                "extensions": [
+                    ".tontodiagram"
+                ],
+                "configuration": "./data/tontodiagram-language-configuration.json"
             }
         ],
         "grammars": [
@@ -55,6 +54,11 @@
                 "language": "tonto",
                 "scopeName": "source.tonto",
                 "path": "./syntaxes/tonto.tmLanguage.json"
+            },
+            {
+                "language": "tontodiagram",
+                "scopeName": "source.tontodiagram",
+                "path": "./syntaxes/tontodiagram.tmLanguage.json"
             }
         ],
         "viewsContainers": {
@@ -91,6 +95,10 @@
                     "when": "editorLangId == 'tonto'"
                 },
                 {
+                    "command": "tonto.diagram.createFile",
+                    "when": "editorLangId == 'tonto'"
+                },
+                {
                     "command": "tonto.diagram.fit",
                     "when": "tonto-diagram-focused"
                 },
@@ -112,6 +120,11 @@
                     "command": "tonto.diagram.open",
                     "when": "editorLangId == 'tonto'",
                     "group": "navigation"
+                },
+                {
+                    "command": "tonto.diagram.createFile",
+                    "when": "editorLangId == 'tonto'",
+                    "group": "navigation"
                 }
             ],
             "editor/title": [
@@ -124,6 +137,11 @@
                     "command": "tonto.diagram.plantuml.open",
                     "when": "editorLangId == 'tonto'",
                     "group": "navigation"
+                },
+                {
+                    "command": "tonto.diagram.createFile",
+                    "when": "editorLangId == 'tonto'",
+                    "group": "navigation"
                 }
             ],
             "explorer/context": [
@@ -134,6 +152,11 @@
                 },
                 {
                     "command": "tonto.diagram.plantuml.open",
+                    "when": "resourceExtname == '.tonto'",
+                    "group": "navigation"
+                },
+                {
+                    "command": "tonto.diagram.createFile",
                     "when": "resourceExtname == '.tonto'",
                     "group": "navigation"
                 }
@@ -208,6 +231,16 @@
                     }
                 ],
                 "priority": "option"
+            },
+            {
+                "viewType": "tonto.diagram.editor",
+                "displayName": "Tonto Diagram Editor",
+                "selector": [
+                    {
+                        "filenamePattern": "*.tontodiagram"
+                    }
+                ],
+                "priority": "option"
             }
         ],
         "commands": [
@@ -235,6 +268,11 @@
             {
                 "command": "tonto.diagram.export",
                 "title": "Export diagram to SVG",
+                "category": "Tonto"
+            },
+            {
+                "command": "tonto.diagram.createFile",
+                "title": "New Diagram From Current Model",
                 "category": "Tonto"
             },
             {
@@ -328,7 +366,10 @@
     "activationEvents": [
         "workspaceContains:tonto.json",
         "onWebviewPanel:tonto",
-        "onView:tonto"
+        "onView:tonto",
+        "onLanguage:tontodiagram",
+        "onCommand:tonto.diagram.createFile",
+        "onCustomEditor:tonto.diagram.editor"
     ],
     "files": [
         "pack",
@@ -349,8 +390,8 @@
         "clean": "rimraf out pack node_modules",
         "lint": "eslint src --ext ts",
         "lint:fix": "eslint src --ext ts --fix",
-        "build": "node ./esbuild.mjs",
-        "watch": "node ./esbuild.mjs --watch",
+        "build": "npm --prefix ../webview run build && node ./esbuild.mjs",
+        "watch": "concurrently \"npm --prefix ../webview run watch\" \"node ./esbuild.mjs --watch\"",
         "coverage": "vitest run --coverage",
         "langium:generate": "langium generate",
         "langium:watch": "langium generate --watch",
