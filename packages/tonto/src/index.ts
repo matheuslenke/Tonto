@@ -1,5 +1,6 @@
 export * from "./cli/main.js";
 export * from "./cli/requests/ontoumljsValidator.js";
+export * from "./cli/requests/tontoGeneration.js";
 export * from "./language/index.js";
 export { Configuration } from "./utils/extensionConfig.js";
 

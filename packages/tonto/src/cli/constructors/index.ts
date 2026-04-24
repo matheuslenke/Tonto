@@ -2,6 +2,7 @@ import * as fs from "fs";
 import { CompositeGeneratorNode, toString } from "langium/generate";
 import { OntoumlElement, OntoumlType, Package, Project } from "ontouml-js";
 import * as path from "path";
+import { normalizeTontoGenerationError, TONTO_GENERATION_STEPS } from "../requests/tontoGeneration.js";
 import { formatForId, replaceWhitespace } from "../utils/replaceWhitespace.js";
 import { createTontoImports } from "./importModular.constructor.js";
 import { createTontoManifest, customExtractDestinationAndName } from "./manifest.constructor.js";
@@ -26,16 +27,40 @@ interface GeneratorContext {
 }
 
 function generate(ctx: GeneratorContext): string {
-    if (!fs.existsSync(ctx.destinationFolder)) {
-        fs.mkdirSync(ctx.destinationFolder, { recursive: true });
+    try {
+        if (!fs.existsSync(ctx.destinationFolder)) {
+            fs.mkdirSync(ctx.destinationFolder, { recursive: true });
+        }
+    } catch (error) {
+        throw normalizeTontoGenerationError(
+            error,
+            `Could not create the destination folder for "${ctx.name}".`,
+            TONTO_GENERATION_STEPS.fileWriting
+        );
     }
-    // Create manifest file
-    createTontoManifest(ctx.project, ctx.destinationFolder);
+
+    try {
+        createTontoManifest(ctx.project, ctx.destinationFolder);
+    } catch (error) {
+        throw normalizeTontoGenerationError(
+            error,
+            `Could not create the Tonto manifest for "${ctx.name}".`,
+            TONTO_GENERATION_STEPS.fileWriting
+        );
+    }
 
     const modelPath = path.join(ctx.destinationFolder, formatForId(ctx.project.model?.getNameOrId()));
 
-    if (!fs.existsSync(modelPath)) {
-        fs.mkdirSync(modelPath);
+    try {
+        if (!fs.existsSync(modelPath)) {
+            fs.mkdirSync(modelPath);
+        }
+    } catch (error) {
+        throw normalizeTontoGenerationError(
+            error,
+            `Could not create the model folder for "${ctx.name}".`,
+            TONTO_GENERATION_STEPS.fileWriting
+        );
     }
 
     const packages = ctx.project.model.getAllPackages();
@@ -70,17 +95,32 @@ function generateModel(
 function generatePackage(dir: string, ontoumlElement: OntoumlElement, fileNode: CompositeGeneratorNode) {
     if (ontoumlElement.type === OntoumlType.PACKAGE_TYPE) {
         const packageElement = ontoumlElement as Package;
+        const packageName = packageElement.getNameOrId();
         // Create directory for this package
         const packagePath = path.join(dir, formatForId(packageElement.getName()));
         let newPath: string = packagePath;
-        if (!fs.existsSync(packagePath)) {
-            newPath = fs.mkdirSync(packagePath, { recursive: true }) ?? packagePath;
+        try {
+            if (!fs.existsSync(packagePath)) {
+                newPath = fs.mkdirSync(packagePath, { recursive: true }) ?? packagePath;
+            }
+        } catch (error) {
+            throw normalizeTontoGenerationError(
+                error,
+                `Could not create the package folder for "${packageName}".`,
+                TONTO_GENERATION_STEPS.fileWriting
+            );
         }
-        // First, we need to generate all imports for this module
-        createTontoImports(packageElement, fileNode);
 
-        // Then, we create the elements of this package
-        createTontoPackage(packageElement, fileNode);
+        try {
+            createTontoImports(packageElement, fileNode);
+            createTontoPackage(packageElement, fileNode);
+        } catch (error) {
+            throw normalizeTontoGenerationError(
+                error,
+                `Could not generate the Tonto source for package "${packageName}".`,
+                TONTO_GENERATION_STEPS.packageGeneration
+            );
+        }
 
         // Lastly, we call it again to create other packages inside it recursively
         for (const child of packageElement.getContents()) {
@@ -88,8 +128,17 @@ function generatePackage(dir: string, ontoumlElement: OntoumlElement, fileNode: 
                 generateModel(replaceWhitespace(newPath), child, new CompositeGeneratorNode());
             }
         }
+
         const generatedFilePath = path.join(newPath, formatForId(packageElement.getName())) + ".tonto";
-        fs.writeFileSync(generatedFilePath, toString(fileNode));
+        try {
+            fs.writeFileSync(generatedFilePath, toString(fileNode));
+        } catch (error) {
+            throw normalizeTontoGenerationError(
+                error,
+                `Could not write the generated Tonto file "${path.basename(generatedFilePath)}".`,
+                TONTO_GENERATION_STEPS.fileWriting
+            );
+        }
     }
 }
 
@@ -120,4 +169,3 @@ function generatePackage(dir: string, ontoumlElement: OntoumlElement, fileNode: 
 //   const generatedFilePath = path.join(packagePath, formatForId(packageItem.getNameOrId())) + ".tonto";
 //   fs.writeFileSync(generatedFilePath, toString(fileNode));
 // }
-

@@ -81,6 +81,7 @@ export default function (): void {
 
 export * from "./actions/index.js";
 export * from "./requests/jsonGeneration.js";
+export * from "./requests/tontoGeneration.js";
 export * from "./model/grammar/TontoManifest.js";
 export * from "./requests/gufoTransform.js";
 export * from "./requests/ontoumljsValidator.js";

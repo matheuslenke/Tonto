@@ -10,6 +10,7 @@ import { generateModularCommand } from "../../../src/cli/actions/commands/genera
 import { createTontoPackage } from "../../../src/cli/constructors/package.constructor.js";
 import { createDefaultTontoManifest, type TontoManifest } from "../../../src/cli/model/grammar/TontoManifest.js";
 import { buildFolderDocuments } from "../../../src/cli/utils/buildFolderDocuments.js";
+import { serializeProject } from "../../../src/cli/utils/serializeProject.js";
 import { createTontoServices } from "../../../src/language/tonto-module.js";
 
 const tempDirs: string[] = [];
@@ -264,6 +265,38 @@ role Professor specializes Employee {
         expect(rendered).toContain("datatype Person-Name");
         expect(rendered).toContain("role Former-Student");
         expect(rendered).toContain("class_ : Person-Name");
+    });
+
+    it("should import packages with enumerations without trying to read enum attributes", async () => {
+        const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "tonto-enum-import-"));
+        tempDirs.push(tempDir);
+
+        const project = new Project({ name: new MultilingualText("Enum Import Test") });
+        const model = project.createModel({ name: new MultilingualText("Enum Import Test") });
+        const datatypesPackage = model.createPackage("Datatypes");
+
+        datatypesPackage.createDatatype("PhoneNumber");
+        const color = datatypesPackage.createEnumeration("Color");
+        color.createLiteral("Red");
+        color.createLiteral("Blue");
+
+        const sourceFilePath = path.join(tempDir, "enum-import.json");
+        fs.writeFileSync(sourceFilePath, serializeProject(project));
+
+        const importResult = await importCommand({
+            fileName: sourceFilePath,
+            destination: path.join(tempDir, "imported"),
+        });
+
+        expect(importResult.success).toBe(true);
+
+        const datatypesFilePath = path.join(importResult.filePath ?? "", "Datatypes", "Datatypes.tonto");
+        const datatypesSource = fs.readFileSync(datatypesFilePath, "utf8");
+
+        expect(datatypesSource).toContain("datatype PhoneNumber");
+        expect(datatypesSource).toContain("enum Color");
+        expect(datatypesSource).toContain("Red");
+        expect(datatypesSource).toContain("Blue");
     });
 });
 

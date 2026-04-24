@@ -75,6 +75,7 @@ function getContainersFromAttributes(actualPackage: Package): Package[] {
         .getContents()
         .filter((item: OntoumlElement) => item.type === OntoumlType.CLASS_TYPE)
         .map((item: OntoumlElement) => item as Class)
+        .filter((item: Class) => !item.hasEnumerationStereotype())
         .flatMap((item: Class) => item.getOwnAttributes())
         .flatMap((attribute: Property) => attribute.propertyType ? [attribute.propertyType] : [])
         .map((item: OntoumlElement) => item.container as Package);

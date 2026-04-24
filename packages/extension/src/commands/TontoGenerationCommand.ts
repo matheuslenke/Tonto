@@ -1,5 +1,5 @@
 import * as path from "path";
-import { importCommand } from "tonto-cli";
+import { formatTontoGenerationErrorMessage, importCommand } from "tonto-cli";
 import * as vscode from "vscode";
 import { CommandIds } from "./commandIds.js";
 
@@ -61,14 +61,25 @@ async function generateTonto(uri: vscode.Uri, generatedDirectoryName: string) {
         const document = await vscode.workspace.openTextDocument(uri);
         if (document.languageId === "json") {
             const destination = path.join(path.dirname(uri.fsPath), generatedDirectoryName);
-            const result = await importCommand({
-                fileName: document.fileName,
-                destination: destination,
-            });
-            if (result.success) {
-                vscode.window.showInformationMessage(`Success! ${result.message}`);
-            } else {
-                vscode.window.showErrorMessage(`Failed! ${result.message}`);
+            try {
+                const result = await importCommand({
+                    fileName: document.fileName,
+                    destination: destination,
+                });
+
+                if (result.success) {
+                    vscode.window.showInformationMessage(`Success! ${result.message}`);
+                    return;
+                }
+
+                vscode.window.showErrorMessage(
+                    result.error ? formatTontoGenerationErrorMessage(result.error) : result.message,
+                    { modal: true }
+                );
+                console.error(result.error ?? result.message);
+            } catch (error) {
+                vscode.window.showErrorMessage(formatTontoGenerationErrorMessage(error), { modal: true });
+                console.error(error);
             }
         } else {
             vscode.window.showErrorMessage("Failed! File is not a JSON");
