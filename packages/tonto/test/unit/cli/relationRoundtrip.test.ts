@@ -2,9 +2,8 @@ import { EmptyFileSystem, type LangiumDocument } from "langium";
 import { CompositeGeneratorNode, toString } from "langium/generate";
 import { parseHelper } from "langium/test";
 import { MultilingualText, Project, serializationUtils } from "ontouml-js";
-import { beforeAll, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { constructClassElement } from "../../../src/cli/constructors/classElement.constructor.js";
-import { isJsonGenerationError } from "../../../src/cli/requests/jsonGeneration.js";
 import { serializeProject } from "../../../src/cli/utils/serializeProject.js";
 import { parseProject } from "../../../src/cli/utils/parseProject.js";
 import { Model } from "../../../src/language/index.js";
@@ -27,6 +26,10 @@ beforeAll(async () => {
     services = createTontoServices(EmptyFileSystem);
     parse = parseHelper<Model>(services.Tonto);
     await services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
+});
+
+afterEach(() => {
+    vi.restoreAllMocks();
 });
 
 describe("Relation round-trip support", () => {
@@ -100,7 +103,7 @@ describe("Relation round-trip support", () => {
         ]);
     });
 
-    it("should throw a semantic generation error when a relation end redefines itself", async () => {
+    it("should warn and skip an invalid relation end that redefines itself", async () => {
         const selfRedefinitionModelText = `
             package Tonto
             kind Person {
@@ -110,24 +113,19 @@ describe("Relation round-trip support", () => {
 
         const document = await parse(selfRedefinitionModelText);
         throwIfParserHasErrors(document);
+        const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
 
-        let thrownError: unknown;
-        try {
-            parseProject({
-                model: document.parseResult.value,
-                name: "Self Redefinition",
-            });
-        } catch (error) {
-            thrownError = error;
-        }
+        const project = parseProject({
+            model: document.parseResult.value,
+            name: "Self Redefinition",
+        });
 
-        expect(isJsonGenerationError(thrownError)).toBe(true);
-        if (!isJsonGenerationError(thrownError)) {
-            throw new Error("Expected a JsonGenerationError");
-        }
+        expect(project.getAllRelations().find((relation) => relation.getName() === "associates")).toBeDefined();
 
-        expect(thrownError.info[0]?.code).toBe("self_redefined_property");
-        expect(thrownError.info[0]?.description).toContain("cannot redefine itself");
+        const warningOutput = warnSpy.mock.calls.flat().join("\n");
+        expect(warningOutput).toContain("JSON generation warning");
+        expect(warningOutput).toContain("Relation end cannot redefine itself");
+        expect(warningOutput).toContain("cannot redefine itself");
     });
 });
 

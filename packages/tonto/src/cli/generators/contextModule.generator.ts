@@ -13,6 +13,7 @@ import {
     createJsonGenerationError,
     createJsonGenerationNodeInfo,
 } from "../requests/jsonGeneration.js";
+import { warnJsonGenerationIssue } from "../utils/jsonGenerationWarnings.js";
 
 export function contextModuleGenerator(contextModule: ContextModule, packageItem: Package): void {
     const classes: Class[] = [];
@@ -23,16 +24,24 @@ export function contextModuleGenerator(contextModule: ContextModule, packageItem
     generateClassesAndDataTypes(contextModule, packageItem, classes, dataTypes);
 
     // Phase 2: Create relations (requires all classes to exist)
-    generateInternalRelations(contextModule, classes, relations, packageItem);
-    generateExternalRelations(contextModule, classes, relations, packageItem);
+    runGenerationStep(() => generateInternalRelations(contextModule, classes, relations, packageItem));
+    runGenerationStep(() => generateExternalRelations(contextModule, classes, relations, packageItem));
 
     // Phase 3: Create specializations and other dependent elements (requires relations to exist)
-    generateGenSets(contextModule, classes, packageItem);
-    generateSpecializations(contextModule, classes, relations, packageItem);
-    generateDataTypeSpecializations(contextModule, classes, dataTypes, packageItem);
+    runGenerationStep(() => generateGenSets(contextModule, classes, packageItem));
+    runGenerationStep(() => generateSpecializations(contextModule, classes, relations, packageItem));
+    runGenerationStep(() => generateDataTypeSpecializations(contextModule, classes, dataTypes, packageItem));
 
     // Phase 4: Generate instantiations (requires everything else)
-    generateInstantiations(contextModule, classes, relations, packageItem);
+    runGenerationStep(() => generateInstantiations(contextModule, classes, relations, packageItem));
+}
+
+function runGenerationStep(generate: () => void): void {
+    try {
+        generate();
+    } catch (error) {
+        warnJsonGenerationIssue(error);
+    }
 }
 
 function generateClassesAndDataTypes(
@@ -65,8 +74,8 @@ function generateClassesAndDataTypes(
     });
 
     // After all classes and datatypes are created, generate attributes
-    generateClassAttributes(contextModule, classes, dataTypes);
-    generateDataTypeAttributes(contextModule, dataTypes);
+    runGenerationStep(() => generateClassAttributes(contextModule, classes, dataTypes));
+    runGenerationStep(() => generateDataTypeAttributes(contextModule, dataTypes));
 }
 
 function generateClassAttributes(contextModule: ContextModule, classes: Class[], dataTypes: Class[]): void {
@@ -134,7 +143,7 @@ function generateExternalRelations(
         switch (declaration.$type) {
             case "ElementRelation": {
                 const elementRelation = declaration as ElementRelation;
-                const createdRelation = relationGenerator(elementRelation, packageItem, classes);
+                const createdRelation = generateRelation(() => relationGenerator(elementRelation, packageItem, classes));
                 if (createdRelation) {
                     relations.push(createdRelation);
                 }
@@ -154,11 +163,22 @@ function generateInternalRelations(
             const classDeclaration = declaration as ClassDeclaration;
 
             classDeclaration.references.forEach((reference) => {
-                const createdRelation = relationGenerator(reference, packageItem, classes, classDeclaration);
+                const createdRelation = generateRelation(() =>
+                    relationGenerator(reference, packageItem, classes, classDeclaration)
+                );
                 if (createdRelation) {
                     relations.push(createdRelation);
                 }
             });
         }
     });
+}
+
+function generateRelation(generate: () => Relation | undefined): Relation | undefined {
+    try {
+        return generate();
+    } catch (error) {
+        warnJsonGenerationIssue(error);
+        return undefined;
+    }
 }

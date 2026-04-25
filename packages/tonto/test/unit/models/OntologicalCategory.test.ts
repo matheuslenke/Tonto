@@ -9,11 +9,21 @@ import {
 } from "../../../src/language/models/OntologicalCategory.js";
 
 describe("OntologicalCategory", () => {
-  const ultimateSortals = ["kind", "collective", "quantity", "relator", "quality", "mode"];
+  const ultimateSortals = [
+    "kind",
+    "collective",
+    "quantity",
+    "relator",
+    "quality",
+    "mode",
+    "intrinsicMode",
+    "extrinsicMode",
+    "type",
+    "powertype",
+  ];
   const baseSortals = ["subkind", "phase", "role", "historicalRole"];
   const allSortals = [...ultimateSortals, ...baseSortals];
   const nonSortals = ["category", "mixin", "phaseMixin", "roleMixin", "historicalRoleMixin"];
-  const otherCategories = ["class", "type", "event", "situation", "enumeration", "datatype", "abstract", "intrinsicMode", "extrinsicMode"];
 
   describe("isSortalOntoCategory", () => {
     it.each(allSortals)("should return true for sortal '%s'", (stereotype) => {
@@ -116,6 +126,7 @@ describe("OntologicalCategory", () => {
       ["mode", OntologicalCategoryEnum.MODE],
       ["intrinsicMode", OntologicalCategoryEnum.INTRINSIC_MODE],
       ["extrinsicMode", OntologicalCategoryEnum.EXTRINSIC_MODE],
+      ["powertype", OntologicalCategoryEnum.POWERTYPE],
       ["subkind", OntologicalCategoryEnum.SUBKIND],
       ["role", OntologicalCategoryEnum.ROLE],
       ["phase", OntologicalCategoryEnum.PHASE],

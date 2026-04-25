@@ -19,6 +19,7 @@ import {
     createJsonGenerationError,
     createJsonGenerationNodeInfo,
 } from "../requests/jsonGeneration.js";
+import { warnJsonGenerationIssue } from "../utils/jsonGenerationWarnings.js";
 
 export interface GeneratedContextModuleData {
     classes: Class[];
@@ -108,12 +109,20 @@ export function contextModuleModularGenerator(
     const resolveDataType = (dataType: DataType | undefined) => findGeneratedDataType(lookupData, dataType);
     const resolveRelation = (relationItem: ElementRelation | undefined) => findGeneratedRelation(lookupData, relationItem);
 
-    generateGenSets(contextModule, classes, packageItem, resolveClass);
-    generateComplexDataTypesAttributes(contextModule, dataTypes, resolveDataType);
-    generateSpecializations(contextModule, classes, relations, packageItem, resolveClass, resolveRelation);
-    generateClassDeclarationAttributes(contextModule, classes, dataTypes, resolveDataType, resolveClass);
-    generateDataTypeSpecializations(contextModule, classes, dataTypes, packageItem, resolveClass, resolveDataType);
-    generateInstantiations(contextModule, classes, relations, packageItem, resolveClass);
+    runGenerationStep(() => generateGenSets(contextModule, classes, packageItem, resolveClass));
+    runGenerationStep(() => generateComplexDataTypesAttributes(contextModule, dataTypes, resolveDataType));
+    runGenerationStep(() => generateSpecializations(contextModule, classes, relations, packageItem, resolveClass, resolveRelation));
+    runGenerationStep(() => generateClassDeclarationAttributes(contextModule, classes, dataTypes, resolveDataType, resolveClass));
+    runGenerationStep(() => generateDataTypeSpecializations(contextModule, classes, dataTypes, packageItem, resolveClass, resolveDataType));
+    runGenerationStep(() => generateInstantiations(contextModule, classes, relations, packageItem, resolveClass));
+}
+
+function runGenerationStep(generate: () => void): void {
+    try {
+        generate();
+    } catch (error) {
+        warnJsonGenerationIssue(error);
+    }
 }
 
 function findGeneratedClass(
@@ -212,7 +221,9 @@ function generateExternalRelations(
         switch (declaration.$type) {
             case "ElementRelation": {
                 const elementRelation = declaration as ElementRelation;
-                const createdRelation = relationGenerator(elementRelation, packageItem, classes, undefined, resolveClass);
+                const createdRelation = generateRelation(() =>
+                    relationGenerator(elementRelation, packageItem, classes, undefined, resolveClass)
+                );
                 if (createdRelation) {
                     relations.push({
                         declaration: elementRelation,
@@ -237,7 +248,9 @@ function generateInternalRelations(
             const classDeclaration = declaration as ClassDeclaration;
 
             classDeclaration.references.forEach((reference) => {
-                const createdRelation = relationGenerator(reference, packageItem, classes, classDeclaration, resolveClass);
+                const createdRelation = generateRelation(() =>
+                    relationGenerator(reference, packageItem, classes, classDeclaration, resolveClass)
+                );
                 if (createdRelation) {
                     relations.push({
                         declaration: reference,
@@ -248,6 +261,15 @@ function generateInternalRelations(
         }
     });
     return relations;
+}
+
+function generateRelation(generate: () => Relation | undefined): Relation | undefined {
+    try {
+        return generate();
+    } catch (error) {
+        warnJsonGenerationIssue(error);
+        return undefined;
+    }
 }
 
 function generateComplexDataTypesAttributes(

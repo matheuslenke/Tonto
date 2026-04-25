@@ -7,6 +7,7 @@ import {
     createJsonGenerationNodeInfo,
     normalizeJsonGenerationError,
 } from "../requests/jsonGeneration.js";
+import { warnJsonGenerationIssue } from "./jsonGenerationWarnings.js";
 
 export interface ParseProjectContext {
     model: Model;
@@ -43,10 +44,12 @@ export function parseProject(ctx: ParseProjectContext): Project {
     try {
         contextModuleGenerator(contextModule, createdPackage);
     } catch (error) {
-        throw normalizeJsonGenerationError(
-            error,
-            `Could not generate the OntoUML project for package "${contextModule.name}".`,
-            JSON_GENERATION_STEPS.projectCreation
+        warnJsonGenerationIssue(
+            normalizeJsonGenerationError(
+                error,
+                `Could not generate every element for package "${contextModule.name}". The JSON file will still be written with the generated elements that remain valid.`,
+                JSON_GENERATION_STEPS.projectCreation
+            )
         );
     }
 

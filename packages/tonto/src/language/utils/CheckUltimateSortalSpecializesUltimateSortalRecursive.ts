@@ -1,7 +1,7 @@
 import { ValidationAcceptor } from "langium";
 import { ClassDeclaration } from "../generated/ast.js";
 import { ErrorMessages } from "../models/ErrorMessages.js";
-import { OntologicalCategoryEnum } from "../models/OntologicalCategory.js";
+import { isUltimateSortalOntoCategory } from "../models/OntologicalCategory.js";
 
 const checkUltimateSortalSpecializesUltimateSortalRecursive = (
     actualElement: ClassDeclaration,
@@ -15,16 +15,7 @@ const checkUltimateSortalSpecializesUltimateSortalRecursive = (
 
         const refOntologicalCategory = specItem?.classElementType?.ontologicalCategory;
 
-        if (
-            refOntologicalCategory === OntologicalCategoryEnum.KIND ||
-      refOntologicalCategory === OntologicalCategoryEnum.COLLECTIVE ||
-      refOntologicalCategory === OntologicalCategoryEnum.QUANTITY ||
-      refOntologicalCategory === OntologicalCategoryEnum.QUALITY ||
-      refOntologicalCategory === OntologicalCategoryEnum.RELATOR ||
-      refOntologicalCategory === OntologicalCategoryEnum.MODE ||
-      refOntologicalCategory === OntologicalCategoryEnum.INTRINSIC_MODE ||
-      refOntologicalCategory === OntologicalCategoryEnum.EXTRINSIC_MODE
-        ) {
+        if (refOntologicalCategory && isUltimateSortalOntoCategory(refOntologicalCategory)) {
             accept("error", ErrorMessages.ultimateSortalSpecializesUltimateSortal, {
                 node: actualElement,
             });

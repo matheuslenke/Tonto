@@ -18,6 +18,7 @@ export interface BuiltFolderDocumentsResult {
 export interface BuildFolderDocumentsOptions {
     validation?: boolean
     manifest?: TontoManifest
+    warnOnValidationErrors?: boolean
 }
 
 function toGlobPath(filePath: string): string {
@@ -59,7 +60,13 @@ export async function buildFolderDocuments(
     const folderAbsolutePath = path.resolve(resolvedDirName);
     const manifest = options.manifest ?? readOrCreateDefaultTontoManifest(resolvedDirName);
     const allFiles = await getTontoProjectSourceFiles(folderAbsolutePath, manifest);
-    const documents = await extractAllDocuments(allFiles, services, builtInLibs, options.validation ?? false);
+    const documents = await extractAllDocuments(
+        allFiles,
+        services,
+        builtInLibs,
+        options.validation ?? false,
+        options.warnOnValidationErrors ?? false
+    );
     const models = documents.all.flatMap((doc) => doc.parseResult?.value as Model).toArray();
 
     return {

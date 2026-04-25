@@ -17,6 +17,7 @@ enum OntologicalCategoryEnum {
     MODE = "mode",
     INTRINSIC_MODE = "intrinsicMode",
     EXTRINSIC_MODE = "extrinsicMode",
+    POWERTYPE = "powertype",
     SUBKIND = "subkind",
     ROLE = "role",
     PHASE = "phase",
@@ -36,6 +37,10 @@ const UltimateSortalOntoCategories = [
     OntologicalCategoryEnum.RELATOR,
     OntologicalCategoryEnum.QUALITY,
     OntologicalCategoryEnum.MODE,
+    OntologicalCategoryEnum.INTRINSIC_MODE,
+    OntologicalCategoryEnum.EXTRINSIC_MODE,
+    OntologicalCategoryEnum.TYPE,
+    OntologicalCategoryEnum.POWERTYPE,
 ];
 
 const BaseSortalOntoCategories = [
@@ -168,6 +173,8 @@ function getOntologicalCategory(stereotype: string): OntologicalCategoryEnum | u
             return OntologicalCategoryEnum.INTRINSIC_MODE;
         case "extrinsicMode":
             return OntologicalCategoryEnum.EXTRINSIC_MODE;
+        case "powertype":
+            return OntologicalCategoryEnum.POWERTYPE;
         case "subkind":
             return OntologicalCategoryEnum.SUBKIND;
         case "role":
@@ -191,4 +198,3 @@ export {
     isNonSortalOntoCategory, isSortalOntoCategory,
     isUltimateSortalOntoCategory
 };
-

@@ -9,7 +9,6 @@ import { TontoManifest } from "../../model/grammar/TontoManifest.js";
 import {
     JSON_GENERATION_STEPS,
     createJsonGenerationError,
-    getJsonGenerationDocumentErrorInfos,
     normalizeJsonGenerationError,
 } from "../../requests/jsonGeneration.js";
 import { buildFolderDocuments } from "../../utils/buildFolderDocuments.js";
@@ -51,9 +50,10 @@ async function createModel(
     label?: string,
     description?: string
 ): Promise<string | undefined> {
-    const { allFiles, documents, folderAbsolutePath, models } = await buildFolderDocuments(dir, services, {
+    const { allFiles, folderAbsolutePath, models } = await buildFolderDocuments(dir, services, {
         manifest,
         validation: true,
+        warnOnValidationErrors: true,
     });
 
     if (allFiles.length === 0) {
@@ -66,14 +66,6 @@ async function createModel(
                 description: `The selected folder does not contain any ".tonto" files outside the configured output directory.`,
                 filePath: dir,
             }],
-        });
-    }
-
-    const diagnosticInfos = getJsonGenerationDocumentErrorInfos(documents);
-    if (diagnosticInfos.length > 0) {
-        throw createJsonGenerationError("Could not generate JSON because the Tonto sources contain syntax or validation errors.", {
-            step: JSON_GENERATION_STEPS.documentValidation,
-            info: diagnosticInfos,
         });
     }
 

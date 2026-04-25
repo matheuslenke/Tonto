@@ -9,14 +9,14 @@ import { BuiltInLib } from "./model/BuiltInLib.js";
 import {
     JSON_GENERATION_STEPS,
     createJsonGenerationError,
-    getJsonGenerationDiagnosticInfos,
 } from "./requests/jsonGeneration.js";
 
 export async function extractAllDocuments(
     fileNames: string[],
     services: LangiumServices,
     builtInLibs: BuiltInLib[],
-    validationChecks: boolean
+    validationChecks: boolean,
+    warnOnValidationErrors = false
 ): Promise<LangiumDocuments> {
     const documents: Array<LangiumDocument<AstNode>> = [];
 
@@ -35,20 +35,8 @@ export async function extractAllDocuments(
         validation: validationChecks
     });
 
-    for (const document of documents) {
-        const validationErrors = (document.diagnostics ?? []).filter((e) => e.severity === 1);
-        if (validationErrors.length > 0) {
-            console.error(chalk.red("There are validation errors:"));
-            for (const validationError of validationErrors) {
-                console.error(
-                    chalk.red(
-                        `line ${validationError.range.start.line + 1}: ${validationError.message} [${document.textDocument.getText(
-                            validationError.range
-                        )}]`
-                    )
-                );
-            }
-        }
+    if (warnOnValidationErrors) {
+        warnValidationErrors(documents);
     }
     return services.shared.workspace.LangiumDocuments;
 }
@@ -83,21 +71,7 @@ export async function extractDocument(fileName: string, services: LangiumService
 
     const validationErrors = (document.diagnostics ?? []).filter((e) => e.severity === 1);
     if (validationErrors.length > 0) {
-        console.error(chalk.red("There are validation errors:"));
-        for (const validationError of validationErrors) {
-            console.error(
-                chalk.red(
-                    `line ${validationError.range.start.line + 1}: ${validationError.message} [${document.textDocument.getText(
-                        validationError.range
-                    )}]`
-                )
-            );
-        }
-
-        throw createJsonGenerationError("Could not generate JSON because the Tonto source file contains syntax or validation errors.", {
-            step: JSON_GENERATION_STEPS.documentValidation,
-            info: getJsonGenerationDiagnosticInfos(document),
-        });
+        warnValidationErrors([document]);
     }
 
     return document;
@@ -150,4 +124,22 @@ export function extractDestinationAndName(filePath: string, destination: string 
 export function extractName(filePath: string): string {
     filePath = filePath.replace(/\..*$/, "").replace(/[.-]/g, "");
     return path.basename(filePath);
+}
+
+function warnValidationErrors(documents: Iterable<LangiumDocument<AstNode>>): void {
+    for (const document of documents) {
+        const validationErrors = (document.diagnostics ?? []).filter((e) => e.severity === 1);
+        if (validationErrors.length > 0) {
+            console.warn(chalk.yellow("There are validation warnings. JSON generation will continue:"));
+            for (const validationError of validationErrors) {
+                console.warn(
+                    chalk.yellow(
+                        `line ${validationError.range.start.line + 1}: ${validationError.message} [${document.textDocument.getText(
+                            validationError.range
+                        )}]`
+                    )
+                );
+            }
+        }
+    }
 }

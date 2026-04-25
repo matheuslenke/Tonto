@@ -50,13 +50,7 @@ export class ClassDeclarationValidator {
         if (ontologicalCategory === null || ontologicalCategory === undefined) {
             return;
         }
-        // Check if it is an UltimateSortal
-        // 'kind' | 'collective' | 'quantity' | 'quality' | 'mode' | 'intrinsicMode' | 'extrinsicMode' | 'relator'
-        if (
-            isUltimateSortalOntoCategory(ontologicalCategory) ||
-            ontologicalCategory === "intrinsicMode" ||
-            ontologicalCategory === "extrinsicMode"
-        ) {
+        if (isUltimateSortalOntoCategory(ontologicalCategory)) {
             checkUltimateSortalSpecializesUltimateSortalRecursive(classDeclaration, accept);
         }
     }

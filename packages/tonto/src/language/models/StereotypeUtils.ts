@@ -34,6 +34,7 @@ const allowedStereotypeRestrictedToMatches: AllowedStereotypes = {
     [OntologicalCategoryEnum.HISTORICAL_ROLE]: natureUtils.EndurantNatures,
 
     [OntologicalCategoryEnum.TYPE]: [OntologicalNature.type],
+    [OntologicalCategoryEnum.POWERTYPE]: [OntologicalNature.type],
 
     [OntologicalCategoryEnum.CLASS]: [],
 };

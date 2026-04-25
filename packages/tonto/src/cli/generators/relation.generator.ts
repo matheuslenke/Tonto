@@ -80,7 +80,7 @@ export function relationGenerator(
                 createJsonGenerationNodeInfo(relationItem, {
                     code: "missing_relation_endpoint_reference",
                     title: "Missing relation endpoint reference",
-                    description: `Relation ${getRelationLabel(relationItem)} must declare both source and target class references before JSON generation can continue.`,
+                    description: `Relation ${getRelationLabel(relationItem)} must declare both source and target class references before it can be included in the generated JSON.`,
                 }),
             ],
         });

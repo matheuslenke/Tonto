@@ -2,7 +2,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { MultilingualText, Project } from "ontouml-js";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { generateModularCommand } from "../../../src/cli/actions/commands/generateCommand.js";
 import { attributeGenerator } from "../../../src/cli/generators/attribute.generator.js";
 import { createDefaultTontoManifest } from "../../../src/cli/model/grammar/TontoManifest.js";
@@ -33,6 +33,7 @@ function createTempProject(sourceText: string): string {
 }
 
 afterEach(() => {
+    vi.restoreAllMocks();
     for (const tempDir of tempDirs.splice(0)) {
         fs.rmSync(tempDir, { recursive: true, force: true });
     }
@@ -83,57 +84,45 @@ describe("JSON generation errors", () => {
         expect(formatJsonGenerationErrorMessage(thrownError)).toContain("Step: attribute generation");
     });
 
-    it("should stop modular generation when the project has source validation errors", async () => {
+    it("should warn and continue modular generation when the project has source validation errors", async () => {
         const tempDir = createTempProject(
             "package Main\nkind Person\n@material relation Person [1] -- worksAt -- [1] Organization\n"
         );
+        const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
 
-        let thrownError: unknown;
-        try {
-            await generateModularCommand(tempDir);
-        } catch (error) {
-            thrownError = error;
-        }
+        const generatedJsonPath = await generateModularCommand(tempDir);
 
-        expect(isJsonGenerationError(thrownError)).toBe(true);
-        if (!isJsonGenerationError(thrownError)) {
-            throw new Error("Expected a JsonGenerationError");
-        }
+        expect(fs.existsSync(generatedJsonPath ?? "")).toBe(true);
 
-        const formattedMessage = formatJsonGenerationErrorMessage(thrownError);
+        const warningOutput = warnSpy.mock.calls.flat().join("\n");
+        expect(warningOutput).toContain("There are validation warnings");
+        expect(warningOutput).toContain("Organization");
+        expect(warningOutput).toContain("JSON generation warning");
+        expect(warningOutput).toContain("Missing relation endpoint reference");
 
-        expect(thrownError.step).toBe(JSON_GENERATION_STEPS.documentValidation);
-        expect(formattedMessage).toContain("Could not generate JSON because the Tonto sources contain syntax or validation errors.");
-        expect(formattedMessage).toContain("Step: document validation");
-        expect(formattedMessage).toContain("Source validation error");
-        expect(formattedMessage).toContain("main.tonto");
+        warnSpy.mockRestore();
     });
 
-    it("should stop modular generation when a relation end redefines itself", async () => {
+    it("should warn and continue modular generation when a relation end redefines itself", async () => {
         const tempDir = createTempProject(`
             package Main
             kind Person {
                 [0..*] -- closeAssociates -- [0..*] ({ redefines specificColleagues } specificColleagues) Person
             }
         `);
+        const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => undefined);
 
-        let thrownError: unknown;
-        try {
-            await generateModularCommand(tempDir);
-        } catch (error) {
-            thrownError = error;
-        }
+        const generatedJsonPath = await generateModularCommand(tempDir);
 
-        expect(isJsonGenerationError(thrownError)).toBe(true);
-        if (!isJsonGenerationError(thrownError)) {
-            throw new Error("Expected a JsonGenerationError");
-        }
+        expect(fs.existsSync(generatedJsonPath ?? "")).toBe(true);
 
-        const formattedMessage = formatJsonGenerationErrorMessage(thrownError);
+        const warningOutput = warnSpy.mock.calls.flat().join("\n");
+        expect(warningOutput).toContain("There are validation warnings");
+        expect(warningOutput).toContain("Relation end \"specificColleagues\" cannot redefine itself.");
+        expect(warningOutput).toContain("JSON generation warning");
+        expect(warningOutput).toContain("Relation end cannot redefine itself");
 
-        expect(thrownError.step).toBe(JSON_GENERATION_STEPS.documentValidation);
-        expect(formattedMessage).toContain("Relation end \"specificColleagues\" cannot redefine itself.");
-        expect(formattedMessage).toContain("main.tonto");
+        warnSpy.mockRestore();
     });
 
     it("exports source names without duplicating label and description metadata", async () => {

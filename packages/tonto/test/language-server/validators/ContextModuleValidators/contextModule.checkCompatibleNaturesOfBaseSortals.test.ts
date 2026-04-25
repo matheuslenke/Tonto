@@ -32,6 +32,21 @@ describe("ContextModuleValidator.checkCompatibleNaturesOfBaseSortals", () => {
     expect(errors).toHaveLength(0);
   });
 
+  it("should produce no missing nature error for base sortal specializing extrinsicMode", async () => {
+    const stub = `
+    package TestPackage
+    extrinsicMode teste
+    role myRole specializes teste
+    `;
+    const result = await validate(stub);
+    const errors = result.diagnostics.filter(
+      (d) =>
+        d.message.includes("This class does not specialize a Ultimate Sortal") ||
+        d.message.includes("must specify the ontological nature")
+    );
+    expect(errors).toHaveLength(0);
+  });
+
   it("should produce no error for base sortal with declared nature", async () => {
     const stub = `
     package TestPackage

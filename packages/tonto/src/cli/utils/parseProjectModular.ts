@@ -11,6 +11,7 @@ import {
     createJsonGenerationNodeInfo,
     normalizeJsonGenerationError,
 } from "../requests/jsonGeneration.js";
+import { warnJsonGenerationIssue } from "./jsonGenerationWarnings.js";
 
 export interface ModularGeneratorContext {
     models: Model[]
@@ -213,17 +214,19 @@ export function parseProjectModular(ctx: ModularGeneratorContext): Project {
                     ...globalDataTypes,
                 ]);
             } catch (error) {
-                throw normalizeJsonGenerationError(
-                    error,
-                    `Could not generate relations for package "${contextModule.name}".`,
-                    JSON_GENERATION_STEPS.relationGeneration,
-                    [
-                        createJsonGenerationNodeInfo(contextModule, {
-                            code: "relation_generation_failed",
-                            title: "Relation generation failed",
-                            description: `The JSON generator could not create all relations for package "${contextModule.name}".`,
-                        }),
-                    ]
+                warnJsonGenerationIssue(
+                    normalizeJsonGenerationError(
+                        error,
+                        `Could not generate all relations for package "${contextModule.name}". The JSON file will still be written with the generated elements that remain valid.`,
+                        JSON_GENERATION_STEPS.relationGeneration,
+                        [
+                            createJsonGenerationNodeInfo(contextModule, {
+                                code: "relation_generation_failed",
+                                title: "Relation generation failed",
+                                description: `The JSON generator skipped one or more relations for package "${contextModule.name}".`,
+                            }),
+                        ]
+                    )
                 );
             }
         }
@@ -255,17 +258,19 @@ export function parseProjectModular(ctx: ModularGeneratorContext): Project {
                     ...globalDataTypes,
                 ]);
             } catch (error) {
-                throw normalizeJsonGenerationError(
-                    error,
-                    `Could not finish semantic generation for package "${contextModule.name}".`,
-                    JSON_GENERATION_STEPS.projectCreation,
-                    [
-                        createJsonGenerationNodeInfo(contextModule, {
-                            code: "semantic_generation_failed",
-                            title: "Semantic generation failed",
-                            description: `The JSON generator could not finish the dependent semantic elements for package "${contextModule.name}".`,
-                        }),
-                    ]
+                warnJsonGenerationIssue(
+                    normalizeJsonGenerationError(
+                        error,
+                        `Could not finish all semantic generation for package "${contextModule.name}". The JSON file will still be written with the generated elements that remain valid.`,
+                        JSON_GENERATION_STEPS.projectCreation,
+                        [
+                            createJsonGenerationNodeInfo(contextModule, {
+                                code: "semantic_generation_failed",
+                                title: "Semantic generation failed",
+                                description: `The JSON generator skipped one or more dependent semantic elements for package "${contextModule.name}".`,
+                            }),
+                        ]
+                    )
                 );
             }
         }
