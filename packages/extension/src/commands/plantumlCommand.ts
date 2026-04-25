@@ -1,8 +1,10 @@
 import { NodeFileSystem } from 'langium/node';
-import { createTontoServices, generatePlantUML, Model } from 'tonto-cli';
+import { createTontoServices, generatePlantUML, getModelContextModules, getPrimaryContextModuleOrThrow, Model } from 'tonto-cli';
 import * as vscode from 'vscode';
 import { URI } from 'vscode-uri';
 import { PlantUMLPanel } from '../diagram/plantuml-webview.js';
+
+type TontoServices = ReturnType<typeof createTontoServices>["Tonto"];
 
 export function registerPlantUMLCommands(context: vscode.ExtensionContext) {
     let showExternalReferences = true;
@@ -129,23 +131,54 @@ async function buildPlantUmlForDocument(
     options: { showExternalReferences?: boolean; useOrthogonalLines?: boolean } = {}
 ): Promise<string | undefined> {
     const services = createTontoServices(NodeFileSystem).Tonto;
+    const langiumDocuments = services.shared.workspace.LangiumDocuments;
+    const documentBuilder = services.shared.workspace.DocumentBuilder;
+    const currentUri = URI.parse(document.uri.toString());
     const langiumDoc = await services.shared.workspace.LangiumDocumentFactory.fromString(
         document.getText(),
-        URI.parse(document.uri.toString())
+        currentUri
     );
-    await services.shared.workspace.DocumentBuilder.build([langiumDoc]);
+    langiumDocuments.addDocument(langiumDoc);
+
+    await loadWorkspaceTontoDocuments(services, currentUri);
+    await documentBuilder.build(langiumDocuments.all.toArray());
 
     if (langiumDoc.parseResult.parserErrors.length > 0) {
         return undefined;
     }
 
-    const plantUmlOptions =
-        options.showExternalReferences === undefined && options.useOrthogonalLines === undefined
-            ? undefined
-            : {
-                showExternalReferences: options.showExternalReferences ?? true,
-                orthogonal: options.useOrthogonalLines ?? false,
-            };
+    const externalReferenceModules = langiumDocuments.all
+        .flatMap((workspaceDocument) => getModelContextModules(workspaceDocument.parseResult.value as Model))
+        .toArray();
+    const plantUmlOptions = {
+        showExternalReferences: options.showExternalReferences ?? true,
+        orthogonal: options.useOrthogonalLines ?? false,
+        externalReferenceModules,
+    };
+    const currentModule = getPrimaryContextModuleOrThrow(langiumDoc.parseResult.value as Model);
 
-    return generatePlantUML(langiumDoc.parseResult.value as Model, plantUmlOptions);
+    return generatePlantUML(currentModule, plantUmlOptions);
+}
+
+async function loadWorkspaceTontoDocuments(
+    services: TontoServices,
+    currentUri: URI
+): Promise<void> {
+    const tontoFiles = await vscode.workspace.findFiles(
+        '**/*.tonto',
+        '**/{node_modules,out,dist,pack,build}/**'
+    );
+    for (const file of tontoFiles) {
+        const fileUri = URI.parse(file.toString());
+        if (fileUri.toString() === currentUri.toString()) {
+            continue;
+        }
+
+        const bytes = await vscode.workspace.fs.readFile(file);
+        const workspaceDocument = services.shared.workspace.LangiumDocumentFactory.fromString(
+            Buffer.from(bytes).toString("utf8"),
+            fileUri
+        );
+        services.shared.workspace.LangiumDocuments.addDocument(workspaceDocument);
+    }
 }

@@ -2,6 +2,7 @@ import {
     ClassDeclaration,
     ContextModule,
     DataType,
+    DataTypeOrClassOrRelation,
     ElementRelation,
     isClassDeclaration,
     isContextModule,
@@ -72,6 +73,7 @@ function getColor(element: ClassDeclaration): string | undefined {
 export interface PlantUMLOptions {
     showExternalReferences: boolean;
     orthogonal?: boolean;
+    externalReferenceModules?: ContextModule[];
 }
 
 export function generatePlantUML(model: Model | ContextModule, options: PlantUMLOptions = { showExternalReferences: true, orthogonal: false }): string {
@@ -87,6 +89,8 @@ export function generatePlantUML(model: Model | ContextModule, options: PlantUML
     puml += "hide circle\n";
 
     const externalElements = new Set<ClassDeclaration>();
+    const generatedRelations = new Set<ElementRelation>();
+    const focusedModule = isContextModule(model) ? model : undefined;
 
     function traverse(element: Model | ContextModule) {
         if (isModel(element)) {
@@ -132,14 +136,14 @@ export function generatePlantUML(model: Model | ContextModule, options: PlantUML
                         const directions = ["d", "r", "l", "u"];
                         decl.references.forEach((ref, index) => {
                             const direction = decl.references.length > 1 ? directions[index % directions.length] : undefined;
-                            puml += generateRelation(ref, element, options, direction, externalElements);
+                            puml += generateRelationOnce(ref, element, options, generatedRelations, direction, externalElements);
                         });
                     }
                 }
 
                 for (const decl of others) {
                     if (isElementRelation(decl)) {
-                        puml += generateRelation(decl, element, options, undefined, externalElements);
+                        puml += generateRelationOnce(decl, element, options, generatedRelations, undefined, externalElements);
                     } else if (isDataType(decl)) {
                         puml += generateDataType(decl);
                     }
@@ -149,6 +153,13 @@ export function generatePlantUML(model: Model | ContextModule, options: PlantUML
     }
 
     traverse(model);
+
+    if (focusedModule && options.showExternalReferences) {
+        const externalReferenceModules = options.externalReferenceModules ?? getSiblingContextModules(focusedModule);
+        for (const relation of getIncomingExternalRelations(focusedModule, externalReferenceModules)) {
+            puml += generateRelationOnce(relation, focusedModule, options, generatedRelations, undefined, externalElements);
+        }
+    }
 
     // Generate external elements
     if (externalElements.size > 0) {
@@ -224,16 +235,88 @@ function generateDataType(element: DataType): string {
     return classDef;
 }
 
+function generateRelationOnce(
+    element: ElementRelation,
+    currentModule: ContextModule,
+    options: PlantUMLOptions,
+    generatedRelations: Set<ElementRelation>,
+    direction?: string,
+    externalElements?: Set<ClassDeclaration>
+): string {
+    if (generatedRelations.has(element)) {
+        return "";
+    }
+
+    generatedRelations.add(element);
+    let relationDefinition = generateRelation(element, currentModule, options, direction, externalElements);
+
+    const inverseRelation = element.inverseEnd?.ref;
+    if (options.showExternalReferences && inverseRelation && !generatedRelations.has(inverseRelation)) {
+        relationDefinition += generateRelationOnce(inverseRelation, currentModule, options, generatedRelations, undefined, externalElements);
+    }
+
+    return relationDefinition;
+}
+
+function getIncomingExternalRelations(currentModule: ContextModule, externalReferenceModules: ContextModule[]): ElementRelation[] {
+    const relations: ElementRelation[] = [];
+    const seen = new Set<ElementRelation>();
+
+    for (const module of externalReferenceModules) {
+        if (module === currentModule) {
+            continue;
+        }
+
+        for (const relation of getModuleRelations(module)) {
+            if (!seen.has(relation) && shouldShowExternalRelationForModule(relation, currentModule)) {
+                seen.add(relation);
+                relations.push(relation);
+            }
+        }
+    }
+
+    return relations;
+}
+
+function getSiblingContextModules(currentModule: ContextModule): ContextModule[] {
+    const model = currentModule.$container.$container;
+    return isModel(model) ? getModelContextModules(model) : [];
+}
+
+function getModuleRelations(module: ContextModule): ElementRelation[] {
+    const relations: ElementRelation[] = [];
+
+    for (const declaration of module.declarations) {
+        if (isElementRelation(declaration)) {
+            relations.push(declaration);
+        } else if (isClassDeclaration(declaration)) {
+            relations.push(...declaration.references);
+        }
+    }
+
+    return relations;
+}
+
+function shouldShowExternalRelationForModule(relation: ElementRelation, currentModule: ContextModule): boolean {
+    return relationTouchesModule(relation, currentModule) || relationHasInverseInModule(relation, currentModule);
+}
+
+function relationTouchesModule(relation: ElementRelation, currentModule: ContextModule): boolean {
+    return getRelationSourceModule(relation) === currentModule || getReferenceModule(relation.secondEnd.ref) === currentModule;
+}
+
+function relationHasInverseInModule(relation: ElementRelation, currentModule: ContextModule): boolean {
+    const inverseRelation = relation.inverseEnd?.ref;
+    return inverseRelation ? getRelationModule(inverseRelation) === currentModule : false;
+}
+
 function generateRelation(element: ElementRelation, currentModule: ContextModule, options: PlantUMLOptions, direction?: string, externalElements?: Set<ClassDeclaration>): string {
     let sourceName: string | undefined;
     let sourceContainer: ContextModule | undefined;
 
     if (element.firstEnd) {
         sourceName = element.firstEnd.ref?.name || element.firstEnd.$refText;
-        // Try to determine container if resolved
-        if (element.firstEnd.ref && isClassDeclaration(element.firstEnd.ref)) {
-            sourceContainer = element.firstEnd.ref.$container;
-        }
+        sourceContainer = getReferenceModule(element.firstEnd.ref);
     } else if (isClassDeclaration(element.$container)) {
         // Inline relation, container is the source
         sourceName = element.$container.name;
@@ -242,17 +325,16 @@ function generateRelation(element: ElementRelation, currentModule: ContextModule
 
     const target = element.secondEnd?.ref;
     const targetName = target?.name || element.secondEnd?.$refText;
-    let targetContainer: ContextModule | undefined;
-    if (target && isClassDeclaration(target)) {
-        targetContainer = target.$container;
-    }
+    const targetContainer = getReferenceModule(target);
+    const relationContainer = getRelationModule(element);
 
     if (!sourceName || !targetName) return "";
 
     // Check external references
     const isSourceExternal = sourceContainer && sourceContainer !== currentModule;
     const isTargetExternal = targetContainer && targetContainer !== currentModule;
-    const isExternal = isSourceExternal || isTargetExternal;
+    const isRelationExternal = relationContainer && relationContainer !== currentModule;
+    const isExternal = isSourceExternal || isTargetExternal || isRelationExternal;
 
     if (externalElements) {
         if (isSourceExternal && element.firstEnd?.ref && isClassDeclaration(element.firstEnd.ref)) {
@@ -279,7 +361,7 @@ function generateRelation(element: ElementRelation, currentModule: ContextModule
     const targetCard = element.secondCardinality ?
         (element.secondCardinality.upperBound !== undefined ? `"${element.secondCardinality.lowerBound}..${element.secondCardinality.upperBound}"` : `"${element.secondCardinality.lowerBound}"`) : "";
 
-    const relationName = element.name ? `: <back:WhiteSmoke>${element.name}</back> >` : "";
+    const relationName = getRelationLabel(element);
 
     // Use longer arrows for external references to push them away
     const dash = direction ? (isExternal ? `-${direction}--` : `-${direction}-`) : (isExternal ? "----" : "--");
@@ -296,4 +378,65 @@ function generateRelation(element: ElementRelation, currentModule: ContextModule
     }
 
     return `"${sourceName}" ${sourceCard} ${arrow} ${targetCard} "${targetName}" ${relationName}\n`;
+}
+
+function getRelationLabel(element: ElementRelation): string {
+    const labels: string[] = [];
+
+    if (element.name) {
+        labels.push(`<back:WhiteSmoke>${element.name}</back>`);
+    }
+
+    const inverseName = element.inverseEnd?.$refText ?? getRelationDisplayName(element.inverseEnd?.ref);
+    if (inverseName) {
+        labels.push(`inverseOf ${inverseName}`);
+    }
+
+    return labels.length > 0 ? `: ${labels.join("\\n")} >` : "";
+}
+
+function getRelationDisplayName(element: ElementRelation | undefined): string | undefined {
+    if (!element?.name) {
+        return undefined;
+    }
+
+    const parent = element.$container;
+    if (isClassDeclaration(parent)) {
+        return `${parent.name}.${element.name}`;
+    }
+    if (isContextModule(parent)) {
+        return element.firstEnd?.$refText ? `${element.firstEnd.$refText}.${element.name}` : element.name;
+    }
+    return element.name;
+}
+
+function getRelationSourceModule(element: ElementRelation): ContextModule | undefined {
+    if (element.firstEnd) {
+        return getReferenceModule(element.firstEnd.ref);
+    }
+    if (isClassDeclaration(element.$container)) {
+        return element.$container.$container;
+    }
+    return undefined;
+}
+
+function getRelationModule(element: ElementRelation): ContextModule | undefined {
+    const parent = element.$container;
+    if (isContextModule(parent)) {
+        return parent;
+    }
+    if (isClassDeclaration(parent)) {
+        return parent.$container;
+    }
+    return undefined;
+}
+
+function getReferenceModule(element: DataTypeOrClassOrRelation | undefined): ContextModule | undefined {
+    if (isClassDeclaration(element) || isDataType(element)) {
+        return element.$container;
+    }
+    if (isElementRelation(element)) {
+        return getRelationModule(element);
+    }
+    return undefined;
 }

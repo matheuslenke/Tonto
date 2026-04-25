@@ -86,4 +86,69 @@ describe("PlantUML Generator Reproduction", () => {
     expect(puml).toContain(`"EmploymentContract" "1..*" -d-- "1" "Employee"`);
     expect(puml).toContain(`"EmploymentContract" "1..*" -r-- "1" "UniversityProfessor"`);
   });
+
+  test("should include external relations declared outside the focused module", async () => {
+    const peopleDoc = await parse(`
+        package IncomingPeople
+        kind Person
+    `, "IncomingPeople");
+
+    await parse(`
+        import IncomingPeople
+        package IncomingContracts
+
+        kind Contract
+
+        relation Contract -- engages -- [1] IncomingPeople.Person
+    `, "IncomingContracts");
+
+    await documentBuilder.build(langiumDocuments.all.toArray());
+
+    const peoplePackage = getPrimaryContextModuleOrThrow(peopleDoc.parseResult.value as Model);
+    const externalReferenceModules = langiumDocuments.all
+      .flatMap((document) => getPrimaryContextModuleOrThrow(document.parseResult.value as Model))
+      .toArray();
+
+    const puml = generatePlantUML(peoplePackage, { showExternalReferences: true, externalReferenceModules });
+
+    expect(puml).toContain(`class "Contract" <<kind>> #FF99A3`);
+    expect(puml).toContain(`"Contract"  ---- "1" "Person" : <back:WhiteSmoke>engages</back> >`);
+
+    const pumlWithoutExternalReferences = generatePlantUML(peoplePackage, {
+      showExternalReferences: false,
+      externalReferenceModules,
+    });
+
+    expect(pumlWithoutExternalReferences).not.toContain(`class "Contract" <<kind>> #FF99A3`);
+    expect(pumlWithoutExternalReferences).not.toContain(`engages`);
+  });
+
+  test("should render inverseOf labels and include inverse external relations", async () => {
+    const peopleDoc = await parse(`
+        import InverseAgreements
+        package InversePeople
+
+        kind Person {
+            [1] -- participatesIn -- [*] InverseAgreements.Contract inverseOf InverseAgreements.Contract.hasParticipant
+        }
+    `, "InversePeople");
+
+    await parse(`
+        import InversePeople
+        package InverseAgreements
+
+        kind Contract {
+            [1] -- hasParticipant -- [*] InversePeople.Person
+        }
+    `, "InverseAgreements");
+
+    await documentBuilder.build(langiumDocuments.all.toArray());
+
+    const peoplePackage = getPrimaryContextModuleOrThrow(peopleDoc.parseResult.value as Model);
+    const puml = generatePlantUML(peoplePackage, { showExternalReferences: true });
+
+    expect(puml).toContain(`<back:WhiteSmoke>participatesIn</back>\\ninverseOf InverseAgreements.Contract.hasParticipant >`);
+    expect(puml).toContain(`"Contract" "1" ---- "*" "Person" : <back:WhiteSmoke>hasParticipant</back> >`);
+    expect(puml).toContain(`class "Contract" <<kind>> #FF99A3`);
+  });
 });
