@@ -26,10 +26,7 @@ export function registerCreateTontoDiagramCommand(): vscode.Disposable {
             await vscode.workspace.fs.writeFile(targetUri, Buffer.from(diagramContents, "utf8"));
         }
 
-        const targetDocument = await vscode.workspace.openTextDocument(targetUri);
-        await vscode.window.showTextDocument(targetDocument, {
-            preview: false,
-        });
+        await vscode.commands.executeCommand("vscode.openWith", targetUri, "tonto.diagram.editor");
     });
 }
 
@@ -51,14 +48,11 @@ async function resolveSourceDocument(resource?: vscode.Uri): Promise<vscode.Text
 }
 
 function createDiagramTemplate(document: vscode.TextDocument): string {
-    const packageName = document.getText().match(/\bpackage\s+([A-Za-z_][\w.]*)/)?.[1];
     const fileName = document.uri.path.split("/").pop()?.replace(/\.tonto$/i, "") ?? "diagram";
     const title = toTitleCase(fileName);
 
     return `diagram "${title} Diagram" {
-  source "./${fileName}.tonto"
-${packageName ? `  import ${packageName}\n` : ""}
-  direction LR
+  direction TB
   stereotypes true
   attributes true
   external false

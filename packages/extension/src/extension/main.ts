@@ -12,7 +12,6 @@ import { createTpmInstallCommands } from "../commands/TpmInstallCommand.js";
 import { createValidationSatusBarItem } from "../commands/validationCommand.js";
 import { TontoFeature, TontoFeatureToggleController } from "../configuration/tonto-feature-toggles.js";
 import { activateDiagram } from "../diagram/activateDiagram.js";
-import { registerAutoOpenTontoDiagramPreview } from "../diagram-editor/auto-open-tontodiagram-preview.js";
 import { registerCreateTontoDiagramCommand } from "../diagram-editor/create-tontodiagram-command.js";
 import { registerTontoDiagramCompletionProvider } from "../diagram-editor/tontodiagram-completion-provider.js";
 import { TontoDiagramEditorProvider } from "../diagram-editor/tonto-diagram-editor-provider.js";
@@ -29,6 +28,7 @@ const TONTO_EXPLORER_COMMANDS = [
     "tonto.initProject",
     "tonto.addGuidances",
     "tonto.addSkill",
+    "tonto.diagram.plantuml.openProject",
 ];
 
 class TontoCommandItem extends vscode.TreeItem {
@@ -81,6 +81,8 @@ class TontoCommandsProvider implements vscode.TreeDataProvider<TontoCommandItem>
                 return "Add Guidances to project (LLMs)";
             case "tonto.addSkill":
                 return "Add Tonto skill to project";
+            case "tonto.diagram.plantuml.openProject":
+                return "Open Ontology PlantUML Diagram";
             default:
                 return cmd;
         }
@@ -122,7 +124,6 @@ export function activate(context: vscode.ExtensionContext): void {
     featureToggles.registerFeature(TontoFeature.TontoDiagramVisualization, () => vscode.Disposable.from(
         registerCreateTontoDiagramCommand(),
         TontoDiagramEditorProvider.register(context),
-        registerAutoOpenTontoDiagramPreview(),
         registerTontoDiagramCompletionProvider(),
     ));
 

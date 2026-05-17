@@ -1,7 +1,9 @@
 import path from "node:path";
 import {
+    TontoDiagramDirection,
     TontoDiagramGraph,
     TontoDiagramIssue,
+    TontoDiagramSpec,
     buildTontoDiagramGraph,
     parseTontoDiagramSpec,
     serializeTontoDiagramSpec,
@@ -36,7 +38,49 @@ type DiagramLayoutUpdateMessage = {
     }>;
 };
 
-type DiagramIncomingMessage = DiagramReadyMessage | DiagramSourceUpdateMessage | DiagramLayoutUpdateMessage;
+type DiagramImportsUpdateMessage = {
+    type: "updateImports";
+    imports: string[];
+};
+
+type DiagramIncludeUpdateMessage = {
+    type: "updateInclude";
+    include: string[];
+};
+
+type DiagramPresentationUpdateMessage = {
+    type: "updatePresentation";
+    direction?: TontoDiagramDirection;
+    stereotypes?: boolean;
+    attributes?: boolean;
+};
+
+type DiagramFilterFlagsUpdateMessage = {
+    type: "updateFilterFlags";
+    external?: boolean;
+    datatypes?: boolean;
+};
+
+type DiagramTitleUpdateMessage = {
+    type: "updateTitle";
+    title: string;
+};
+
+type DiagramExportRequestMessage = {
+    type: "requestExport";
+    format: "png" | "svg" | "plantuml";
+};
+
+type DiagramIncomingMessage =
+    | DiagramReadyMessage
+    | DiagramSourceUpdateMessage
+    | DiagramLayoutUpdateMessage
+    | DiagramImportsUpdateMessage
+    | DiagramIncludeUpdateMessage
+    | DiagramPresentationUpdateMessage
+    | DiagramFilterFlagsUpdateMessage
+    | DiagramTitleUpdateMessage
+    | DiagramExportRequestMessage;
 
 type DiagramEditorPanelState = {
     panel: vscode.WebviewPanel;
@@ -154,10 +198,100 @@ export class TontoDiagramEditorProvider implements vscode.CustomTextEditorProvid
                 }))
             );
 
-            const serialized = serializeTontoDiagramSpec(updatedSpec);
-            if (serialized !== document.getText()) {
-                await this.replaceDocumentText(document, serialized);
+            await this.writeSpec(document, updatedSpec);
+            return;
+        }
+
+        if (message.type === "updateImports") {
+            await this.mutateSpec(document, (spec) => ({
+                ...spec,
+                imports: dedupeSorted(message.imports),
+            }));
+            return;
+        }
+
+        if (message.type === "updateInclude") {
+            await this.mutateSpec(document, (spec) => ({
+                ...spec,
+                filter: {
+                    ...spec.filter,
+                    include: dedupeSorted(message.include),
+                },
+            }));
+            return;
+        }
+
+        if (message.type === "updatePresentation") {
+            await this.mutateSpec(document, (spec) => ({
+                ...spec,
+                presentation: {
+                    direction: message.direction ?? spec.presentation.direction,
+                    stereotypes: message.stereotypes ?? spec.presentation.stereotypes,
+                    attributes: message.attributes ?? spec.presentation.attributes,
+                },
+            }));
+            return;
+        }
+
+        if (message.type === "updateFilterFlags") {
+            await this.mutateSpec(document, (spec) => ({
+                ...spec,
+                filter: {
+                    ...spec.filter,
+                    external: message.external ?? spec.filter.external,
+                    datatypes: message.datatypes ?? spec.filter.datatypes,
+                },
+            }));
+            return;
+        }
+
+        if (message.type === "updateTitle") {
+            const trimmed = message.title.trim();
+            if (!trimmed) {
+                return;
             }
+            await this.mutateSpec(document, (spec) => ({
+                ...spec,
+                title: trimmed,
+            }));
+            return;
+        }
+
+        if (message.type === "requestExport") {
+            await this.handleExportRequest(document, message.format);
+            return;
+        }
+    }
+
+    private async handleExportRequest(document: vscode.TextDocument, format: "png" | "svg" | "plantuml"): Promise<void> {
+        if (format === "plantuml") {
+            await vscode.commands.executeCommand("tonto.diagram.plantuml.openProject", document.uri);
+            return;
+        }
+
+        // PNG/SVG are produced inside the webview from the live ReactFlow canvas;
+        // when the webview offers a ready-made blob we'll forward it via showSaveDialog.
+        // For now surface the format as a not-yet-wired notification so the UX
+        // makes it obvious the request was received but the host needs more work.
+        vscode.window.showInformationMessage(`Tonto diagram: ${format.toUpperCase()} export is handled in the webview.`);
+    }
+
+    private async mutateSpec(
+        document: vscode.TextDocument,
+        mutate: (spec: TontoDiagramSpec) => TontoDiagramSpec,
+    ): Promise<void> {
+        const parsed = parseTontoDiagramSpec(document.getText());
+        if (!parsed.spec) {
+            return;
+        }
+        const next = mutate({ ...parsed.spec, source: undefined });
+        await this.writeSpec(document, next);
+    }
+
+    private async writeSpec(document: vscode.TextDocument, spec: TontoDiagramSpec): Promise<void> {
+        const serialized = serializeTontoDiagramSpec(spec);
+        if (serialized !== document.getText()) {
+            await this.replaceDocumentText(document, serialized);
         }
     }
 
@@ -318,7 +452,14 @@ export class TontoDiagramEditorProvider implements vscode.CustomTextEditorProvid
         );
         const edit = new vscode.WorkspaceEdit();
         edit.replace(document.uri, fullRange, nextText);
-        await vscode.workspace.applyEdit(edit);
+        const applied = await vscode.workspace.applyEdit(edit);
+        if (applied && document.isDirty) {
+            try {
+                await document.save();
+            } catch (error) {
+                console.error("Failed to auto-save Tonto diagram document", error);
+            }
+        }
     }
 
     private getPanelStates(): DiagramEditorPanelState[] {
@@ -335,7 +476,10 @@ function createDiagramEditorHtml(extensionUri: vscode.Uri, webview: vscode.Webvi
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} data:; script-src ${webview.cspSource}; style-src 'unsafe-inline' ${webview.cspSource}; font-src ${webview.cspSource};">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} data:; script-src ${webview.cspSource}; style-src 'unsafe-inline' ${webview.cspSource} https://fonts.googleapis.com; font-src ${webview.cspSource} https://fonts.gstatic.com;">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
         <link rel="stylesheet" href="${styleUri}">
         <title>Tonto Diagram Editor</title>
     </head>
@@ -344,6 +488,10 @@ function createDiagramEditorHtml(extensionUri: vscode.Uri, webview: vscode.Webvi
         <script type="module" src="${scriptUri}"></script>
     </body>
 </html>`;
+}
+
+function dedupeSorted(values: string[]): string[] {
+    return [...new Set(values)].sort((left, right) => left.localeCompare(right));
 }
 
 function escapeHtml(value: string): string {

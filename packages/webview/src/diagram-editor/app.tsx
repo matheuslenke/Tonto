@@ -12,12 +12,25 @@ import {
     useNodesState,
     useReactFlow,
 } from "@xyflow/react";
-import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
-import type { TontoDiagramGraph, TontoDiagramIssue } from "tonto-cli";
+import type {
+    TontoDiagramGraph,
+    TontoDiagramIssue,
+    TontoDiagramPresentation,
+} from "tonto-cli";
+import { cn } from "./utils/cn";
 import { DiagramNode } from "./components/diagram-node";
+import { ExportFab } from "./components/export-fab";
+import { PackageTree } from "./components/package-tree";
 import { RelationEdge } from "./components/relation-edge";
+import { Sidebar, type SidebarTabId } from "./components/sidebar";
+import { SourcePanel } from "./components/source-panel";
 import { SpecializationEdge } from "./components/specialization-edge";
-import type { DiagramDocumentStateMessage, DiagramDocumentStateStatus } from "./messages";
+import { ViewPanel } from "./components/view-panel";
+import { SettingsModal } from "./components/settings-modal";
+import { UfoLegend } from "./components/ufo-legend";
+import { downloadPng, downloadSvg } from "./lib/export";
+import { useDiagramSettings } from "./lib/settings";
+import type { DiagramDocumentStateMessage, DiagramDocumentStateStatus, DiagramExportFormat } from "./messages";
 import { postToVscode } from "./vscode";
 
 const EDGE_TYPES = {
@@ -29,22 +42,54 @@ const NODE_TYPES = {
     diagram: DiagramNode,
 };
 
+type Theme = "light" | "dark";
+
+const THEME_STORAGE_KEY = "tonto-diagram-theme";
+
 export function App() {
+    const [theme, setTheme] = React.useState<Theme>(() => {
+        if (typeof window === "undefined") {
+            return "light";
+        }
+        const stored = window.localStorage?.getItem(THEME_STORAGE_KEY);
+        if (stored === "light" || stored === "dark") {
+            return stored;
+        }
+        return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    });
+
+    React.useEffect(() => {
+        const root = document.documentElement;
+        root.classList.toggle("dark", theme === "dark");
+        try {
+            window.localStorage?.setItem(THEME_STORAGE_KEY, theme);
+        } catch {
+            // ignore storage errors
+        }
+    }, [theme]);
+
     return (
         <ReactFlowProvider>
-            <DiagramEditor />
+            <DiagramEditor theme={theme} onSetTheme={setTheme} />
         </ReactFlowProvider>
     );
 }
 
-function DiagramEditor() {
+function DiagramEditor({ theme, onSetTheme }: { theme: Theme; onSetTheme: (next: Theme) => void }) {
+    const isDark = theme === "dark";
+    const { settings, patchSettings } = useDiagramSettings(theme);
+
     const [documentText, setDocumentText] = React.useState("");
     const [sourceDraft, setSourceDraft] = React.useState("");
     const [graph, setGraph] = React.useState<TontoDiagramGraph | undefined>();
     const [status, setStatus] = React.useState<DiagramDocumentStateStatus>("loading");
     const [issues, setIssues] = React.useState<TontoDiagramIssue[]>([]);
+    const [issuesDismissed, setIssuesDismissed] = React.useState(false);
     const [hasReceivedState, setHasReceivedState] = React.useState(false);
-    const [isSourceVisible, setIsSourceVisible] = React.useState(true);
+    const [sidebarTab, setSidebarTab] = React.useState<SidebarTabId>("packages");
+    const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
+    const [settingsOpen, setSettingsOpen] = React.useState(false);
+    const [titleDraft, setTitleDraft] = React.useState<string>("");
     const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
     const reactFlow = useReactFlow();
@@ -55,24 +100,38 @@ function DiagramEditor() {
 
     React.useEffect(() => {
         const onMessage = (event: MessageEvent<DiagramDocumentStateMessage>) => {
-            if (event.data?.type !== "documentState") {
+            if (event.data?.type !== "documentState") return;
+            const next = event.data;
+            const nextStatus = resolveDocumentStatus(next);
+
+            setHasReceivedState(true);
+            setDocumentText(next.documentText);
+            setIssues(next.issues ?? []);
+            setIssuesDismissed(false);
+
+            // Keep the source textarea quiet while the user is editing it — only
+            // accept upstream source changes when they actually differ.
+            setSourceDraft((current) => (current === next.documentText ? current : next.documentText));
+
+            if (next.graph) {
+                // Graph available — adopt it, refresh nodes/edges in place.
+                setGraph(next.graph);
+                setTitleDraft((current) => (current && current.trim() && current !== next.graph!.title ? current : next.graph!.title));
+                setNodes(toFlowNodes(next.graph));
+                setEdges(toFlowEdges(next.graph, settings.edgeRouting));
+                setStatus(nextStatus === "loading" ? "ready" : nextStatus);
                 return;
             }
 
-            setHasReceivedState(true);
-            setDocumentText(event.data.documentText);
-            setSourceDraft(event.data.documentText);
-            setGraph(event.data.graph);
-            setIssues(event.data.issues ?? []);
-            setStatus(resolveDocumentStatus(event.data));
-
-            if (event.data.graph) {
-                setNodes(toFlowNodes(event.data.graph));
-                setEdges(toFlowEdges(event.data.graph));
-            } else {
+            // No graph in this update.
+            //   - On the FIRST handshake (no prior graph), surface the loader.
+            //   - On subsequent interim updates, keep the prior diagram visible
+            //     and just track the status quietly so we don't blank the view.
+            setStatus(nextStatus);
+            if (nextStatus === "error" && !hasFitInitialGraph.current) {
+                setGraph(undefined);
                 setNodes([]);
                 setEdges([]);
-                hasFitInitialGraph.current = false;
             }
         };
 
@@ -85,20 +144,23 @@ function DiagramEditor() {
                 window.clearTimeout(sourceUpdateTimeout.current);
             }
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [setEdges, setNodes]);
 
     React.useEffect(() => {
-        if (!hasReceivedState || sourceDraft === documentText) {
-            return;
-        }
+        setEdges((prev) =>
+            prev.map((edge) => ({
+                ...edge,
+                data: { ...(edge.data ?? {}), routing: settings.edgeRouting },
+            })),
+        );
+    }, [settings.edgeRouting, setEdges]);
 
+    React.useEffect(() => {
+        if (!hasReceivedState || sourceDraft === documentText) return;
         sourceUpdateTimeout.current = window.setTimeout(() => {
-            postToVscode({
-                type: "updateSource",
-                text: sourceDraft,
-            });
+            postToVscode({ type: "updateSource", text: sourceDraft });
         }, 250);
-
         return () => {
             if (sourceUpdateTimeout.current) {
                 window.clearTimeout(sourceUpdateTimeout.current);
@@ -107,16 +169,9 @@ function DiagramEditor() {
     }, [documentText, hasReceivedState, sourceDraft]);
 
     React.useEffect(() => {
-        if (!graph || !nodesInitialized || hasFitInitialGraph.current) {
-            return;
-        }
-
+        if (!graph || !nodesInitialized || hasFitInitialGraph.current) return;
         hasFitInitialGraph.current = true;
-        void reactFlow.fitView({
-            padding: 0.16,
-            maxZoom: 1,
-            duration: 0,
-        });
+        void reactFlow.fitView({ padding: 0.16, maxZoom: 1, duration: 0 });
     }, [graph, nodesInitialized, reactFlow]);
 
     const persistNodeLayout = React.useCallback((nextNodes: Node[]) => {
@@ -131,155 +186,267 @@ function DiagramEditor() {
         });
     }, []);
 
+    const commitTitle = React.useCallback(() => {
+        const next = titleDraft.trim();
+        if (!graph || !next || next === graph.title) {
+            setTitleDraft(graph?.title ?? next);
+            return;
+        }
+        postToVscode({ type: "updateTitle", title: next });
+    }, [graph, titleDraft]);
+
+    const handleExport = React.useCallback((format: DiagramExportFormat) => {
+        const base = (graph?.title || "diagram").replace(/[^\w.-]+/g, "_");
+        if (format === "png") {
+            void downloadPng(base);
+        } else if (format === "svg") {
+            void downloadSvg(base);
+        } else {
+            postToVscode({ type: "requestExport", format });
+        }
+    }, [graph?.title]);
+
     if (!hasReceivedState) {
+        return <DiagramStartupView />;
+    }
+
+    // Only block the canvas with the loader before the first successful render;
+    // after that, updates flow in silently in the background.
+    const hasRenderedOnce = graph !== undefined;
+    const isLoading = status === "loading" && !hasRenderedOnce;
+    const isBlockingError = !isLoading && !hasRenderedOnce && graph === undefined && status === "error";
+    const visibleIssues = issues.filter((issue) => issue.severity !== "error");
+    const shouldShowIssuesPanel = !isBlockingError && !issuesDismissed && visibleIssues.length > 0;
+
+    const legend = graph && !isLoading && !isBlockingError ? (
+        <UfoLegend nodes={graph.nodes} isDark={isDark} />
+    ) : null;
+
+    return (
+        <div className={cn("flex h-full w-full", `density-${settings.density}`)}>
+            <Sidebar
+                activeTab={sidebarTab}
+                onChangeTab={setSidebarTab}
+                collapsed={sidebarCollapsed}
+                onToggleCollapsed={() => setSidebarCollapsed((prev) => !prev)}
+                onOpenSettings={() => setSettingsOpen(true)}
+                footer={legend}
+            >
+                {renderSidebarBody({ tab: sidebarTab, graph, sourceDraft, setSourceDraft })}
+            </Sidebar>
+
+            <div className="tonto-canvas-region">
+                <header className="tonto-canvas-header">
+                    <div className="tonto-diagram-title">
+                        <input
+                            className="tonto-diagram-title-input"
+                            value={titleDraft}
+                            placeholder={graph?.title ?? "Tonto Diagram"}
+                            spellCheck={false}
+                            onChange={(event) => setTitleDraft(event.target.value)}
+                            onBlur={commitTitle}
+                            onKeyDown={(event) => {
+                                if (event.key === "Enter") {
+                                    event.preventDefault();
+                                    (event.target as HTMLInputElement).blur();
+                                } else if (event.key === "Escape") {
+                                    setTitleDraft(graph?.title ?? "");
+                                    (event.target as HTMLInputElement).blur();
+                                }
+                            }}
+                            aria-label="Diagram name"
+                        />
+                        <span className="ext">.tontodiagram</span>
+                    </div>
+                    <div className="tonto-spacer" />
+                </header>
+
+                <div
+                    className={cn(
+                        "relative flex-1 w-full",
+                        !settings.minorGrid && "no-minor-grid",
+                        !settings.vignette && "no-vignette",
+                    )}
+                >
+                    <div id={canvasDescriptionId} className="sr-only">
+                        {getCanvasDescription(graph)}
+                    </div>
+
+                    <ReactFlow
+                        fitView
+                        fitViewOptions={{ padding: 0.16, maxZoom: 1 }}
+                        nodes={nodes}
+                        edges={edges}
+                        nodeTypes={NODE_TYPES}
+                        edgeTypes={EDGE_TYPES}
+                        onNodesChange={onNodesChange}
+                        onEdgesChange={onEdgesChange}
+                        onNodeDragStop={(_, draggedNode) => {
+                            const nextNodes = nodes.map((node) =>
+                                node.id === draggedNode.id
+                                    ? { ...node, position: draggedNode.position }
+                                    : node,
+                            );
+                            setNodes(nextNodes);
+                            persistNodeLayout(nextNodes);
+                        }}
+                        aria-label={graph ? `${graph.title} diagram canvas` : "Tonto diagram canvas"}
+                        aria-describedby={canvasDescriptionId}
+                        role="region"
+                        tabIndex={0}
+                        nodesFocusable
+                        edgesFocusable
+                        nodesConnectable={false}
+                        edgesReconnectable={false}
+                        className="h-full w-full"
+                        style={{ background: "var(--bg)" }}
+                    >
+                        <Background
+                            id="tonto-grid-minor"
+                            variant={BackgroundVariant.Dots}
+                            gap={16}
+                            size={1.1}
+                            color="var(--grid-minor)"
+                        />
+                        <Background
+                            id="tonto-grid-major"
+                            variant={BackgroundVariant.Dots}
+                            gap={80}
+                            size={1.8}
+                            color="var(--grid-major)"
+                        />
+                        <Controls showInteractive={false} />
+                    </ReactFlow>
+
+                    <div className="tonto-canvas-vignette" aria-hidden="true" />
+
+                    <ExportFab onExport={handleExport} />
+
+                    {isLoading ? (
+                        <DiagramFeedbackView
+                            variant="loading"
+                            title="Building diagram"
+                            message="Resolving the project model and layout."
+                        />
+                    ) : null}
+
+                    {isBlockingError ? (
+                        <DiagramFeedbackView
+                            variant="error"
+                            title="Diagram cannot be rendered"
+                            message="Fix the reported errors and the preview will update."
+                            issues={issues}
+                        />
+                    ) : null}
+
+                    {shouldShowIssuesPanel ? (
+                        <div className="tonto-issues-panel">
+                            <div className="tonto-issues-header">
+                                <span>Issues · {visibleIssues.length}</span>
+                                <button
+                                    type="button"
+                                    className="tonto-icon-btn"
+                                    onClick={() => setIssuesDismissed(true)}
+                                    title="Dismiss"
+                                    aria-label="Dismiss issues"
+                                >
+                                    ×
+                                </button>
+                            </div>
+                            {visibleIssues.map((issue, index) => (
+                                <div key={`${issue.message}:${index}`} className="tonto-issue-row">
+                                    <span className="sev">{issue.severity}</span>
+                                    <span className="line">{issue.line ? `L${issue.line}` : ""}</span>
+                                    <span style={{ flex: 1 }}>{issue.message}</span>
+                                </div>
+                            ))}
+                        </div>
+                    ) : null}
+                </div>
+            </div>
+
+            <SettingsModal
+                open={settingsOpen}
+                onClose={() => setSettingsOpen(false)}
+                settings={settings}
+                onChange={patchSettings}
+                theme={theme}
+                onSetTheme={onSetTheme}
+            />
+        </div>
+    );
+}
+
+function renderSidebarBody({
+    tab,
+    graph,
+    sourceDraft,
+    setSourceDraft,
+}: {
+    tab: SidebarTabId;
+    graph: TontoDiagramGraph | undefined;
+    sourceDraft: string;
+    setSourceDraft: (next: string) => void;
+}): React.ReactNode {
+    if (tab === "source") {
+        return <SourcePanel value={sourceDraft} onChange={setSourceDraft} />;
+    }
+
+    if (!graph) {
         return (
-            <DiagramStartupView />
+            <div className="font-mono text-[11px] text-[var(--fg-muted)]" style={{ padding: "16px 14px" }}>
+                Waiting for project context…
+            </div>
         );
     }
 
-    const isLoading = status === "loading";
-    const isBlockingError = !isLoading && graph === undefined;
-    const shouldShowIssuesPanel = issues.length > 0 && !isBlockingError;
+    if (tab === "packages") {
+        return (
+            <PackageTree
+                workspace={graph.workspace}
+                imports={graph.imports}
+                include={graph.filter.include}
+                onChangeImports={(next) => postToVscode({ type: "updateImports", imports: next })}
+                onChangeInclude={(next) => postToVscode({ type: "updateInclude", include: next })}
+            />
+        );
+    }
 
-    return (
-        <div className="h-full w-full bg-[var(--editor-bg)] text-slate-900">
-            <div className="flex items-center justify-between border-b border-[var(--panel-line)] bg-white/80 px-4 py-3 backdrop-blur-sm">
-                <div>
-                    <div className="font-display text-xl">{graph?.title ?? "Tonto Diagram"}</div>
-                    <div className="font-mono text-[11px] uppercase tracking-[0.24em] text-slate-500">
-                        {graph?.packages.join(", ") || "No resolved packages"}
-                    </div>
-                </div>
-                <button
-                    type="button"
-                    className="rounded-full border border-slate-300 bg-white px-3 py-2 font-mono text-[11px] uppercase tracking-[0.18em] text-slate-700"
-                    onClick={() => setIsSourceVisible((value) => !value)}
-                >
-                    {isSourceVisible ? "Hide source" : "Show source"}
-                </button>
-            </div>
+    if (tab === "view") {
+        return (
+            <ViewPanel
+                presentation={graph.presentation}
+                filter={graph.filter}
+                onChangePresentation={(next: Partial<TontoDiagramPresentation>) =>
+                    postToVscode({
+                        type: "updatePresentation",
+                        direction: next.direction,
+                        stereotypes: next.stereotypes,
+                        attributes: next.attributes,
+                    })
+                }
+                onChangeFilterFlags={(next: { external?: boolean; datatypes?: boolean }) =>
+                    postToVscode({
+                        type: "updateFilterFlags",
+                        external: next.external,
+                        datatypes: next.datatypes,
+                    })
+                }
+            />
+        );
+    }
 
-            <PanelGroup direction="horizontal" className="h-[calc(100%-65px)]">
-                <Panel defaultSize={isSourceVisible ? 68 : 100} minSize={45}>
-                    <div className="relative h-full w-full">
-                        <div id={canvasDescriptionId} className="sr-only">
-                            {getCanvasDescription(graph)}
-                        </div>
-                        <ReactFlow
-                            fitView
-                            fitViewOptions={{
-                                padding: 0.16,
-                                maxZoom: 1,
-                            }}
-                            nodes={nodes}
-                            edges={edges}
-                            nodeTypes={NODE_TYPES}
-                            edgeTypes={EDGE_TYPES}
-                            onNodesChange={onNodesChange}
-                            onEdgesChange={onEdgesChange}
-                            onNodeDragStop={(_, draggedNode) => {
-                                const nextNodes = nodes.map((node) => node.id === draggedNode.id ? {
-                                    ...node,
-                                    position: draggedNode.position,
-                                } : node);
-                                setNodes(nextNodes);
-                                persistNodeLayout(nextNodes);
-                            }}
-                            aria-label={graph ? `${graph.title} diagram canvas` : "Tonto diagram canvas"}
-                            aria-describedby={canvasDescriptionId}
-                            role="region"
-                            tabIndex={0}
-                            nodesFocusable
-                            edgesFocusable
-                            nodesConnectable={false}
-                            edgesReconnectable={false}
-                            onlyRenderVisibleElements
-                            className="h-full w-full bg-white"
-                        >
-                            <Background variant={BackgroundVariant.Dots} gap={24} size={1.2} color="rgba(148,163,184,0.52)" />
-                            <Controls />
-                        </ReactFlow>
-                        <CanvasCenterMark />
-
-                        {isLoading ? (
-                            <DiagramFeedbackView
-                                variant="loading"
-                                title="Building diagram"
-                                message="Resolving the source model and layout."
-                            />
-                        ) : null}
-
-                        {isBlockingError ? (
-                            <DiagramFeedbackView
-                                variant="error"
-                                title="Diagram cannot be rendered"
-                                message="Fix the reported errors and the preview will update."
-                                issues={issues}
-                            />
-                        ) : null}
-
-                        {shouldShowIssuesPanel ? (
-                            <div className="absolute bottom-4 left-4 max-w-xl rounded-lg border border-amber-200 bg-white/95 p-4 shadow-xl backdrop-blur-sm">
-                                <div className="font-mono text-[11px] uppercase tracking-[0.24em] text-amber-700">Issues</div>
-                                <div className="mt-3 space-y-2 text-sm text-slate-700">
-                                    {issues.map((issue, index) => (
-                                        <div key={`${issue.message}:${index}`} className="break-words">
-                                            {formatIssue(issue)}
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        ) : null}
-                    </div>
-                </Panel>
-
-                {isSourceVisible ? (
-                    <>
-                        <PanelResizeHandle className="w-px bg-[var(--panel-line)]" />
-                        <Panel defaultSize={32} minSize={20}>
-                            <div className="flex h-full flex-col border-l border-[var(--panel-line)] bg-white/88 backdrop-blur-sm">
-                                <div className="border-b border-[var(--panel-line)] px-4 py-3 font-mono text-[11px] uppercase tracking-[0.24em] text-slate-500">
-                                    .tontodiagram source
-                                </div>
-                                <textarea
-                                    value={sourceDraft}
-                                    onChange={(event) => setSourceDraft(event.target.value)}
-                                    className="h-full w-full resize-none border-0 bg-transparent px-4 py-4 font-mono text-[13px] leading-6 text-slate-800 outline-none"
-                                    spellCheck={false}
-                                />
-                            </div>
-                        </Panel>
-                    </>
-                ) : null}
-            </PanelGroup>
-        </div>
-    );
-}
-
-function CanvasCenterMark() {
-    return (
-        <div
-            className="pointer-events-none absolute left-1/2 top-1/2 z-10 h-5 w-5 -translate-x-1/2 -translate-y-1/2"
-            aria-hidden="true"
-        >
-            <div className="absolute left-1/2 top-0 h-full w-px -translate-x-1/2 bg-slate-500/45" />
-            <div className="absolute left-0 top-1/2 h-px w-full -translate-y-1/2 bg-slate-500/45" />
-            <div className="absolute left-1/2 top-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full border border-slate-500/60 bg-white" />
-        </div>
-    );
+    return null;
 }
 
 function getCanvasDescription(graph: TontoDiagramGraph | undefined): string {
-    if (!graph) {
-        return "The Tonto diagram canvas is loading.";
-    }
-
+    if (!graph) return "The Tonto diagram canvas is loading.";
     return `${graph.title} contains ${graph.nodes.length} nodes and ${graph.edges.length} edges.`;
 }
 
 function DiagramStartupView() {
     return (
-        <div className="flex h-full w-full items-center justify-center bg-[var(--editor-bg)] px-4 text-slate-900">
+        <div className="flex h-full w-full items-center justify-center bg-[var(--bg)] px-4 text-[var(--fg)]">
             <DiagramFeedbackCard
                 variant="loading"
                 title="Loading diagram editor"
@@ -298,7 +465,7 @@ type DiagramFeedbackViewProps = {
 
 function DiagramFeedbackView(props: DiagramFeedbackViewProps) {
     return (
-        <div className="absolute inset-0 flex items-center justify-center bg-white/75 px-4 backdrop-blur-sm">
+        <div className="tonto-loader-overlay">
             <DiagramFeedbackCard {...props} />
         </div>
     );
@@ -310,39 +477,58 @@ function DiagramFeedbackCard({ variant, title, message, issues = [] }: DiagramFe
 
     return (
         <div
-            className="w-full max-w-lg rounded-lg border border-slate-200 bg-white/95 p-5 shadow-xl"
+            className="tonto-loader-card"
             role={variant === "error" ? "alert" : "status"}
             aria-live={variant === "error" ? "assertive" : "polite"}
+            style={{ flexDirection: "column", alignItems: "stretch", gap: 12 }}
         >
-            <div className="flex items-start gap-3">
+            <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
                 {variant === "loading" ? (
-                    <div
-                        className="mt-1 h-5 w-5 shrink-0 animate-spin rounded-full border-2 border-slate-300 border-t-slate-800"
-                        aria-hidden="true"
-                    />
+                    <div className="tonto-spinner" aria-hidden="true" />
                 ) : (
                     <div
-                        className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-100 font-mono text-sm font-semibold text-red-700"
+                        className="font-mono"
                         aria-hidden="true"
+                        style={{
+                            width: 20,
+                            height: 20,
+                            display: "grid",
+                            placeItems: "center",
+                            border: "1px solid var(--err)",
+                            color: "var(--err)",
+                            background: "var(--err-soft)",
+                            fontSize: 12,
+                            fontWeight: 600,
+                            borderRadius: 2,
+                        }}
                     >
                         !
                     </div>
                 )}
-                <div className="min-w-0">
-                    <div className="font-display text-xl leading-tight text-slate-950">{title}</div>
-                    <div className="mt-2 text-sm leading-6 text-slate-600">{message}</div>
+                <div className="tonto-loader-text" style={{ minWidth: 0 }}>
+                    <div className="title">{title}</div>
+                    <div className="desc">{message}</div>
                 </div>
             </div>
 
             {visibleIssues.length > 0 ? (
-                <div className="mt-4 space-y-2 rounded-md border border-red-100 bg-red-50/80 p-3 text-sm text-red-950">
+                <div
+                    style={{
+                        border: "1px solid var(--err)",
+                        background: "var(--err-soft)",
+                        color: "var(--err)",
+                        padding: "8px 10px",
+                        fontFamily: "Geist Mono, ui-monospace, monospace",
+                        fontSize: 11,
+                        lineHeight: 1.5,
+                        borderRadius: 2,
+                    }}
+                >
                     {visibleIssues.map((issue, index) => (
-                        <div key={`${issue.message}:${index}`} className="break-words">
-                            {formatIssue(issue)}
-                        </div>
+                        <div key={`${issue.message}:${index}`}>{formatIssue(issue)}</div>
                     ))}
                     {remainingIssueCount > 0 ? (
-                        <div className="font-mono text-[11px] uppercase tracking-[0.18em] text-red-700">
+                        <div style={{ marginTop: 4, opacity: 0.75 }}>
                             {remainingIssueCount} more issue{remainingIssueCount === 1 ? "" : "s"}
                         </div>
                     ) : null}
@@ -358,14 +544,8 @@ function formatIssue(issue: TontoDiagramIssue): string {
 }
 
 function resolveDocumentStatus(message: DiagramDocumentStateMessage): DiagramDocumentStateStatus {
-    if (message.status) {
-        return message.status;
-    }
-
-    if (message.graph) {
-        return "ready";
-    }
-
+    if (message.status) return message.status;
+    if (message.graph) return "ready";
     return message.issues?.some((issue) => issue.severity === "error") ? "error" : "loading";
 }
 
@@ -383,7 +563,7 @@ function toFlowNodes(graph: TontoDiagramGraph): Node[] {
     }));
 }
 
-function toFlowEdges(graph: TontoDiagramGraph): Edge[] {
+function toFlowEdges(graph: TontoDiagramGraph, routing: string): Edge[] {
     return graph.edges.map((edge) => ({
         id: edge.id,
         type: edge.kind,
@@ -394,7 +574,10 @@ function toFlowEdges(graph: TontoDiagramGraph): Edge[] {
             connector: edge.connector,
             sourceCardinality: edge.sourceCardinality,
             targetCardinality: edge.targetCardinality,
+            sourceEnd: edge.sourceEnd,
+            targetEnd: edge.targetEnd,
             stereotype: edge.stereotype,
+            routing,
         },
     }));
 }

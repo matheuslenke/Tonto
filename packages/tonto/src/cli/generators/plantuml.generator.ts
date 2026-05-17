@@ -1,3 +1,4 @@
+import type { AstNode } from "langium";
 import {
     ClassDeclaration,
     ContextModule,
@@ -86,11 +87,14 @@ export type PlantUMLLayoutVariant =
     | "smetana"
     | "elk";
 
-export function generatePlantUML(model: Model | ContextModule, options: PlantUMLOptions = { showExternalReferences: true, orthogonal: false }): string {
-    const contextModules = isModel(model) ? getModelContextModules(model) : [model];
+export type PlantUMLSource = Model | ContextModule | ContextModule[] | AstNode;
+
+export function generatePlantUML(model: PlantUMLSource, options: PlantUMLOptions = { showExternalReferences: true, orthogonal: false }): string {
+    const contextModules = getPlantUMLContextModules(model);
     const focusedModule = isContextModule(model) ? model : undefined;
     const renderContext: PlantUMLRenderContext = {
-        qualifyAllModules: isModel(model) && contextModules.length > 1,
+        qualifyAllModules: contextModules.length > 1,
+        includedModules: new Set(contextModules),
     };
 
     let puml = "@startuml\n";
@@ -106,8 +110,12 @@ export function generatePlantUML(model: Model | ContextModule, options: PlantUML
     const externalElements = new Set<ClassDeclaration>();
     const generatedRelations = new Set<ElementRelation>();
 
-    function traverse(element: Model | ContextModule) {
-        if (isModel(element)) {
+    function traverse(element: PlantUMLSource) {
+        if (Array.isArray(element)) {
+            for (const contextModule of element) {
+                traverse(contextModule);
+            }
+        } else if (isModel(element)) {
             for (const contextModule of contextModules) {
                 traverse(contextModule);
             }
@@ -126,9 +134,9 @@ export function generatePlantUML(model: Model | ContextModule, options: PlantUML
                         for (const parentRef of decl.specializationEndurants) {
                             if (parentRef.ref) {
                                 // Check if parent is in the same module or if we show external refs
-                                if (options.showExternalReferences || parentRef.ref.$container === element) {
-                                    const isExternal = parentRef.ref.$container !== element;
-                                    if (isExternal && isClassDeclaration(parentRef.ref)) {
+                                const isExternal = parentRef.ref.$container !== element && !renderContext.includedModules.has(parentRef.ref.$container);
+                                if (options.showExternalReferences || !isExternal) {
+                                    if (isExternal && isClassDeclaration(parentRef.ref) && !renderContext.includedModules.has(parentRef.ref.$container)) {
                                         externalElements.add(parentRef.ref);
                                     }
                                     const arrow = isExternal ? "<|----" : "<|--";
@@ -181,7 +189,7 @@ export function generatePlantUML(model: Model | ContextModule, options: PlantUML
     if (externalElements.size > 0) {
         puml += "\n' External Elements\n";
         for (const element of externalElements) {
-            puml += generateClass(element, focusedModule ?? element.$container, renderContext);
+            puml += generateClass(element, focusedModule ?? contextModules[0], renderContext);
         }
     }
 
@@ -191,6 +199,19 @@ export function generatePlantUML(model: Model | ContextModule, options: PlantUML
 
 interface PlantUMLRenderContext {
     qualifyAllModules: boolean;
+    includedModules: Set<ContextModule>;
+}
+
+function getPlantUMLContextModules(model: PlantUMLSource): ContextModule[] {
+    if (Array.isArray(model)) {
+        return model;
+    }
+
+    if (isModel(model)) {
+        return getModelContextModules(model);
+    }
+
+    return isContextModule(model) ? [model] : [];
 }
 
 function getPlantUMLLayoutVariant(options: PlantUMLOptions): PlantUMLLayoutVariant {
@@ -386,15 +407,20 @@ function generateRelation(
     // Check external references
     const isSourceExternal = sourceContainer && sourceContainer !== currentModule;
     const isTargetExternal = targetContainer && targetContainer !== currentModule;
-    const isRelationExternal = relationContainer && relationContainer !== currentModule;
-    const isExternal = isSourceExternal || isTargetExternal || isRelationExternal;
+    const isSourceOutsideRenderSet = sourceContainer && !renderContext.includedModules.has(sourceContainer);
+    const isTargetOutsideRenderSet = targetContainer && !renderContext.includedModules.has(targetContainer);
+    const isRelationOutsideRenderSet = relationContainer && !renderContext.includedModules.has(relationContainer);
+    const isExternal = isSourceOutsideRenderSet || isTargetOutsideRenderSet || isRelationOutsideRenderSet;
 
     if (externalElements) {
-        if (isSourceExternal && element.firstEnd?.ref && isClassDeclaration(element.firstEnd.ref)) {
-            externalElements.add(element.firstEnd.ref);
+        const sourceReference = element.firstEnd?.ref;
+        if (isSourceExternal && sourceReference && isClassDeclaration(sourceReference) && !renderContext.includedModules.has(sourceReference.$container)) {
+            externalElements.add(sourceReference);
         }
         if (isTargetExternal && target && isClassDeclaration(target)) {
-            externalElements.add(target);
+            if (!renderContext.includedModules.has(target.$container)) {
+                externalElements.add(target);
+            }
         }
     }
 

@@ -80,14 +80,6 @@ export function parseTontoDiagramSpec(sourceText: string): TontoDiagramParseResu
     const viewportBlock = findNamedBlock(body, "viewport");
     const nodeMatches = [...body.matchAll(/\bnode\s+([A-Za-z_][\w.-]*)\s*\{\s*x\s+(-?\d+(?:\.\d+)?)\s+y\s+(-?\d+(?:\.\d+)?)\s*\}/g)];
 
-    if (!sourceMatch) {
-        issues.push({
-            severity: "error",
-            message: "Diagram source is required.",
-            line: lineNumberForIndex(sourceText, 1),
-        });
-    }
-
     const imports = dedupeAndSort([
         ...importMatches.map((match) => match.value),
         ...(legacyModuleMatch ? [legacyModuleMatch.value] : []),
@@ -95,7 +87,7 @@ export function parseTontoDiagramSpec(sourceText: string): TontoDiagramParseResu
 
     const parsedSpec: TontoDiagramSpec = {
         title,
-        source: sourceMatch?.value ?? "",
+        source: sourceMatch?.value,
         imports,
         filter: {
             include: dedupeAndSort([
@@ -114,13 +106,9 @@ export function parseTontoDiagramSpec(sourceText: string): TontoDiagramParseResu
         viewport: parseViewportBlock(viewportBlock, sourceText, issues),
     };
 
-    if (!sourceMatch) {
-        return { issues };
-    }
-
     const strayContent = getStrayContent(body, [
-        sourceMatch.index,
-        sourceMatch.index + sourceMatch.length,
+        sourceMatch ? sourceMatch.index : undefined,
+        sourceMatch ? sourceMatch.index + sourceMatch.length : undefined,
         ...importMatches.flatMap((match) => [match.index, match.index + match.length]),
         legacyModuleMatch ? legacyModuleMatch.index : undefined,
         legacyModuleMatch ? legacyModuleMatch.index + legacyModuleMatch.length : undefined,

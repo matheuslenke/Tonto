@@ -4,7 +4,6 @@ export function serializeTontoDiagramSpec(spec: TontoDiagramSpec): string {
     const lines: string[] = [];
 
     lines.push(`diagram "${spec.title}" {`);
-    lines.push(`  source "${spec.source}"`);
 
     for (const packageName of [...spec.imports].sort((left, right) => left.localeCompare(right))) {
         lines.push(`  import ${packageName}`);
@@ -51,6 +50,7 @@ export function updateTontoDiagramLayout(
 
     return {
         ...spec,
+        source: undefined,
         nodes: normalizedLayouts,
     };
 }

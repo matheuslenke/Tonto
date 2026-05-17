@@ -8,6 +8,7 @@ import { ErrorResultResponse, ValidationReturn } from "../requests/ontoumljsVali
 import { readOrCreateDefaultTontoManifest } from "../utils/readManifest.js";
 import { generateModularCommand } from "./commands/generateCommand.js";
 import { isGufoResultResponse, transformToGufoCommand } from "./commands/generateGufoCommand.js";
+import { generatePlantUMLCommand } from "./commands/generatePlantUMLCommand.js";
 import { ImportOptions, newImportCommand } from "./commands/importCommand.js";
 import { initCommand } from "./commands/initCommand.js";
 import { validateCommand } from "./commands/validateCommand.js";
@@ -21,6 +22,13 @@ export type GenerateOptions = {
 
 export type ValidateOptions = {
     local: boolean;
+}
+
+export type GeneratePlantUMLOptions = {
+    destination?: string;
+    perPackage?: boolean;
+    externalReferences?: boolean;
+    layout?: string;
 }
 
 export class TontoActions {
@@ -93,6 +101,32 @@ export class TontoActions {
             console.log(chalk.bold.green("Transformation to Gufo finished"));
         } catch (error) {
             console.log(chalk.red(error));
+        }
+    }
+
+    async generatePlantUMLAction(dirName: string, opts: GeneratePlantUMLOptions = {}): Promise<void> {
+        if (!dirName) {
+            console.log(chalk.red("Directory not provided!"));
+            return;
+        }
+
+        try {
+            const generatedFiles = await generatePlantUMLCommand(dirName, {
+                destination: opts.destination,
+                perPackage: opts.perPackage,
+                showExternalReferences: opts.externalReferences !== false,
+                layout: opts.layout,
+            });
+
+            if (generatedFiles.length === 1) {
+                console.log(chalk.green(`PlantUML file generated successfully: ${generatedFiles[0]}`));
+                return;
+            }
+
+            console.log(chalk.green("PlantUML files generated successfully:"));
+            generatedFiles.forEach((filePath) => console.log(chalk.green(`- ${filePath}`)));
+        } catch (error) {
+            console.log(chalk.red(formatJsonGenerationErrorMessage(error)));
         }
     }
 

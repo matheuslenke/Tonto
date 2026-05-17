@@ -8,11 +8,11 @@ import {
     isDataType,
     isElementRelation
 } from "../language/generated/ast.js";
-import { getPrimaryContextModuleOrThrow } from "../language/utils/modelStatements.js";
 import { isAntiRigidStereotype, isRigidStereotype, isSemiRigidStereotype } from "../language/models/StereotypeUtils.js";
 import { isNonSortalOntoCategory } from "../language/models/OntologicalCategory.js";
 import { TontoNatureResult, tontoNatureUtils } from "../language/utils/tontoNatureUtils.js";
 import {
+    buildTontoDiagramWorkspaceContext,
     loadTontoDiagramWorkspace,
     resolveRequestedPackages,
     resolveTontoDiagramSourcePath
@@ -33,39 +33,31 @@ const DEFAULT_NODE_WIDTH = 260;
 const HEADER_HEIGHT = 58;
 const ROW_HEIGHT = 24;
 const NODE_PADDING = 24;
-const LAYOUT_LAYER_GAP = 140;
-const LAYOUT_NODE_GAP = 80;
-
-type LayoutNode = {
-    id: string;
-    width: number;
-    height: number;
-};
-
-type LayoutEdge = {
-    id: string;
-    sources: string[];
-    targets: string[];
-};
 
 export async function buildTontoDiagramGraph(
     spec: TontoDiagramSpec,
     diagramPath: string
 ): Promise<TontoDiagramGraph> {
     const workspace = await loadTontoDiagramWorkspace(spec.source, diagramPath);
-    const fallbackPackage = getPrimaryContextModuleOrThrow(workspace.sourceModel).name;
-    const requestedPackages = spec.imports.length > 0 ? spec.imports : [fallbackPackage];
+    const workspaceContext = buildTontoDiagramWorkspaceContext(
+        workspace.models,
+        workspace.sourcePath ?? workspace.projectRoot,
+    );
+    const graphIssues: TontoDiagramIssue[] = [];
+
+    const requestedPackages = spec.imports.length > 0
+        ? spec.imports
+        : workspaceContext.packages.map((pkg) => pkg.name);
     const resolvedPackages = resolveRequestedPackages(workspace.models, requestedPackages);
 
-    if (resolvedPackages.packages.length === 0) {
-        throw new Error(`Could not resolve any imported package from ${requestedPackages.join(", ")}.`);
+    for (const missing of resolvedPackages.missing) {
+        graphIssues.push({
+            severity: "warning",
+            message: `Imported package \`${missing}\` could not be resolved.`,
+        });
     }
 
     const visiblePackageNames = new Set(resolvedPackages.packages.map((contextModule) => contextModule.name));
-    const graphIssues: TontoDiagramIssue[] = resolvedPackages.missing.map((packageName) => ({
-        severity: "warning",
-        message: `Imported package \`${packageName}\` could not be resolved.`,
-    }));
 
     const nodes = collectNodes(resolvedPackages.packages, spec.filter.datatypes);
     const edgeCollection = collectEdges(resolvedPackages.packages, visiblePackageNames, spec.filter.external);
@@ -84,19 +76,7 @@ export async function buildTontoDiagramGraph(
         applyVisibilityFilter(nodes, edges, spec.filter.include, spec.filter.relations, graphIssues);
     }
 
-    const layoutTargets = await computeFallbackLayout(
-        nodes.map((node) => ({
-            id: node.id,
-            width: node.size.width,
-            height: node.size.height,
-        })),
-        edges.map((edge) => ({
-            id: edge.id,
-            sources: [edge.source],
-            targets: [edge.target],
-        })),
-        spec.presentation.direction
-    );
+    const layoutTargets = computeHierarchicalLayoutByPackage(nodes, edges);
 
     const savedLayouts = resolveSavedLayouts(spec, nodes);
 
@@ -110,11 +90,15 @@ export async function buildTontoDiagramGraph(
     return {
         title: spec.title,
         source: workspace.sourcePath,
+        projectRoot: workspace.projectRoot,
         packages: [...visiblePackageNames].sort((left, right) => left.localeCompare(right)),
+        imports: [...requestedPackages].sort((left, right) => left.localeCompare(right)),
+        filter: spec.filter,
         presentation: spec.presentation,
         viewport: spec.viewport,
         nodes: nodes.sort((left, right) => left.id.localeCompare(right.id)),
         edges: edges.sort((left, right) => left.id.localeCompare(right.id)),
+        workspace: workspaceContext,
         issues: graphIssues,
     };
 }
@@ -238,6 +222,8 @@ function createRelationEdge(
         connector: getConnector(relation),
         sourceCardinality: formatCardinality(relation.firstCardinality),
         targetCardinality: formatCardinality(relation.secondCardinality),
+        sourceEnd: relation.firstEndMetaAttributes?.endName,
+        targetEnd: relation.secondEndMetaAttributes?.endName,
     };
 
     const externalNodes: TontoDiagramNode[] = [];
@@ -516,113 +502,105 @@ function resolveSavedLayouts(spec: TontoDiagramSpec, nodes: TontoDiagramNode[]):
     return layouts;
 }
 
-async function computeFallbackLayout(
-    nodes: LayoutNode[],
-    edges: LayoutEdge[],
-    direction: TontoDiagramSpec["presentation"]["direction"]
-): Promise<Map<string, { x: number; y: number }>> {
-    if (nodes.length === 0) {
-        return new Map();
-    }
-
-    const layers = computeNodeLayers(nodes, edges);
+function computeHierarchicalLayoutByPackage(
+    nodes: TontoDiagramNode[],
+    edges: TontoDiagramEdge[]
+): Map<string, { x: number; y: number }> {
     const positions = new Map<string, { x: number; y: number }>();
-    const horizontal = direction === "LR" || direction === "RL";
-    const reversed = direction === "RL" || direction === "BT";
-    const maxLayer = Math.max(...layers.keys());
-
-    const layerSizes = new Map<number, number>();
-    for (const [layer, layerNodes] of layers) {
-        const size = horizontal
-            ? Math.max(...layerNodes.map((node) => node.width))
-            : Math.max(...layerNodes.map((node) => node.height));
-        layerSizes.set(layer, size);
+    if (nodes.length === 0) {
+        return positions;
     }
 
-    const layerOrigins = new Map<number, number>();
-    let nextLayerOrigin = 0;
-    for (let layer = 0; layer <= maxLayer; layer += 1) {
-        layerOrigins.set(layer, nextLayerOrigin);
-        nextLayerOrigin += (layerSizes.get(layer) ?? 0) + LAYOUT_LAYER_GAP;
-    }
+    const PACKAGE_GAP = 120;
+    const LAYER_GAP = 90;
+    const NODE_GAP = 60;
 
-    for (const [layer, layerNodes] of layers) {
-        let nextNodeOrigin = 0;
-        for (const node of layerNodes) {
-            const layerOrigin = layerOrigins.get(layer) ?? 0;
-            const axisLayerOrigin = reversed
-                ? nextLayerOrigin - LAYOUT_LAYER_GAP - layerOrigin - (layerSizes.get(layer) ?? 0)
-                : layerOrigin;
-
-            positions.set(node.id, horizontal
-                ? { x: axisLayerOrigin, y: nextNodeOrigin }
-                : { x: nextNodeOrigin, y: axisLayerOrigin });
-
-            nextNodeOrigin += (horizontal ? node.height : node.width) + LAYOUT_NODE_GAP;
+    const byPackage = new Map<string, TontoDiagramNode[]>();
+    for (const node of nodes) {
+        const list = byPackage.get(node.module);
+        if (list) {
+            list.push(node);
+        } else {
+            byPackage.set(node.module, [node]);
         }
+    }
+
+    let xCursor = 0;
+    const sortedPackages = [...byPackage.entries()].sort((left, right) => left[0].localeCompare(right[0]));
+
+    for (const [, packageNodes] of sortedPackages) {
+        const nodeIds = new Set(packageNodes.map((node) => node.id));
+        const specEdges = edges.filter(
+            (edge) => edge.kind === "specialization"
+                && nodeIds.has(edge.source)
+                && nodeIds.has(edge.target),
+        );
+
+        const incoming = new Map<string, number>(packageNodes.map((node) => [node.id, 0]));
+        const outgoing = new Map<string, string[]>();
+        for (const edge of specEdges) {
+            incoming.set(edge.target, (incoming.get(edge.target) ?? 0) + 1);
+            outgoing.set(edge.source, [...(outgoing.get(edge.source) ?? []), edge.target]);
+        }
+
+        const layerByNode = new Map<string, number>(packageNodes.map((node) => [node.id, 0]));
+        const queue = packageNodes
+            .filter((node) => (incoming.get(node.id) ?? 0) === 0)
+            .map((node) => node.id);
+
+        while (queue.length > 0) {
+            const current = queue.shift();
+            if (!current) {
+                continue;
+            }
+            const currentLayer = layerByNode.get(current) ?? 0;
+            for (const target of outgoing.get(current) ?? []) {
+                layerByNode.set(target, Math.max(layerByNode.get(target) ?? 0, currentLayer + 1));
+                incoming.set(target, (incoming.get(target) ?? 0) - 1);
+                if (incoming.get(target) === 0) {
+                    queue.push(target);
+                }
+            }
+        }
+
+        const byLayer = new Map<number, TontoDiagramNode[]>();
+        for (const node of packageNodes) {
+            const layer = layerByNode.get(node.id) ?? 0;
+            const layerNodes = byLayer.get(layer);
+            if (layerNodes) {
+                layerNodes.push(node);
+            } else {
+                byLayer.set(layer, [node]);
+            }
+        }
+
+        const orderedLayers = [...byLayer.entries()].sort((left, right) => left[0] - right[0]);
+        for (const [, layerNodes] of orderedLayers) {
+            layerNodes.sort((left, right) => left.label.localeCompare(right.label));
+        }
+
+        const packageWidth = Math.max(
+            0,
+            ...orderedLayers.map(([, layerNodes]) =>
+                layerNodes.reduce((sum, node) => sum + node.size.width, 0) + Math.max(0, layerNodes.length - 1) * NODE_GAP,
+            ),
+        );
+
+        let y = 0;
+        for (const [, layerNodes] of orderedLayers) {
+            const layerWidth = layerNodes.reduce((sum, node) => sum + node.size.width, 0)
+                + Math.max(0, layerNodes.length - 1) * NODE_GAP;
+            const layerHeight = Math.max(...layerNodes.map((node) => node.size.height));
+            let x = xCursor + (packageWidth - layerWidth) / 2;
+            for (const node of layerNodes) {
+                positions.set(node.id, { x, y });
+                x += node.size.width + NODE_GAP;
+            }
+            y += layerHeight + LAYER_GAP;
+        }
+
+        xCursor += packageWidth + PACKAGE_GAP;
     }
 
     return positions;
-}
-
-function computeNodeLayers(nodes: LayoutNode[], edges: LayoutEdge[]): Map<number, LayoutNode[]> {
-    const nodesById = new Map(nodes.map((node) => [node.id, node]));
-    const outgoingEdges = new Map<string, string[]>();
-    const incomingCounts = new Map(nodes.map((node) => [node.id, 0]));
-    const nodeLayers = new Map(nodes.map((node) => [node.id, 0]));
-
-    for (const edge of edges) {
-        for (const source of edge.sources) {
-            if (!nodesById.has(source)) {
-                continue;
-            }
-
-            for (const target of edge.targets) {
-                if (!nodesById.has(target)) {
-                    continue;
-                }
-
-                outgoingEdges.set(source, [...outgoingEdges.get(source) ?? [], target]);
-                incomingCounts.set(target, (incomingCounts.get(target) ?? 0) + 1);
-            }
-        }
-    }
-
-    const queue = nodes
-        .filter((node) => incomingCounts.get(node.id) === 0)
-        .map((node) => node.id)
-        .sort((left, right) => left.localeCompare(right));
-    const visited = new Set<string>();
-
-    while (queue.length > 0) {
-        const current = queue.shift();
-        if (!current || visited.has(current)) {
-            continue;
-        }
-
-        visited.add(current);
-        const currentLayer = nodeLayers.get(current) ?? 0;
-
-        for (const target of outgoingEdges.get(current) ?? []) {
-            nodeLayers.set(target, Math.max(nodeLayers.get(target) ?? 0, currentLayer + 1));
-            incomingCounts.set(target, (incomingCounts.get(target) ?? 0) - 1);
-            if (incomingCounts.get(target) === 0) {
-                queue.push(target);
-                queue.sort((left, right) => left.localeCompare(right));
-            }
-        }
-    }
-
-    const layers = new Map<number, LayoutNode[]>();
-    for (const node of nodes) {
-        const layer = visited.has(node.id) ? nodeLayers.get(node.id) ?? 0 : 0;
-        layers.set(layer, [...layers.get(layer) ?? [], node]);
-    }
-
-    return new Map([...layers.entries()]
-        .sort(([left], [right]) => left - right)
-        .map(([layer, layerNodes]) => [
-            layer,
-            layerNodes.sort((left, right) => left.id.localeCompare(right.id)),
-        ]));
 }

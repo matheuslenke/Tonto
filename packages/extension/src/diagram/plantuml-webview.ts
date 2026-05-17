@@ -9,18 +9,28 @@ export interface PlantUMLPanelState {
     layoutOptions: Array<{ value: string; label: string }>;
 }
 
+export interface PlantUMLPanelOptions {
+    defaultBaseName?: string;
+    defaultSaveDirectory?: vscode.Uri;
+    title?: string;
+}
+
 export class PlantUMLPanel {
     public static currentPanel: PlantUMLPanel | undefined;
     public static readonly viewType = 'tontoPlantUML';
     private readonly _panel: vscode.WebviewPanel;
     public documentUri: vscode.Uri;
     private _disposables: vscode.Disposable[] = [];
+    private _defaultBaseName: string;
+    private _defaultSaveDirectory: vscode.Uri;
 
     private _currentPlantUML: string = '';
 
-    private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, documentUri: vscode.Uri) {
+    private constructor(panel: vscode.WebviewPanel, extensionUri: vscode.Uri, documentUri: vscode.Uri, options: PlantUMLPanelOptions = {}) {
         this._panel = panel;
         this.documentUri = documentUri;
+        this._defaultBaseName = options.defaultBaseName ?? getDefaultBaseName(documentUri);
+        this._defaultSaveDirectory = options.defaultSaveDirectory ?? getDefaultSaveDirectory(documentUri);
 
         this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
 
@@ -49,11 +59,18 @@ export class PlantUMLPanel {
         );
     }
 
-    public static createOrShow(extensionUri: vscode.Uri, plantumlContent: string, documentUri: vscode.Uri, state: PlantUMLPanelState) {
+    public static createOrShow(
+        extensionUri: vscode.Uri,
+        plantumlContent: string,
+        documentUri: vscode.Uri,
+        state: PlantUMLPanelState,
+        options: PlantUMLPanelOptions = {}
+    ) {
         const column = vscode.ViewColumn.Beside;
 
         if (PlantUMLPanel.currentPanel) {
             PlantUMLPanel.currentPanel.documentUri = documentUri;
+            PlantUMLPanel.currentPanel.updateOptions(options);
             PlantUMLPanel.currentPanel._panel.reveal(column);
             PlantUMLPanel.currentPanel.update(plantumlContent, state);
             return;
@@ -61,7 +78,7 @@ export class PlantUMLPanel {
 
         const panel = vscode.window.createWebviewPanel(
             PlantUMLPanel.viewType,
-            `PlantUML: ${path.basename(documentUri.fsPath)}`,
+            options.title ?? `PlantUML: ${path.basename(documentUri.fsPath)}`,
             column,
             {
                 enableScripts: true,
@@ -69,7 +86,7 @@ export class PlantUMLPanel {
             }
         );
 
-        PlantUMLPanel.currentPanel = new PlantUMLPanel(panel, extensionUri, documentUri);
+        PlantUMLPanel.currentPanel = new PlantUMLPanel(panel, extensionUri, documentUri, options);
         PlantUMLPanel.currentPanel.update(plantumlContent, state);
     }
 
@@ -80,7 +97,7 @@ export class PlantUMLPanel {
 
     private async downloadCode() {
         const uri = await vscode.window.showSaveDialog({
-            defaultUri: vscode.Uri.file(this.documentUri.fsPath.replace('.tonto', '.puml')),
+            defaultUri: vscode.Uri.joinPath(this._defaultSaveDirectory, `${this._defaultBaseName}.puml`),
             filters: { 'PlantUML': ['puml'] }
         });
         if (uri) {
@@ -94,7 +111,7 @@ export class PlantUMLPanel {
         const imageUrl = `https://www.plantuml.com/plantuml/png/${encoded}`;
 
         const uri = await vscode.window.showSaveDialog({
-            defaultUri: vscode.Uri.file(this.documentUri.fsPath.replace('.tonto', '.png')),
+            defaultUri: vscode.Uri.joinPath(this._defaultSaveDirectory, `${this._defaultBaseName}.png`),
             filters: { 'PNG': ['png'] }
         });
 
@@ -113,6 +130,12 @@ export class PlantUMLPanel {
                 vscode.window.showErrorMessage(`Error downloading PNG: ${e}`);
             }
         }
+    }
+
+    private updateOptions(options: PlantUMLPanelOptions): void {
+        this._defaultBaseName = options.defaultBaseName ?? getDefaultBaseName(this.documentUri);
+        this._defaultSaveDirectory = options.defaultSaveDirectory ?? getDefaultSaveDirectory(this.documentUri);
+        this._panel.title = options.title ?? `PlantUML: ${path.basename(this.documentUri.fsPath)}`;
     }
 
     public dispose() {
@@ -313,6 +336,14 @@ function escapeHtml(value: string): string {
         .replace(/"/g, '&quot;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
+}
+
+function getDefaultBaseName(uri: vscode.Uri): string {
+    return path.basename(uri.fsPath, path.extname(uri.fsPath)) || 'ontology';
+}
+
+function getDefaultSaveDirectory(uri: vscode.Uri): vscode.Uri {
+    return vscode.Uri.file(path.dirname(uri.fsPath));
 }
 
 function getNonce(): string {

@@ -13,9 +13,6 @@ export function registerTontoDiagramCompletionProvider(): vscode.Disposable {
             provideCompletionItems: async (document, position) => {
                 const linePrefix = document.lineAt(position.line).text.slice(0, position.character);
                 const sourceReference = readSourceReference(document.getText());
-                if (!sourceReference) {
-                    return undefined;
-                }
 
                 let workspaceContext: TontoDiagramWorkspaceContext;
                 try {
@@ -101,7 +98,7 @@ function createTokenRange(position: vscode.Position, token: string): vscode.Rang
 }
 
 function readSourceReference(text: string): string | undefined {
-    return text.match(/(^|\n)\s*source\s+["']([^"']+)["']/)?.[2];
+    return text.match(/(^|\n)\s*source\s+["']([^"']+)["']/)?.[2] ?? undefined;
 }
 
 function readImportedPackages(text: string): string[] {

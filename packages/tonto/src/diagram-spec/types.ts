@@ -29,7 +29,7 @@ export type TontoDiagramViewport = {
 
 export type TontoDiagramSpec = {
     title: string;
-    source: string;
+    source?: string;
     imports: string[];
     filter: TontoDiagramFilter;
     presentation: TontoDiagramPresentation;
@@ -117,16 +117,22 @@ export type TontoDiagramEdge = {
     connector?: TontoDiagramConnector;
     sourceCardinality?: string;
     targetCardinality?: string;
+    sourceEnd?: string;
+    targetEnd?: string;
 };
 
 export type TontoDiagramGraph = {
     title: string;
-    source: string;
+    source?: string;
+    projectRoot: string;
     packages: string[];
+    imports: string[];
+    filter: TontoDiagramFilter;
     presentation: TontoDiagramPresentation;
     viewport: TontoDiagramViewport;
     nodes: TontoDiagramNode[];
     edges: TontoDiagramEdge[];
+    workspace: TontoDiagramWorkspaceContext;
     issues: TontoDiagramIssue[];
 };
 

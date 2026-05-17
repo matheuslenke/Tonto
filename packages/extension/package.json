@@ -251,7 +251,7 @@
                         "filenamePattern": "*.tontodiagram"
                     }
                 ],
-                "priority": "option"
+                "priority": "default"
             }
         ],
         "commands": [
@@ -333,13 +333,8 @@
                 "category": "Tonto"
             },
             {
-                "command": "tonto.diagram.plantuml.export",
-                "title": "Export PlantUML",
-                "category": "Tonto"
-            },
-            {
-                "command": "tonto.diagram.plantuml.open",
-                "title": "Open PlantUML Diagram",
+                "command": "tonto.diagram.plantuml.openProject",
+                "title": "Open Ontology PlantUML Diagram",
                 "category": "Tonto"
             },
             {
