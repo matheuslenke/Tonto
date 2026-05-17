@@ -32,8 +32,6 @@ export function serializeTontoDiagramSpec(spec: TontoDiagramSpec): string {
         }
     }
 
-    lines.push("");
-    lines.push(`  viewport { x ${formatNumber(spec.viewport.x)} y ${formatNumber(spec.viewport.y)} zoom ${formatNumber(spec.viewport.zoom)} }`);
     lines.push("}");
 
     return lines.join("\n");
@@ -41,8 +39,7 @@ export function serializeTontoDiagramSpec(spec: TontoDiagramSpec): string {
 
 export function updateTontoDiagramLayout(
     spec: TontoDiagramSpec,
-    layouts: Array<{ target: string; x: number; y: number }>,
-    viewport: TontoDiagramSpec["viewport"]
+    layouts: Array<{ target: string; x: number; y: number }>
 ): TontoDiagramSpec {
     const normalizedLayouts = [...layouts]
         .sort((left, right) => left.target.localeCompare(right.target))
@@ -55,11 +52,6 @@ export function updateTontoDiagramLayout(
     return {
         ...spec,
         nodes: normalizedLayouts,
-        viewport: {
-            x: roundNumber(viewport.x),
-            y: roundNumber(viewport.y),
-            zoom: roundNumber(viewport.zoom),
-        },
     };
 }
 

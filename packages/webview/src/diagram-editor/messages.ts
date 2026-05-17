@@ -1,7 +1,10 @@
 import type { TontoDiagramGraph, TontoDiagramIssue } from "tonto-cli";
 
+export type DiagramDocumentStateStatus = "loading" | "ready" | "error";
+
 export type DiagramDocumentStateMessage = {
     type: "documentState";
+    status?: DiagramDocumentStateStatus;
     documentText: string;
     graph?: TontoDiagramGraph;
     issues: TontoDiagramIssue[];
@@ -23,9 +26,4 @@ export type DiagramOutgoingMessage =
             x: number;
             y: number;
         }>;
-        viewport: {
-            x: number;
-            y: number;
-            zoom: number;
-        };
     };

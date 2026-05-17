@@ -1,8 +1,13 @@
-
 import * as plantumlEncoder from 'plantuml-encoder';
 import * as vscode from 'vscode';
 
 import * as path from 'path';
+
+export interface PlantUMLPanelState {
+    showExternalReferences: boolean;
+    layoutVariant: string;
+    layoutOptions: Array<{ value: string; label: string }>;
+}
 
 export class PlantUMLPanel {
     public static currentPanel: PlantUMLPanel | undefined;
@@ -34,6 +39,9 @@ export class PlantUMLPanel {
                     case 'toggleOrthogonalLines':
                         vscode.commands.executeCommand('tonto.diagram.plantuml.toggleOrthogonalLines');
                         break;
+                    case 'setLayoutVariant':
+                        vscode.commands.executeCommand('tonto.diagram.plantuml.setLayoutVariant', message.layoutVariant);
+                        break;
                 }
             },
             null,
@@ -41,13 +49,13 @@ export class PlantUMLPanel {
         );
     }
 
-    public static createOrShow(extensionUri: vscode.Uri, plantumlContent: string, documentUri: vscode.Uri) {
+    public static createOrShow(extensionUri: vscode.Uri, plantumlContent: string, documentUri: vscode.Uri, state: PlantUMLPanelState) {
         const column = vscode.ViewColumn.Beside;
 
         if (PlantUMLPanel.currentPanel) {
             PlantUMLPanel.currentPanel.documentUri = documentUri;
             PlantUMLPanel.currentPanel._panel.reveal(column);
-            PlantUMLPanel.currentPanel.update(plantumlContent);
+            PlantUMLPanel.currentPanel.update(plantumlContent, state);
             return;
         }
 
@@ -62,12 +70,12 @@ export class PlantUMLPanel {
         );
 
         PlantUMLPanel.currentPanel = new PlantUMLPanel(panel, extensionUri, documentUri);
-        PlantUMLPanel.currentPanel.update(plantumlContent);
+        PlantUMLPanel.currentPanel.update(plantumlContent, state);
     }
 
-    public update(plantumlContent: string) {
+    public update(plantumlContent: string, state: PlantUMLPanelState) {
         this._currentPlantUML = plantumlContent;
-        this._panel.webview.html = this._getHtmlForWebview(plantumlContent);
+        this._panel.webview.html = this._getHtmlForWebview(plantumlContent, state);
     }
 
     private async downloadCode() {
@@ -83,7 +91,7 @@ export class PlantUMLPanel {
 
     private async downloadPng() {
         const encoded = plantumlEncoder.encode(this._currentPlantUML);
-        const imageUrl = `http://www.plantuml.com/plantuml/png/${encoded}`; // Use png endpoint
+        const imageUrl = `https://www.plantuml.com/plantuml/png/${encoded}`;
 
         const uri = await vscode.window.showSaveDialog({
             defaultUri: vscode.Uri.file(this.documentUri.fsPath.replace('.tonto', '.png')),
@@ -118,15 +126,25 @@ export class PlantUMLPanel {
         }
     }
 
-    private _getHtmlForWebview(plantumlContent: string) {
+    private _getHtmlForWebview(plantumlContent: string, state: PlantUMLPanelState) {
         const encoded = plantumlEncoder.encode(plantumlContent);
-        const imageUrl = `http://www.plantuml.com/plantuml/svg/${encoded}`;
+        const imageUrl = `https://www.plantuml.com/plantuml/svg/${encoded}`;
+        const nonce = getNonce();
+        const cspSource = this._panel.webview.cspSource;
+        const layoutOptions = state.layoutOptions
+            .map((option) => {
+                const selected = option.value === state.layoutVariant ? ' selected' : '';
+                return `<option value="${escapeHtml(option.value)}"${selected}>${escapeHtml(option.label)}</option>`;
+            })
+            .join('');
+        const externalRefsLabel = state.showExternalReferences ? 'Hide External Refs' : 'Show External Refs';
 
         return `<!DOCTYPE html>
         <html lang="en">
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https://www.plantuml.com data:; script-src 'nonce-${nonce}'; style-src 'unsafe-inline' ${cspSource};">
             <title>Tonto Diagram</title>
             <style>
                 body {
@@ -170,7 +188,8 @@ export class PlantUMLPanel {
                     gap: 10px;
                     z-index: 1000;
                 }
-                button {
+                button,
+                select {
                     background: var(--vscode-button-background);
                     color: var(--vscode-button-foreground);
                     border: none;
@@ -178,7 +197,8 @@ export class PlantUMLPanel {
                     cursor: pointer;
                     border-radius: 3px;
                 }
-                button:hover {
+                button:hover,
+                select:hover {
                     background: var(--vscode-button-hoverBackground);
                 }
             </style>
@@ -191,12 +211,14 @@ export class PlantUMLPanel {
                 <button id="zoomIn">+</button>
                 <button id="zoomOut">-</button>
                 <button id="reset">Reset</button>
-                <button id="toggleRefs">Show/Hide External Refs</button>
-                <button id="toggleOrthogonal">Orthogonal</button>
+                <button id="toggleRefs">${externalRefsLabel}</button>
+                <select id="layoutVariant" title="Layout">
+                    ${layoutOptions}
+                </select>
                 <button id="downloadCode">Code</button>
                 <button id="downloadPng">PNG</button>
             </div>
-            <script>
+            <script nonce="${nonce}">
                 const vscode = acquireVsCodeApi();
                 const container = document.getElementById('diagram-container');
                 const img = document.getElementById('diagram');
@@ -232,8 +254,11 @@ export class PlantUMLPanel {
                     vscode.postMessage({ command: 'toggleExternalRefs' });
                 };
 
-                document.getElementById('toggleOrthogonal').onclick = () => {
-                    vscode.postMessage({ command: 'toggleOrthogonalLines' });
+                document.getElementById('layoutVariant').onchange = (event) => {
+                    vscode.postMessage({
+                        command: 'setLayoutVariant',
+                        layoutVariant: event.target.value
+                    });
                 };
 
                 document.getElementById('downloadCode').onclick = () => {
@@ -280,4 +305,17 @@ export class PlantUMLPanel {
         </body>
         </html>`;
     }
+}
+
+function escapeHtml(value: string): string {
+    return value
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+function getNonce(): string {
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    return Array.from({ length: 32 }, () => possible.charAt(Math.floor(Math.random() * possible.length))).join('');
 }

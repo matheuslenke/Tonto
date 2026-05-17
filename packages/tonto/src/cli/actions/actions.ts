@@ -113,22 +113,20 @@ export class TontoActions {
         if (opts.withApi) {
             console.log(chalk.bold("\nPerforming API validation..."));
             try {
-                const response = await validateCommand(dirName, true);
+                const response = await validateCommand(dirName, false);
 
-                if (Array.isArray(response)) {
-                    const resultResponses = response as ValidationReturn[];
-                    let errorCount = 0;
-                    resultResponses.forEach(result => {
-                        errorCount += result.result.length;
-                        result.result.forEach(resultResponse => {
+                if (isValidationReturn(response)) {
+                    if (response.result.length > 0) {
+                        response.result.forEach(resultResponse => {
                             console.log(chalk.bold.redBright(`[${resultResponse.severity}] ${resultResponse.title}:`));
                             console.log(chalk.red(resultResponse.description));
                         });
-                    });
-                    console.log(chalk.bold(`- Total of API errors: ${errorCount}`));
+                        console.log(chalk.bold(`- Total of API errors: ${response.numberOfErrors}`));
+                    } else {
+                        console.log(chalk.green("No API errors found."));
+                    }
                 } else {
-                    const error = response as ErrorResultResponse;
-                    console.log(chalk.bold.red(error.message));
+                    console.log(chalk.bold.red(response.message ?? "API validation failed."));
                 }
             } catch (error) {
                 console.log(chalk.red(error));
@@ -141,4 +139,8 @@ export class TontoActions {
         const cmd = initCommand();
         cmd.parse([process.argv[0], process.argv[1]]);
     }
+}
+
+function isValidationReturn(response: ValidationReturn | ErrorResultResponse): response is ValidationReturn {
+    return "result" in response && Array.isArray(response.result);
 }

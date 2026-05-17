@@ -3,7 +3,7 @@ import { TontoDiagramEditorProvider } from "./tonto-diagram-editor-provider.js";
 
 const TONTO_DIAGRAM_LANGUAGE_ID = "tontodiagram";
 
-export function registerAutoOpenTontoDiagramPreview(context: vscode.ExtensionContext): void {
+export function registerAutoOpenTontoDiagramPreview(): vscode.Disposable {
     const handledDocuments = new Set<string>();
 
     const maybeOpenPreview = async (editor: vscode.TextEditor | undefined): Promise<void> => {
@@ -38,7 +38,7 @@ export function registerAutoOpenTontoDiagramPreview(context: vscode.ExtensionCon
         }
     };
 
-    context.subscriptions.push(
+    const disposable = vscode.Disposable.from(
         vscode.window.onDidChangeActiveTextEditor((editor) => {
             void maybeOpenPreview(editor);
         }),
@@ -47,9 +47,14 @@ export function registerAutoOpenTontoDiagramPreview(context: vscode.ExtensionCon
                 handledDocuments.delete(document.uri.toString());
             }
         }),
+        new vscode.Disposable(() => {
+            handledDocuments.clear();
+        }),
     );
 
     void maybeOpenPreview(vscode.window.activeTextEditor);
+
+    return disposable;
 }
 
 function hasDiagramPreviewOpen(uri: vscode.Uri): boolean {

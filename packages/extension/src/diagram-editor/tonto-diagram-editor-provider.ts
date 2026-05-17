@@ -11,6 +11,7 @@ import * as vscode from "vscode";
 
 type DiagramDocumentStateMessage = {
     type: "documentState";
+    status: "loading" | "ready" | "error";
     documentText: string;
     graph?: TontoDiagramGraph;
     issues: TontoDiagramIssue[];
@@ -33,11 +34,6 @@ type DiagramLayoutUpdateMessage = {
         x: number;
         y: number;
     }>;
-    viewport: {
-        x: number;
-        y: number;
-        zoom: number;
-    };
 };
 
 type DiagramIncomingMessage = DiagramReadyMessage | DiagramSourceUpdateMessage | DiagramLayoutUpdateMessage;
@@ -49,14 +45,15 @@ type DiagramEditorPanelState = {
     disposed: boolean;
 };
 
-export class TontoDiagramEditorProvider implements vscode.CustomTextEditorProvider {
+export class TontoDiagramEditorProvider implements vscode.CustomTextEditorProvider, vscode.Disposable {
     public static readonly viewType = "tonto.diagram.editor";
 
     private readonly panelsByDocument = new Map<string, Set<DiagramEditorPanelState>>();
     private readonly documentsBySourcePath = new Map<string, Set<string>>();
+    private readonly disposables: vscode.Disposable[] = [];
 
     constructor(private readonly context: vscode.ExtensionContext) {
-        context.subscriptions.push(
+        this.disposables.push(
             vscode.workspace.onDidChangeTextDocument(async (event) => {
                 if (event.document.languageId !== "tontodiagram") {
                     return;
@@ -79,12 +76,26 @@ export class TontoDiagramEditorProvider implements vscode.CustomTextEditorProvid
 
     public static register(context: vscode.ExtensionContext): vscode.Disposable {
         const provider = new TontoDiagramEditorProvider(context);
-        return vscode.window.registerCustomEditorProvider(TontoDiagramEditorProvider.viewType, provider, {
-            webviewOptions: {
-                retainContextWhenHidden: true,
-            },
-            supportsMultipleEditorsPerDocument: true,
-        });
+        return vscode.Disposable.from(
+            vscode.window.registerCustomEditorProvider(TontoDiagramEditorProvider.viewType, provider, {
+                webviewOptions: {
+                    retainContextWhenHidden: true,
+                },
+                supportsMultipleEditorsPerDocument: true,
+            }),
+            provider,
+        );
+    }
+
+    public dispose(): void {
+        for (const panelState of this.getPanelStates()) {
+            panelState.panel.dispose();
+        }
+
+        vscode.Disposable.from(...this.disposables).dispose();
+        this.disposables.length = 0;
+        this.panelsByDocument.clear();
+        this.documentsBySourcePath.clear();
     }
 
     async resolveCustomTextEditor(
@@ -140,8 +151,7 @@ export class TontoDiagramEditorProvider implements vscode.CustomTextEditorProvid
                     target: node.specifier,
                     x: node.x,
                     y: node.y,
-                })),
-                message.viewport,
+                }))
             );
 
             const serialized = serializeTontoDiagramSpec(updatedSpec);
@@ -218,6 +228,7 @@ export class TontoDiagramEditorProvider implements vscode.CustomTextEditorProvid
             parsed,
             message: {
                 type: "documentState",
+                status: parsed.spec ? "loading" : "error",
                 documentText: document.getText(),
                 issues: [...parsed.issues],
             },
@@ -231,12 +242,14 @@ export class TontoDiagramEditorProvider implements vscode.CustomTextEditorProvid
     ): Promise<DiagramDocumentStateMessage> {
         const issues = [...immediateState.issues];
         let graph: TontoDiagramGraph | undefined;
+        let status: DiagramDocumentStateMessage["status"] = "ready";
 
         if (parsed.spec) {
             try {
                 graph = await buildTontoDiagramGraph(parsed.spec, document.uri.fsPath);
                 issues.push(...graph.issues);
             } catch (error) {
+                status = "error";
                 issues.push({
                     severity: "error",
                     message: error instanceof Error ? error.message : String(error),
@@ -246,6 +259,7 @@ export class TontoDiagramEditorProvider implements vscode.CustomTextEditorProvid
 
         return {
             type: "documentState",
+            status,
             documentText: immediateState.documentText,
             graph,
             issues,
@@ -305,6 +319,10 @@ export class TontoDiagramEditorProvider implements vscode.CustomTextEditorProvid
         const edit = new vscode.WorkspaceEdit();
         edit.replace(document.uri, fullRange, nextText);
         await vscode.workspace.applyEdit(edit);
+    }
+
+    private getPanelStates(): DiagramEditorPanelState[] {
+        return [...this.panelsByDocument.values()].flatMap((panelStates) => [...panelStates]);
     }
 }
 

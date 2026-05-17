@@ -6,8 +6,8 @@ import * as vscode from "vscode";
 
 const TONTO_DIAGRAM_LANGUAGE_ID = "tontodiagram";
 
-export function registerTontoDiagramCompletionProvider(context: vscode.ExtensionContext): void {
-    const provider = vscode.languages.registerCompletionItemProvider(
+export function registerTontoDiagramCompletionProvider(): vscode.Disposable {
+    return vscode.languages.registerCompletionItemProvider(
         { language: TONTO_DIAGRAM_LANGUAGE_ID, scheme: "file" },
         {
             provideCompletionItems: async (document, position) => {
@@ -75,8 +75,6 @@ export function registerTontoDiagramCompletionProvider(context: vscode.Extension
         ".",
         ","
     );
-
-    context.subscriptions.push(provider);
 }
 
 function createCompletionItem(input: {

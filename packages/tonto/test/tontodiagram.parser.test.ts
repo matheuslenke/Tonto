@@ -81,13 +81,12 @@ describe("tontodiagram parser", () => {
             [
                 { target: "people.Child", x: 360.154, y: 120.499 },
                 { target: "people.Person", x: 80, y: 120 },
-            ],
-            { x: 4.124, y: 10.333, zoom: 0.875 }
+            ]
         );
 
         expect(serializeTontoDiagramSpec(updated)).toContain("node people.Child { x 360.15 y 120.5 }");
         expect(serializeTontoDiagramSpec(updated)).toContain("import people");
-        expect(serializeTontoDiagramSpec(updated)).toContain("viewport { x 4.12 y 10.33 zoom 0.88 }");
+        expect(serializeTontoDiagramSpec(updated)).not.toContain("viewport");
     });
 
     test("reports missing source declarations", () => {

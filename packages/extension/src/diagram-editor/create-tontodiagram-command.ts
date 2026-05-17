@@ -2,37 +2,35 @@ import * as vscode from "vscode";
 
 const COMMAND_ID = "tonto.diagram.createFile";
 
-export function registerCreateTontoDiagramCommand(context: vscode.ExtensionContext): void {
-    context.subscriptions.push(
-        vscode.commands.registerCommand(COMMAND_ID, async (resource?: vscode.Uri) => {
-            const sourceDocument = await resolveSourceDocument(resource);
-            if (!sourceDocument) {
-                return;
-            }
+export function registerCreateTontoDiagramCommand(): vscode.Disposable {
+    return vscode.commands.registerCommand(COMMAND_ID, async (resource?: vscode.Uri) => {
+        const sourceDocument = await resolveSourceDocument(resource);
+        if (!sourceDocument) {
+            return;
+        }
 
-            if (sourceDocument.uri.scheme !== "file") {
-                vscode.window.showErrorMessage("Tonto diagram files can only be created from files on disk.");
-                return;
-            }
+        if (sourceDocument.uri.scheme !== "file") {
+            vscode.window.showErrorMessage("Tonto diagram files can only be created from files on disk.");
+            return;
+        }
 
-            const targetUri = sourceDocument.uri.with({
-                path: sourceDocument.uri.path.replace(/\.tonto$/i, ".tontodiagram"),
-            });
+        const targetUri = sourceDocument.uri.with({
+            path: sourceDocument.uri.path.replace(/\.tonto$/i, ".tontodiagram"),
+        });
 
-            const diagramContents = createDiagramTemplate(sourceDocument);
+        const diagramContents = createDiagramTemplate(sourceDocument);
 
-            try {
-                await vscode.workspace.fs.stat(targetUri);
-            } catch {
-                await vscode.workspace.fs.writeFile(targetUri, Buffer.from(diagramContents, "utf8"));
-            }
+        try {
+            await vscode.workspace.fs.stat(targetUri);
+        } catch {
+            await vscode.workspace.fs.writeFile(targetUri, Buffer.from(diagramContents, "utf8"));
+        }
 
-            const targetDocument = await vscode.workspace.openTextDocument(targetUri);
-            await vscode.window.showTextDocument(targetDocument, {
-                preview: false,
-            });
-        }),
-    );
+        const targetDocument = await vscode.workspace.openTextDocument(targetUri);
+        await vscode.window.showTextDocument(targetDocument, {
+            preview: false,
+        });
+    });
 }
 
 async function resolveSourceDocument(resource?: vscode.Uri): Promise<vscode.TextDocument | undefined> {
@@ -65,8 +63,6 @@ ${packageName ? `  import ${packageName}\n` : ""}
   attributes true
   external false
   datatypes true
-
-  viewport { x 0 y 0 zoom 1 }
 }
 `;
 }

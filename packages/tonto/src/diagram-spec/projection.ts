@@ -1,4 +1,3 @@
-import ElkConstructor from "elkjs";
 import {
     Attribute,
     ClassDeclaration,
@@ -30,13 +29,12 @@ import {
     TontoDiagramSpec
 } from "./types.js";
 
-const ELK_CLASS = "default" in ElkConstructor ? ElkConstructor.default : ElkConstructor;
-const ELK = new ELK_CLASS({ algorithms: ["layered"] });
-
 const DEFAULT_NODE_WIDTH = 260;
 const HEADER_HEIGHT = 58;
 const ROW_HEIGHT = 24;
 const NODE_PADDING = 24;
+const LAYOUT_LAYER_GAP = 140;
+const LAYOUT_NODE_GAP = 80;
 
 type LayoutNode = {
     id: string;
@@ -527,26 +525,104 @@ async function computeFallbackLayout(
         return new Map();
     }
 
-    const elkGraph = await ELK.layout({
-        id: "root",
-        layoutOptions: {
-            "elk.algorithm": "layered",
-            "elk.direction": direction,
-            "elk.spacing.nodeNode": "60",
-            "elk.layered.spacing.nodeNodeBetweenLayers": "90",
-        },
-        children: nodes,
-        edges,
-    });
-
+    const layers = computeNodeLayers(nodes, edges);
     const positions = new Map<string, { x: number; y: number }>();
+    const horizontal = direction === "LR" || direction === "RL";
+    const reversed = direction === "RL" || direction === "BT";
+    const maxLayer = Math.max(...layers.keys());
 
-    for (const node of elkGraph.children ?? []) {
-        positions.set(node.id, {
-            x: node.x ?? 0,
-            y: node.y ?? 0,
-        });
+    const layerSizes = new Map<number, number>();
+    for (const [layer, layerNodes] of layers) {
+        const size = horizontal
+            ? Math.max(...layerNodes.map((node) => node.width))
+            : Math.max(...layerNodes.map((node) => node.height));
+        layerSizes.set(layer, size);
+    }
+
+    const layerOrigins = new Map<number, number>();
+    let nextLayerOrigin = 0;
+    for (let layer = 0; layer <= maxLayer; layer += 1) {
+        layerOrigins.set(layer, nextLayerOrigin);
+        nextLayerOrigin += (layerSizes.get(layer) ?? 0) + LAYOUT_LAYER_GAP;
+    }
+
+    for (const [layer, layerNodes] of layers) {
+        let nextNodeOrigin = 0;
+        for (const node of layerNodes) {
+            const layerOrigin = layerOrigins.get(layer) ?? 0;
+            const axisLayerOrigin = reversed
+                ? nextLayerOrigin - LAYOUT_LAYER_GAP - layerOrigin - (layerSizes.get(layer) ?? 0)
+                : layerOrigin;
+
+            positions.set(node.id, horizontal
+                ? { x: axisLayerOrigin, y: nextNodeOrigin }
+                : { x: nextNodeOrigin, y: axisLayerOrigin });
+
+            nextNodeOrigin += (horizontal ? node.height : node.width) + LAYOUT_NODE_GAP;
+        }
     }
 
     return positions;
+}
+
+function computeNodeLayers(nodes: LayoutNode[], edges: LayoutEdge[]): Map<number, LayoutNode[]> {
+    const nodesById = new Map(nodes.map((node) => [node.id, node]));
+    const outgoingEdges = new Map<string, string[]>();
+    const incomingCounts = new Map(nodes.map((node) => [node.id, 0]));
+    const nodeLayers = new Map(nodes.map((node) => [node.id, 0]));
+
+    for (const edge of edges) {
+        for (const source of edge.sources) {
+            if (!nodesById.has(source)) {
+                continue;
+            }
+
+            for (const target of edge.targets) {
+                if (!nodesById.has(target)) {
+                    continue;
+                }
+
+                outgoingEdges.set(source, [...outgoingEdges.get(source) ?? [], target]);
+                incomingCounts.set(target, (incomingCounts.get(target) ?? 0) + 1);
+            }
+        }
+    }
+
+    const queue = nodes
+        .filter((node) => incomingCounts.get(node.id) === 0)
+        .map((node) => node.id)
+        .sort((left, right) => left.localeCompare(right));
+    const visited = new Set<string>();
+
+    while (queue.length > 0) {
+        const current = queue.shift();
+        if (!current || visited.has(current)) {
+            continue;
+        }
+
+        visited.add(current);
+        const currentLayer = nodeLayers.get(current) ?? 0;
+
+        for (const target of outgoingEdges.get(current) ?? []) {
+            nodeLayers.set(target, Math.max(nodeLayers.get(target) ?? 0, currentLayer + 1));
+            incomingCounts.set(target, (incomingCounts.get(target) ?? 0) - 1);
+            if (incomingCounts.get(target) === 0) {
+                queue.push(target);
+                queue.sort((left, right) => left.localeCompare(right));
+            }
+        }
+    }
+
+    const layers = new Map<number, LayoutNode[]>();
+    for (const node of nodes) {
+        const layer = visited.has(node.id) ? nodeLayers.get(node.id) ?? 0 : 0;
+        layers.set(layer, [...layers.get(layer) ?? [], node]);
+    }
+
+    return new Map([...layers.entries()]
+        .sort(([left], [right]) => left - right)
+        .map(([layer, layerNodes]) => [
+            layer,
+            layerNodes.sort((left, right) => left.id.localeCompare(right.id)),
+        ]));
 }

@@ -30,13 +30,12 @@ describe("PlantUML Generator", () => {
     
     const puml = generatePlantUML(model);
     
-    // Check for correct cardinality generation with directional arrows
-    // Employment has 2 associations, so it uses directions: d, r
-    expect(puml).toContain(`"Employment" "1" -d- "1..*" "Person"`);
-    expect(puml).toContain(`"Employment" "1..*" -r- "1" "Company"`);
+    // Check for correct cardinality generation without directional arrow hints.
+    expect(puml).toContain(`"Employment" "1" -- "1..*" "Person"`);
+    expect(puml).toContain(`"Employment" "1..*" -- "1" "Company"`);
     
     // Ensure it doesn't generate the incorrect 1..* for [1]
-    expect(puml).not.toContain(`"Employment" "1..*" -d- "1..*" "Person"`);
+    expect(puml).not.toContain(`"Employment" "1..*" -- "1..*" "Person"`);
   });
 
   test("should generate orthogonal lines when option is enabled", async () => {
@@ -51,6 +50,22 @@ describe("PlantUML Generator", () => {
     const puml = generatePlantUML(model, { showExternalReferences: true, orthogonal: true });
     
     expect(puml).toContain("skinparam linetype ortho");
+  });
+
+  test("should generate selectable layout directives", async () => {
+    const tontoCode = `
+      package TestPackage
+      kind Person
+    `;
+
+    const validationResult = await validate(tontoCode);
+    const model = validationResult.document.parseResult.value as Model;
+
+    expect(generatePlantUML(model, { showExternalReferences: true, layout: "left-to-right" })).toContain("left to right direction");
+    expect(generatePlantUML(model, { showExternalReferences: true, layout: "top-to-bottom" })).toContain("top to bottom direction");
+    expect(generatePlantUML(model, { showExternalReferences: true, layout: "polyline" })).toContain("skinparam linetype polyline");
+    expect(generatePlantUML(model, { showExternalReferences: true, layout: "smetana" })).toContain("!pragma layout smetana");
+    expect(generatePlantUML(model, { showExternalReferences: true, layout: "elk" })).toContain("!pragma layout elk");
   });
 
   test("should generate correct colors based on stereotypes", async () => {
