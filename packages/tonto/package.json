@@ -8,7 +8,7 @@
     },
     "type": "module",
     "description": "Tonto is a DSL for creating OntoUML models",
-    "version": "0.4.9",
+    "version": "0.4.10",
     "license": "MIT",
     "repository": {
         "type": "git",
@@ -16,7 +16,7 @@
         "directory": "packages/tonto"
     },
     "engines": {
-        "node": ">= 16"
+        "node": ">= 20"
     },
     "categories": [
         "Programming Languages"
