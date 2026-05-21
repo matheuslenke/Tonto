@@ -112,10 +112,46 @@
    theme-aware colours so dark mode looks correct without rerendering. */
 .tonto-edge-marker {
     vector-effect: non-scaling-stroke;
-    stroke: var(--edge) !important;
+    stroke: var(--edge);
+    stroke-width: 1.25;
+    stroke-linejoin: miter;
 }
-.tonto-edge-marker.fill-surface { fill: var(--surface) !important; }
-.tonto-edge-marker.fill-edge    { fill: var(--edge) !important; }
+.tonto-edge-marker.fill-surface { fill: var(--surface); }
+.tonto-edge-marker.fill-edge    { fill: var(--edge); }
+
+/* Custom edges overlay (rendered inside ReactFlow's ViewportPortal so it
+   pans/zooms with the canvas; pointer-events: none lets clicks reach nodes).
+   Z-index -1 keeps the lines BEHIND the node bodies — the portal mounts last
+   among ReactFlow viewport children, so we have to actively push the overlay
+   back. */
+.tonto-edges-overlay {
+    position: absolute;
+    inset: 0;
+    width: 1px;
+    height: 1px;
+    overflow: visible;
+    pointer-events: none;
+    z-index: -1;
+}
+/* Labels still want to sit on top of everything, including node bodies, so
+   they don't get clipped when a relation passes near a box. */
+.tonto-edges-overlay foreignObject {
+    overflow: visible;
+}
+.tonto-edges-overlay .tonto-edge-label,
+.tonto-edges-overlay .tonto-edge-spec-label,
+.tonto-edges-overlay .tonto-edge-end {
+    z-index: 1;
+}
+.tonto-edges-overlay .tonto-edge-line {
+    fill: none;
+    stroke: var(--edge);
+    stroke-width: 1.4;
+    vector-effect: non-scaling-stroke;
+}
+.tonto-edges-overlay foreignObject {
+    overflow: visible;
+}
 .react-flow .react-flow__edges,
 .react-flow .react-flow__edges svg {
     overflow: visible !important;

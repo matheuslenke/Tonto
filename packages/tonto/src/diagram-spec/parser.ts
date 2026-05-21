@@ -4,6 +4,7 @@ import {
     TontoDiagramLayout,
     TontoDiagramParseResult,
     TontoDiagramPresentation,
+    TontoDiagramRelationLayout,
     TontoDiagramSpec,
     TontoDiagramViewport
 } from "./types.js";
@@ -30,6 +31,7 @@ const DEFAULT_SPEC: Omit<TontoDiagramSpec, "title" | "source"> = {
     },
     presentation: DEFAULT_PRESENTATION,
     nodes: [],
+    relations: [],
     viewport: DEFAULT_VIEWPORT,
 };
 
@@ -79,6 +81,7 @@ export function parseTontoDiagramSpec(sourceText: string): TontoDiagramParseResu
     const presentationBlock = findNamedBlock(body, "presentation");
     const viewportBlock = findNamedBlock(body, "viewport");
     const nodeMatches = [...body.matchAll(/\bnode\s+([A-Za-z_][\w.-]*)\s*\{\s*x\s+(-?\d+(?:\.\d+)?)\s+y\s+(-?\d+(?:\.\d+)?)\s*\}/g)];
+    const relationMatchesWithBody = [...body.matchAll(/\brelation\s+([A-Za-z_][\w.:-]*(?:::[A-Za-z_][\w.:-]*)*)\s*\{[^}]*\}/g)];
 
     const imports = dedupeAndSort([
         ...importMatches.map((match) => match.value),
@@ -103,6 +106,7 @@ export function parseTontoDiagramSpec(sourceText: string): TontoDiagramParseResu
         },
         presentation: parsePresentation(body, presentationBlock?.body, sourceText, presentationBlock?.index, issues),
         nodes: parseNodeLayouts(nodeMatches, sourceText, issues),
+        relations: parseRelationLayouts(relationMatchesWithBody, sourceText, issues),
         viewport: parseViewportBlock(viewportBlock, sourceText, issues),
     };
 
@@ -125,6 +129,7 @@ export function parseTontoDiagramSpec(sourceText: string): TontoDiagramParseResu
         viewportBlock?.index,
         viewportBlock?.endIndex,
         ...nodeMatches.flatMap((match) => [match.index, match.index !== undefined ? match.index + match[0].length : undefined]),
+        ...relationMatchesWithBody.flatMap((match) => [match.index, match.index !== undefined ? match.index + match[0].length : undefined]),
     ]);
 
     if (strayContent.trim().length > 0) {
@@ -168,6 +173,28 @@ function parsePresentation(
         stereotypes: parseBooleanSetting(body, block, "stereotypes", sourceText, blockIndex, issues, DEFAULT_PRESENTATION.stereotypes),
         attributes: parseBooleanSetting(body, block, "attributes", sourceText, blockIndex, issues, DEFAULT_PRESENTATION.attributes),
     };
+}
+
+function parseRelationLayouts(
+    matches: RegExpMatchArray[],
+    sourceText: string,
+    issues: TontoDiagramIssue[]
+): TontoDiagramRelationLayout[] {
+    const out = new Map<string, TontoDiagramRelationLayout>();
+
+    for (const match of matches) {
+        const target = match[1];
+        if (out.has(target)) {
+            issues.push({
+                severity: "warning",
+                message: `Relation entry \`${target}\` is duplicated; last value wins.`,
+                line: lineNumberForIndex(sourceText, match.index ?? 0),
+            });
+        }
+        out.set(target, { target });
+    }
+
+    return [...out.values()].sort((left, right) => left.target.localeCompare(right.target));
 }
 
 function parseNodeLayouts(

@@ -19,12 +19,11 @@ import type {
 } from "tonto-cli";
 import { cn } from "./utils/cn";
 import { DiagramNode } from "./components/diagram-node";
+import { EdgesOverlay } from "./components/edges-overlay";
 import { ExportFab } from "./components/export-fab";
 import { PackageTree } from "./components/package-tree";
-import { RelationEdge } from "./components/relation-edge";
 import { Sidebar, type SidebarTabId } from "./components/sidebar";
 import { SourcePanel } from "./components/source-panel";
-import { SpecializationEdge } from "./components/specialization-edge";
 import { ViewPanel } from "./components/view-panel";
 import { SettingsModal } from "./components/settings-modal";
 import { UfoLegend } from "./components/ufo-legend";
@@ -32,11 +31,6 @@ import { downloadPng, downloadSvg } from "./lib/export";
 import { useDiagramSettings } from "./lib/settings";
 import type { DiagramDocumentStateMessage, DiagramDocumentStateStatus, DiagramExportFormat } from "./messages";
 import { postToVscode } from "./vscode";
-
-const EDGE_TYPES = {
-    relation: RelationEdge,
-    specialization: SpecializationEdge,
-};
 
 const NODE_TYPES = {
     diagram: DiagramNode,
@@ -91,7 +85,10 @@ function DiagramEditor({ theme, onSetTheme }: { theme: Theme; onSetTheme: (next:
     const [settingsOpen, setSettingsOpen] = React.useState(false);
     const [titleDraft, setTitleDraft] = React.useState<string>("");
     const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
-    const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
+    // ReactFlow edges stay empty — we render relations ourselves via
+    // `EdgesOverlay` to bypass the rendering issues we hit in this webview.
+    const [edges] = useEdgesState<Edge>([]);
+    const [diagramEdges, setDiagramEdges] = React.useState<TontoDiagramGraph["edges"]>([]);
     const reactFlow = useReactFlow();
     const nodesInitialized = useNodesInitialized();
     const sourceUpdateTimeout = React.useRef<number | undefined>(undefined);
@@ -118,7 +115,7 @@ function DiagramEditor({ theme, onSetTheme }: { theme: Theme; onSetTheme: (next:
                 setGraph(next.graph);
                 setTitleDraft((current) => (current && current.trim() && current !== next.graph!.title ? current : next.graph!.title));
                 setNodes(toFlowNodes(next.graph));
-                setEdges(toFlowEdges(next.graph, settings.edgeRouting));
+                setDiagramEdges(next.graph.edges);
                 setStatus(nextStatus === "loading" ? "ready" : nextStatus);
                 return;
             }
@@ -131,7 +128,7 @@ function DiagramEditor({ theme, onSetTheme }: { theme: Theme; onSetTheme: (next:
             if (nextStatus === "error" && !hasFitInitialGraph.current) {
                 setGraph(undefined);
                 setNodes([]);
-                setEdges([]);
+                setDiagramEdges([]);
             }
         };
 
@@ -145,16 +142,7 @@ function DiagramEditor({ theme, onSetTheme }: { theme: Theme; onSetTheme: (next:
             }
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [setEdges, setNodes]);
-
-    React.useEffect(() => {
-        setEdges((prev) =>
-            prev.map((edge) => ({
-                ...edge,
-                data: { ...(edge.data ?? {}), routing: settings.edgeRouting },
-            })),
-        );
-    }, [settings.edgeRouting, setEdges]);
+    }, [setNodes]);
 
     React.useEffect(() => {
         if (!hasReceivedState || sourceDraft === documentText) return;
@@ -278,9 +266,7 @@ function DiagramEditor({ theme, onSetTheme }: { theme: Theme; onSetTheme: (next:
                         nodes={nodes}
                         edges={edges}
                         nodeTypes={NODE_TYPES}
-                        edgeTypes={EDGE_TYPES}
                         onNodesChange={onNodesChange}
-                        onEdgesChange={onEdgesChange}
                         onNodeDragStop={(_, draggedNode) => {
                             const nextNodes = nodes.map((node) =>
                                 node.id === draggedNode.id
@@ -316,6 +302,11 @@ function DiagramEditor({ theme, onSetTheme }: { theme: Theme; onSetTheme: (next:
                             color="var(--grid-major)"
                         />
                         <Controls showInteractive={false} />
+                        <EdgesOverlay
+                            edges={diagramEdges}
+                            showCardinalities
+                            routing={settings.edgeRouting}
+                        />
                     </ReactFlow>
 
                     <div className="tonto-canvas-vignette" aria-hidden="true" />
@@ -563,21 +554,3 @@ function toFlowNodes(graph: TontoDiagramGraph): Node[] {
     }));
 }
 
-function toFlowEdges(graph: TontoDiagramGraph, routing: string): Edge[] {
-    return graph.edges.map((edge) => ({
-        id: edge.id,
-        type: edge.kind,
-        source: edge.source,
-        target: edge.target,
-        label: edge.label,
-        data: {
-            connector: edge.connector,
-            sourceCardinality: edge.sourceCardinality,
-            targetCardinality: edge.targetCardinality,
-            sourceEnd: edge.sourceEnd,
-            targetEnd: edge.targetEnd,
-            stereotype: edge.stereotype,
-            routing,
-        },
-    }));
-}

@@ -21,6 +21,16 @@ export type TontoDiagramLayout = {
     y: number;
 };
 
+/**
+ * Per-relation entry in the .tontodiagram source. Mirrors `node <name>`. The
+ * block body is reserved for future per-edge layout (waypoints, label
+ * position) — for now declaring an entry simply records that the relation is
+ * part of the diagram authoring trail.
+ */
+export type TontoDiagramRelationLayout = {
+    target: string;
+};
+
 export type TontoDiagramViewport = {
     x: number;
     y: number;
@@ -34,6 +44,7 @@ export type TontoDiagramSpec = {
     filter: TontoDiagramFilter;
     presentation: TontoDiagramPresentation;
     nodes: TontoDiagramLayout[];
+    relations: TontoDiagramRelationLayout[];
     viewport: TontoDiagramViewport;
 };
 

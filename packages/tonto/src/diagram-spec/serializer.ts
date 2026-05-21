@@ -1,4 +1,4 @@
-import { TontoDiagramSpec } from "./types.js";
+import { TontoDiagramRelationLayout, TontoDiagramSpec } from "./types.js";
 
 export function serializeTontoDiagramSpec(spec: TontoDiagramSpec): string {
     const lines: string[] = [];
@@ -31,9 +31,35 @@ export function serializeTontoDiagramSpec(spec: TontoDiagramSpec): string {
         }
     }
 
+    // Relations are intentionally NOT serialized. They are derived from the
+    // .tonto source files by the projection — including them here would
+    // duplicate authoring information. The parser still accepts
+    // `relation <id> { ... }` blocks (for forward-compat / future per-edge
+    // layout) but the serializer omits them.
+
     lines.push("}");
 
     return lines.join("\n");
+}
+
+/**
+ * Replace `spec.relations` so the file reflects the supplied set of edge ids.
+ * Used by the extension after each spec mutation to keep the diagram source
+ * in sync with the rendered relation set (auto-add).
+ */
+export function syncTontoDiagramRelations(
+    spec: TontoDiagramSpec,
+    edgeIds: string[]
+): TontoDiagramSpec {
+    const next: TontoDiagramRelationLayout[] = [...new Set(edgeIds)]
+        .sort((left, right) => left.localeCompare(right))
+        .map((target) => ({ target }));
+
+    return {
+        ...spec,
+        source: undefined,
+        relations: next,
+    };
 }
 
 export function updateTontoDiagramLayout(
